@@ -8,7 +8,7 @@ if (isset($_GET['nomfic'])) {
 }
 
 //Si le fichier a été supprimé
-if (!file_exists($nomfic)) {
+if (!isset($nomfic) || !file_exists($nomfic)) {
 	header('Location: '.'TEI_OverHAL.php?erreur=7');
 }
 
@@ -169,9 +169,11 @@ include("./URLport_coll.php");
   <link rel="stylesheet" href="<?php echo $css;?>" type="text/css">
   <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <script type="text/javascript" language="Javascript" src="./CrosHAL.js"></script>
+  <script type="text/javascript" language="Javascript" src="./Zip2HAL.js"></script>
   <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
-  <link rel="icon" type="type/ico" href="HAL_favicon.ico">
+	<script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/ui-lightness/jquery-ui.css" type="text/css">
+  <link rel="icon" type="type/ico" href="favicon.ico">
   <link rel="stylesheet" href="./Zip2HAL.css">
 </head>
 <body>
@@ -180,6 +182,32 @@ include("./URLport_coll.php");
 <div align='center' id='noscript'><font color='red'><b>ATTENTION !!! JavaScript est désactivé ou non pris en charge par votre navigateur : cette procédure ne fonctionnera pas correctement.</b></font><br>
 <b>Pour modifier cette option, voir <a target='_blank' href='https://www.libellules.ch/browser_javascript_activ.php'>ce lien</a>.</b></div><br>
 </noscript>
+
+<!--Autocomplete idHAL-->
+<script type="text/javascript">
+$(function() {
+    
+    //autocomplete
+    $(".autoID").autocomplete({
+        source: "AC_ID.php",
+        minLength: 1
+    });                
+
+});
+</script>
+
+<!--Autocomplete affiliations-->
+<script type="text/javascript">
+$(function() {
+    
+    //autocomplete
+    $(".autoAC").autocomplete({
+        source: "AC_AF.php",
+        minLength: 1
+    });                
+
+});
+</script>
 
 <table width="100%">
 <tr>
@@ -406,9 +434,8 @@ if (isset($_POST["soumis"])) {
 			}
 			$cpt++;
 		}
-		if ($dbl == 0) {echo('la notice n\'a pas été trouvée ...');}//Notice TEI non trouvée ...
-		if ($dbl == 1) {echo('1 seule notice trouvée, donc, pas de doublon');}//Seule la notice TEI a été trouvée donc il n'y a pas de doublon
-		if ($dbl > 1) {$dbltot = $dbl - 1;echo($dbl.' notices trouvées, donc, '.$dbltot.' doublon(s)');}//Présence de doublon(s)
+		if ($dbl == 0) {echo('aucune notice trouvée dans HAL, donc, pas de doublon');}//Notice non trouvée > pas de doublon
+		if ($dbl >= 1) {echo('la notice est déjà présente dans HAL');}//Présence de doublon(s)
 
 		echo('<script>');
 		echo('document.getElementById(\'cpt1\').style.display = \'none\';');
@@ -423,6 +450,8 @@ if (isset($_POST["soumis"])) {
 		$preAut = array();//Prénoms des auteurs
 		$nomAut = array();//Noms des auteurs
 		$affAut = array();//Affiliation des auteurs
+		$xmlIds = array();//IdHALs trouvés
+		$xmlIdi = array();//IdHALi trouvés
 		$halAut = array();
 		
 		echo('<b>Etape 2 : recherche des idHAL des auteurs</b><br>');
@@ -430,8 +459,12 @@ if (isset($_POST["soumis"])) {
 		
 		$auts = $xml->getElementsByTagName("author");
 		foreach($auts as $aut) {
+			//Initialisation des variables
+			$xmlIds[$iAut] = "";
+			$xmlIdi[$iAut] = "";
 			$affAut[$iAut] = "";
 			foreach($aut->childNodes as $elt) {
+				//Prénom/Nom
 				if ($elt->nodeName == "persName") {
 					foreach($elt->childNodes as $per) {
 						if ($per->nodeName == "forename") {
@@ -442,6 +475,14 @@ if (isset($_POST["soumis"])) {
 						}
 					}
 				}
+				//IdHAL
+				if ($elt->nodeName == "idno") {
+					if ($elt->hasAttribute("type") && $elt->getAttribute("type") == "idhal") {
+						if ($elt->hasAttribute("notation") && $elt->getAttribute("notation") == "string") {$xmlIds[$iAut] = $elt->nodeValue;}
+						if ($elt->hasAttribute("notation") && $elt->getAttribute("notation") == "numeric") {$xmlIdi[$iAut] = $elt->nodeValue;}
+					}
+				}
+				//Affiliations
 				if ($elt->nodeName == "affiliation") {
 					if ($elt->hasAttribute("ref")) {$affAut[$iAut] .= $elt->getAttribute("ref").'~';}
 				}
@@ -462,6 +503,16 @@ if (isset($_POST["soumis"])) {
 			$firstName = $preAut[$i];
 			$lastName = $nomAut[$i];
 			$affilName = $affAut[$i];
+			//Initialisation des variables du tableau
+			$halAut[$iAut]['firstName'] = $firstName;
+			$halAut[$iAut]['lastName'] = $lastName;
+			$halAut[$iAut]['affilName'] = $affilName;
+			$halAut[$iAut]['xmlIdi'] = $xmlIdi[$i];
+			$halAut[$iAut]['xmlIds'] = $xmlIds[$i];
+			$halAut[$iAut]['idHali'] = "";
+			$halAut[$iAut]['idHals'] = "";
+			$halAut[$iAut]['mailDom'] = "";
+			$halAut[$iAut]['docid'] = "";
 			$firstNameT = strtolower(wd_remove_accents($firstName));
 			$lastNameT = strtolower(wd_remove_accents($lastName));
 			$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=firstName_t:%22".$firstNameT."%22%20AND%20lastName_t:%22".$lastNameT."%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s";
@@ -470,7 +521,7 @@ if (isset($_POST["soumis"])) {
 			$contAut = file_get_contents($reqAut);
 			$resAut = json_decode($contAut);
 			$numFound = 0;
-			if (isset($results->response->numFound)) {$numFound=$results->response->numFound;}
+			if (isset($resAut->response->numFound)) {$numFound=$resAut->response->numFound;}
 			$docid = "";
 			$nbdocid = 0;
 			$iHi = "non";//Test pour savoir si un idHal_i a été trouvé
@@ -505,22 +556,13 @@ if (isset($_POST["soumis"])) {
 				$halAut[$iAut]['docid'] = $docid;
 				$cptdoc++;
 				//echo($firstName.' '.$lastName.' : '.$docid);
-			}else{//Ni idHal_i, ni docid > aucun résultat > auteur non enregistré dans la base
-				$halAut[$iAut]['firstName'] = $firstName;
-				$halAut[$iAut]['lastName'] = $lastName;
-				$halAut[$iAut]['affilName'] = $affilName;
-				$halAut[$iAut]['idHali'] = "";
-				$halAut[$iAut]['idHals'] = "";
-				$halAut[$iAut]['mailDom'] = "";
-				$halAut[$iAut]['docid'] = "";
-				//echo($firstName.' '.$lastName.' : ni idHal_i, ni docid > aucun résultat > auteur non enregistré dans la base<br>');
 			}
 			$iAut++;
 			//echo ('<br>');
 			$cpt++;
 		}
 		//var_dump($halAut);
-		$halAutinit = $halAut;//Sauvegarde des affiliations intiales remontées par OverHAL
+		$halAutinit = $halAut;//Sauvegarde des affiliations et idHal intiaux remontées par OverHAL
 		echo($cptiHi. ' idHal et '.$cptdoc.' docid trouvé(s)');
 		
 		echo('<script>');
@@ -540,9 +582,11 @@ if (isset($_POST["soumis"])) {
 
 		
 		echo('<b>Etape 3a : recherche des id structures des affiliations</b><br>');
-		echo('<div id=\'cpt3\'></div>');
+		echo('<div id=\'cpt3a\'></div>');
 		
 		$cptAff = 0;
+		
+		//Affiliations
 		$affs = $xml->getElementsByTagName("org");
 		foreach($affs as $aff) {
 			if ($aff && $aff->hasAttribute("xml:id")) {$nomAff[$iAff]['lsAff'] = '#'.$aff->getAttribute("xml:id").'~'; $cptAff++;}
@@ -575,36 +619,74 @@ if (isset($_POST["soumis"])) {
 				}			
 			}
 			if ($test == "oui") {
-				$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=%22".$code."%22&fl=*&rows=1000&fl=idocid,valid_s,name_s";
+				
+				//1ère méthode > avec le référentiel HAL des structures
+				$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=%22".$code."%22%20AND%20-valid_s:%22INCOMING%22&fl=*&rows=1000&fl=docid,valid_s,name_s";
 				$reqAff = str_replace(" ", "%20", $reqAff);
 				//echo $reqAff.'<br>';
 				$contAff = file_get_contents($reqAff);
 				$resAff = json_decode($contAff);
-				$docid = "non";
-				if (isset($results->response->numFound)) {$numFound=$results->response->numFound;}
+				if (isset($resAff->response->numFound)) {$numFound=$resAff->response->numFound;}
 				if ($numFound != 0) {			
 					foreach($resAff->response->docs as $affil) {
-						if (($affil->valid_s == "VALID" || $affil->valid_s == "OLD") && $docid == "non") {
-							$halAff[$iAff]['docid'] = $affil->docid;
-							$halAff[$iAff]['lsAff'] = $nomAff[$i]['lsAff'];
-							$halAff[$iAff]['valid'] = $affil->valid_s;
-							$halAff[$iAff]['names'] = $affil->name_s;
-							$iAff++;
-							$docid = "oui";
-						}
+						$halAff[$iAff]['docid'] = $affil->docid;
+						$halAff[$iAff]['lsAff'] = $nomAff[$i]['lsAff'];
+						$halAff[$iAff]['valid'] = $affil->valid_s;
+						$halAff[$iAff]['names'] = $affil->name_s;
+						$halAff[$iAff]['fname'] = "";
+						$halAff[$iAff]['lname'] = "";
+						$iAff++;
 					}
-					/*
-					if ($docid == "non") {//pas de docid trouvé avec VALID ou OLD > on teste avec INCOMING
-						foreach($resAff->response->docs as $affil) {
-							if ($affil->valid_s == "INCOMING"  && $docid == "non") {
-								$halAff[$iAff]['docid'] = $affil->docid;
-								$halAff[$iAff]['lsAff'] = $nomAff[$i]['lsAff'];
-								$iAff++;
-								$docid = "oui";
+				}
+				
+				//2ème méthode > avec le référentiel HAL des notices
+				//On récupère tout d'abord l'année de la publication
+				$annee = "";
+				$anns = $xml->getElementsByTagName("date");
+				foreach($anns as $ann) {
+					if ($ann->hasAttribute("type") && $ann->getAttribute("type") == "datePub") {$annee = $ann->nodeValue;}
+				}
+				if ($annee != "") {
+					for($j = 0; $j < count($halAut); $j++) {
+						if ($halAut[$j]['affilName'] == $nomAff[$i]['lsAff']) {//On ne s'intéresse qu'aux auteurs concernés par cette référence d'affiliation
+							$firstName = $halAut[$j]['firstName'];
+							$lastName = $halAut[$j]['lastName'];
+							$facetSep = $lastName.' '.$firstName;
+							$reqAff = "https://api.archives-ouvertes.fr/search/index/?q=authLastName_sci:%22".$lastName."%22%20AND%20authFirstName_sci:%22".$firstName."%22&fq=-labStructValid_s:INCOMING%20OR%20(structAcronym_sci:%22".$code."%22%20OR%20structName_sci:%22u1085%22%20OR%20structCode_sci:%22".$code."%22)&fl=structPrimaryHasAlphaAuthIdHal_fs,authId_i,authLastName_s,authFirstName_s&sort=abs(sub(producedDateY_i,".$annee."))%20asc";
+							$reqAff = str_replace(" ", "%20", $reqAff);
+							//echo $reqAff.'<br>';
+							$contAff = file_get_contents($reqAff);
+							$resAff = json_decode($contAff);
+							if (isset($resAff->response->numFound)) {$numFound=$resAff->response->numFound;}
+							if ($numFound != 0) {
+								foreach($resAff->response->docs as $affil) {
+									foreach($affil->structPrimaryHasAlphaAuthIdHal_fs as $fSep) {
+										if (strpos($fSep, $facetSep) !== false) {
+											$fSepTab = explode('_', $fSep);
+											$ajout = "oui";
+											for($k = 0; $k < count($halAff); $k++) {
+												if (intval($fSepTab[2]) == $halAff[$k]['docid'] && $firstName == $halAff[$k]['fname'] && $lastName == $halAff[$k]['lname']) {$ajout = "non";}
+											}
+											if ($ajout == "oui") {
+												//VALID ou OLD ?
+												$reqVoO = "https://api.archives-ouvertes.fr/ref/structure/?q=docid:%22".$fSepTab[2]."%22%20AND%20-valid_s:%22INCOMING%22&fl=*&rows=1000&fl=docid,valid_s,name_s";
+												$reqVoO = str_replace(" ", "%20", $reqVoO);
+												$contVoO = file_get_contents($reqVoO);
+												$resVoO = json_decode($contVoO);
+												$halAff[$iAff]['docid'] = intval($fSepTab[2]);
+												$halAff[$iAff]['lsAff'] = $nomAff[$i]['lsAff'];
+												$halAff[$iAff]['valid'] = $resVoO->response->docs[0]->valid_s;
+												$halAff[$iAff]['names'] = $fSepTab[4];
+												$halAff[$iAff]['fname'] = $firstName;
+												$halAff[$iAff]['lname'] = $lastName;
+												$iAff++;
+											}
+										}
+									}
+								}
 							}
 						}
 					}
-					*/
 				}
 			}else{
 				//Affiliation sans recherche possible > on réinitialise cette affiliation pour les auteurs concernés
@@ -616,7 +698,7 @@ if (isset($_POST["soumis"])) {
 			}
 			$cpt++;
 		}
-		//var_dump($halAff);
+
 		echo($iAff.' id structures des affiliations trouvé(s)');
 		
 		echo('<script>');
@@ -659,7 +741,7 @@ if (isset($_POST["soumis"])) {
 					$contAff = file_get_contents($reqAff);
 					$resAff = json_decode($contAff);
 					$docid = "non";
-					if (isset($results->response->numFound)) {$numFound=$results->response->numFound;}
+					if (isset($resAff->response->numFound)) {$numFound=$resAff->response->numFound;}
 					if ($numFound != 0) {			
 						foreach($resAff->response->docs as $affil) {
 							if (($affil->valid_s == "VALID" || $affil->valid_s == "OLD") && $docid == "non") {
@@ -669,6 +751,8 @@ if (isset($_POST["soumis"])) {
 								$halAff[$iAff]['lsAff'] = "#localStruct-Aff".$cptAff."~";
 								$halAff[$iAff]['valid'] = $affil->valid_s;
 								$halAff[$iAff]['names'] = $affil->name_s;
+								$halAff[$iAff]['fname'] = $halAut[$i]['firstName'];
+								$halAff[$iAff]['lname'] = $halAut[$i]['lastName'];
 								$halAut[$i]['affilName'] = "#localStruct-Aff".$cptAff."~";
 								$iAff++;
 								$docid = "oui";
@@ -701,7 +785,9 @@ if (isset($_POST["soumis"])) {
 		echo('document.getElementById(\'cpt3b\').style.display = \'none\';');
 		echo('</script>');
 		//Fin étape 3b
-		
+
+		//var_dump($halAff);
+
 		/*
 		echo('<br><br>');
 		echo('Tableau initial obtenu pour les idHAL des auteurs ($halAutinit) :');
@@ -795,7 +881,6 @@ if (isset($_POST["soumis"])) {
 		echo('<table class=\'table table-striped table-bordered table-hover;\'>');
 		echo('<tr>');
 		echo('<td style=\'text-align: center; background-color: #eeeeee; color: #999999;\'><b>ID</b></td>');
-		echo('<td style=\'text-align: center; background-color: #eeeeee; color: #999999;\'><b>HAL</b></td>');
 		echo('<td style=\'text-align: center; background-color: #eeeeee; color: #999999;\'><b>Doublon</b></td>');
 		echo('<td style=\'text-align: center; background-color: #eeeeee; color: #999999;\'><b>Supprimer</b></td>');
 		echo('<td style=\'text-align: center; background-color: #eeeeee; color: #999999;\'><b>Type de document</b></td>');
@@ -809,20 +894,118 @@ if (isset($_POST["soumis"])) {
 		$cpt = 1;
 		
 		echo('<tr style=\'text-align: center;\'>');
+		//Numérotation > id
 		echo('<td>'.$cpt.'</td>');
+		//Doublon ?
 		echo('<td><a target=\'_blank\' href=\'https://hal.archives-ouvertes.fr/'.$idTEI.'\'><img alt=\'HAL\' src=\'./img/HAL.jpg\'></a>');
-		echo('<td style=\'text-align: center;\'>'.$halId['doublon'][$hId].'</td>');
+		//Supprimer toute la notice
 		echo('<td><img alt=\'Supprimer la notice\' src=\'./img/supprimer.jpg\'>');
 		echo('<td>'.$docTEI.'</td>');
-		echo('<td>A venir !!!</td>');
+		//Métadonnées
+		echo('<td style=\'text-align: left;\'>');
+		//Métadonnées > Titre
+		$elts = $xml->getElementsByTagName("title");
+		foreach($elts as $elt) {
+			if ($elt->hasAttribute("xml:lang")) {echo('Titre : <textarea id="titre" name="titre" class="textarea form-control" style="width: 500px;">'.str_replace("'", "\'", $elt->nodeValue).'</textarea><br>');}
+		}
+		//Métadonnées > Notice
+		$elts = $xml->getElementsByTagName("ref");
+		foreach($elts as $elt) {
+			if ($elt->hasAttribute("type") && $elt->getAttribute("type") == "file") {
+				if ($elt->hasAttribute("target")) {echo('<p class="form-inline">Notice : <input type="text" id=notice" name="notice" value="'.$elt->getAttribute("target").'" class="form-control" style="height: 18px; width:400px;"> - <a target="_blank" href="'.$elt->getAttribute("target").'">Lien</a></p>');}
+			}
+		}
+		//Métadonnées > Date de publication
+		$elts = $xml->getElementsByTagName("date");
+		foreach($elts as $elt) {
+			if ($elt->hasAttribute("type") && $elt->getAttribute("type") == "datePub") {echo('<p class="form-inline">Date de publication : <input type="text" id="datePub" name="datePub" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:100px;"></p>');}
+		}
+		//Métadonnées > Langue
+		$elts = $xml->getElementsByTagName("language");
+		foreach($elts as $elt) {
+			if ($elt->hasAttribute("ident")) {echo('<p class="form-inline">Langue : <input type="text" id="language" name="language" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:150px;"></p>');}
+		}
+		//Métadonnées > Revue
+		$elts = $xml->getElementsByTagName("title");
+		foreach($elts as $elt) {
+			if ($elt->hasAttribute("level")) {echo('<p class="form-inline">Nom de la revue : <input type="text" id="revue" name="revue" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:150px;"></p>');}
+		}
+		//Métadonnées > Audience, vulgarisation et comité de lecture
+		$elts = $xml->getElementsByTagName("note");
+		foreach($elts as $elt) {
+			if ($elt->hasAttribute("type") && $elt->getAttribute("type") == "audience") {
+				$audience = '';
+				switch($elt->getAttribute("n")) {
+					case 1 :
+						$audience = 'Internationale';
+						break;
+					case 2 :
+						$audience = 'Nationale';
+						break;
+					case 3 :
+						$audience = 'Non renseignée';
+						break;
+				}
+				echo('<p class="form-inline">Audience : <input type="text" id="audience" name="audience" value="'.$audience.'" class="form-control" style="height: 18px; width:200px;"></p>');
+			}
+			if ($elt->hasAttribute("type") && $elt->getAttribute("type") == "popular") {echo('<p class="form-inline">Vulgarisation : <input type="text" id="popular" name="popular" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:100px;"></p>');}
+			if ($elt->hasAttribute("type") && $elt->getAttribute("type") == "peer") {echo('<p class="form-inline">Comité de lecture : <input type="text" id="peer" name="peer" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:100px;"></p>');}
+		}
+		//Métadonnées > Editeur
+		$elts = $xml->getElementsByTagName("publisher");
+		foreach($elts as $elt) {
+			echo('<p class="form-inline">Editeur : <input type="text" id="publisher" name="publisher" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:300px;"></p>');
+		}
+		//Métadonnées > ISSN et EISSN
+		$elts = $xml->getElementsByTagName("idno");
+		foreach($elts as $elt) {
+			if ($elt->hasAttribute("type") && $elt->getAttribute("type") == "issn") {echo('<p class="form-inline">ISSN : <input type="text" id="issn" name="issn" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:100px;"></p>');}
+			if ($elt->hasAttribute("type") && $elt->getAttribute("type") == "eissn") {echo('<p class="form-inline">EISSN : <input type="text" id="eissn" name="eissn" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:100px;"></p>');}
+		}
+		//Métadonnées > Volume, numéro et pages
+		$elts = $xml->getElementsByTagName("biblScope");
+		foreach($elts as $elt) {
+			if ($elt->hasAttribute("unit") && $elt->getAttribute("unit") == "volume") {echo('<p class="form-inline">Volume : <input type="text" id="volume" name="volume" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:100px;"></p>');}
+			if ($elt->hasAttribute("unit") && $elt->getAttribute("unit") == "issue") {echo('<p class="form-inline">Numéro : <input type="text" id="issue" name="issue" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:100px;"></p>');}
+			if ($elt->hasAttribute("unit") && $elt->getAttribute("unit") == "pp") {echo('<p class="form-inline">Pages : <input type="text" id="pp" name="pp" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:150px;"></p>');}
+		}
+		//Métadonnées > Financement
+		$elts = $xml->getElementsByTagName("funder");
+		foreach($elts as $elt) {
+			echo('Financement : <textarea id="funder" name="funder" class="textarea form-control" style="width: 500px;">'.str_replace("'", "\'", $elt->nodeValue).'</textarea><br>');
+		}
+		//Métadonnées > Mots-clés
+		$motscles = '';
+		$keys = $xml->getElementsByTagName("keywords");
+		foreach($keys as $key) {
+			foreach($key->childNodes as $elt) {
+				$motscles .= $elt->nodeValue.', ';
+			}
+		}
+		$motscles = substr($motscles, 0, (strlen($motscles) - 2));
+		echo('Mots-clés : <textarea id="funder" name="funder" class="textarea form-control" style="width: 500px;">'.str_replace("'", "\'", $motscles).'</textarea><br>');
+		//Métadonnées > Résumé
+		$elts = $xml->getElementsByTagName("abstract");
+		foreach($elts as $elt) {
+			if ($elt->hasAttribute("xml:lang")) {echo('Résumé : <textarea id="abstract" name="abstract" class="textarea form-control" style="width: 500px;">'.str_replace("'", "\'", $elt->nodeValue).'</textarea><br>');}
+		}
+		
+		echo('</td>');
+		//DOI
 		if (isset($doiTEI)) {echo('<td><a target=\'_blank\' href=\'https://doi.org/'.$doiTEI.'\'><img alt=\'DOI\' src=\'./img/doi.jpg\'></a>');}else{echo('<td>&nbsp;</td>');}
 		//Auteurs / affiliations
 		echo('<td style=\'text-align: left;\'>');
 		for($i = 0; $i < count($halAut); $i++) {
 			echo('<b>'.$halAutinit[$i]['firstName'].' '.$halAutinit[$i]['lastName'].'</b>');
-			if ($halAutinit[$i]['mailDom'] != "") {echo('(@'.$halAutinit[$i]['mailDom'].')');}
+			if ($halAutinit[$i]['mailDom'] != "") {echo(' (@'.$halAutinit[$i]['mailDom'].')');}
 			echo('<br>');
-			echo('Supprimer l\'idHAL <img width=\'12px\' alt=\'Supprimer l\'idHAL\' src=\'./img/supprimer.jpg\'> et rechercher/remonter le bon auteur du réfrentiel auteurs :<br><form><input type="text" id="ajoutidHAL" name="ajoutidHAL'.$i.'" class="form-control" style="height: 15px; width:200px; align:center;"></form>');
+			if ($halAutinit[$i]['xmlIds'] != "") {
+				echo('Supprimer l\'idHAL '.$halAutinit[$i]['xmlIds'].' <img width=\'12px\' alt=\'Supprimer l\'idHAL\' src=\'./img/supprimer.jpg\'><br>');
+			}
+			if ($halAutinit[$i]['idHals'] != "") {
+				echo('Remonter le bon auteur du référentiel auteurs :<br><form><input type="text" id="ajoutidHAL" value="'.$halAutinit[$i]['idHals'].'" name="ajoutidHAL'.$i.'" class="form-control" style="height: 18px; width:200px; align:center;"></form>');
+			}
+			echo('<form>Ajouter un idHAL : <input type="text" id="ajoutIdh'.$i.'" name="ajoutIdh'.$i.'" class="autoID form-control" style="height: 18px; width:300px; align:center;"></form>');
 			echo('<i><font style=\'color: #999999;\'>Affiliation(s) remontée(s) par OverHAL:<br>');
 			for($j = 0; $j < count($nomAff); $j++) {
 				if ($halAutinit[$i]['affilName'] != "" && stripos($halAutinit[$i]['affilName'], $nomAff[$j]['lsAff']) !== false) {
@@ -831,15 +1014,17 @@ if (isset($_POST["soumis"])) {
 				}
 			}
 			echo('</font></i>');
+			$ajtAff = "~";//Pour éviter d'afficher 2 fois des affiliations > méthode 1 / méthode 2 > avec ou sans prénom/nom
 			for($j = 0; $j < count($halAff); $j++) {
-				if ($halAut[$i]['affilName'] != "" && stripos($halAut[$i]['affilName'], $halAff[$j]['lsAff']) !== false) {
+				if ($halAut[$i]['affilName'] != "" && stripos($halAut[$i]['affilName'], $halAff[$j]['lsAff']) !== false && strpos($ajtAff, $halAff[$j]['names']) === false && (($halAut[$i]['firstName'] == $halAff[$j]['fname'] && $halAut[$i]['lastName'] == $halAff[$j]['lname']) || ($halAff[$j]['fname'] == "" && $halAff[$j]['lname'] == ""))) {
 					if ($halAff[$j]['valid'] == "VALID") {$txtcolor = '#339966';}
 					if ($halAff[$j]['valid'] == "OLD") {$txtcolor = '#ff6600';}
+					$ajtAff .= $halAff[$j]['names']."~";
 					echo('<font style=\'color: '.$txtcolor.';\'>'.$halAff[$j]['names'].'</font>');
 					echo('&nbsp;<img width=\'12px\' alt=\'Supprimer l\'affiliation\' src=\'./img/supprimer.jpg\'><br>');
 				}
 			}
-			echo('<form>Ajouter une affiliation : <input type="text" id="ajoutAff'.$i.'" name="ajoutAff'.$i.'" class="form-control" style="height: 15px; width:200px; align:center;"></form>');
+			echo('<form>Ajouter une affiliation : <input type="text" id="ajoutAff'.$i.'" name="ajoutAff'.$i.'" class="autoAF form-control" style="height: 18px; width:300px; align:center;"></form>');
 			echo('</font><br>');
 		}
 		echo('<br>');
@@ -856,6 +1041,12 @@ if (isset($_POST["soumis"])) {
 	}
 }
 ?>
+
+<!--Ajustement automatique des textarea-->
+<script type="text/javascript" language="Javascript" src="./autoresize.jquery.js"></script>
+<script type="text/javascript">
+$('textarea').autoResize();
+</script>
 
 <?php
 echo('<br><br>');
