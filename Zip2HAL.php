@@ -51,78 +51,185 @@ function objectToArray($object) {
   return array_map('objectToArray', $object);
 }
 
-function askCurl($url, &$arrayCurl) {
-  $ch = curl_init();
-  curl_setopt($ch, CURLOPT_URL, $url);
-  curl_setopt($ch, CURLOPT_HEADER, 0);
-  curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-  curl_setopt($ch, CURLOPT_USERAGENT, 'SCD (https://halur1.univ-rennes1.fr)');
-  curl_setopt($ch, CURLOPT_USERAGENT, 'PROXY (https://siproxy.univ-rennes1.fr)');
-  curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-  $json = curl_exec($ch);
-  curl_close($ch);
-  
-  $memory = intval(ini_get('memory_limit')) * 1024 * 1024;
-  $limite = strlen($json)*1;
-  if ($limite > $memory) {
-    die ('<b><font color="red">Désolé ! La collection et/ou la période choisie génère(nt) trop de résultats pour être traités correctement.</font></b>');
-  }else{
-    $parsed_json = json_decode($json, true);
-    $arrayCurl = objectToArray($parsed_json);
-  }
+function deleteNode($xml, $amont, $aval, $pos, $typAtt1, $valAtt1) {
+	$cpt = 0;//Boucle pour retrouver $pos
+	$elts = $xml->getElementsByTagName($amont);		
+	foreach ($elts as $elt) {
+		if ($cpt != $pos) {
+		}else{
+			if ($elt->hasChildNodes()) {
+				foreach($elt->childNodes as $item) {
+					//echo('<script>console.log("'.$amont.' : '.$valAtt1.'");</script>');
+					if ($item->nodeName == $aval) {
+						if ($item->hasAttribute($typAtt1)) {$att1 = $item->getAttribute($typAtt1);}else{$att1 = "";}
+						if (strpos($valAtt1, $att1) !== false) {
+							$elt->removeChild($item);
+							break 2;
+						}
+					}
+				}
+			}
+		}
+		$cpt++;
+	}
 }
 
-function insertNode($xml, $dueon, $amont, $aval, $tagName, $typAtt1, $valAtt1, $typAtt2, $valAtt2, $methode) {//$methode = iB (insertBefore) ou aC (appendChild)
+function insertNode($xml, $dueon, $amont, $aval, $pos, $tagName, $typAtt1, $valAtt1, $typAtt2, $valAtt2, $methode, $crit, $comp) {
+	/*
+	$methode = iB (insertBefore) ou aC (appendChild)
+	Attribuer à $dueon la chaîne 'nonodevalue' si aucune valeur n'est nécessaire au noeud
+	$pos = si besoin de se positionner à un endroit précis dans une liste de noeuds
+	$crit = critère déterminant s'il faut parcourir sur $tagName ou sur $amont
+		-> si recherche sur tagName, c'est pour une mise à jour
+		-> si recherche sur amont, c'est pour vérifier l'existence + ajout éventuel
+	Si recherche amont et $comp != "" > le noeud existe et il faut remplacer la valeur de l'attribut
+	*/
   $noeud = "";
   $dueon = htmlspecialchars($dueon);
+	//echo('<script>console.log("'.$amont.' : '.$valAtt1.'");</script>');
   //si noeud présent
-  $elts = $xml->getElementsByTagName($tagName);
-  foreach ($elts as $elt) {
-    if ($elt->hasAttribute($typAtt1)) {
-      $quoi = $elt->getAttribute($typAtt1);
-      if ($amont != "langUsage" && $tagName != "abstract") {
-        if ($quoi == $valAtt1) {
-          $elt->nodeValue = $dueon;
-          if ($elt->hasAttribute("subtype")) {$elt->removeAttribute("subtype");}//suppression inPress
-          if ($valAtt2 != "") {$elt->setAttribute($typAtt2, $valAtt2);}
-          $noeud = "ok";
-        }
-      }else{
-        $elt->nodeValue = $dueon;
-        $elt->setAttribute($typAtt1, $valAtt1);
-        if ($elt->hasAttribute("subtype")) {$elt->removeAttribute("subtype");}//suppression inPress
-        if ($valAtt2 != "") {$elt->setAttribute($typAtt2, $valAtt2);}
-        $noeud = "ok";
-      }
-    }
-  }
-	
+	$cpt = 0;//Boucle pour retrouver $pos
+	if ($crit == "amont") {
+		$elts = $xml->getElementsByTagName($amont);		
+		foreach ($elts as $elt) {
+			if ($cpt != $pos) {
+			}else{
+				if ($elt->hasChildNodes()) {
+					foreach($elt->childNodes as $item) {
+						if (get_class($item) != "DOMText") {
+							if ($item->hasAttribute($typAtt1)) {$att1 = $item->getAttribute($typAtt1);}else{$att1 = "";}
+							if ($item->hasAttribute($typAtt2)) {$att2 = $item->getAttribute($typAtt2);}else{$att2 = "";}
+							if ($comp == "") {//L'appel à la fonction sert juste à vérifier l'existence du noeud
+								if ($att1 == $valAtt1 && $att2 == $valAtt2) {//Noeud avec attributs déjà présent
+									$noeud = "ok";
+									break 2;
+								}
+							}else{//L'appel à la fonction sert à remplacer la valeur de l'attribut d'un noeud existant > Test uniquement sur le 1er attribut pour l'instant
+								if ($item->hasAttribute($typAtt1) && strpos($comp, $att1) !== false) {
+									$item->setAttribute($typAtt1, $valAtt1);
+									$noeud = "ok";
+									break 2;
+								}
+							}
+						}else{//Pas de noeud enfant ?
+							$bip = $xml->createElement($tagName);
+							if ($typAtt1 != "" && $valAtt1 != "") {$bip->setAttribute($typAtt1, $valAtt1);}
+							if ($valAtt2 != "") {$bip->setAttribute($typAtt2, $valAtt2);}
+							if ($dueon != "nonodevalue") {$cTn = $xml->createTextNode($dueon);}
+							if ($dueon != "nonodevalue") {$bip->appendChild($cTn);}
+							$biblStr = $xml->getElementsByTagName($amont)->item(0);						
+							$biblStr->appendChild($bip);
+							break;
+						}
+					}
+				}
+			}
+			$cpt++;
+		}
+	}else{
+		$elts = $xml->getElementsByTagName($tagName);
+		foreach ($elts as $elt) {
+			if ($cpt != $pos) {
+			}else{
+				if ($elt->hasAttribute($typAtt1)) {
+					$quoi = $elt->getAttribute($typAtt1);
+					if ($amont != "langUsage" && $tagName != "abstract") {
+						if ($quoi == $valAtt1) {
+							if ($dueon != "nonodevalue") {$elt->nodeValue = $dueon;}
+							if ($elt->hasAttribute("subtype")) {$elt->removeAttribute("subtype");}//suppression inPress
+							if ($valAtt2 != "") {$elt->setAttribute($typAtt2, $valAtt2);}
+							$noeud = "ok";
+						}
+					}else{
+						if ($dueon != "nonodevalue") {$elt->nodeValue = $dueon;}
+						$elt->setAttribute($typAtt1, $valAtt1);
+						if ($elt->hasAttribute("subtype")) {$elt->removeAttribute("subtype");}//suppression inPress
+						if ($valAtt2 != "") {$elt->setAttribute($typAtt2, $valAtt2);}
+						$noeud = "ok";
+					}
+				}
+			}
+			$cpt++;
+		}
+	}
+	//echo('<script>console.log("Noeud : '.$noeud.'");</script>');
   //si noeud absent > recherche du noeud amont pour insérer les nouvelles données au bon emplacement
   if ($noeud == "" && $dueon != "") {
+		$cpt = 0;//Boucle pour retrouver $pos
     $bibl = $xml->getElementsByTagName($amont);
-    foreach ($bibl as $elt) {
-      foreach($elt->childNodes as $item) { 
-        if ($item->hasChildNodes()) {
-          $childs = $item->childNodes;
-          foreach($childs as $i) {
-            $name = $i->parentNode->nodeName;
-            if ($name == $aval) {//insertion nvx noeuds
-              $bip = $xml->createElement($tagName);
-              $cTn = $xml->createTextNode($dueon);
-              if ($typAtt1 != "" && $valAtt1 != "") {$bip->setAttribute($typAtt1, $valAtt1);}
-              if ($valAtt2 != "") {$bip->setAttribute($typAtt2, $valAtt2);}
-              $bip->appendChild($cTn);
-              $biblStr = $xml->getElementsByTagName($amont)->item(0);
-              if ($methode == "iB") {//insertBefore
-                $biblStr->insertBefore($bip, $i->parentNode);
-              }else{
-                $biblStr->appendChild($bip);
-              }
-              break 2;
-            }
-          }
-        }
-      }
+    foreach($bibl as $elt) {
+			if ($cpt != $pos) {
+			}else{
+				if ($elt->hasChildNodes()) {
+					foreach($elt->childNodes as $item) {
+						$name = $item->nodeName;
+						//Si pas de valeur $aval définie, insertion en item(0)
+						if ($aval == "") {
+							$bip = $xml->createElement($tagName);
+							if ($typAtt1 != "" && $valAtt1 != "") {$bip->setAttribute($typAtt1, $valAtt1);}
+							if ($valAtt2 != "") {$bip->setAttribute($typAtt2, $valAtt2);}
+							if ($dueon != "nonodevalue") {$cTn = $xml->createTextNode($dueon);}
+							if ($dueon != "nonodevalue") {$bip->appendChild($cTn);}
+							$biblStr = $xml->getElementsByTagName($amont)->item(0);						
+							$biblStr->appendChild($bip);
+							break 2;
+						}else{
+							if ($name == $aval) {//insertion nvx noeuds
+								$bip = $xml->createElement($tagName);
+								if ($dueon != "nonodevalue") {$cTn = $xml->createTextNode($dueon);}
+								if ($typAtt1 != "" && $valAtt1 != "") {$bip->setAttribute($typAtt1, $valAtt1);}
+								if ($valAtt2 != "") {$bip->setAttribute($typAtt2, $valAtt2);}
+								if ($dueon != "nonodevalue") {$bip->appendChild($cTn);}
+								$biblStr = $xml->getElementsByTagName($amont)->item($pos);
+								//echo('<script>console.log("'.var_dump($biblStr).'");</script>');
+								if ($methode == "iB") {//insertBefore
+									$biblStr->insertBefore($bip, $item);
+								}else{
+									$biblStr->appendChild($bip);
+								}
+								break 2;
+							}
+							//echo('<script>console.log("'.var_dump($item).'");</script>');
+							/*
+							if ($item->hasChildNodes()) {
+								$childs = $item->childNodes;
+								echo('<script>console.log("'.var_dump($childs).'");</script>');
+								foreach($childs as $i) {
+									$name = $i->parentNode->nodeName;
+									echo('<script>console.log("'.$name.'");</script>');
+									if ($name == $aval) {//insertion nvx noeuds
+										$bip = $xml->createElement($tagName);
+										if ($dueon != "nonodevalue") {$cTn = $xml->createTextNode($dueon);}
+										if ($typAtt1 != "" && $valAtt1 != "") {$bip->setAttribute($typAtt1, $valAtt1);}
+										if ($valAtt2 != "") {$bip->setAttribute($typAtt2, $valAtt2);}
+										if ($dueon != "nonodevalue") {$bip->appendChild($cTn);}
+										$biblStr = $xml->getElementsByTagName($amont)->item($pos);
+										echo('<script>console.log("'.var_dump($biblStr).'");</script>');
+										if ($methode == "iB") {//insertBefore
+											$biblStr->insertBefore($bip, $i->parentNode);
+										}else{
+											$biblStr->appendChild($bip);
+										}
+										break 3;
+									}
+								}
+							}
+							*/
+						}
+					}
+				}else{
+					//Pas de noeud enfant, insertion directe
+					$bip = $xml->createElement($tagName);
+					if ($typAtt1 != "" && $valAtt1 != "") {$bip->setAttribute($typAtt1, $valAtt1);}
+					if ($valAtt2 != "") {$bip->setAttribute($typAtt2, $valAtt2);}
+					if ($dueon != "nonodevalue") {$cTn = $xml->createTextNode($dueon);}
+					if ($dueon != "nonodevalue") {$bip->appendChild($cTn);}
+					$biblStr = $xml->getElementsByTagName($amont)->item(0);						
+					$biblStr->appendChild($bip);
+					break;
+				}
+			}
+			$cpt++;
     }
   }
 }
@@ -328,12 +435,13 @@ if (file_exists($nomfic)) {
 <?php
 
 if (isset($_POST["soumis"])) {
+
 	//Chargement du fichier XML
 	$xml = new DOMDocument( "1.0", "UTF-8" );
 	$xml->formatOutput = true;
 	$xml->preserveWhiteSpace = false;
 	$xml->load($nomfic);
-	$xml->saveXML();
+	$xml->save($nomfic);
 	
 	//Récupération du titre et du DOI de la notice TEI
 	$titTEI = "";
@@ -758,21 +866,21 @@ if (isset($_POST["soumis"])) {
 								$docid = "oui";
 							}
 						}
-						/*
-						if ($docid == "non") {//pas de docid trouvé avec VALID ou OLD > on teste avec INCOMING
-							foreach($resAff->response->docs as $affil) {
-								if ($affil->valid_s == "INCOMING"  && $docid == "non") {
-									$halAff[$iAff]['docid'] = $affil->docid;
-									$cptNoaff++;
-									$cptAff++;
-									$halAff[$iAff]['lsAff'] = "localStruct-Aff".$cptAff;
-									$halAut[$i]['affilName'] = "localStruct-Aff".$cptAff."~";
-									$iAff++;
-									$docid = "oui";
-								}
-							}
-						}
-						*/
+						
+						//if ($docid == "non") {//pas de docid trouvé avec VALID ou OLD > on teste avec INCOMING
+						//	foreach($resAff->response->docs as $affil) {
+						//		if ($affil->valid_s == "INCOMING"  && $docid == "non") {
+						//			$halAff[$iAff]['docid'] = $affil->docid;
+						//			$cptNoaff++;
+						//			$cptAff++;
+						//			$halAff[$iAff]['lsAff'] = "localStruct-Aff".$cptAff;
+						//			$halAut[$i]['affilName'] = "localStruct-Aff".$cptAff."~";
+						//			$iAff++;
+						//			$docid = "oui";
+						//		}
+						//	}
+						//}
+						
 					}
 				}
 				$cpt++;
@@ -785,7 +893,7 @@ if (isset($_POST["soumis"])) {
 		echo('document.getElementById(\'cpt3b\').style.display = \'none\';');
 		echo('</script>');
 		//Fin étape 3b
-
+		
 		//var_dump($halAff);
 
 		/*
@@ -802,76 +910,97 @@ if (isset($_POST["soumis"])) {
 		echo('Tableau obtenu pour les id structure des affiliations ($halAff) :');
 		var_dump($halAff);
 		*/
+
+
+		//Premières modifications du TEI avec les résultats précédemment obtenus
+	
+		//Ajout du code collection
+		insertNode($xml, "", "seriesStmt", "", 0, "idno", "type", "stamp", "n", $team, "aC", "amont", "");
+		$xml->save($nomfic);
 		
-		
-		/*
-		//Actions
-		foreach($results->response->docs as $entry) {
-			$hId = $entry->halId_s;
-			$lienMAJ = "";
-			$lienMAJgrp = "";
-			$actsMAJ = "";
-			$actsMAJgrp = "";
-			$actMaj = "ok";
-			$raisons = "";
-			$tei = $entry->label_xml;
-			$tei = str_replace(array('<p>', '</p>'), '', $tei);
-			$tei = str_replace('<p part="N">HAL API platform', '<p part="N">HAL API platform</p>', $tei);
-			$teiRes = '<?xml version="1.0" encoding="UTF-8"?>'.$tei;
-			$Fnm = "./XML/".$hId.".xml";
-			$xml = new DOMDocument( "1.0", "UTF-8" );
-			$xml->formatOutput = true;
-			$xml->preserveWhiteSpace = false;
-			$colact = "ok";
-			if (@$xml->loadXML($teiRes) !== false) {//tester validité teiRes
-				$xml->loadXML($teiRes);
-			}else{
-				$colact = "pasok";
-			}
-			
-			//suppression noeud <teiHeader>
-			$elts = $xml->documentElement;
-			if (is_object($elts->getElementsByTagName("teiHeader")->item(0))) {
-				$elt = $elts->getElementsByTagName("teiHeader")->item(0);
-				$newXml = $elts->removeChild($elt);
-			}
-			
-			//suppression éventuel attribut 'corresp' pour le noeud <idno type="stamp" n="xxx" corresp="yyy">
-			if (is_object($xml->getElementsByTagName("idno"))) {
-				$elts = $xml->getElementsByTagName("idno");
-				$nbelt = $elts->length;
-				for ($pos = $nbelt; --$pos >= 0;) {
-					$elt = $elts->item($pos);
-					if ($elt && $elt->hasAttribute("type")) {
-						$quoi = $elt->getAttribute("type");
-						if ($quoi == "stamp") {
-							if ($elt->hasAttribute("corresp")) {$elt->removeAttribute("corresp");}
-							//$xml->save($nomfic);
+		//Ajout du domaine
+		insertNode($xml, "nonodevalue", "textClass", "classCode", 0, "classCode", "scheme", "halDomain", "n", $domaine, "aC", "amont", "");
+		$xml->save($nomfic);
+
+		//Ajout des IdHAL et/ou docid
+		$auts = $xml->getElementsByTagName("author");
+		foreach($auts as $aut) {
+			//Initialisation des variables
+			$fname = "";//Prénom
+			$lname = "";//Nom
+			$listIdHAL = "~";//Variable pour assurer l'univité de l'insertion des IdHAL
+			$listdocid = "~";//Variable pour assurer l'univité de l'insertion des docid
+			foreach($aut->childNodes as $elt) {
+				//Prénom/Nom
+				if ($elt->nodeName == "persName") {
+					foreach($elt->childNodes as $per) {
+						if ($per->nodeName == "forename") {
+							$fname = $per->nodeValue;
+						}
+						if ($per->nodeName == "surname") {
+							$lname = $per->nodeValue;
 						}
 					}
 				}
-			}
-			
-			//suppression éventuel noeud <listBibl type="references">
-			if (is_object($xml->getElementsByTagName("listBibl"))) {
-				$elts = $xml->getElementsByTagName("listBibl");
-				foreach($elts as $elt) {
-					if ($elt->hasAttribute("type")) {
-						$quoi = $elt->getAttribute("type");
-						if ($quoi == "references") {
-							$parent = $elt->parentNode; 
-							$newXml = $parent->removeChild($elt);
+				//Ajouts divers
+				for($i = 0; $i < count($halAut); $i++) {
+					if ($halAut[$i]['firstName'] == $fname && $halAut[$i]['lastName'] == $lname) {
+						//Y-a-t-il un IdHAL ?
+						if ($halAut[$i]['idHals'] != "" && strpos($listIdHAL, $halAut[$i]['idHals']) === false) {
+							insertNode($xml, $halAut[$i]['idHali'], "author", "affiliation", $i, "idno", "type", "idhal", "notation", "numeric", "iB", "amont", "");	
+							insertNode($xml, $halAut[$i]['idHals'], "author", "idno", $i, "idno", "type", "idhal", "notation", "string", "iB", "amont", "");
+							$listIdHAL .= $halAut[$i]['idHals'].'~';
+						}
+						//Y-a-t-il un docid ?
+						if ($halAut[$i]['docid'] != "" && strpos($listdocid, $halAut[$i]['docid']) === false) {
+							insertNode($xml, $halAut[$i]['docid'], "author", "affiliation", $i, "idno", "type", "halauthorid", "", "", "iB", "amont", "");
+							$listdocid .= $halAut[$i]['docid'].'~';
+						}
+						//Id structures des affiliations
+						//Recherche des affiliations remontées globalement sur la base du nom de l'organisme, quel que soit l'auteur mais sous réserve du rattachement de l'auteur à cette affiliation (ex : U1085)
+						for($j = 0; $j < count($halAff); $j++) {
+							if ($halAff[$j]['fname'] == "" && $halAff[$j]['lname'] == "" && (strpos($halAut[$i]['affilName'], $halAff[$j]['lsAff']) !== false)) {
+								$lsAff = $halAff[$j]['lsAff'];
+								deleteNode($xml, "author", "affiliation", $i, "ref", $lsAff);
+								//Puis on ajoute l'(les) affiliation(s) trouvée(s)
+								$affil = "#struct-".$halAff[$j]['docid'];
+								insertNode($xml, "nonodevalue", "author", "persName", $i, "affiliation", "ref", $affil, "", "", "aC", "amont", "");
+							}
+						}
+						//Recherche des affiliations remontées pour chaque auteur
+						for($j = 0; $j < count($halAff); $j++) {
+							if ($halAff[$j]['fname'] == $fname && $halAff[$j]['lname'] == $lname) {
+								//Au moins une affiliation trouvée > On supprime l'affiliation correspondante du TEI de type '<affiliation ref="#localStruct-Affx"/>' pour cet auteur
+								$lsAff = $halAff[$j]['lsAff'];
+								deleteNode($xml, "author", "affiliation", $i, "ref", $lsAff);
+								//Puis on ajoute l'(les) affiliation(s) trouvée(s)
+								$affil = "#struct-".$halAff[$j]['docid'];
+								insertNode($xml, "nonodevalue", "author", "persName", $i, "affiliation", "ref", $affil, "", "", "aC", "amont", "");
+							}
+						}
+						
+						$xml->save($nomfic);
+					}
+				}
+				/*
+				//Y-a-t-il un docid ?
+				for($i = 0; $i < count($halAut); $i++) {
+					if ($halAut[$i]['firstName'] == $fname && $halAut[$i]['lastName'] == $lname) {
+						if ($halAut[$i]['docid'] != "" && strpos($listdocid, $halAut[$i]['docid']) === false) {
+							insertNode($xml, $halAut[$i]['docid'], "author", "affiliation", $i, "idno", "type", "halauthorid", "", "", "iB");
+							$xml->save($nomfic);
+							$listdocid .= $halAut[$i]['docid'].'~';
 						}
 					}
 				}
+				*/
 			}
-			
-			//Si absent, ajout du code collection
-			
-			$xml->save($Fnm);
 		}
-		//Fin actions
-		*/
+		
+
+
+		//Fin des premières modifications du TEI
+		
 		
 		
 		//Tableau des résultats
@@ -897,7 +1026,11 @@ if (isset($_POST["soumis"])) {
 		//Numérotation > id
 		echo('<td>'.$cpt.'</td>');
 		//Doublon ?
-		echo('<td><a target=\'_blank\' href=\'https://hal.archives-ouvertes.fr/'.$idTEI.'\'><img alt=\'HAL\' src=\'./img/HAL.jpg\'></a>');
+		if (isset($idTEI) && $idTEI != "") {
+			echo('<td><a target=\'_blank\' href=\'https://hal.archives-ouvertes.fr/'.$idTEI.'\'><img alt=\'HAL\' src=\'./img/HAL.jpg\'></a>');
+		}else{
+			echo('<td>&nbsp;</td>');
+		}
 		//Supprimer toute la notice
 		echo('<td><img alt=\'Supprimer la notice\' src=\'./img/supprimer.jpg\'>');
 		echo('<td>'.$docTEI.'</td>');
@@ -995,6 +1128,7 @@ if (isset($_POST["soumis"])) {
 		if (isset($doiTEI)) {echo('<td><a target=\'_blank\' href=\'https://doi.org/'.$doiTEI.'\'><img alt=\'DOI\' src=\'./img/doi.jpg\'></a>');}else{echo('<td>&nbsp;</td>');}
 		//Auteurs / affiliations
 		echo('<td style=\'text-align: left;\'>');
+		//$i = compteur auteur / $j = compteur affiliation
 		for($i = 0; $i < count($halAut); $i++) {
 			echo('<b>'.$halAutinit[$i]['firstName'].' '.$halAutinit[$i]['lastName'].'</b>');
 			if ($halAutinit[$i]['mailDom'] != "") {echo(' (@'.$halAutinit[$i]['mailDom'].')');}
@@ -1003,14 +1137,15 @@ if (isset($_POST["soumis"])) {
 				echo('Supprimer l\'idHAL '.$halAutinit[$i]['xmlIds'].' <img width=\'12px\' alt=\'Supprimer l\'idHAL\' src=\'./img/supprimer.jpg\'><br>');
 			}
 			if ($halAutinit[$i]['idHals'] != "") {
-				echo('Remonter le bon auteur du référentiel auteurs :<br><form><input type="text" id="ajoutidHAL" value="'.$halAutinit[$i]['idHals'].'" name="ajoutidHAL'.$i.'" class="form-control" style="height: 18px; width:200px; align:center;"></form>');
+				echo('Remonter le bon auteur du référentiel auteurs :<br><form><input type="text" id="ajoutidHAL'.$i.'" value="'.$halAutinit[$i]['idHals'].'" name="ajoutidHAL'.$i.'" class="form-control" style="height: 18px; width:200px; align:center;"></form>');
 			}
 			echo('<form>Ajouter un idHAL : <input type="text" id="ajoutIdh'.$i.'" name="ajoutIdh'.$i.'" class="autoID form-control" style="height: 18px; width:300px; align:center;"></form>');
 			echo('<i><font style=\'color: #999999;\'>Affiliation(s) remontée(s) par OverHAL:<br>');
 			for($j = 0; $j < count($nomAff); $j++) {
 				if ($halAutinit[$i]['affilName'] != "" && stripos($halAutinit[$i]['affilName'], $nomAff[$j]['lsAff']) !== false) {
-					echo($nomAff[$j]['org']);
-					echo('&nbsp;<img width=\'12px\' alt=\'Supprimer l\'affiliation\' src=\'./img/supprimer.jpg\'><br>');
+					echo('<span id="aut'.$i.'-nomAff'.$j.'">'.$nomAff[$j]['org']);
+					//echo('&nbsp;<img width=\'12px\' alt=\'Supprimer l\'affiliation\' src=\'./img/supprimer.jpg\'></span><br>');
+					echo('</span><br>');
 				}
 			}
 			echo('</font></i>');
@@ -1020,8 +1155,8 @@ if (isset($_POST["soumis"])) {
 					if ($halAff[$j]['valid'] == "VALID") {$txtcolor = '#339966';}
 					if ($halAff[$j]['valid'] == "OLD") {$txtcolor = '#ff6600';}
 					$ajtAff .= $halAff[$j]['names']."~";
-					echo('<font style=\'color: '.$txtcolor.';\'>'.$halAff[$j]['names'].'</font>');
-					echo('&nbsp;<img width=\'12px\' alt=\'Supprimer l\'affiliation\' src=\'./img/supprimer.jpg\'><br>');
+					echo('<span id="aut'.$i.'-halAff'.$j.'"><font style=\'color: '.$txtcolor.';\'>'.$halAff[$j]['names'].'</font>');
+					echo('&nbsp;<img width=\'12px\' alt=\'Supprimer l\'affiliation\' src=\'./img/supprimer.jpg\'></span><br>');
 				}
 			}
 			echo('<form>Ajouter une affiliation : <input type="text" id="ajoutAff'.$i.'" name="ajoutAff'.$i.'" class="autoAF form-control" style="height: 18px; width:300px; align:center;"></form>');
