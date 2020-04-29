@@ -29,6 +29,9 @@ if (isset($_GET['css']) && ($_GET['css'] != ""))
   $css = "https://ecobio.univ-rennes1.fr/HAL_SCD.css";
 }
 
+include "./Zip2HAL_nodes.php";
+include "./Zip2HAL_codes_pays.php";
+
 function progression($indice, $iMax, $id, &$iPro, $quoi) {
 	$iPro = $indice;
 	echo('<script>');
@@ -49,189 +52,6 @@ function objectToArray($object) {
     $object = get_object_vars($object);
   }
   return array_map('objectToArray', $object);
-}
-
-function deleteNode($xml, $amont, $aval, $pos, $typAtt1, $valAtt1) {
-	$cpt = 0;//Boucle pour retrouver $pos
-	$elts = $xml->getElementsByTagName($amont);		
-	foreach ($elts as $elt) {
-		if ($cpt != $pos) {
-		}else{
-			if ($elt->hasChildNodes()) {
-				foreach($elt->childNodes as $item) {
-					//echo('<script>console.log("'.$amont.' : '.$valAtt1.'");</script>');
-					if ($item->nodeName == $aval) {
-						if ($item->hasAttribute($typAtt1)) {$att1 = $item->getAttribute($typAtt1);}else{$att1 = "";}
-						if (strpos($valAtt1, $att1) !== false) {
-							$elt->removeChild($item);
-							break 2;
-						}
-					}
-				}
-			}
-		}
-		$cpt++;
-	}
-}
-
-function insertNode($xml, $dueon, $amont, $aval, $pos, $tagName, $typAtt1, $valAtt1, $typAtt2, $valAtt2, $methode, $crit, $comp) {
-	/*
-	$methode = iB (insertBefore) ou aC (appendChild)
-	Attribuer à $dueon la chaîne 'nonodevalue' si aucune valeur n'est nécessaire au noeud
-	$pos = si besoin de se positionner à un endroit précis dans une liste de noeuds
-	$crit = critère déterminant s'il faut parcourir sur $tagName ou sur $amont
-		-> si recherche sur tagName, c'est pour une mise à jour
-		-> si recherche sur amont, c'est pour vérifier l'existence + ajout éventuel
-	Si recherche amont et $comp != "" > le noeud existe et il faut remplacer la valeur de l'attribut
-	*/
-  $noeud = "";
-  $dueon = htmlspecialchars($dueon);
-	//echo('<script>console.log("'.$amont.' : '.$valAtt1.'");</script>');
-  //si noeud présent
-	$cpt = 0;//Boucle pour retrouver $pos
-	if ($crit == "amont") {
-		$elts = $xml->getElementsByTagName($amont);		
-		foreach ($elts as $elt) {
-			if ($cpt != $pos) {
-			}else{
-				if ($elt->hasChildNodes()) {
-					foreach($elt->childNodes as $item) {
-						if (get_class($item) != "DOMText") {
-							if ($item->hasAttribute($typAtt1)) {$att1 = $item->getAttribute($typAtt1);}else{$att1 = "";}
-							if ($item->hasAttribute($typAtt2)) {$att2 = $item->getAttribute($typAtt2);}else{$att2 = "";}
-							if ($comp == "") {//L'appel à la fonction sert juste à vérifier l'existence du noeud
-								if ($att1 == $valAtt1 && $att2 == $valAtt2) {//Noeud avec attributs déjà présent
-									$noeud = "ok";
-									break 2;
-								}
-							}else{//L'appel à la fonction sert à remplacer la valeur de l'attribut d'un noeud existant > Test uniquement sur le 1er attribut pour l'instant
-								if ($item->hasAttribute($typAtt1) && strpos($comp, $att1) !== false) {
-									$item->setAttribute($typAtt1, $valAtt1);
-									$noeud = "ok";
-									break 2;
-								}
-							}
-						}else{//Pas de noeud enfant ?
-							$bip = $xml->createElement($tagName);
-							if ($typAtt1 != "" && $valAtt1 != "") {$bip->setAttribute($typAtt1, $valAtt1);}
-							if ($valAtt2 != "") {$bip->setAttribute($typAtt2, $valAtt2);}
-							if ($dueon != "nonodevalue") {$cTn = $xml->createTextNode($dueon);}
-							if ($dueon != "nonodevalue") {$bip->appendChild($cTn);}
-							$biblStr = $xml->getElementsByTagName($amont)->item(0);						
-							$biblStr->appendChild($bip);
-							break;
-						}
-					}
-				}
-			}
-			$cpt++;
-		}
-	}else{
-		$elts = $xml->getElementsByTagName($tagName);
-		foreach ($elts as $elt) {
-			if ($cpt != $pos) {
-			}else{
-				if ($elt->hasAttribute($typAtt1)) {
-					$quoi = $elt->getAttribute($typAtt1);
-					if ($amont != "langUsage" && $tagName != "abstract") {
-						if ($quoi == $valAtt1) {
-							if ($dueon != "nonodevalue") {$elt->nodeValue = $dueon;}
-							if ($elt->hasAttribute("subtype")) {$elt->removeAttribute("subtype");}//suppression inPress
-							if ($valAtt2 != "") {$elt->setAttribute($typAtt2, $valAtt2);}
-							$noeud = "ok";
-						}
-					}else{
-						if ($dueon != "nonodevalue") {$elt->nodeValue = $dueon;}
-						$elt->setAttribute($typAtt1, $valAtt1);
-						if ($elt->hasAttribute("subtype")) {$elt->removeAttribute("subtype");}//suppression inPress
-						if ($valAtt2 != "") {$elt->setAttribute($typAtt2, $valAtt2);}
-						$noeud = "ok";
-					}
-				}
-			}
-			$cpt++;
-		}
-	}
-	//echo('<script>console.log("Noeud : '.$noeud.'");</script>');
-  //si noeud absent > recherche du noeud amont pour insérer les nouvelles données au bon emplacement
-  if ($noeud == "" && $dueon != "") {
-		$cpt = 0;//Boucle pour retrouver $pos
-    $bibl = $xml->getElementsByTagName($amont);
-    foreach($bibl as $elt) {
-			if ($cpt != $pos) {
-			}else{
-				if ($elt->hasChildNodes()) {
-					foreach($elt->childNodes as $item) {
-						$name = $item->nodeName;
-						//Si pas de valeur $aval définie, insertion en item(0)
-						if ($aval == "") {
-							$bip = $xml->createElement($tagName);
-							if ($typAtt1 != "" && $valAtt1 != "") {$bip->setAttribute($typAtt1, $valAtt1);}
-							if ($valAtt2 != "") {$bip->setAttribute($typAtt2, $valAtt2);}
-							if ($dueon != "nonodevalue") {$cTn = $xml->createTextNode($dueon);}
-							if ($dueon != "nonodevalue") {$bip->appendChild($cTn);}
-							$biblStr = $xml->getElementsByTagName($amont)->item(0);						
-							$biblStr->appendChild($bip);
-							break 2;
-						}else{
-							if ($name == $aval) {//insertion nvx noeuds
-								$bip = $xml->createElement($tagName);
-								if ($dueon != "nonodevalue") {$cTn = $xml->createTextNode($dueon);}
-								if ($typAtt1 != "" && $valAtt1 != "") {$bip->setAttribute($typAtt1, $valAtt1);}
-								if ($valAtt2 != "") {$bip->setAttribute($typAtt2, $valAtt2);}
-								if ($dueon != "nonodevalue") {$bip->appendChild($cTn);}
-								$biblStr = $xml->getElementsByTagName($amont)->item($pos);
-								//echo('<script>console.log("'.var_dump($biblStr).'");</script>');
-								if ($methode == "iB") {//insertBefore
-									$biblStr->insertBefore($bip, $item);
-								}else{
-									$biblStr->appendChild($bip);
-								}
-								break 2;
-							}
-							//echo('<script>console.log("'.var_dump($item).'");</script>');
-							/*
-							if ($item->hasChildNodes()) {
-								$childs = $item->childNodes;
-								echo('<script>console.log("'.var_dump($childs).'");</script>');
-								foreach($childs as $i) {
-									$name = $i->parentNode->nodeName;
-									echo('<script>console.log("'.$name.'");</script>');
-									if ($name == $aval) {//insertion nvx noeuds
-										$bip = $xml->createElement($tagName);
-										if ($dueon != "nonodevalue") {$cTn = $xml->createTextNode($dueon);}
-										if ($typAtt1 != "" && $valAtt1 != "") {$bip->setAttribute($typAtt1, $valAtt1);}
-										if ($valAtt2 != "") {$bip->setAttribute($typAtt2, $valAtt2);}
-										if ($dueon != "nonodevalue") {$bip->appendChild($cTn);}
-										$biblStr = $xml->getElementsByTagName($amont)->item($pos);
-										echo('<script>console.log("'.var_dump($biblStr).'");</script>');
-										if ($methode == "iB") {//insertBefore
-											$biblStr->insertBefore($bip, $i->parentNode);
-										}else{
-											$biblStr->appendChild($bip);
-										}
-										break 3;
-									}
-								}
-							}
-							*/
-						}
-					}
-				}else{
-					//Pas de noeud enfant, insertion directe
-					$bip = $xml->createElement($tagName);
-					if ($typAtt1 != "" && $valAtt1 != "") {$bip->setAttribute($typAtt1, $valAtt1);}
-					if ($valAtt2 != "") {$bip->setAttribute($typAtt2, $valAtt2);}
-					if ($dueon != "nonodevalue") {$cTn = $xml->createTextNode($dueon);}
-					if ($dueon != "nonodevalue") {$bip->appendChild($cTn);}
-					$biblStr = $xml->getElementsByTagName($amont)->item(0);						
-					$biblStr->appendChild($bip);
-					break;
-				}
-			}
-			$cpt++;
-    }
-  }
 }
 
 //Suppresion des accents
@@ -961,7 +781,7 @@ if (isset($_POST["soumis"])) {
 						for($j = 0; $j < count($halAff); $j++) {
 							if ($halAff[$j]['fname'] == "" && $halAff[$j]['lname'] == "" && (strpos($halAut[$i]['affilName'], $halAff[$j]['lsAff']) !== false)) {
 								$lsAff = $halAff[$j]['lsAff'];
-								deleteNode($xml, "author", "affiliation", $i, "ref", $lsAff);
+								deleteNode($xml, "author", "affiliation", $i, "ref", $lsAff, "approx");
 								//Puis on ajoute l'(les) affiliation(s) trouvée(s)
 								$affil = "#struct-".$halAff[$j]['docid'];
 								insertNode($xml, "nonodevalue", "author", "persName", $i, "affiliation", "ref", $affil, "", "", "aC", "amont", "");
@@ -972,7 +792,7 @@ if (isset($_POST["soumis"])) {
 							if ($halAff[$j]['fname'] == $fname && $halAff[$j]['lname'] == $lname) {
 								//Au moins une affiliation trouvée > On supprime l'affiliation correspondante du TEI de type '<affiliation ref="#localStruct-Affx"/>' pour cet auteur
 								$lsAff = $halAff[$j]['lsAff'];
-								deleteNode($xml, "author", "affiliation", $i, "ref", $lsAff);
+								deleteNode($xml, "author", "affiliation", $i, "ref", $lsAff, "approx");
 								//Puis on ajoute l'(les) affiliation(s) trouvée(s)
 								$affil = "#struct-".$halAff[$j]['docid'];
 								insertNode($xml, "nonodevalue", "author", "persName", $i, "affiliation", "ref", $affil, "", "", "aC", "amont", "");
@@ -996,8 +816,6 @@ if (isset($_POST["soumis"])) {
 				*/
 			}
 		}
-		
-
 
 		//Fin des premières modifications du TEI
 		
@@ -1023,109 +841,173 @@ if (isset($_POST["soumis"])) {
 		$cpt = 1;
 		
 		echo('<tr style=\'text-align: center;\'>');
+		
 		//Numérotation > id
 		echo('<td>'.$cpt.'</td>');
+		
 		//Doublon ?
 		if (isset($idTEI) && $idTEI != "") {
 			echo('<td><a target=\'_blank\' href=\'https://hal.archives-ouvertes.fr/'.$idTEI.'\'><img alt=\'HAL\' src=\'./img/HAL.jpg\'></a>');
 		}else{
 			echo('<td>&nbsp;</td>');
 		}
+		
 		//Supprimer toute la notice
 		echo('<td><img alt=\'Supprimer la notice\' src=\'./img/supprimer.jpg\'>');
 		echo('<td>'.$docTEI.'</td>');
+		
 		//Métadonnées
 		echo('<td style=\'text-align: left;\'>');
+		
 		//Métadonnées > Titre
+		$elts = $xml->getElementsByTagName("language");
+		foreach($elts as $elt) {
+			if ($elt->hasAttribute("ident")) {$lang = $elt->nodeValue;}else{$lang = "";}
+		}
 		$elts = $xml->getElementsByTagName("title");
 		foreach($elts as $elt) {
-			if ($elt->hasAttribute("xml:lang")) {echo('Titre : <textarea id="titre" name="titre" class="textarea form-control" style="width: 500px;">'.str_replace("'", "\'", $elt->nodeValue).'</textarea><br>');}
+			if ($elt->hasAttribute("xml:lang")) {echo('Titre : <textarea id="titre" name="titre" class="textarea form-control" style="width: 500px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', { nomfic : \''.$nomfic.'\', action: \'titre\', valeur: $(this).val(), langue : \''.$lang.'\'});";>'.str_replace("'", "\'", $elt->nodeValue).'</textarea><br>');}
 		}
 		//Métadonnées > Notice
+		$target = "";
 		$elts = $xml->getElementsByTagName("ref");
 		foreach($elts as $elt) {
 			if ($elt->hasAttribute("type") && $elt->getAttribute("type") == "file") {
-				if ($elt->hasAttribute("target")) {echo('<p class="form-inline">Notice : <input type="text" id=notice" name="notice" value="'.$elt->getAttribute("target").'" class="form-control" style="height: 18px; width:400px;"> - <a target="_blank" href="'.$elt->getAttribute("target").'">Lien</a></p>');}
+				if ($elt->hasAttribute("target")) {$target = $elt->getAttribute("target");}
 			}
 		}
+		echo('<p class="form-inline">Notice : <input type="text" id="notice" name="notice" value="'.$target.'" class="form-control" style="height: 18px; width:400px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', { nomfic : \''.$nomfic.'\', action: \'notice\', valeur: $(this).val(), valeur2: $(\'#subtype\').val()});";>');
+		if ($target != "") {echo(' - <a target="_blank" href="'.$target.'">Lien</a></p>');}
+		//Subtype
+		echo('<p class="form-inline">Subtype : <select id="subtype" name="subtype" class="form-control" style="height: 18px; padding: 0px; width:150px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', { nomfic : \''.$nomfic.'\', action: \'notice\', valeur: $(\'#notice\').val(), valeur2: $(this).val()});">');
+		if ($elt->getAttribute("subtype") == "author") {$txt = "selected";}else{$txt = "";}
+		echo('<option '.$txt.' value="author">author</option>');
+		if ($elt->getAttribute("subtype") == "greenPublisher") {$txt = "selected";}else{$txt = "";}
+		echo('<option '.$txt.' value="greenPublisher">greenPublisher</option>');
+		if ($elt->getAttribute("subtype") == "publisherPaid") {$txt = "selected";}else{$txt = "";}
+		echo('<option '.$txt.' value="publisherPaid">publisherPaid</option>');
+		if ($elt->getAttribute("subtype") == "noaction") {$txt = "selected";}else{$txt = "";}
+		echo('<option '.$txt.' value="noaction">noaction</option>');
+		echo('</select></p>');
+		
 		//Métadonnées > Date de publication
 		$elts = $xml->getElementsByTagName("date");
 		foreach($elts as $elt) {
-			if ($elt->hasAttribute("type") && $elt->getAttribute("type") == "datePub") {echo('<p class="form-inline">Date de publication : <input type="text" id="datePub" name="datePub" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:100px;"></p>');}
+			if ($elt->hasAttribute("type") && $elt->getAttribute("type") == "datePub") {echo('<p class="form-inline">Date de publication : <input type="text" id="datePub" name="datePub" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:100px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', { nomfic : \''.$nomfic.'\', action: \'datePub\', valeur: $(this).val()});";></p>');}
 		}
+		
 		//Métadonnées > Langue
+		$tabLang = array_keys($countries);
 		$elts = $xml->getElementsByTagName("language");
 		foreach($elts as $elt) {
-			if ($elt->hasAttribute("ident")) {echo('<p class="form-inline">Langue : <input type="text" id="language" name="language" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:150px;"></p>');}
+			if ($elt->hasAttribute("ident")) {$lang = $elt->nodeValue;}else{$lang = "";}
 		}
+		echo('<p class="form-inline">Langue : ');
+		echo('<select id="language" name="language" class="form-control" style="height: 18px; padding: 0px; width:150px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', { nomfic : \''.$nomfic.'\', action: \'language\', valeur: $(this).val()});";>>');
+		for($i = 0; $i < count($countries); $i++) {
+			if ($lang == $tabLang[$i]) {$txt = "selected";}else{$txt = "";}
+			echo('<option '.$txt.' value="'.$tabLang[$i].'">'.$tabLang[$i].'</option>');
+		}
+		echo('</select></p>');
+
 		//Métadonnées > Revue
 		$elts = $xml->getElementsByTagName("title");
 		foreach($elts as $elt) {
-			if ($elt->hasAttribute("level")) {echo('<p class="form-inline">Nom de la revue : <input type="text" id="revue" name="revue" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:150px;"></p>');}
+			if ($elt->hasAttribute("level")) {echo('<p class="form-inline">Nom de la revue : <input type="text" id="revue" name="revue" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:150px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', { nomfic : \''.$nomfic.'\', action: \'revue\', valeur: $(this).val()});";></p>');}
 		}
+		
 		//Métadonnées > Audience, vulgarisation et comité de lecture
 		$elts = $xml->getElementsByTagName("note");
 		foreach($elts as $elt) {
+			//Audience
 			if ($elt->hasAttribute("type") && $elt->getAttribute("type") == "audience") {
-				$audience = '';
-				switch($elt->getAttribute("n")) {
-					case 1 :
-						$audience = 'Internationale';
-						break;
-					case 2 :
-						$audience = 'Nationale';
-						break;
-					case 3 :
-						$audience = 'Non renseignée';
-						break;
-				}
-				echo('<p class="form-inline">Audience : <input type="text" id="audience" name="audience" value="'.$audience.'" class="form-control" style="height: 18px; width:200px;"></p>');
+				echo('<p class="form-inline">Audience : ');
+				echo('<select id="audience" name="audience" class="form-control" style="height: 18px; padding: 0px; width:150px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', { nomfic : \''.$nomfic.'\', action: \'audience\', valeur: $(this).val()});";>>');
+				$valAud = $elt->getAttribute("n");
+				if ($valAud == 1) {$txt = "selected";}else{$txt = "";}
+				echo('<option '.$txt.' value="1">Internationale</option>');
+				if ($valAud == 2) {$txt = "selected";}else{$txt = "";}
+				echo('<option '.$txt.' value="2">Nationale</option>');
+				if ($valAud == 3) {$txt = "selected";}else{$txt = "";}
+				echo('<option '.$txt.' value="3">Non renseignée</option>');
+				echo('</select></p>');
 			}
-			if ($elt->hasAttribute("type") && $elt->getAttribute("type") == "popular") {echo('<p class="form-inline">Vulgarisation : <input type="text" id="popular" name="popular" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:100px;"></p>');}
-			if ($elt->hasAttribute("type") && $elt->getAttribute("type") == "peer") {echo('<p class="form-inline">Comité de lecture : <input type="text" id="peer" name="peer" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:100px;"></p>');}
+			//Vulgarisation
+			if ($elt->hasAttribute("type") && $elt->getAttribute("type") == "popular") {
+				if ($elt->nodeValue == "Yes") {$txtO = "checked"; $txtN = "";}else{$txtO = ""; $txtN = "checked";}
+				echo('<p class="form-inline">Vulgarisation : ');
+				echo('<input type="radio" '.$txtO.' id="popular" name="popular" value="Yes" class="form-control" onchange="$.post(\'Zip2HAL_liste_actions.php\', { nomfic : \''.$nomfic.'\', action: \'vulgarisation\', valeur: $(this).val()});";> Oui');
+				echo('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+				echo('<input type="radio" '.$txtN.' id="popular" name="popular" value="No" class="form-control" onchange="$.post(\'Zip2HAL_liste_actions.php\', { nomfic : \''.$nomfic.'\', action: \'vulgarisation\', valeur: $(this).val()});";> Non');
+				echo('</p>');
+			}
+			//Comité de lecture
+			if ($elt->hasAttribute("type") && $elt->getAttribute("type") == "peer") {
+				if ($elt->nodeValue == "Yes") {$txtO = "checked"; $txtN = "";}else{$txtO = ""; $txtN = "checked";}
+				echo('<p class="form-inline">Comité de lecture : ');
+				echo('<input type="radio" '.$txtO.' id="peer" name="peer" value="Yes" class="form-control" onchange="$.post(\'Zip2HAL_liste_actions.php\', { nomfic : \''.$nomfic.'\', action: \'peer\', valeur: $(this).val()});";> Oui');
+				echo('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+				echo('<input type="radio" '.$txtN.' id="peer" name="peer" value="No" class="form-control" onchange="$.post(\'Zip2HAL_liste_actions.php\', { nomfic : \''.$nomfic.'\', action: \'peer\', valeur: $(this).val()});";> Non');
+				echo('</p>');
+			}
 		}
+		
 		//Métadonnées > Editeur
 		$elts = $xml->getElementsByTagName("publisher");
 		foreach($elts as $elt) {
-			echo('<p class="form-inline">Editeur : <input type="text" id="publisher" name="publisher" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:300px;"></p>');
+			echo('<p class="form-inline">Editeur : <input type="text" id="publisher" name="publisher" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:300px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', { nomfic : \''.$nomfic.'\', action: \'editeur\', valeur: $(this).val()});";></p>');
 		}
+		
 		//Métadonnées > ISSN et EISSN
 		$elts = $xml->getElementsByTagName("idno");
 		foreach($elts as $elt) {
-			if ($elt->hasAttribute("type") && $elt->getAttribute("type") == "issn") {echo('<p class="form-inline">ISSN : <input type="text" id="issn" name="issn" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:100px;"></p>');}
-			if ($elt->hasAttribute("type") && $elt->getAttribute("type") == "eissn") {echo('<p class="form-inline">EISSN : <input type="text" id="eissn" name="eissn" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:100px;"></p>');}
+			if ($elt->hasAttribute("type") && $elt->getAttribute("type") == "issn") {echo('<p class="form-inline">ISSN : <input type="text" id="issn" name="issn" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:100px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', { nomfic : \''.$nomfic.'\', action: \'issn\', valeur: $(this).val()});";></p>');}
+			if ($elt->hasAttribute("type") && $elt->getAttribute("type") == "eissn") {echo('<p class="form-inline">EISSN : <input type="text" id="eissn" name="eissn" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:100px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', { nomfic : \''.$nomfic.'\', action: \'eissn\', valeur: $(this).val()});";></p>');}
 		}
+		
 		//Métadonnées > Volume, numéro et pages
 		$elts = $xml->getElementsByTagName("biblScope");
 		foreach($elts as $elt) {
-			if ($elt->hasAttribute("unit") && $elt->getAttribute("unit") == "volume") {echo('<p class="form-inline">Volume : <input type="text" id="volume" name="volume" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:100px;"></p>');}
-			if ($elt->hasAttribute("unit") && $elt->getAttribute("unit") == "issue") {echo('<p class="form-inline">Numéro : <input type="text" id="issue" name="issue" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:100px;"></p>');}
-			if ($elt->hasAttribute("unit") && $elt->getAttribute("unit") == "pp") {echo('<p class="form-inline">Pages : <input type="text" id="pp" name="pp" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:150px;"></p>');}
+			if ($elt->hasAttribute("unit") && $elt->getAttribute("unit") == "volume") {echo('<p class="form-inline">Volume : <input type="text" id="volume" name="volume" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:100px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', { nomfic : \''.$nomfic.'\', action: \'volume\', valeur: $(this).val()});";></p>');}
+			if ($elt->hasAttribute("unit") && $elt->getAttribute("unit") == "issue") {echo('<p class="form-inline">Numéro : <input type="text" id="issue" name="issue" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:100px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', { nomfic : \''.$nomfic.'\', action: \'issue\', valeur: $(this).val()});";></p>');}
+			if ($elt->hasAttribute("unit") && $elt->getAttribute("unit") == "pp") {echo('<p class="form-inline">Pages : <input type="text" id="pp" name="pp" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:150px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', { nomfic : \''.$nomfic.'\', action: \'pages\', valeur: $(this).val()});";"></p>');}
 		}
+		
 		//Métadonnées > Financement
 		$elts = $xml->getElementsByTagName("funder");
 		foreach($elts as $elt) {
-			echo('Financement : <textarea id="funder" name="funder" class="textarea form-control" style="width: 500px;">'.str_replace("'", "\'", $elt->nodeValue).'</textarea><br>');
+			echo('Financement : <textarea id="funder" name="funder" class="textarea form-control" style="width: 500px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', { nomfic : \''.$nomfic.'\', action: \'financement\', valeur: $(this).val()});";>'.str_replace("'", "\'", $elt->nodeValue).'</textarea><br>');
 		}
+		
 		//Métadonnées > Mots-clés
-		$motscles = '';
+		echo('Mots-clés :');
 		$keys = $xml->getElementsByTagName("keywords");
+		$ind = 0;
 		foreach($keys as $key) {
 			foreach($key->childNodes as $elt) {
-				$motscles .= $elt->nodeValue.', ';
+				echo('<input type="text" id="mots-cles'.$ind.'" name="mots-cles'.$ind.'" value="'.str_replace("'", "\'", $elt->nodeValue).'" class="form-control" style="height: 18px; width: 500px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', { nomfic : \''.$nomfic.'\', action: \'mots-cles\', pos: '.$ind.', valeur: $(this).val(), langue: $(\'#language\').val()});";>');
+				$ind++;
 			}
 		}
-		$motscles = substr($motscles, 0, (strlen($motscles) - 2));
-		echo('Mots-clés : <textarea id="funder" name="funder" class="textarea form-control" style="width: 500px;">'.str_replace("'", "\'", $motscles).'</textarea><br>');
+		//Ajouter des mots-clés
+		echo('<br>');
+		echo('Ajouter des mots-clés :');
+		for($dni = $ind; $dni < $ind + 5; $dni++) {
+			echo('<input type="text" id="mots-cles'.$dni.'" name="mots-cles'.$dni.'" value="" class="form-control" style="height: 18px; width: 500px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', { nomfic : \''.$nomfic.'\', action: \'ajout-mots-cles\', pos: '.$dni.', valeur: $(this).val(), langue: $(\'#language\').val()});";>');
+		}
+		echo('<br>');
+				
 		//Métadonnées > Résumé
 		$elts = $xml->getElementsByTagName("abstract");
 		foreach($elts as $elt) {
-			if ($elt->hasAttribute("xml:lang")) {echo('Résumé : <textarea id="abstract" name="abstract" class="textarea form-control" style="width: 500px;">'.str_replace("'", "\'", $elt->nodeValue).'</textarea><br>');}
+			if ($elt->hasAttribute("xml:lang")) {echo('Résumé : <textarea id="abstract" name="abstract" class="textarea form-control" style="width: 500px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', { nomfic : \''.$nomfic.'\', action: \'abstract\', valeur: $(this).val(), langue: $(\'#language\').val()});";>'.str_replace("'", "\'", $elt->nodeValue).'</textarea><br>');}
 		}
 		
 		echo('</td>');
+		
 		//DOI
 		if (isset($doiTEI)) {echo('<td><a target=\'_blank\' href=\'https://doi.org/'.$doiTEI.'\'><img alt=\'DOI\' src=\'./img/doi.jpg\'></a>');}else{echo('<td>&nbsp;</td>');}
+		
 		//Auteurs / affiliations
 		echo('<td style=\'text-align: left;\'>');
 		//$i = compteur auteur / $j = compteur affiliation
