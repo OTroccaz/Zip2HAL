@@ -44,16 +44,6 @@ function progression($indice, $iMax, $id, &$iPro, $quoi) {
 	flush();
 }
 
-function objectToArray($object) {
-  if (!is_object( $object) && !is_array($object)) {
-    return $object;
-  }
-  if (is_object($object)) {
-    $object = get_object_vars($object);
-  }
-  return array_map('objectToArray', $object);
-}
-
 //Suppresion des accents
 function wd_remove_accents($str, $charset='utf-8')
 {
@@ -128,7 +118,7 @@ $(function() {
 $(function() {
     
     //autocomplete
-    $(".autoAC").autocomplete({
+    $(".autoAF").autocomplete({
         source: "AC_AF.php",
         minLength: 1
     });                
@@ -149,7 +139,6 @@ $(function() {
 <br>
 <?php
 
-/*
 //authentification CAS ou autre ?
 if (strpos($_SERVER['HTTP_HOST'], '127.0.0.1') !== false || strpos($_SERVER['HTTP_HOST'], 'ecobio') !== false) {
   include('./_connexion.php');
@@ -167,11 +156,10 @@ if (strpos($_SERVER['HTTP_HOST'], '127.0.0.1') !== false || strpos($_SERVER['HTT
   if (isset($_SESSION['HAL_PASSWD']) && $_SESSION['HAL_PASSWD'] != "") {
     $HAL_PASSWD = $_SESSION['HAL_PASSWD'];
   }else{
-    include('./CrosHALForm.php');
+    include('./Zip2HALForm.php');
     die();
   }
 }
-*/
 
 //echo time();
 echo ('<br>');
@@ -781,7 +769,7 @@ if (isset($_POST["soumis"])) {
 						for($j = 0; $j < count($halAff); $j++) {
 							if ($halAff[$j]['fname'] == "" && $halAff[$j]['lname'] == "" && (strpos($halAut[$i]['affilName'], $halAff[$j]['lsAff']) !== false)) {
 								$lsAff = $halAff[$j]['lsAff'];
-								deleteNode($xml, "author", "affiliation", $i, "ref", $lsAff, "approx");
+								deleteNode($xml, "author", "affiliation", $i, "ref", $lsAff, "", "", "approx");
 								//Puis on ajoute l'(les) affiliation(s) trouvée(s)
 								$affil = "#struct-".$halAff[$j]['docid'];
 								insertNode($xml, "nonodevalue", "author", "persName", $i, "affiliation", "ref", $affil, "", "", "aC", "amont", "");
@@ -792,7 +780,7 @@ if (isset($_POST["soumis"])) {
 							if ($halAff[$j]['fname'] == $fname && $halAff[$j]['lname'] == $lname) {
 								//Au moins une affiliation trouvée > On supprime l'affiliation correspondante du TEI de type '<affiliation ref="#localStruct-Affx"/>' pour cet auteur
 								$lsAff = $halAff[$j]['lsAff'];
-								deleteNode($xml, "author", "affiliation", $i, "ref", $lsAff, "approx");
+								deleteNode($xml, "author", "affiliation", $i, "ref", $lsAff, "", "", "approx");
 								//Puis on ajoute l'(les) affiliation(s) trouvée(s)
 								$affil = "#struct-".$halAff[$j]['docid'];
 								insertNode($xml, "nonodevalue", "author", "persName", $i, "affiliation", "ref", $affil, "", "", "aC", "amont", "");
@@ -993,14 +981,14 @@ if (isset($_POST["soumis"])) {
 		echo('<br>');
 		echo('Ajouter des mots-clés :');
 		for($dni = $ind; $dni < $ind + 5; $dni++) {
-			echo('<input type="text" id="mots-cles'.$dni.'" name="mots-cles'.$dni.'" value="" class="form-control" style="height: 18px; width: 500px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', { nomfic : \''.$nomfic.'\', action: \'ajout-mots-cles\', pos: '.$dni.', valeur: $(this).val(), langue: $(\'#language\').val()});";>');
+			echo('<input type="text" id="mots-cles'.$dni.'" name="mots-cles'.$dni.'" value="" class="form-control" style="height: 18px; width: 300px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', { nomfic : \''.$nomfic.'\', action: \'ajout-mots-cles\', pos: '.$dni.', valeur: $(this).val(), langue: $(\'#language\').val()});";>');
 		}
 		echo('<br>');
 				
 		//Métadonnées > Résumé
 		$elts = $xml->getElementsByTagName("abstract");
 		foreach($elts as $elt) {
-			if ($elt->hasAttribute("xml:lang")) {echo('Résumé : <textarea id="abstract" name="abstract" class="textarea form-control" style="width: 500px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', { nomfic : \''.$nomfic.'\', action: \'abstract\', valeur: $(this).val(), langue: $(\'#language\').val()});";>'.str_replace("'", "\'", $elt->nodeValue).'</textarea><br>');}
+			if ($elt->hasAttribute("xml:lang")) {echo('Résumé : <textarea id="abstract" name="abstract" class="textarea form-control" style="width: 300px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', { nomfic : \''.$nomfic.'\', action: \'abstract\', valeur: $(this).val(), langue: $(\'#language\').val()});";>'.str_replace("'", "\'", $elt->nodeValue).'</textarea><br>');}
 		}
 		
 		echo('</td>');
@@ -1016,12 +1004,12 @@ if (isset($_POST["soumis"])) {
 			if ($halAutinit[$i]['mailDom'] != "") {echo(' (@'.$halAutinit[$i]['mailDom'].')');}
 			echo('<br>');
 			if ($halAutinit[$i]['xmlIds'] != "") {
-				echo('Supprimer l\'idHAL '.$halAutinit[$i]['xmlIds'].' <img width=\'12px\' alt=\'Supprimer l\'idHAL\' src=\'./img/supprimer.jpg\'><br>');
+				echo('<span id="Txt'.$halAutinit[$i]['xmlIds'].'">Supprimer l\'idHAL '.$halAutinit[$i]['xmlIds'].'</span> <span id="Vu'.$halAutinit[$i]['xmlIds'].'"><a style="cursor:pointer;" onclick="$.post(\'Zip2HAL_liste_actions.php\', { nomfic : \''.$nomfic.'\', action: \'supprimerIdHAL\', pos: '.$i.', valeur: \''.$halAutinit[$i]['xmlIds'].'\'}); majokIdHAL(\''.$halAutinit[$i]['xmlIds'].'\');";><img width=\'12px\' alt=\'Supprimer l\'idHAL\' src=\'./img/supprimer.jpg\'></a></span><br>');
 			}
 			if ($halAutinit[$i]['idHals'] != "") {
-				echo('Remonter le bon auteur du référentiel auteurs :<br><form><input type="text" id="ajoutidHAL'.$i.'" value="'.$halAutinit[$i]['idHals'].'" name="ajoutidHAL'.$i.'" class="form-control" style="height: 18px; width:200px; align:center;"></form>');
+				echo('Remonter le bon auteur du référentiel auteurs <a class=info><img src=\'./img/pdi.jpg\'><span>L\'idHAL n\'est pas ajouté automatiquement car c\'est juste une suggestion que vous devrez valider en l\'ajoutant dans le champ ci-dessous prévu à cet effet.</span></a> :<br><input type="text" id="ajoutidHAL'.$i.'" value="'.$halAutinit[$i]['idHals'].'" name="ajoutidHAL'.$i.'" class="form-control" style="height: 18px; width:200px; align:center;">');
 			}
-			echo('<form>Ajouter un idHAL : <input type="text" id="ajoutIdh'.$i.'" name="ajoutIdh'.$i.'" class="autoID form-control" style="height: 18px; width:300px; align:center;"></form>');
+			echo('Ajouter un idHAL : <input type="text" id="ajoutIdh'.$i.'" name="ajoutIdh'.$i.'" class="autoID form-control" style="height: 18px; width:300px; align:center;" onchange="$.post(\'Zip2HAL_liste_actions.php\', { nomfic : \''.$nomfic.'\', action: \'ajouterIdHAL\', pos: '.$i.', valeur: $(this).val()});";>');
 			echo('<i><font style=\'color: #999999;\'>Affiliation(s) remontée(s) par OverHAL:<br>');
 			for($j = 0; $j < count($nomAff); $j++) {
 				if ($halAutinit[$i]['affilName'] != "" && stripos($halAutinit[$i]['affilName'], $nomAff[$j]['lsAff']) !== false) {
@@ -1037,18 +1025,28 @@ if (isset($_POST["soumis"])) {
 					if ($halAff[$j]['valid'] == "VALID") {$txtcolor = '#339966';}
 					if ($halAff[$j]['valid'] == "OLD") {$txtcolor = '#ff6600';}
 					$ajtAff .= $halAff[$j]['names']."~";
-					echo('<span id="aut'.$i.'-halAff'.$j.'"><font style=\'color: '.$txtcolor.';\'>'.$halAff[$j]['names'].'</font>');
-					echo('&nbsp;<img width=\'12px\' alt=\'Supprimer l\'affiliation\' src=\'./img/supprimer.jpg\'></span><br>');
+					echo('<span id="aut'.$i.'-halAff'.$j.'"><font style=\'color: '.$txtcolor.';\'>'.$halAff[$j]['names'].'</font></span>');
+					echo('&nbsp;<span id="Vu-aut'.$i.'-halAff'.$j.'"><a style="cursor:pointer;" onclick="$.post(\'Zip2HAL_liste_actions.php\', { nomfic : \''.$nomfic.'\', action: \'supprimerAffil\', pos: '.$i.', valeur: \''.$halAff[$j]['docid'].'\'}); majokAffil(\'aut'.$i.'-halAff'.$j.'\', \''.str_replace("'", "\'", $halAff[$j]['names']).'\');";><img width=\'12px\' alt=\'Supprimer l\'affiliation\' src=\'./img/supprimer.jpg\'></a></span><br>');
+					
+					
 				}
 			}
-			echo('<form>Ajouter une affiliation : <input type="text" id="ajoutAff'.$i.'" name="ajoutAff'.$i.'" class="autoAF form-control" style="height: 18px; width:300px; align:center;"></form>');
+			echo('Ajouter des affiliations : ');
+			for($dni = $j; $dni < $j + 5; $dni++) {
+				echo('<input type="text" id="ajoutAff'.$dni.'" name="ajoutAff'.$dni.'" value="" class="autoAF form-control" style="height: 18px; width: 300px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', { nomfic : \''.$nomfic.'\', action: \'ajouterAffil\', pos: '.$i.', valeur: $(this).val()});";>');
+			}
+			//echo('<input type="text" id="ajoutAff'.$i.'" name="ajoutAff'.$i.'" class="autoAF form-control" style="height: 18px; width:300px; align:center;" onchange="$.post(\'Zip2HAL_liste_actions.php\', { nomfic : \''.$nomfic.'\', action: \'ajouterAffil\', pos: '.$i.', valeur: $(this).val()});";>');
 			echo('</font><br>');
 		}
 		echo('<br>');
-		echo('<form><b>Ajouter un auteur : </b><input type="text" id="ajoutAuteur" name="ajoutAuteur" class="form-control" style="height: 15px; width:200px; align:center;"></form>');
+		echo('<b>Ajouter un auteur <i>(Prénom Nom)</i> : </b><input type="text" id="ajoutAuteur" name="ajoutAuteur" class="form-control" style="height: 18px; width:200px; align:center;" onfocusout="$.post(\'Zip2HAL_liste_actions.php\', { nomfic : \''.$nomfic.'\', action: \'ajouterAuteur\', pos: '.$i.', valeur: $(this).val()});";>');
 		echo('</td>');
-		echo('<td><img alt=\'Valider le TEI modifié\' src=\'./img/done.png\'>');
-		echo('<td><img alt=\'Importer dans HAL\' src=\'./img/MAJ.png\'>');
+		echo('<td><a target=\'_blank\' href=\'https://www.freeformatter.com/xml-validator-xsd.html#\'><img alt=\'Valider le TEI modifié\' src=\'./img/done.png\'></a>');
+		$idNomfic = str_replace(array(".xml", "./XML/"), "", $nomfic);
+		$lienMAJ = "./Zip2HALModif.php?action=MAJ&Id=".$idNomfic;
+		//$lienMAJ = "https://ecobio.univ-rennes1.fr";//Pour test
+		include "./Zip2HAL_actions.php";
+		echo('<td><center><span id=\''.$idNomfic.'\'><a target=\'_blank\' href=\''.$lienMAJ.'\' onclick="$.post(\'Zip2HAL_liste_actions.php\', { idNomfic : \''.$idNomfic.'\', action: \'statistiques\', valeur: \''.$idNomfic.'\'}); majokVu(\''.$idNomfic.'\');"><img alt=\'MAJ\' src=\'./img/MAJ.png\'></a></span></center>');
 		echo('</tr>');
 		echo('<table>');
 		//Fin du tableau des résultats

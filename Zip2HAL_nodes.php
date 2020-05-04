@@ -1,10 +1,20 @@
 <?php
-function deleteNode($xml, $amont, $aval, $pos, $typAtt1, $valAtt1, $rech) {
+function insertAfter(\DOMNode $newNode, \DOMNode $referenceNode)
+{
+  if($referenceNode->nextSibling === null) {
+      return $referenceNode->parentNode->appendChild($newNode);
+  } else {
+      return $referenceNode->parentNode->insertBefore($newNode, $referenceNode->nextSibling);
+  }
+}
+
+function deleteNode($xml, $amont, $aval, $pos, $typAtt1, $valAtt1, $typAtt2, $valAtt2, $rech) {
 	/*
 	$aval = noeud à supprimer
 	$rech = 'approx' ou 'exact' > méthode de recherche pour l'attribut
 	*/
 	$cpt = 0;//Boucle pour retrouver $pos
+	$att2 = "";
 	$elts = $xml->getElementsByTagName($amont);		
 	foreach ($elts as $elt) {
 		if ($cpt != $pos) {
@@ -15,13 +25,21 @@ function deleteNode($xml, $amont, $aval, $pos, $typAtt1, $valAtt1, $rech) {
 					if ($item->nodeName == $aval) {
 						if ($typAtt1 != "") {
 							if ($item->hasAttribute($typAtt1)) {$att1 = $item->getAttribute($typAtt1);}
+							if ($typAtt2 != "" && $item->hasAttribute($typAtt2)) {$att2 = $item->getAttribute($typAtt2);}
 							if ($rech == "approx") {
 								if (strpos($valAtt1, $att1) !== false) {
-									$elt->removeChild($item);
-									break 2;
+									if ($att2 != "") {
+										if (strpos($valAtt2, $att2) !== false) {
+											$elt->removeChild($item);
+											break 2;
+										}
+									}else{
+										$elt->removeChild($item);
+										break 2;
+									}
 								}
 							}else{
-								if ($valAtt1 == $att1) {
+								if ($valAtt1 == $att1 && $valAtt2 == $att2) {
 									$elt->removeChild($item);
 									break 2;
 								}
@@ -40,7 +58,7 @@ function deleteNode($xml, $amont, $aval, $pos, $typAtt1, $valAtt1, $rech) {
 
 function insertNode($xml, $dueon, $amont, $aval, $pos, $tagName, $typAtt1, $valAtt1, $typAtt2, $valAtt2, $methode, $crit, $comp) {
 	/*
-	$methode = iB (insertBefore) ou aC (appendChild)
+	$methode = iB (insertBefore), aC (appendChild) ou iA (insertAfter)
 	Attribuer à $dueon la chaîne 'nonodevalue' si aucune valeur n'est nécessaire au noeud
 	$pos = si besoin de se positionner à un endroit précis dans une liste de noeuds
 	$crit = critère déterminant s'il faut parcourir sur $tagName ou sur $amont
@@ -81,11 +99,21 @@ function insertNode($xml, $dueon, $amont, $aval, $pos, $tagName, $typAtt1, $valA
 							if ($valAtt2 != "") {$bip->setAttribute($typAtt2, $valAtt2);}
 							if ($dueon != "nonodevalue") {$cTn = $xml->createTextNode($dueon);}
 							if ($dueon != "nonodevalue") {$bip->appendChild($cTn);}
-							$biblStr = $xml->getElementsByTagName($amont)->item(0);						
+							$biblStr = $xml->getElementsByTagName($amont)->item(0);
 							$biblStr->appendChild($bip);
 							break;
 						}
 					}
+				}else{
+					//Pas de noeud enfant, insertion directe
+					$bip = $xml->createElement($tagName);
+					if ($typAtt1 != "" && $valAtt1 != "") {$bip->setAttribute($typAtt1, $valAtt1);}
+					if ($valAtt2 != "") {$bip->setAttribute($typAtt2, $valAtt2);}
+					if ($dueon != "nonodevalue") {$cTn = $xml->createTextNode($dueon);}
+					if ($dueon != "nonodevalue") {$bip->appendChild($cTn);}
+					$biblStr = $xml->getElementsByTagName($amont)->item($pos);						
+					$biblStr->appendChild($bip);
+					break;
 				}
 			}
 			$cpt++;
@@ -149,7 +177,11 @@ function insertNode($xml, $dueon, $amont, $aval, $pos, $tagName, $typAtt1, $valA
 								if ($methode == "iB") {//insertBefore
 									$biblStr->insertBefore($bip, $item);
 								}else{
-									$biblStr->appendChild($bip);
+									if ($methode == "aC") {//appendChild
+										$biblStr->appendChild($bip);
+									}else{//iA > insertAfter
+										insertAfter($bip, $item);
+									}
 								}
 								break 2;
 							}
