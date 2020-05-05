@@ -1044,19 +1044,30 @@ if (isset($_POST["soumis"])) {
 		
 		//Validation du TEI
 		echo('<td>');
+		echo('<div id=\'cpt4\'>Validation en cours ...</div>');
+		ob_flush();
+		flush();
+		ob_flush();
+		flush(); 
 		$maj = "non";
 		include('./DOMValidator.php');
-		$validator = new DomValidator;
-		$validated = $validator->validateFeeds($nomfic);
-		if ($validated) {
+		$tst = new DOMDocument();
+		$tst->load($nomfic);
+		if (!$tst->schemaValidate('./aofr.xsd')) {
+			echo('<script>');
+			echo('document.getElementById(\'cpt4\').style.display = \'none\';');
+			echo('</script>');
+			echo('<a target=\'_blank\' href=\'https://www.freeformatter.com/xml-validator-xsd.html#\'><img alt=\'TEI non valide AOFR\' src=\'./img/supprimer.jpg\'></a><br>');
+			print '<b>DOMDocument::schemaValidate() Generated Errors!</b>';
+			libxml_display_errors();
+		}else{
+			echo('<script>');
+			echo('document.getElementById(\'cpt4\').style.display = \'none\';');
+			echo('</script>');
 			echo('<a target=\'_blank\' href=\'https://www.freeformatter.com/xml-validator-xsd.html#\'><img alt=\'TEI validé AOFR\' src=\'./img/done.png\'></a>');
 			$maj = "oui";
-		} else {
-			echo('<a target=\'_blank\' href=\'https://www.freeformatter.com/xml-validator-xsd.html#\'><img alt=\'TEI non valide AOFR\' src=\'./img/supprimer.jpg\'></a><br>');
-			print_r($validator->displayErrors());
 		}
 		echo('</td>');
-		
 		
 		//Importer dans HAL
 		if ($maj == "oui") {
