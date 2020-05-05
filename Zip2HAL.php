@@ -138,7 +138,7 @@ $(function() {
 
 <br>
 <?php
-
+/*
 //authentification CAS ou autre ?
 if (strpos($_SERVER['HTTP_HOST'], '127.0.0.1') !== false || strpos($_SERVER['HTTP_HOST'], 'ecobio') !== false) {
   include('./_connexion.php');
@@ -160,7 +160,7 @@ if (strpos($_SERVER['HTTP_HOST'], '127.0.0.1') !== false || strpos($_SERVER['HTT
     die();
   }
 }
-
+*/
 //echo time();
 echo ('<br>');
 
@@ -812,7 +812,7 @@ if (isset($_POST["soumis"])) {
 		//Tableau des résultats
 		echo('<br><br>');
 		
-		echo('<b>Tableau des résultats</b><br>');
+		echo('<b>Tableau des résultats et validation finale du TEI pour importation dans HAL</b><br>');
 		echo('<table class=\'table table-striped table-bordered table-hover;\'>');
 		echo('<tr>');
 		echo('<td style=\'text-align: center; background-color: #eeeeee; color: #999999;\'><b>ID</b></td>');
@@ -1033,7 +1033,7 @@ if (isset($_POST["soumis"])) {
 			}
 			echo('Ajouter des affiliations : ');
 			for($dni = $j; $dni < $j + 5; $dni++) {
-				echo('<input type="text" id="ajoutAff'.$dni.'" name="ajoutAff'.$dni.'" value="" class="autoAF form-control" style="height: 18px; width: 300px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', { nomfic : \''.$nomfic.'\', action: \'ajouterAffil\', pos: '.$i.', valeur: $(this).val()});";>');
+				echo('<input type="text" id="aut'.$i.'-ajoutAff'.$dni.'" name="aut'.$i.'-ajoutAff'.$dni.'" value="" class="autoAF form-control" style="height: 18px; width: 300px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', { nomfic : \''.$nomfic.'\', action: \'ajouterAffil\', pos: '.$i.', valeur: $(this).val()});";>');
 			}
 			//echo('<input type="text" id="ajoutAff'.$i.'" name="ajoutAff'.$i.'" class="autoAF form-control" style="height: 18px; width:300px; align:center;" onchange="$.post(\'Zip2HAL_liste_actions.php\', { nomfic : \''.$nomfic.'\', action: \'ajouterAffil\', pos: '.$i.', valeur: $(this).val()});";>');
 			echo('</font><br>');
@@ -1041,12 +1041,34 @@ if (isset($_POST["soumis"])) {
 		echo('<br>');
 		echo('<b>Ajouter un auteur <i>(Prénom Nom)</i> : </b><input type="text" id="ajoutAuteur" name="ajoutAuteur" class="form-control" style="height: 18px; width:200px; align:center;" onfocusout="$.post(\'Zip2HAL_liste_actions.php\', { nomfic : \''.$nomfic.'\', action: \'ajouterAuteur\', pos: '.$i.', valeur: $(this).val()});";>');
 		echo('</td>');
-		echo('<td><a target=\'_blank\' href=\'https://www.freeformatter.com/xml-validator-xsd.html#\'><img alt=\'Valider le TEI modifié\' src=\'./img/done.png\'></a>');
-		$idNomfic = str_replace(array(".xml", "./XML/"), "", $nomfic);
-		$lienMAJ = "./Zip2HALModif.php?action=MAJ&Id=".$idNomfic;
-		//$lienMAJ = "https://ecobio.univ-rennes1.fr";//Pour test
-		include "./Zip2HAL_actions.php";
-		echo('<td><center><span id=\''.$idNomfic.'\'><a target=\'_blank\' href=\''.$lienMAJ.'\' onclick="$.post(\'Zip2HAL_liste_actions.php\', { idNomfic : \''.$idNomfic.'\', action: \'statistiques\', valeur: \''.$idNomfic.'\'}); majokVu(\''.$idNomfic.'\');"><img alt=\'MAJ\' src=\'./img/MAJ.png\'></a></span></center>');
+		
+		//Validation du TEI
+		echo('<td>');
+		$maj = "non";
+		include('./DOMValidator.php');
+		$validator = new DomValidator;
+		$validated = $validator->validateFeeds($nomfic);
+		if ($validated) {
+			echo('<a target=\'_blank\' href=\'https://www.freeformatter.com/xml-validator-xsd.html#\'><img alt=\'TEI validé AOFR\' src=\'./img/done.png\'></a>');
+			$maj = "oui";
+		} else {
+			echo('<a target=\'_blank\' href=\'https://www.freeformatter.com/xml-validator-xsd.html#\'><img alt=\'TEI non valide AOFR\' src=\'./img/supprimer.jpg\'></a><br>');
+			print_r($validator->displayErrors());
+		}
+		echo('</td>');
+		
+		
+		//Importer dans HAL
+		if ($maj == "oui") {
+			$idNomfic = str_replace(array(".xml", "./XML/"), "", $nomfic);
+			$lienMAJ = "./Zip2HALModif.php?action=MAJ&Id=".$idNomfic;
+			//$lienMAJ = "https://ecobio.univ-rennes1.fr";//Pour test
+			include "./Zip2HAL_actions.php";
+			echo('<td><center><span id=\''.$idNomfic.'\'><a target=\'_blank\' href=\''.$lienMAJ.'\' onclick="$.post(\'Zip2HAL_liste_actions.php\', { idNomfic : \''.$idNomfic.'\', action: \'statistiques\', valeur: \''.$idNomfic.'\'}); majokVu(\''.$idNomfic.'\');"><img alt=\'MAJ\' src=\'./img/MAJ.png\'></a></span></center></td>');
+		}else{
+			echo('<td><center><img alt=\'MAJ\' src=\'./img/MAJImpossible.png\'></center></td>');
+		}
+		
 		echo('</tr>');
 		echo('<table>');
 		//Fin du tableau des résultats

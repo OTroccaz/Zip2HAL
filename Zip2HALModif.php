@@ -10,18 +10,18 @@ if (isset($_GET['css']) && ($_GET['css'] != ""))
 ?>
 <html>
 <head>
-  <title>CrosHAL</title>
-  <meta name="Description" content="CrosHAL">
+  <title>Zip2HAL</title>
+  <meta name="Description" content="Zip2HAL">
   <link rel="stylesheet" href="<?php echo($css);?>" type="text/css">
   <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <link rel="icon" type="type/ico" href="HAL_favicon.ico">
-  <link rel="stylesheet" href="./CrosHAL.css">
+  <link rel="stylesheet" href="./Zip2HAL.css">
 </head>
 <body>
 <table width="100%">
 <tr>
-<td style="text-align: left;"><img alt="ExtrHAL" title="ExtrHAL" width="250px" src="./img/logo_Croshal.png"></td>
+<td style="text-align: left;"><img alt="Zip2HAL" title="Zip2HAL" width="250px" src="./img/logo_Zip2hal.png"></td>
 <td style="text-align: right;"><img alt="Université de Rennes 1" title="Université de Rennes 1" width="150px" src="./img/logo_UR1_gris_petit.jpg"></td>
 </tr>
 </table>
@@ -53,14 +53,14 @@ if (strpos($_SERVER['HTTP_HOST'], '127.0.0.1') !== false || strpos($_SERVER['HTT
 if (isset($_GET['Id']) && ($_GET['Id'] != ""))
 {
   //$halid = "hal-01179051";
-  $halid = $_GET['Id'];
+  $idNomfic = $_GET['Id'];
 }else{
   if (isset($_GET['DOI']) && ($_GET['DOI'] != ""))
   {
     //$halid = "hal-01179051";
     $doi = $_GET['DOI'];
   }else{
-    header('Location: CrosHAL.php');
+    header('Location: Zip2HAL.php');
     exit;
   }
 }
@@ -87,8 +87,8 @@ if ($_GET['action'] == "PDF") {
 }
 */
 
-$nomfic = "./XML/".$halid.".xml";
-$nomficFin = "./XML/".$halid."-Fin.xml";
+$nomfic = "./XML/".$idNomfic.".xml";
+$nomficFin = "./XML/".$idNomfic."-Fin.xml";
 copy($nomfic, $nomficFin);
   
 //suppression éventuel noeud <listBibl type="references">
