@@ -647,9 +647,15 @@ if (isset($_POST["soumis"])) {
 				$reqAut = str_replace(" ", "%20", $reqAut);
 				//echo $reqAut.'<br>';
 				$contAut = file_get_contents($reqAut);
-				$resAut = json_decode($contAut);
+				$resAut = json_decode($contAut, true);
 				$orgName = "";
-				if (isset($resAut->response->result->org[0]->orgName)) {$orgName = $resAut->response->result->org[0]->orgName;}
+				if (isset($resAut->response->result->org[0]->orgName)) {
+					if (is_array($resAut->response->result->org[0]->orgName)) {
+						$orgName = $resAut->response->result->org[0]->orgName[0];
+					}else{
+						$orgName = $resAut->response->result->org[0]->orgName;
+					}
+				}
 				if ($orgName != "") {//Une affiliation a été trouvée
 					$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=%22".$orgName."%22&fl=*&rows=1000&fl=idocid,valid_s,name_s";
 					$reqAff = str_replace(" ", "%20", $reqAff);
@@ -835,17 +841,24 @@ if (isset($_POST["soumis"])) {
 		
 		//Doublon ?
 		if (isset($idTEI) && $idTEI != "") {
-			echo('<td><a target=\'_blank\' href=\'https://hal.archives-ouvertes.fr/'.$idTEI.'\'><img alt=\'HAL\' src=\'./img/HAL.jpg\'></a>');
+			echo('<td><a target=\'_blank\' href=\'https://hal.archives-ouvertes.fr/'.$idTEI.'\'><img alt=\'HAL\' src=\'./img/HAL.jpg\'></a></td>');
 		}else{
 			echo('<td>&nbsp;</td>');
 		}
 		
-		//Supprimer toute la notice
-		echo('<td><img alt=\'Supprimer la notice\' src=\'./img/supprimer.jpg\'>');
-		echo('<td>'.$docTEI.'</td>');
+		//Supprimer le TEI
+		echo('<td><span id=\'suppression\'><a style="cursor:pointer;" onclick="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'suppression\'}); majokSuppr(\'suppression\');"><img alt=\'Supprimer le TEI\' src=\'./img/supprimer.jpg\'></a></span>');
+		
+		//Type de document
+		$typDoc = "";
+		$elts = $xml->getElementsByTagName("classCode");
+		foreach($elts as $elt) {
+			if ($elt->hasAttribute("scheme") && $elt->getAttribute("scheme") == "halTypology") {$typDoc = $elt->getAttribute("n");}
+		}
+		echo('<td>'.$typDoc.'</td>');
 		
 		//Métadonnées
-		echo('<td style=\'text-align: left;\'>');
+		echo('<td style=\'text-align: left;\'><span id=\'metadonnees\'>');
 		
 		//Métadonnées > Titre
 		$elts = $xml->getElementsByTagName("language");
@@ -991,13 +1004,14 @@ if (isset($_POST["soumis"])) {
 			if ($elt->hasAttribute("xml:lang")) {echo('Résumé : <textarea id="abstract" name="abstract" class="textarea form-control" style="width: 300px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', { nomfic : \''.$nomfic.'\', action: \'abstract\', valeur: $(this).val(), langue: $(\'#language\').val()});";>'.str_replace("'", "\'", $elt->nodeValue).'</textarea><br>');}
 		}
 		
-		echo('</td>');
+		echo('</span></td>');
+		//Fin des métadonnées
 		
 		//DOI
 		if (isset($doiTEI)) {echo('<td><a target=\'_blank\' href=\'https://doi.org/'.$doiTEI.'\'><img alt=\'DOI\' src=\'./img/doi.jpg\'></a>');}else{echo('<td>&nbsp;</td>');}
 		
 		//Auteurs / affiliations
-		echo('<td style=\'text-align: left;\'>');
+		echo('<td style=\'text-align: left;\'><span id=\'affiliations\'>');
 		//$i = compteur auteur / $j = compteur affiliation
 		for($i = 0; $i < count($halAut); $i++) {
 			echo('<b>'.$halAutinit[$i]['firstName'].' '.$halAutinit[$i]['lastName'].'</b>');
@@ -1040,10 +1054,10 @@ if (isset($_POST["soumis"])) {
 		}
 		echo('<br>');
 		echo('<b>Ajouter un auteur <i>(Prénom Nom)</i> : </b><input type="text" id="ajoutAuteur" name="ajoutAuteur" class="form-control" style="height: 18px; width:200px; align:center;" onfocusout="$.post(\'Zip2HAL_liste_actions.php\', { nomfic : \''.$nomfic.'\', action: \'ajouterAuteur\', pos: '.$i.', valeur: $(this).val()});";>');
-		echo('</td>');
+		echo('</span></td>');
 		
 		//Validation du TEI
-		echo('<td>');
+		echo('<td><span id=\'validerTEI\'>');
 		echo('<div id=\'cpt4\'>Validation en cours ...</div>');
 		ob_flush();
 		flush();
@@ -1058,16 +1072,18 @@ if (isset($_POST["soumis"])) {
 			echo('document.getElementById(\'cpt4\').style.display = \'none\';');
 			echo('</script>');
 			echo('<a target=\'_blank\' href=\'https://www.freeformatter.com/xml-validator-xsd.html#\'><img alt=\'TEI non valide AOFR\' src=\'./img/supprimer.jpg\'></a><br>');
+			echo('<a target=\'_blank\' href=\''.$nomfic.'\'>Lien TEI</a><br>');
 			print '<b>DOMDocument::schemaValidate() Generated Errors!</b>';
 			libxml_display_errors();
 		}else{
 			echo('<script>');
 			echo('document.getElementById(\'cpt4\').style.display = \'none\';');
 			echo('</script>');
-			echo('<a target=\'_blank\' href=\'https://www.freeformatter.com/xml-validator-xsd.html#\'><img alt=\'TEI validé AOFR\' src=\'./img/done.png\'></a>');
+			echo('<a target=\'_blank\' href=\'https://www.freeformatter.com/xml-validator-xsd.html#\'><img alt=\'TEI validé AOFR\' src=\'./img/done.png\'></a><br>');
+			echo('<a target=\'_blank\' href=\''.$nomfic.'\'>Lien TEI</a><br>');			
 			$maj = "oui";
 		}
-		echo('</td>');
+		echo('<span></td>');
 		
 		//Importer dans HAL
 		if ($maj == "oui") {
@@ -1075,9 +1091,9 @@ if (isset($_POST["soumis"])) {
 			$lienMAJ = "./Zip2HALModif.php?action=MAJ&Id=".$idNomfic;
 			//$lienMAJ = "https://ecobio.univ-rennes1.fr";//Pour test
 			include "./Zip2HAL_actions.php";
-			echo('<td><center><span id=\''.$idNomfic.'\'><a target=\'_blank\' href=\''.$lienMAJ.'\' onclick="$.post(\'Zip2HAL_liste_actions.php\', { idNomfic : \''.$idNomfic.'\', action: \'statistiques\', valeur: \''.$idNomfic.'\'}); majokVu(\''.$idNomfic.'\');"><img alt=\'MAJ\' src=\'./img/MAJ.png\'></a></span></center></td>');
+			echo('<td><span id=\'importerHAL\'><center><span id=\''.$idNomfic.'\'><a target=\'_blank\' href=\''.$lienMAJ.'\' onclick="$.post(\'Zip2HAL_liste_actions.php\', { idNomfic : \''.$idNomfic.'\', action: \'statistiques\', valeur: \''.$idNomfic.'\'}); majokVu(\''.$idNomfic.'\');"><img alt=\'MAJ\' src=\'./img/MAJ.png\'></a></span></center></td>');
 		}else{
-			echo('<td><center><img alt=\'MAJ\' src=\'./img/MAJImpossible.png\'></center></td>');
+			echo('<td><center><img alt=\'MAJ\' src=\'./img/MAJImpossible.png\'></center></span></td>');
 		}
 		
 		echo('</tr>');
