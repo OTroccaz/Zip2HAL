@@ -104,11 +104,11 @@ include("./URLport_coll.php");
 <script type="text/javascript">
 $(function() {
     
-    //autocomplete
-    $(".autoID").autocomplete({
-        source: "AC_ID.php",
-        minLength: 1
-    });                
+	//autocomplete
+	$(".autoID").autocomplete({
+			source: "AC_ID.php",
+			minLength: 1
+	});                
 
 });
 </script>
@@ -117,14 +117,29 @@ $(function() {
 <script type="text/javascript">
 $(function() {
     
-    //autocomplete
-    $(".autoAF").autocomplete({
-        source: "AC_AF.php",
-        minLength: 1
-    });                
+	//autocomplete
+	$(".autoAF").autocomplete({
+			source: "AC_AF.php",
+			minLength: 1,
+			open: function (event, ui) {
+				$('.ui-autocomplete > li').css("background-color", function() {
+						return $(this).text().indexOf('VALID') > -1 ? '#dff0d8' : ($(this).text().indexOf('INCOMING') > -1 ? '#fcf8e3' : '#f2dede');
+				});
+				$('.ui-menu-item > div').css("color", function() {
+						return $(this).text().indexOf('VALID') > -1 ? '#698d53' : ($(this).text().indexOf('INCOMING') > -1 ? '#cfac72' : '#b96f7b');
+				});
+			}	
+	})
 
 });
 </script>
+
+<style type="text/css">
+	.ui-autocomplete {
+			font-family: 'Corbel', sans-serif;
+			font-size:12px;       
+	} 
+</style>  
 
 <table width="100%">
 <tr>
