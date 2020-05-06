@@ -18,6 +18,11 @@ $xml->load($nomfic);
 $xml->save($nomfic);
 
 //Actions
+//Supprimer le TEI
+if ($action == "suppression") {
+	if(file_exists ($nomfic)) {@unlink($nomfic);}
+}
+
 //Titre
 if ($action == "titre") {
 	insertNode($xml, $valeur, "analytic", "", 0, "title", "xml:lang", $lang, "", "", "iB", "tagName", "");
@@ -38,9 +43,23 @@ if ($action == "notice") {
 	$xml->save($nomfic);
 }
 
+//Licence
+if ($action == "licence") {
+	deleteNode($xml, "availability", "licence", 0, "", "", "", "", "exact");
+	insertNode($xml, "nonodevalue", "availability", "", 0, "licence", "target", $valeur, "", "", "iB", "tagName", "");
+	$xml->save($nomfic);
+}
+
 //Date de publication
 if ($action == "datePub") {
-	insertNode($xml, $valeur, "imprint", "", 0, "date", "type", "datePub", "", "", "iB", "tagName", "");
+	insertNode($xml, $valeur, "imprint", "", 0, "date", "type", "datePub", "", "", "aC", "tagName", "");
+	$xml->save($nomfic);
+}
+
+//Date d'édition
+if ($action == "dateEpub") {
+	deleteNode($xml, "imprint", "date", 0, "type", "dateEpub", "", "", "exact");
+	insertNode($xml, $valeur, "imprint", "", 0, "date", "type", "dateEpub", "", "", "iB", "tagName", "");
 	$xml->save($nomfic);
 }
 

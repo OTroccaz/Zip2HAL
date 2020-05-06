@@ -945,11 +945,26 @@ if (isset($_POST["soumis"])) {
 		if ($elt->getAttribute("subtype") == "noaction") {$txt = "selected";}else{$txt = "";}
 		echo('<option '.$txt.' value="noaction">noaction</option>');
 		echo('</select></p>');
+		//Licence
+		$licence = "";
+		$elts = $xml->getElementsByTagName("licence");
+		foreach($elts as $elt) {
+			if ($elt->hasAttribute("target")) {
+				$licence = $elt->getAttribute("target");
+			}
+		}
+		echo('<p class="form-inline">Licence : <input type="text" id="licence" name="licence" value="'.$licence.'" class="form-control" style="height: 18px; width:400px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', { nomfic : \''.$nomfic.'\', action: \'licence\', valeur: $(this).val()});";>');
 		
 		//Métadonnées > Date de publication
 		$elts = $xml->getElementsByTagName("date");
 		foreach($elts as $elt) {
 			if ($elt->hasAttribute("type") && $elt->getAttribute("type") == "datePub") {echo('<p class="form-inline">Date de publication : <input type="text" id="datePub" name="datePub" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:100px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', { nomfic : \''.$nomfic.'\', action: \'datePub\', valeur: $(this).val()});";></p>');}
+		}
+		
+		//Métadonnées > Date d'édition
+		$elts = $xml->getElementsByTagName("date");
+		foreach($elts as $elt) {
+			if ($elt->hasAttribute("type") && $elt->getAttribute("type") == "dateEpub") {echo('<p class="form-inline">Date d\'édition : <input type="text" id="dateEpub" name="dateEpub" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:100px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', { nomfic : \''.$nomfic.'\', action: \'dateEpub\', valeur: $(this).val()});";></p>');}
 		}
 		
 		//Métadonnées > Langue
