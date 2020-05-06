@@ -647,16 +647,11 @@ if (isset($_POST["soumis"])) {
 				$reqAut = str_replace(" ", "%20", $reqAut);
 				//echo $reqAut.'<br>';
 				$contAut = file_get_contents($reqAut);
-				$resAut = json_decode($contAut, true);
+				$resAut = json_decode($contAut);
 				$orgName = "";
-				if (isset($resAut->response->result->org[0]->orgName)) {
-					if (is_array($resAut->response->result->org[0]->orgName)) {
-						$orgName = $resAut->response->result->org[0]->orgName[0];
-					}else{
-						$orgName = $resAut->response->result->org[0]->orgName;
-					}
-				}
-				if ($orgName != "") {//Une affiliation a été trouvée
+				//var_dump($resAut);
+				if (isset($resAut->response->result->org->orgName)) {//Un seul résultat
+					$orgName = $resAut->response->result->org->orgName[0];
 					$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=%22".$orgName."%22&fl=*&rows=1000&fl=idocid,valid_s,name_s";
 					$reqAff = str_replace(" ", "%20", $reqAff);
 					//echo $reqAff.'<br>';
@@ -695,6 +690,51 @@ if (isset($_POST["soumis"])) {
 						//	}
 						//}
 						
+					}
+				}else{//Plusieurs résultats
+					$org = 0;
+					while(isset($resAut->response->result->org[$org]->orgName)) {
+						$orgName = $resAut->response->result->org[$org]->orgName[0];
+						$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=%22".$orgName."%22&fl=*&rows=1000&fl=idocid,valid_s,name_s";
+						$reqAff = str_replace(" ", "%20", $reqAff);
+						//echo $reqAff.'<br>';
+						$contAff = file_get_contents($reqAff);
+						$resAff = json_decode($contAff);
+						$docid = "non";
+						if (isset($resAff->response->numFound)) {$numFound=$resAff->response->numFound;}
+						if ($numFound != 0) {			
+							foreach($resAff->response->docs as $affil) {
+								if (($affil->valid_s == "VALID" || $affil->valid_s == "OLD") && $docid == "non") {
+									$halAff[$iAff]['docid'] = $affil->docid;
+									$cptNoaff++;
+									$cptAff++;
+									$halAff[$iAff]['lsAff'] = "#localStruct-Aff".$cptAff."~";
+									$halAff[$iAff]['valid'] = $affil->valid_s;
+									$halAff[$iAff]['names'] = $affil->name_s;
+									$halAff[$iAff]['fname'] = $halAut[$i]['firstName'];
+									$halAff[$iAff]['lname'] = $halAut[$i]['lastName'];
+									$halAut[$i]['affilName'] = "#localStruct-Aff".$cptAff."~";
+									$iAff++;
+									$docid = "oui";
+								}
+							}
+							
+							//if ($docid == "non") {//pas de docid trouvé avec VALID ou OLD > on teste avec INCOMING
+							//	foreach($resAff->response->docs as $affil) {
+							//		if ($affil->valid_s == "INCOMING"  && $docid == "non") {
+							//			$halAff[$iAff]['docid'] = $affil->docid;
+							//			$cptNoaff++;
+							//			$cptAff++;
+							//			$halAff[$iAff]['lsAff'] = "localStruct-Aff".$cptAff;
+							//			$halAut[$i]['affilName'] = "localStruct-Aff".$cptAff."~";
+							//			$iAff++;
+							//			$docid = "oui";
+							//		}
+							//	}
+							//}
+							
+						}
+						$org++;
 					}
 				}
 				$cpt++;
