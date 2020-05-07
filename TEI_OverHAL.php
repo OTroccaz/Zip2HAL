@@ -52,13 +52,15 @@ if (isset($_GET["erreur"]))
 	//if ($erreur == 4) {echo("<script type=\"text/javascript\">alert(\"Aucun fichier envoyé ou bien il a une taille nulle !\")</script>");}
 	if ($erreur == 5) {echo("<script type=\"text/javascript\">alert(\"Mauvaise extension de fichier !\")</script>");}
 	if ($erreur == 6) {echo("<script type=\"text/javascript\">alert(\"Vous devez au préalable fournir votre extraction TEI d'OverHAL !\")</script>");}
-	if ($erreur == 7) {echo("<script type=\"text/javascript\">alert(\"Le répertoire de dépôt de fichier est automatiquement nettoyé chaque heure et votre fichier extraction TEI d'OverHAL n'existe plus : vous devez procéder de nouveau à la soumission de votre extraction !\")</script>");}
+	if ($erreur == 7) {echo("<script type=\"text/javascript\">alert(\"Le répertoire de dépôt de fichier est automatiquement nettoyé chaque heure et votre fichier ZIP des extractions TEI d'OverHAL n'existe plus : vous devez procéder de nouveau à son chargement !\")</script>");}
+	if ($erreur == 8) {echo("<script type=\"text/javascript\">alert(\"Archive ZIP incorrecte !\")</script>");}
+	if ($erreur == 9) {echo("<script type=\"text/javascript\">alert(\"Au moins un des fichiers de votre archive ZIP n'a pas l'extension XML !\")</script>");}
 }
 ?>
 
 <form enctype="multipart/form-data" action="TEI_OverHAL_upload.php" method="post" accept-charset="UTF-8">
 <p class="form-inline">
-<label for="TEI_OverHAL">Fichier source TEI OverHAL (xml)</label> : <input class="form-control" id="TEI_OverHAL" style="height: 25px; font-size: 90%; padding: 0px;" name="TEI_OverHAL" type="file" /><br/>
+<label for="TEI_OverHAL">Fichier source des extractions TEI OverHAL (zip)</label> : <input class="form-control" id="TEI_OverHAL" style="height: 25px; font-size: 90%; padding: 0px;" name="TEI_OverHAL" type="file" /><br/>
 <input type="submit" class="form-control btn btn-md btn-primary" value="Envoyer">
 </form>
 

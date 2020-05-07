@@ -13,9 +13,10 @@ function majokVu(idNomfic) {
 }
 
 function majokSuppr(suppression) {
+	var idNomfiv = suppression.replace("suppression", "");
   document.getElementById(suppression).innerHTML = "<img src='./img/supprimer_ok.jpg'>";
-	document.getElementById("metadonnees").innerHTML = "";
-	document.getElementById("affiliations").innerHTML = "";
-	document.getElementById("validerTEI").innerHTML = "";
-	document.getElementById("importerHAL").innerHTML = "";
+	document.getElementById("metadonnees"+idNomfiv).innerHTML = "";
+	document.getElementById("affiliations"+idNomfiv).innerHTML = "";
+	document.getElementById("validerTEI"+idNomfiv).innerHTML = "";
+	document.getElementById("importerHAL"+idNomfiv).innerHTML = "";
 }

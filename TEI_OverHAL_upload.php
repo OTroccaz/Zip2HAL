@@ -60,12 +60,43 @@ if (isset($_FILES['TEI_OverHAL']['name']) && $_FILES['TEI_OverHAL']['name'] != "
 		}
 	}
 	$extension = strrchr($_FILES['TEI_OverHAL']['name'], '.');
-	if ($extension != ".xml") {
+	if ($extension != ".zip") {
 		Header("Location: "."TEI_OverHAL.php?erreur=5");
 	}
-	$nomfic = "./XML/TEI_OverHAL_".time().".xml";
+	$temps = time();
+	mkdir("./XML/".$temps);
+	$nomfic = "./XML/TEI_OverHAL_".$temps.".zip";
 	move_uploaded_file($_FILES['TEI_OverHAL']['tmp_name'], $nomfic);
-	Header("Location: "."Zip2HAL.php?nomfic=".$nomfic);
+	$zip = new ZipArchive;
+	if ($zip->open($nomfic) === TRUE) {
+		$zip->extractTo('./XML/'.$temps);
+		$zip->close();
+	}else{
+		Header("Location: "."TEI_OverHAL.php?erreur=8");
+	}
+	
+	//Vérification que l'archive ne contient bien que des fichiers xml
+	$repertoire = opendir("./XML/".$temps);
+	while(false !== ($fichier = readdir($repertoire))) {
+		$chemin = "./XML/".$temps."/".$fichier;
+		$infos = pathinfo($chemin);
+		if ($fichier != "." && $fichier != ".." && !is_dir($fichier) && $infos['extension'] != "xml") {
+			//Extension non xml > suppression dossier créé et archive zip copiée
+			$repertoire = opendir("./XML/".$temps);
+			while(false !== ($fichier = readdir($repertoire))) {
+				$chemin = "./XML/".$temps."/".$fichier;
+				if ($fichier != "." && $fichier != ".." && !is_dir($fichier)) {
+					unlink($chemin);
+				}
+			}
+			rmdir("./XML/".$temps);
+			unlink($nomfic);
+			Header("Location: "."TEI_OverHAL.php?erreur=9");
+		}
+	}
+  closedir($repertoire);
+
+	Header("Location: "."Zip2HAL.php?nomficZip=".$nomfic);
 }
 ?>
 
