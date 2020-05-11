@@ -58,10 +58,10 @@ function wd_remove_accents($str, $charset='utf-8')
 
 //Nettoyage des dossiers de création de fichiers
 function suppression($dir, $age) {
-	$ageElem = time() - filemtime($dir);
 	
 	$handle = opendir($dir);
 	while($elem = readdir($handle)) {//ce while vide tous les répertoires et sous répertoires
+		$ageElem = time() - filemtime($dir.'/'.$elem);
 		if ($ageElem > $age) {
 			if(is_dir($dir.'/'.$elem) && substr($elem, -2, 2) !== '..' && substr($elem, -1, 1) !== '.') {//si c'est un repertoire
 				suppression($dir.'/'.$elem, $age);
@@ -75,6 +75,7 @@ function suppression($dir, $age) {
 	
 	$handle = opendir($dir);
 	while($elem = readdir($handle)) {//ce while efface tous les dossiers
+		$ageElem = time() - filemtime($dir.'/'.$elem);
 		if ($ageElem > $age) {
 			if(is_dir($dir.'/'.$elem) && substr($elem, -2, 2) !== '..' && substr($elem, -1, 1) !== '.') {//si c'est un repertoire
 				suppression($dir.'/'.$elem, $age);
@@ -276,7 +277,7 @@ if (isset($_POST["soumis"])) {
 	
 	$dir = str_replace(array("TEI_OverHAL_", ".zip"), "", $nomficZip);
 	$tabFic = scandir($dir);
-	$idNomfic = 1;
+	$idFic = 1;
 	foreach($tabFic as $nomfic) {
 		if (substr($nomfic, -2, 2) !== '..' && substr($nomfic, -1, 1) !== '.') {		
 			$nomfic = $dir."/".$nomfic; 
@@ -533,7 +534,7 @@ if (isset($_POST["soumis"])) {
 					$iAff = 0;
 					$nomAff = array();//Code initial des affiliations (à parir du XML)
 					$halAff = array();
-					//$aTester = array('UMR', 'UMS', 'UPR', 'ERL', 'IFR', 'UR', 'USR', 'USC', 'CIC', 'CIC-P', 'CIC-IT', 'FRE', 'EA', 'INSERM', 'U');
+					$aTester = array('UMR', 'UMS', 'UPR', 'ERL', 'IFR', 'UR', 'USR', 'USC', 'CIC', 'CIC-P', 'CIC-IT', 'FRE', 'EA', 'INSERM', 'U');
 
 					
 					echo('<b>Etape 3a : recherche des id structures des affiliations</b><br>');
@@ -560,9 +561,9 @@ if (isset($_POST["soumis"])) {
 					for($i = 0; $i < count($nomAff); $i++) {
 						progression($cpt, $nbAff, 'cpt3a', $iPro, 'affiliation');
 						$code = $nomAff[$i]['org'];
-						//$test = "non";//Test pour savoir si le code commence par un des éléments du tableau aTester
+						$test = "non";//Test pour savoir si le code commence par un des éléments du tableau aTester
 						$trouve = 0;//Test pour savoir si la 1ère méthode a permis de trouver un id de structure
-						/*
+						
 						foreach($aTester as $elt) {
 							if (stripos($code, $elt) !== false) {
 								if ($elt == "U" && strlen($code) != 5) {break;}
@@ -575,75 +576,76 @@ if (isset($_POST["soumis"])) {
 								break;
 							}			
 						}
-						*/
+						
 						//Test pour éliminer le nom du pays (ex: Centre Eugène Marquis, France)
 						$code = str_replace(", France", "", $code);
 						
-						//if ($test == "oui") {
+						if ($test == "oui") {
 							
-						//1ère méthode > avec le référentiel HAL des structures
-						$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=%22".$code."%22%20AND%20-valid_s:%22INCOMING%22&fl=*&rows=1000&fl=docid,valid_s,name_s";
-						$reqAff = str_replace(" ", "%20", $reqAff);
-						//echo $reqAff.'<br>';
-						$contAff = file_get_contents($reqAff);
-						$resAff = json_decode($contAff);
-						if (isset($resAff->response->numFound)) {$numFound=$resAff->response->numFound;}
-						if ($numFound != 0) {			
-							foreach($resAff->response->docs as $affil) {
-								$halAff[$iAff]['docid'] = $affil->docid;
-								$halAff[$iAff]['lsAff'] = $nomAff[$i]['lsAff'];
-								$halAff[$iAff]['valid'] = $affil->valid_s;
-								$halAff[$iAff]['names'] = $affil->name_s;
-								$halAff[$iAff]['fname'] = "";
-								$halAff[$iAff]['lname'] = "";
-								$iAff++;
-								$trouve++;
+							//1ère méthode > avec le référentiel HAL des structures
+							$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=%22".$code."%22%20AND%20-valid_s:%22INCOMING%22&fl=*&rows=1000&fl=docid,valid_s,name_s";
+							$reqAff = str_replace(" ", "%20", $reqAff);
+							//echo $reqAff.'<br>';
+							$contAff = file_get_contents($reqAff);
+							$resAff = json_decode($contAff);
+							if (isset($resAff->response->numFound)) {$numFound=$resAff->response->numFound;}
+							if ($numFound != 0) {			
+								foreach($resAff->response->docs as $affil) {
+									$halAff[$iAff]['docid'] = $affil->docid;
+									$halAff[$iAff]['lsAff'] = $nomAff[$i]['lsAff'];
+									$halAff[$iAff]['valid'] = $affil->valid_s;
+									$halAff[$iAff]['names'] = $affil->name_s;
+									$halAff[$iAff]['fname'] = "";
+									$halAff[$iAff]['lname'] = "";
+									$iAff++;
+									$trouve++;
+								}
 							}
-						}
-						
-						//2ème méthode, si la 1ère méthode n'a pas abouti ou s'il y a trop d'affiliations > avec le référentiel HAL des notices
-						if ($trouve != 1) {
-							//On récupère tout d'abord l'année de la publication
-							$annee = "";
-							$anns = $xml->getElementsByTagName("date");
-							foreach($anns as $ann) {
-								if ($ann->hasAttribute("type") && $ann->getAttribute("type") == "datePub") {$annee = $ann->nodeValue;}
-							}
-							if ($annee != "") {
-								for($j = 0; $j < count($halAut); $j++) {
-									if ($halAut[$j]['affilName'] == $nomAff[$i]['lsAff']) {//On ne s'intéresse qu'aux auteurs concernés par cette référence d'affiliation
-										$firstName = $halAut[$j]['firstName'];
-										$lastName = $halAut[$j]['lastName'];
-										$facetSep = $lastName.' '.$firstName;
-										$reqAff = "https://api.archives-ouvertes.fr/search/index/?q=authLastName_sci:%22".$lastName."%22%20AND%20authFirstName_sci:%22".$firstName."%22&fq=-labStructValid_s:INCOMING%20OR%20(structAcronym_sci:%22".$code."%22%20OR%20structName_sci:%22u1085%22%20OR%20structCode_sci:%22".$code."%22)&fl=structPrimaryHasAlphaAuthIdHal_fs,authId_i,authLastName_s,authFirstName_s&sort=abs(sub(producedDateY_i,".$annee."))%20asc";
-										$reqAff = str_replace(" ", "%20", $reqAff);
-										//echo $reqAff.'<br>';
-										$contAff = file_get_contents($reqAff);
-										$resAff = json_decode($contAff);
-										if (isset($resAff->response->numFound)) {$numFound=$resAff->response->numFound;}
-										if ($numFound != 0) {
-											foreach($resAff->response->docs as $affil) {
-												foreach($affil->structPrimaryHasAlphaAuthIdHal_fs as $fSep) {
-													if (strpos($fSep, $facetSep) !== false) {
-														$fSepTab = explode('_', $fSep);
-														$ajout = "oui";
-														for($k = 0; $k < count($halAff); $k++) {
-															if (intval($fSepTab[2]) == $halAff[$k]['docid'] && $firstName == $halAff[$k]['fname'] && $lastName == $halAff[$k]['lname']) {$ajout = "non";}
-														}
-														if ($ajout == "oui") {
-															//VALID ou OLD ?
-															$reqVoO = "https://api.archives-ouvertes.fr/ref/structure/?q=docid:%22".$fSepTab[2]."%22%20AND%20-valid_s:%22INCOMING%22&fl=*&rows=1000&fl=docid,valid_s,name_s";
-															$reqVoO = str_replace(" ", "%20", $reqVoO);
-															$contVoO = file_get_contents($reqVoO);
-															$resVoO = json_decode($contVoO);
-															$halAff[$iAff]['docid'] = intval($fSepTab[2]);
-															$halAff[$iAff]['lsAff'] = $nomAff[$i]['lsAff'];
-															$halAff[$iAff]['valid'] = $resVoO->response->docs[0]->valid_s;
-															$halAff[$iAff]['names'] = $fSepTab[4];
-															$halAff[$iAff]['fname'] = $firstName;
-															$halAff[$iAff]['lname'] = $lastName;
-															$iAff++;
-															$trouve++;
+							
+							//2ème méthode, si la 1ère méthode n'a pas abouti ou s'il y a trop d'affiliations > avec le référentiel HAL des notices
+							if ($trouve != 1) {
+								//On récupère tout d'abord l'année de la publication
+								$annee = "";
+								$anns = $xml->getElementsByTagName("date");
+								foreach($anns as $ann) {
+									if ($ann->hasAttribute("type") && $ann->getAttribute("type") == "datePub") {$annee = $ann->nodeValue;}
+								}
+								if ($annee != "") {
+									for($j = 0; $j < count($halAut); $j++) {
+										if ($halAut[$j]['affilName'] == $nomAff[$i]['lsAff']) {//On ne s'intéresse qu'aux auteurs concernés par cette référence d'affiliation
+											$firstName = $halAut[$j]['firstName'];
+											$lastName = $halAut[$j]['lastName'];
+											$facetSep = $lastName.' '.$firstName;
+											$reqAff = "https://api.archives-ouvertes.fr/search/index/?q=authLastName_sci:%22".$lastName."%22%20AND%20authFirstName_sci:%22".$firstName."%22&fq=-labStructValid_s:INCOMING%20OR%20(structAcronym_sci:%22".$code."%22%20OR%20structName_sci:%22u1085%22%20OR%20structCode_sci:%22".$code."%22)&fl=structPrimaryHasAlphaAuthIdHal_fs,authId_i,authLastName_s,authFirstName_s&sort=abs(sub(producedDateY_i,".$annee."))%20asc";
+											$reqAff = str_replace(" ", "%20", $reqAff);
+											//echo $reqAff.'<br>';
+											$contAff = file_get_contents($reqAff);
+											$resAff = json_decode($contAff);
+											if (isset($resAff->response->numFound)) {$numFound=$resAff->response->numFound;}
+											if ($numFound != 0) {
+												foreach($resAff->response->docs as $affil) {
+													foreach($affil->structPrimaryHasAlphaAuthIdHal_fs as $fSep) {
+														if (strpos($fSep, $facetSep) !== false) {
+															$fSepTab = explode('_', $fSep);
+															$ajout = "oui";
+															for($k = 0; $k < count($halAff); $k++) {
+																if (intval($fSepTab[2]) == $halAff[$k]['docid'] && $firstName == $halAff[$k]['fname'] && $lastName == $halAff[$k]['lname']) {$ajout = "non";}
+															}
+															if ($ajout == "oui") {
+																//VALID ou OLD ?
+																$reqVoO = "https://api.archives-ouvertes.fr/ref/structure/?q=docid:%22".$fSepTab[2]."%22%20AND%20-valid_s:%22INCOMING%22&fl=*&rows=1000&fl=docid,valid_s,name_s";
+																$reqVoO = str_replace(" ", "%20", $reqVoO);
+																$contVoO = file_get_contents($reqVoO);
+																$resVoO = json_decode($contVoO);
+																$halAff[$iAff]['docid'] = intval($fSepTab[2]);
+																$halAff[$iAff]['lsAff'] = $nomAff[$i]['lsAff'];
+																$halAff[$iAff]['valid'] = $resVoO->response->docs[0]->valid_s;
+																$halAff[$iAff]['names'] = $fSepTab[4];
+																$halAff[$iAff]['fname'] = $firstName;
+																$halAff[$iAff]['lname'] = $lastName;
+																$iAff++;
+																$trouve++;
+															}
 														}
 													}
 												}
@@ -653,7 +655,6 @@ if (isset($_POST["soumis"])) {
 								}
 							}
 						}
-						//}else{
 						if ($trouve == 0) {
 							//Affiliation sans recherche possible > on réinitialise cette affiliation pour les auteurs concernés
 							for($j = 0; $j < count($halAut); $j++) {
@@ -671,7 +672,6 @@ if (isset($_POST["soumis"])) {
 					echo('document.getElementById(\'cpt3a\').style.display = \'none\';');
 					echo('</script>');
 					//Fin étape 3a
-					
 					
 					//Etape 3b - Recherche la dernière affiliation associée aux auteurs sans affiliation
 					echo('<br><br>');
@@ -939,7 +939,7 @@ if (isset($_POST["soumis"])) {
 				}
 				
 				//Supprimer le TEI
-				echo('<td><span id=\'suppression'.'-'.$idNomfic.'\'><a style="cursor:pointer;" onclick="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'suppression\'}); majokSuppr(\'suppression'.'-'.$idNomfic.'\');"><img alt=\'Supprimer le TEI\' src=\'./img/supprimer.jpg\'></a></span>');
+				echo('<td><span id=\'suppression'.'-'.$idFic.'\'><a style="cursor:pointer;" onclick="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'suppression\', valeur : \''.$idFic.'\',}); majokSuppr(\'suppression'.'-'.$idFic.'\');"><img alt=\'Supprimer le TEI\' src=\'./img/supprimer.jpg\'></a></span>');
 				
 				//Type de document
 				$typDoc = "";
@@ -951,7 +951,7 @@ if (isset($_POST["soumis"])) {
 				
 				if ($dbl == 0) {//Notice non trouvée > pas de doublon > inutilde d'afficher les métadonnées
 					//Métadonnées
-					echo('<td style=\'text-align: left;\'><span id=\'metadonnees-'.$idNomfic.'\'>');
+					echo('<td style=\'text-align: left;\'><span id=\'metadonnees-'.$idFic.'\'>');
 					
 					//Métadonnées > Titre
 					$elts = $xml->getElementsByTagName("language");
@@ -1123,14 +1123,14 @@ if (isset($_POST["soumis"])) {
 				
 				if ($dbl == 0) {//Notice non trouvée > pas de doublon > inutile d'afficher les affiliations, la validation du TEI et la possibilité d'import dans HAL
 					//Auteurs / affiliations
-					echo('<td style=\'text-align: left;\'><span id=\'affiliations-'.$idNomfic.'\'>');
+					echo('<td style=\'text-align: left;\'><span id=\'affiliations-'.$idFic.'\'>');
 					//$i = compteur auteur / $j = compteur affiliation
 					for($i = 0; $i < count($halAut); $i++) {
 						echo('<b>'.$halAutinit[$i]['firstName'].' '.$halAutinit[$i]['lastName'].'</b>');
 						if ($halAutinit[$i]['mailDom'] != "") {echo(' (@'.$halAutinit[$i]['mailDom'].')');}
 						echo('<br>');
 						if ($halAutinit[$i]['xmlIds'] != "") {
-							echo('<span id="Txt'.$halAutinit[$i]['xmlIds'].'-'.$idNomfic.'">Supprimer l\'idHAL '.$halAutinit[$i]['xmlIds'].'</span> <span id="Vu'.$halAutinit[$i]['xmlIds'].'"><a style="cursor:pointer;" onclick="$.post(\'Zip2HAL_liste_actions.php\', { nomfic : \''.$nomfic.'\', action: \'supprimerIdHAL\', pos: '.$i.', valeur: \''.$halAutinit[$i]['xmlIds'].'\'}); majokIdHAL(\''.$halAutinit[$i]['xmlIds'].'-'.$idNomfic.'\');";><img width=\'12px\' alt=\'Supprimer l\'idHAL\' src=\'./img/supprimer.jpg\'></a></span><br>');
+							echo('<span id="Txt'.$halAutinit[$i]['xmlIds'].'-'.$idFic.'">Supprimer l\'idHAL '.$halAutinit[$i]['xmlIds'].'</span> <span id="Vu'.$halAutinit[$i]['xmlIds'].'"><a style="cursor:pointer;" onclick="$.post(\'Zip2HAL_liste_actions.php\', { nomfic : \''.$nomfic.'\', action: \'supprimerIdHAL\', pos: '.$i.', valeur: \''.$halAutinit[$i]['xmlIds'].'\'}); majokIdHAL(\''.$halAutinit[$i]['xmlIds'].'-'.$idFic.'\');";><img width=\'12px\' alt=\'Supprimer l\'idHAL\' src=\'./img/supprimer.jpg\'></a></span><br>');
 						}
 						if ($halAutinit[$i]['idHals'] != "") {
 							echo('Remonter le bon auteur du référentiel auteurs <a class=info><img src=\'./img/pdi.jpg\'><span>L\'idHAL n\'est pas ajouté automatiquement car c\'est juste une suggestion que vous devrez valider en l\'ajoutant dans le champ ci-dessous prévu à cet effet.</span></a> :<br><input type="text" id="ajoutidHAL'.$i.'" value="'.$halAutinit[$i]['idHals'].'" name="ajoutidHAL'.$i.'" class="form-control" style="height: 18px; width:200px; align:center;">');
@@ -1151,8 +1151,8 @@ if (isset($_POST["soumis"])) {
 								if ($halAff[$j]['valid'] == "VALID") {$txtcolor = '#339966';}
 								if ($halAff[$j]['valid'] == "OLD") {$txtcolor = '#ff6600';}
 								$ajtAff .= $halAff[$j]['names']."~";
-								echo('<span id="aut'.$i.'-halAff'.$j.'-'.$idNomfic.'"><font style=\'color: '.$txtcolor.';\'>'.$halAff[$j]['names'].'</font></span>');
-								echo('&nbsp;<span id="Vu-aut'.$i.'-halAff'.$j.'"><a style="cursor:pointer;" onclick="$.post(\'Zip2HAL_liste_actions.php\', { nomfic : \''.$nomfic.'\', action: \'supprimerAffil\', pos: '.$i.', valeur: \''.$halAff[$j]['docid'].'\'}); majokAffil(\'aut'.$i.'-halAff'.$j.'-'.$idNomfic.'\', \''.str_replace("'", "\'", $halAff[$j]['names']).'\');";><img width=\'12px\' alt=\'Supprimer l\'affiliation\' src=\'./img/supprimer.jpg\'></a></span><br>');
+								echo('<span id="aut'.$i.'-halAff'.$j.'-'.$idFic.'"><font style=\'color: '.$txtcolor.';\'>'.$halAff[$j]['names'].'</font></span>');
+								echo('&nbsp;<span id="Vu-aut'.$i.'-halAff'.$j.'"><a style="cursor:pointer;" onclick="$.post(\'Zip2HAL_liste_actions.php\', { nomfic : \''.$nomfic.'\', action: \'supprimerAffil\', pos: '.$i.', valeur: \''.$halAff[$j]['docid'].'\'}); majokAffil(\'aut'.$i.'-halAff'.$j.'-'.$idFic.'\', \''.str_replace("'", "\'", $halAff[$j]['names']).'\');";><img width=\'12px\' alt=\'Supprimer l\'affiliation\' src=\'./img/supprimer.jpg\'></a></span><br>');
 								
 								
 							}
@@ -1169,7 +1169,7 @@ if (isset($_POST["soumis"])) {
 					echo('</span></td>');
 					
 					//Validation du TEI
-					echo('<td><span id=\'validerTEI-'.$idNomfic.'\'>');
+					echo('<td><span id=\'validerTEI-'.$idFic.'\'>');
 					echo('<div id=\'cpt4\'>Validation en cours ...</div>');
 					ob_flush();
 					flush();
@@ -1202,7 +1202,7 @@ if (isset($_POST["soumis"])) {
 						$lienMAJ = "./Zip2HALModif.php?action=MAJ&Id=".$idNomfic;
 						//$lienMAJ = "https://ecobio.univ-rennes1.fr";//Pour test
 						include "./Zip2HAL_actions.php";
-						echo('<td><span id=\'importerHAL'.$idNomfic.'\'><center><span id=\''.$idNomfic.'-'.$idNomfic.'\'><a target=\'_blank\' href=\''.$lienMAJ.'\' onclick="$.post(\'Zip2HAL_liste_actions.php\', { idNomfic : \''.$idNomfic.'\', action: \'statistiques\', valeur: \''.$idNomfic.'\'}); majokVu(\''.$idNomfic.'-'.$idNomfic.'\');"><img alt=\'MAJ\' src=\'./img/MAJ.png\'></a></span></center></td>');
+						echo('<td><span id=\'importerHAL-'.$idFic.'\'><center><span id=\''.$idNomfic.'-'.$idFic.'\'><a target=\'_blank\' href=\''.$lienMAJ.'\' onclick="$.post(\'Zip2HAL_liste_actions.php\', { idNomfic : \''.$idNomfic.'\', action: \'statistiques\', valeur: \''.$idNomfic.'\'}); majokVu(\''.$idNomfic.'-'.$idFic.'\');"><img alt=\'MAJ\' src=\'./img/MAJ.png\'></a></span></center></td>');
 					}else{
 						echo('<td><center><img alt=\'MAJ\' src=\'./img/MAJImpossible.png\'></center></span></td>');
 					}
@@ -1220,7 +1220,7 @@ if (isset($_POST["soumis"])) {
 				
 			}
 		}
-		$idNomfic++;
+		$idFic++;
 	}
 }
 ?>
