@@ -584,17 +584,20 @@ if (isset($_POST["soumis"])) {
 						*/
 						//Test pour éliminer le nom du pays (ex: Centre Eugène Marquis, France)
 						$code = str_replace(", France", "", $code);//TODO > à appliquer à d'autres pays ???
+						$code = str_replace(array("[", "]", "&"), "", $code);
 						
 						if ($test == "oui") {
 							
 							//1ère méthode > avec le référentiel HAL des structures
 							
-							//$reqAff ="https://api.archives-ouvertes.fr/ref/structure/?q=name_t:(".$code.")%20OR%20code_t:".$code."%20OR%20acronym_t:".$code."%20AND%20type_s:laboratory%20AND%20valid_s:(VALID%20OR%20OLD)&fl=docid,valid_s,name_s,type_s&sort=docid%20asc&sort=valid_s%20desc";
+							/*
 							if ($type == "institution") {
 								$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=name_t:(".$code.")%20AND%20type_s:".$type."%20AND%20-valid_s:%22INCOMING%22&fl=*&rows=1000&fl=docid,valid_s,name_s,type_s&sort=docid%20asc&sort=valid_s%20desc";
 							}else{
 								$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=%22".$code."%22%20AND%20-valid_s:%22INCOMING%22&fl=*&rows=1000&fl=docid,valid_s,name_s,type_s&sort=docid%20asc&sort=valid_s%20desc";
 							}
+							*/
+							$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:".$code."%20OR%20code_t:".$code."%20OR%20acronym_t:".$code.")%20AND%20type_s:".$type."%20AND%20valid_s:(VALID%20OR%20OLD)&fl=docid,valid_s,name_s,type_s&sort=docid%20asc&sort=valid_s%20desc";
 							
 							$reqAff = str_replace(" ", "%20", $reqAff);
 							//echo $reqAff.'<br>';
@@ -602,20 +605,20 @@ if (isset($_POST["soumis"])) {
 							$resAff = json_decode($contAff);
 							if (isset($resAff->response->numFound)) {$numFound=$resAff->response->numFound;}
 							if ($numFound != 0) {			
-								foreach($resAff->response->docs as $affil) {
-									$halAff[$iAff]['docid'] = $affil->docid;
+								//foreach($resAff->response->docs as $affil) { > Non, on ne prend que la première affiliation trouvée
+									$halAff[$iAff]['docid'] = $resAff->response->docs[0]->docid;
 									$halAff[$iAff]['lsAff'] = $nomAff[$i]['lsAff'];
-									$halAff[$iAff]['valid'] = $affil->valid_s;
-									$halAff[$iAff]['names'] = $affil->name_s;
+									$halAff[$iAff]['valid'] = $resAff->response->docs[0]->valid_s;
+									$halAff[$iAff]['names'] = $resAff->response->docs[0]->name_s;
 									$halAff[$iAff]['fname'] = "";
 									$halAff[$iAff]['lname'] = "";
 									$iAff++;
 									$trouve++;
-								}
+								//}
 							}
 							
-							//2ème méthode, si la 1ère méthode n'a pas abouti ou s'il y a trop d'affiliations > avec le référentiel HAL des notices
-							if ($trouve != 1) {
+							//2ème méthode, si la 1ère méthode n'a pas abouti > avec le référentiel HAL des notices
+							if ($trouve == 0) {
 								//On récupère tout d'abord l'année de la publication
 								$annee = "";
 								$anns = $xml->getElementsByTagName("date");
