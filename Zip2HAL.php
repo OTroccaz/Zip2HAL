@@ -63,7 +63,7 @@ function suppression($dir, $age) {
 	while($elem = readdir($handle)) {//ce while vide tous les répertoires et sous répertoires
 		$ageElem = time() - filemtime($dir.'/'.$elem);
 		if ($ageElem > $age) {
-			if(is_dir($dir.'/'.$elem) && substr($elem, -2, 2) !== '..' && substr($elem, -1, 1) !== '.') {//si c'est un repertoire
+			if(is_dir($dir.'/'.$elem) && substr($elem, -2, 2) !== '..' && substr($elem, -1, 1) !== '.') {//si c'est un répertoire
 				suppression($dir.'/'.$elem, $age);
 			}else{
 				if(substr($elem, -2, 2) !== '..' && substr($elem, -1, 1) !== '.')	{
@@ -84,7 +84,7 @@ function suppression($dir, $age) {
 		}
 	}
 }
-suppression("./XML", 3600);//Suppression des fichiers du dossier XML créés il y a plus d'une heure
+suppression("./XML", 3600);//Suppression des fichiers et dossiers du dossier XML créés il y a plus d'une heure
 
 include("./normalize.php");
 include("./URLport_coll.php");
@@ -588,11 +588,14 @@ if (isset($_POST["soumis"])) {
 						if ($test == "oui") {
 							
 							//1ère méthode > avec le référentiel HAL des structures
+							
+							//$reqAff ="https://api.archives-ouvertes.fr/ref/structure/?q=name_t:(".$code.")%20OR%20code_t:".$code."%20OR%20acronym_t:".$code."%20AND%20type_s:laboratory%20AND%20valid_s:(VALID%20OR%20OLD)&fl=docid,valid_s,name_s,type_s&sort=docid%20asc&sort=valid_s%20desc";
 							if ($type == "institution") {
 								$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=name_t:(".$code.")%20AND%20type_s:".$type."%20AND%20-valid_s:%22INCOMING%22&fl=*&rows=1000&fl=docid,valid_s,name_s,type_s&sort=docid%20asc&sort=valid_s%20desc";
 							}else{
 								$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=%22".$code."%22%20AND%20-valid_s:%22INCOMING%22&fl=*&rows=1000&fl=docid,valid_s,name_s,type_s&sort=docid%20asc&sort=valid_s%20desc";
 							}
+							
 							$reqAff = str_replace(" ", "%20", $reqAff);
 							//echo $reqAff.'<br>';
 							$contAff = file_get_contents($reqAff);
@@ -807,6 +810,54 @@ if (isset($_POST["soumis"])) {
 					echo('</script>');
 					//Fin étape 3b
 					
+					//Etape 3c - Recherche id auteur grâce à l'affiliation évetuellement trouvée
+					echo('<br><br>');
+					$cpt = 1;
+					$cptId = 0;
+					$year = date('Y', time());
+					
+					echo('<b>Etape 3c : recherche des id auteur grâce aux affiliation(s) éventuellement trouvée(s)</b><br>');
+					echo('<div id=\'cpt3c\'></div>');
+					
+					for($i = 0; $i < count($halAut); $i++) {
+						progression($cpt, count($halAut), 'cpt3c', $iPro, 'auteur');
+						if ($halAut[$i]['docid'] == "") {//Pas d'id auteur
+							for($j = 0; $j < count($halAff); $j++) {
+								//if ($halAff[$j]['fname'] == $halAut[$i]['firstName'] && $halAff[$j]['lname'] == $halAut[$i]['lastName']) {
+								if (strpos($halAut[$i]['affilName'], $halAff[$j]['lsAff']) !== false) {
+									$affil = $halAff[$j]['names'];
+									$afill = str_replace("&", "%24", $affil);
+									$reqId = "https://api.archives-ouvertes.fr/search/index/?q=authLastName_sci:%22".$halAut[$i]['lastName']."%22%20AND%20authFirstName_sci:%22".$halAut[$i]['firstName']."%22&fq=(structAcronym_sci:%22".$affil."%22%20OR%20structName_sci:%22".$affil."%22%20OR%20structCode_sci:%22".$affil."%22)&fl=authIdLastNameFirstName_fs&sort=abs(sub(producedDateY_i,".$year."))%20asc";
+									$reqId = str_replace(" ", "%20", $reqId);
+									//echo $reqId.'<br>';
+									$contId = file_get_contents($reqId);
+									$resId = json_decode($contId);
+									if (isset($resId->response->numFound)) {$numFound = $resId->response->numFound;}
+									if ($numFound != 0) {
+										$tests = $resId->response->docs[0]->authIdLastNameFirstName_fs;
+										foreach($tests as $test) {
+											if (strpos($test, $halAut[$i]['firstName']) !== false && strpos($test, $halAut[$i]['lastName']) !== false) {
+												$testTab = explode('_FacetSep_', $test);
+												$halAut[$i]['docid'] = $testTab[0];
+												$cptId++;
+												break 2;
+											}
+										}
+									}
+								}
+							}
+						}
+						$cpt++;
+					}
+					
+					echo($cptId.' id auteur trouvé(s)');
+					
+					echo('<script>');
+					echo('document.getElementById(\'cpt3c\').style.display = \'none\';');
+					echo('</script>');
+					//Fin étape 3c
+					
+					//var_dump($halAut);
 					//var_dump($halAff);
 
 					/*
@@ -855,6 +906,7 @@ if (isset($_POST["soumis"])) {
 									}
 								}
 							}
+							
 							//Ajouts divers
 							for($i = 0; $i < count($halAut); $i++) {
 								if ($halAut[$i]['firstName'] == $fname && $halAut[$i]['lastName'] == $lname) {
@@ -1141,9 +1193,14 @@ if (isset($_POST["soumis"])) {
 						if ($halAutinit[$i]['xmlIds'] != "") {
 							echo('<span id="Txt'.$halAutinit[$i]['xmlIds'].'-'.$idFic.'">Supprimer l\'idHAL '.$halAutinit[$i]['xmlIds'].'</span> <span id="Vu'.$halAutinit[$i]['xmlIds'].'"><a style="cursor:pointer;" onclick="$.post(\'Zip2HAL_liste_actions.php\', { nomfic : \''.$nomfic.'\', action: \'supprimerIdHAL\', pos: '.$i.', valeur: \''.$halAutinit[$i]['xmlIds'].'\'}); majokIdHAL(\''.$halAutinit[$i]['xmlIds'].'-'.$idFic.'\');";><img width=\'12px\' alt=\'Supprimer l\'idHAL\' src=\'./img/supprimer.jpg\'></a></span><br>');
 						}
+						//Si pas d'idHAL et si id auteur existe, afficher l'id
+						if ($halAut[$i]['idHals'] == "" && $halAut[$i]['docid'] != "") {
+							echo('id '.$halAut[$i]['docid'].'<br>');
+						}
 						if ($halAutinit[$i]['idHals'] != "") {
 							echo('Remonter le bon auteur du référentiel auteurs <a class=info><img src=\'./img/pdi.jpg\'><span>L\'idHAL n\'est pas ajouté automatiquement car c\'est juste une suggestion que vous devrez valider en l\'ajoutant dans le champ ci-dessous prévu à cet effet.</span></a> :<br><input type="text" id="ajoutidHAL'.$i.'" value="'.$halAutinit[$i]['idHals'].'" name="ajoutidHAL'.$i.'" class="form-control" style="height: 18px; width:200px; align:center;">');
 						}
+						
 						echo('Ajouter un idHAL : <input type="text" id="ajoutIdh'.$i.'" name="ajoutIdh'.$i.'" class="autoID form-control" style="height: 18px; width:300px; align:center;" onchange="$.post(\'Zip2HAL_liste_actions.php\', { nomfic : \''.$nomfic.'\', action: \'ajouterIdHAL\', pos: '.$i.', valeur: $(this).val()});";>');
 						echo('<i><font style=\'color: #999999;\'>Affiliation(s) remontée(s) par OverHAL:<br>');
 						for($j = 0; $j < count($nomAff); $j++) {
@@ -1179,7 +1236,7 @@ if (isset($_POST["soumis"])) {
 					
 					//Validation du TEI
 					echo('<td><span id=\'validerTEI-'.$idFic.'\'>');
-					echo('<div id=\'cpt4\'>Validation en cours ...</div>');
+					echo('<div id=\'cpt4-'.$idFic.'\'>Validation en cours ...</div>');
 					ob_flush();
 					flush();
 					ob_flush();
@@ -1197,7 +1254,7 @@ if (isset($_POST["soumis"])) {
 						libxml_display_errors();
 					}else{
 						echo('<script>');
-						echo('document.getElementById(\'cpt4\').style.display = \'none\';');
+						echo('document.getElementById(\'cpt4-'.$idFic.'\').style.display = \'none\';');
 						echo('</script>');
 						echo('<a target=\'_blank\' href=\'https://www.freeformatter.com/xml-validator-xsd.html#\'><img alt=\'TEI validé AOFR\' src=\'./img/done.png\'></a><br>');
 						echo('<a target=\'_blank\' href=\''.$nomfic.'\'>Lien TEI</a><br>');			
