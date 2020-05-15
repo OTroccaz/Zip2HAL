@@ -534,7 +534,7 @@ if (isset($_POST["soumis"])) {
 					$iAff = 0;
 					$nomAff = array();//Code initial des affiliations (à parir du XML)
 					$halAff = array();
-					$aTester = array('UMR', 'UMS', 'UPR', 'ERL', 'IFR', 'UR', 'USR', 'USC', 'CIC', 'CIC-P', 'CIC-IT', 'FRE', 'EA', 'INSERM', 'U');
+					//$aTester = array('UMR', 'UMS', 'UPR', 'ERL', 'IFR', 'UR', 'USR', 'USC', 'CIC', 'CIC-P', 'CIC-IT', 'FRE', 'EA', 'INSERM', 'U', 'CHU');
 
 					
 					echo('<b>Etape 3a : recherche des id structures des affiliations</b><br>');
@@ -545,7 +545,11 @@ if (isset($_POST["soumis"])) {
 					//Affiliations
 					$affs = $xml->getElementsByTagName("org");
 					foreach($affs as $aff) {
-						if ($aff && $aff->hasAttribute("xml:id")) {$nomAff[$iAff]['lsAff'] = '#'.$aff->getAttribute("xml:id").'~'; $cptAff++;}
+						if ($aff) {
+							if ($aff->hasAttribute("xml:id")) {$nomAff[$iAff]['lsAff'] = '#'.$aff->getAttribute("xml:id").'~';}
+							if ($aff->hasAttribute("type")) {$nomAff[$iAff]['type'] = $aff->getAttribute("type");}
+							$cptAff++;
+						}
 						foreach($aff->childNodes as $elt) {
 							if ($elt->nodeName == "orgName") {
 								$nomAff[$iAff]['org'] = $elt->nodeValue;
@@ -561,9 +565,10 @@ if (isset($_POST["soumis"])) {
 					for($i = 0; $i < count($nomAff); $i++) {
 						progression($cpt, $nbAff, 'cpt3a', $iPro, 'affiliation');
 						$code = $nomAff[$i]['org'];
-						$test = "non";//Test pour savoir si le code commence par un des éléments du tableau aTester
+						$type = $nomAff[$i]['type'];
+						$test = "oui";//Test pour savoir si le code commence par un des éléments du tableau aTester
 						$trouve = 0;//Test pour savoir si la 1ère méthode a permis de trouver un id de structure
-						
+						/*
 						foreach($aTester as $elt) {
 							if (stripos($code, $elt) !== false) {
 								if ($elt == "U" && strlen($code) != 5) {break;}
@@ -576,14 +581,18 @@ if (isset($_POST["soumis"])) {
 								break;
 							}			
 						}
-						
+						*/
 						//Test pour éliminer le nom du pays (ex: Centre Eugène Marquis, France)
-						$code = str_replace(", France", "", $code);
+						$code = str_replace(", France", "", $code);//TODO > à appliquer à d'autres pays ???
 						
 						if ($test == "oui") {
 							
 							//1ère méthode > avec le référentiel HAL des structures
-							$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=%22".$code."%22%20AND%20-valid_s:%22INCOMING%22&fl=*&rows=1000&fl=docid,valid_s,name_s";
+							if ($type == "institution") {
+								$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=name_t:(".$code.")%20AND%20type_s:".$type."%20AND%20-valid_s:%22INCOMING%22&fl=*&rows=1000&fl=docid,valid_s,name_s,type_s&sort=docid%20asc&sort=valid_s%20desc";
+							}else{
+								$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=%22".$code."%22%20AND%20-valid_s:%22INCOMING%22&fl=*&rows=1000&fl=docid,valid_s,name_s,type_s&sort=docid%20asc&sort=valid_s%20desc";
+							}
 							$reqAff = str_replace(" ", "%20", $reqAff);
 							//echo $reqAff.'<br>';
 							$contAff = file_get_contents($reqAff);
