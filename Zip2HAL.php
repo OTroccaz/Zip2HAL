@@ -410,7 +410,7 @@ if (isset($_POST["soumis"])) {
 					$xmlIdi = array();//IdHALi trouvés
 					$halAut = array();
 					
-					echo('<b>Etape 2 : recherche des idHAL des auteurs</b><br>');
+					echo('<b>Etape 2 : recherche des idHAL et docid des auteurs</b><br>');
 					echo('<div id=\'cpt2\'></div>');
 					
 					$auts = $xml->getElementsByTagName("author");
@@ -471,7 +471,7 @@ if (isset($_POST["soumis"])) {
 						$halAut[$iAut]['docid'] = "";
 						$firstNameT = strtolower(wd_remove_accents($firstName));
 						$lastNameT = strtolower(wd_remove_accents($lastName));
-						$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=firstName_t:%22".$firstNameT."%22%20AND%20lastName_t:%22".$lastNameT."%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s";
+						$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=firstName_t:%22".$firstNameT."%22%20AND%20lastName_t:%22".$lastNameT."%22%20AND%20valid_s:%22VALID%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s";
 						$reqAut = str_replace(" ", "%20", $reqAut);
 						//echo $reqAut.'<br>';
 						$contAut = file_get_contents($reqAut);
@@ -492,7 +492,7 @@ if (isset($_POST["soumis"])) {
 									if (isset($author->idHal_i)) {$halAut[$iAut]['idHali'] = $author->idHal_i;}else{$halAut[$iAut]['idHali'] = "";}
 									if (isset($author->idHal_s)) {$halAut[$iAut]['idHals'] = $author->idHal_s;}else{$halAut[$iAut]['idHals'] = "";}
 									if (isset($author->emailDomain_s)) {$halAut[$iAut]['mailDom'] = $author->emailDomain_s;}else{$halAut[$iAut]['mailDom'] = "";}
-									$halAut[$iAut]['docid'] = "";
+									if (isset($author->docid)) {$halAut[$iAut]['docid'] = $author->docid;}
 									$iHi = "oui";
 									$cptiHi++;
 									break;
@@ -813,13 +813,13 @@ if (isset($_POST["soumis"])) {
 					echo('</script>');
 					//Fin étape 3b
 					
-					//Etape 3c - Recherche id auteur grâce à l'affiliation évetuellement trouvée
+					//Etape 3c - Recherche id auteur grâce à l'affiliation éventuellement trouvée
 					echo('<br><br>');
 					$cpt = 1;
 					$cptId = 0;
 					$year = date('Y', time());
 					
-					echo('<b>Etape 3c : recherche des id auteur grâce aux affiliation(s) éventuellement trouvée(s)</b><br>');
+					echo('<b>Etape 3c : recherche des docid auteur grâce aux affiliations éventuellement trouvées</b><br>');
 					echo('<div id=\'cpt3c\'></div>');
 					
 					for($i = 0; $i < count($halAut); $i++) {
@@ -853,7 +853,7 @@ if (isset($_POST["soumis"])) {
 						$cpt++;
 					}
 					
-					echo($cptId.' id auteur trouvé(s)');
+					echo($cptId.' docid auteur trouvé(s)');
 					
 					echo('<script>');
 					echo('document.getElementById(\'cpt3c\').style.display = \'none\';');
@@ -1201,10 +1201,16 @@ if (isset($_POST["soumis"])) {
 							echo('id '.$halAut[$i]['docid'].'<br>');
 						}
 						if ($halAutinit[$i]['idHals'] != "") {
-							echo('Remonter le bon auteur du référentiel auteurs <a class=info><img src=\'./img/pdi.jpg\'><span>L\'idHAL n\'est pas ajouté automatiquement car c\'est juste une suggestion que vous devrez valider en l\'ajoutant dans le champ ci-dessous prévu à cet effet.</span></a> :<br><input type="text" id="ajoutidHAL'.$i.'" value="'.$halAutinit[$i]['idHals'].'" name="ajoutidHAL'.$i.'" class="form-control" style="height: 18px; width:200px; align:center;">');
+							//echo('Remonter le bon auteur du référentiel auteurs <a class=info><img src=\'./img/pdi.jpg\'><span>L\'idHAL n\'est pas ajouté automatiquement car c\'est juste une suggestion que vous devrez valider en l\'ajoutant dans le champ ci-dessous prévu à cet effet.</span></a> :<br><input type="text" id="ajoutidHAL'.$i.'" value="'.$halAutinit[$i]['idHals'].'" name="ajoutidHAL'.$i.'" class="form-control" style="height: 18px; width:200px; align:center;">');
+								$idHAL = $halAutinit[$i]['idHals'];
+						}else{
+							$idHAL = "";
 						}
 						
-						echo('Ajouter un idHAL : <input type="text" id="ajoutIdh'.$i.'" name="ajoutIdh'.$i.'" class="autoID form-control" style="height: 18px; width:300px; align:center;" onchange="$.post(\'Zip2HAL_liste_actions.php\', { nomfic : \''.$nomfic.'\', action: \'ajouterIdHAL\', pos: '.$i.', valeur: $(this).val()});";>');
+						echo('Ajouter un idHAL : <input type="text" id="ajoutIdh'.$i.'" name="ajoutIdh'.$i.'" value="'.$idHAL.'" class="autoID form-control" style="height: 18px; width:300px; align:center;" onchange="$.post(\'Zip2HAL_liste_actions.php\', { nomfic : \''.$nomfic.'\', action: \'ajouterIdHAL\', pos: '.$i.', valeur: $(this).val()});";>');
+						echo('<a target="_blank" href="https://aurehal.archives-ouvertes.fr/author/browse?critere='.$halAutinit[$i]['firstName'].'+'.$halAutinit[$i]['lastName'].'">Consulter le référentiel auteur</a><br>');
+						
+						//Affiliations remontées par OverHAL
 						echo('<i><font style=\'color: #999999;\'>Affiliation(s) remontée(s) par OverHAL:<br>');
 						for($j = 0; $j < count($nomAff); $j++) {
 							if ($halAutinit[$i]['affilName'] != "" && stripos($halAutinit[$i]['affilName'], $nomAff[$j]['lsAff']) !== false) {
