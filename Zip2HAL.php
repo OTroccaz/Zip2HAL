@@ -584,7 +584,8 @@ if (isset($_POST["soumis"])) {
 						*/
 						//Test pour éliminer le nom du pays (ex: Centre Eugène Marquis, France)
 						$code = str_replace(", France", "", $code);//TODO > à appliquer à d'autres pays ???
-						$code = str_replace(array("[", "]", "&"), "", $code);
+						//$code = str_replace(array("[", "]", "&", "="), array("%5B", "%5D", "%26", "%3D"), $code);
+						$code = str_replace(array("[", "]", "&", "="), array("", "", "", "%3D"), $code);
 						
 						if ($test == "oui") {
 							
@@ -716,8 +717,15 @@ if (isset($_POST["soumis"])) {
 							$orgName = "";
 							//var_dump($resAut);
 							if (isset($resAut->response->result->org->orgName)) {//Un seul résultat
-								$orgName = $resAut->response->result->org->orgName[0];
-								$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=%22".$orgName."%22&fl=*&rows=1000&fl=idocid,valid_s,name_s";
+								if (is_array($resAut->response->result->org->orgName)) {
+									$orgName = $resAut->response->result->org->orgName[0];
+								}else{
+									$orgName = $resAut->response->result->org->orgName;
+								}
+								$orgName = str_replace(array("[", "]", "&", "="), array("%5B", "%5D", "%26", "%3D"), $orgName);
+								//Est-ce une affiliation 'longue' (avec beaucoup de virgules) ou 'courte' ?
+								//if (substr_count($orgName, ',') > 2) {$loncou = "longue";}else{$loncou = "courte";}								
+								$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=%22".$orgName."%22%20AND%20valid_s:(VALID%20OR%20OLD)&fl=docid,valid_s,name_s,type_s&sort=docid%20asc&sort=valid_s%20desc";
 								$reqAff = str_replace(" ", "%20", $reqAff);
 								//echo $reqAff.'<br>';
 								$contAff = file_get_contents($reqAff);
@@ -738,6 +746,8 @@ if (isset($_POST["soumis"])) {
 											$halAut[$i]['affilName'] .= "#localStruct-Aff".$cptAff."~";
 											$iAff++;
 											$docid = "oui";
+											//Pour les affiliations courtes, on ne prend que le premier résultat remonté
+											//if ($loncou == "courte") {break 2;}
 										}
 									}
 									
@@ -759,8 +769,15 @@ if (isset($_POST["soumis"])) {
 							}else{//Plusieurs résultats
 								$org = 0;
 								while(isset($resAut->response->result->org[$org]->orgName)) {
-									$orgName = $resAut->response->result->org[$org]->orgName[0];
-									$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=%22".$orgName."%22&fl=*&rows=1000&fl=idocid,valid_s,name_s";
+									if (is_array($resAut->response->result->org[$org]->orgName)) {
+										$orgName = $resAut->response->result->org[$org]->orgName[0];
+									}else{
+										$orgName = $resAut->response->result->org[$org]->orgName;
+									}
+									$orgName = str_replace(array("[", "]", "&", "="), array("%5B", "%5D", "%26", "%3D"), $orgName);
+									//Est-ce une affiliation 'longue' (avec beaucoup de virgules) ou 'courte' ?
+									//if (substr_count($orgName, ',') > 2) {$loncou = "longue";}else{$loncou = "courte";}				
+									$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=%22".$orgName."%22%20AND%20valid_s:(VALID%20OR%20OLD)&fl=docid,valid_s,name_s,type_s&sort=docid%20asc&sort=valid_s%20desc";
 									$reqAff = str_replace(" ", "%20", $reqAff);
 									//echo $reqAff.'<br>';
 									$contAff = file_get_contents($reqAff);
@@ -781,6 +798,8 @@ if (isset($_POST["soumis"])) {
 												$halAut[$i]['affilName'] .= "#localStruct-Aff".$cptAff."~";
 												$iAff++;
 												$docid = "oui";
+												//Pour les affiliations courtes, on ne prend que le premier résultat remonté
+												//if ($loncou == "courte") {break 2;}
 											}
 										}
 										
@@ -1202,7 +1221,7 @@ if (isset($_POST["soumis"])) {
 						}
 						if ($halAutinit[$i]['idHals'] != "") {
 							//echo('Remonter le bon auteur du référentiel auteurs <a class=info><img src=\'./img/pdi.jpg\'><span>L\'idHAL n\'est pas ajouté automatiquement car c\'est juste une suggestion que vous devrez valider en l\'ajoutant dans le champ ci-dessous prévu à cet effet.</span></a> :<br><input type="text" id="ajoutidHAL'.$i.'" value="'.$halAutinit[$i]['idHals'].'" name="ajoutidHAL'.$i.'" class="form-control" style="height: 18px; width:200px; align:center;">');
-								$idHAL = $halAutinit[$i]['idHals'];
+							$idHAL = $halAutinit[$i]['idHals'].' ('.$halAutinit[$i]['idHali'].')';
 						}else{
 							$idHAL = "";
 						}
