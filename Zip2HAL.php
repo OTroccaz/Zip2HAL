@@ -289,9 +289,10 @@ if (isset($_POST["soumis"])) {
 			$xml->load($nomfic);
 			$xml->save($nomfic);
 			
-			//Récupération du titre et du DOI de la notice TEI
+			//Récupération du titre, du DOI et du type de document de la notice TEI
 			$titTEI = "";
 			$doiTEI = "";
+			$typTEI = "";
 			$tits = $xml->getElementsByTagName("title");
 			foreach($tits as $tit) {
 				if ($tit->hasAttribute("xml:lang")) {$titTEI = $tit->nodeValue;}
@@ -299,6 +300,10 @@ if (isset($_POST["soumis"])) {
 			$idns = $xml->getElementsByTagName("idno");
 			foreach($idns as $idn) {
 				if ($idn->hasAttribute("type") && $idn->getAttribute("type") == 'doi') {$doiTEI = $idn->nodeValue;}
+			}
+			$typs = $xml->getElementsByTagName("classCode");
+			foreach($typs as $typ) {
+				if ($typ->hasAttribute("scheme")) {$typTEI = $typ->getAttribute("n");}
 			}
 			$enctitTEI = normalize(utf8_encode(mb_strtolower(utf8_decode($titTEI))));
 			//echo '<br>'.$doiTEI. ' > '.$titTEI;
@@ -329,6 +334,8 @@ if (isset($_POST["soumis"])) {
 				$cpt = 1;
 				$dbl = 0;
 				$halId = array();
+				$typDbl = "";
+				$txtDbl = "";
 				
 				echo('<b>Etape 1 : recherche des doublons potentiels</b><br>');
 				echo('<a target="_blank" href="'.$reqAPI.'">URL requête API HAL</a><br>');
@@ -384,21 +391,75 @@ if (isset($_POST["soumis"])) {
 					}
 							
 					if ($doublon != "non") {
+						//Doublon trouvé dans HAL > Est-il aussi présent dans la collection et de quel type
 						$dbl++;
-						//echo('Doublon trouvé sur la base du '.$doublon.' pour <a target="_blank" href="https://hal.archives-ouvertes.fr/'.$hId.'">'.$hId.'</a> et <a target="_blank" href="https://hal.archives-ouvertes.fr/'.$halId[$hId].'">'.$halId[$hId].'</a><br>');
-						$halId['doublon'][$hId] .= '&nbsp;<a target="_blank" href="https://hal.archives-ouvertes.fr/'.$halId[$hId].'"><img src=\'./img/doublon.jpg\'></a>&nbsp;';
+						$reqDbl = "https://api.archives-ouvertes.fr/search/".$portail."/?fq=collCode_s:%22".$team."%22%20AND%20title_t:%22".strtolower($tabTit[0])."*%22&rows=10000&fl=halId_s,doiId_s,title_s,subTitle_s,docType_s";
+						$contDbl = file_get_contents($reqDbl);
+						$resDbl = json_decode($contDbl);
+						$numDbl = 0;
+						if (isset($results->response->numFound)) {$numDbl=$results->response->numFound;}
+						//echo $resDbl.'<br>';
+						foreach($resDbl->response->docs as $entDbl) {
+							$doublonDbl = "non";
+							if(strpos($entDbl->title_s[0], "[") !== false && strpos($entDbl->title_s[0], "]") !== false) {
+								$posi = strpos($entDbl->title_s[0], "[")+1;
+								$posf = strpos($entDbl->title_s[0], "]");
+								$tradTitleDbl = substr($entDbl->title_s[0], $posi, $posf-$posi);
+								$encodedTitleDbl = normalize(utf8_encode(mb_strtolower($tradTitleDbl)));
+							}else{
+								//Y-a-t-il un sous-titre ?
+								$titlePlusDbl = $entDbl->title_s[0];
+								if (isset($entDbl->subTitle_s[0])) {
+									$titreInitDbl = $titlePlusDbl;
+									$titlePlusDbl .= " : ".$entDbl->subTitle_s[0];
+								}
+								$encodedTitleDbl = normalize(utf8_encode(mb_strtolower(utf8_decode($titlePlusDbl))));
+								
+								//On récupère le type de document
+								$docTEIDbl = $entDbl->docType_s;
+								
+								//On compare les titres normalisés
+								if ($enctitTEI == $encodedTitleDbl) {
+									$doublonDbl = "titre";
+								}
+								
+								//On compare également les DOI s'ils sont présents
+								if ($doiTEI != "" && isset($entDbl->doiId_s) && $doiTEI == $entDbl->doiId_s) {
+									$docTEIDbl = $entDbl->docType_s;
+									if ($doublonDbl == "non") {
+										$doublonDbl = "DOI";
+									}else{
+										$doublonDbl .= " et du DOI";
+									}
+								}
+								
+								//Doublon trouvé dans la collection > vérification du type
+								if ($doublonDbl != "non") {
+									$txtDbl = " et dans la collection";
+									if ($typTEI == $docTEIDbl) {//Mêmes types de document
+										$typDbl = "HALCOLL";
+										//echo('Doublon trouvé sur la base du '.$doublon.' pour <a target="_blank" href="https://hal.archives-ouvertes.fr/'.$hId.'">'.$hId.'</a> et <a target="_blank" href="https://hal.archives-ouvertes.fr/'.$halId[$hId].'">'.$halId[$hId].'</a><br>');
+										$halId['doublon'][$hId] .= '&nbsp;<a target="_blank" href="https://hal.archives-ouvertes.fr/'.$halId[$hId].'"><img src=\'./img/doublon.jpg\'></a>&nbsp;';
+									}
+								}else{
+									$txtDbl = " mais pas dans la collection";
+									$typDbl = "HAL";
+									//if ($typTEI == $docTEIDbl) {//Mêmes types de document
+								}
+							}
+						}
 					}
 					$cpt++;
 				}
 				if ($dbl == 0) {echo('aucune notice trouvée dans HAL, donc, pas de doublon');}//Notice non trouvée > pas de doublon
-				if ($dbl >= 1) {echo('la notice est déjà présente dans HAL');}//Présence de doublon(s)
+				if ($dbl >= 1) {echo('la notice est déjà présente dans HAL'.$txtDbl);}//Présence de doublon(s)
 
 				echo('<script>');
 				echo('document.getElementById(\'cpt1\').style.display = \'none\';');
 				echo('</script>');
 				//Fin étape 1
 				
-				if ($dbl == 0) {//Notice non trouvée > pas de doublon
+				if (isset($typDbl) && $typDbl != "HALCOLL") {//Pas un doublon de type HAL et COLL
 					//Etape 2 - Recherche des idHAL des auteurs				
 					echo('<br><br>');
 					$cpt = 1;
@@ -584,6 +645,7 @@ if (isset($_POST["soumis"])) {
 						*/
 						//Test pour éliminer le nom du pays (ex: Centre Eugène Marquis, France)
 						$code = str_replace(", France", "", $code);//TODO > à appliquer à d'autres pays ???
+						$code = str_replace(" ", "+", $code);
 						//$code = str_replace(array("[", "]", "&", "="), array("%5B", "%5D", "%26", "%3D"), $code);
 						$code = str_replace(array("[", "]", "&", "="), array("", "", "", "%3D"), $code);
 						
@@ -1015,7 +1077,7 @@ if (isset($_POST["soumis"])) {
 				echo('<td>'.$cpt.'</td>');
 				
 				//Doublon ?
-				if (isset($idTEI) && $idTEI != "") {
+				if (isset($typDbl) && $typDbl != "") {
 					echo('<td><a target=\'_blank\' href=\'https://hal.archives-ouvertes.fr/'.$idTEI.'\'><img alt=\'HAL\' src=\'./img/HAL.jpg\'></a></td>');
 				}else{
 					echo('<td>&nbsp;</td>');
@@ -1032,7 +1094,9 @@ if (isset($_POST["soumis"])) {
 				}
 				echo('<td>'.$typDoc.'</td>');
 				
-				if ($dbl == 0) {//Notice non trouvée > pas de doublon > inutilde d'afficher les métadonnées
+				if (isset($typDbl) && $typDbl == "HALCOLL") {//Doublon de type HAL et COLL > inutile d'afficher les métadonnées
+					echo('<td>&nbsp;</td>');
+				}else{
 					//Métadonnées
 					echo('<td style=\'text-align: left;\'><span id=\'metadonnees-'.$idFic.'\'>');
 					
@@ -1197,14 +1261,16 @@ if (isset($_POST["soumis"])) {
 					
 					echo('</span></td>');
 					//Fin des métadonnées
-				}else{
-					echo('<td>&nbsp;</td>');
 				}
 				
 				//DOI
 				if (isset($doiTEI)) {echo('<td><a target=\'_blank\' href=\'https://doi.org/'.$doiTEI.'\'><img alt=\'DOI\' src=\'./img/doi.jpg\'></a>');}else{echo('<td>&nbsp;</td>');}
 				
-				if ($dbl == 0) {//Notice non trouvée > pas de doublon > inutile d'afficher les affiliations, la validation du TEI et la possibilité d'import dans HAL
+				if (isset($typDbl) && $typDbl == "HALCOLL") {//Doublon de type HAL et COLL > inutile d'afficher les affiliations, la validation du TEI et la possibilité d'import dans HAL
+					echo('<td>&nbsp;</td>');
+					echo('<td>&nbsp;</td>');
+					echo('<td>&nbsp;</td>');
+				}else{
 					//Auteurs / affiliations
 					echo('<td style=\'text-align: left;\'><span id=\'affiliations-'.$idFic.'\'>');
 					//$i = compteur auteur / $j = compteur affiliation
@@ -1300,10 +1366,6 @@ if (isset($_POST["soumis"])) {
 					}else{
 						echo('<td><center><img alt=\'MAJ\' src=\'./img/MAJImpossible.png\'></center></span></td>');
 					}
-				}else{
-					echo('<td>&nbsp;</td>');
-					echo('<td>&nbsp;</td>');
-					echo('<td>&nbsp;</td>');
 				}
 				
 				echo('</tr>');
