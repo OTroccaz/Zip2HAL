@@ -18,7 +18,7 @@ if (isset($_GET['css']) && ($_GET['css'] != ""))
   <link rel="stylesheet" href="<?php echo $css;?>" type="text/css">
   <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <script type="text/javascript" language="Javascript" src="./CrosHAL.js"></script>
+  <script type="text/javascript" language="Javascript" src="./Zip2HAL.js"></script>
   <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
   <link rel="icon" type="type/ico" href="HAL_favicon.ico">
   <link rel="stylesheet" href="./Zip2HAL.css">
@@ -73,6 +73,20 @@ if (isset($_FILES['TEI_OverHAL']['name']) && $_FILES['TEI_OverHAL']['name'] != "
 		$zip->close();
 	}else{
 		Header("Location: "."TEI_OverHAL.php?erreur=8");
+	}
+	
+	//Déplacer les fichier sous HAL
+	if (is_dir("./XML/".$temps."/HAL/")) {
+		if ($dh = opendir("./XML/".$temps."/HAL/")) {
+			while (($file = readdir($dh)) !== false) {
+				if($file != '.' && $file != '..') {
+					copy("./XML/".$temps."/HAL/".$file, "./XML/".$temps."/".$file );
+					unlink("./XML/".$temps."/HAL/".$file);
+				}
+			}
+			closedir($dh);
+			rmdir("./XML/".$temps."/HAL/");
+		}
 	}
 	
 	//Vérification que l'archive ne contient bien que des fichiers xml
