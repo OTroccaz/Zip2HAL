@@ -664,12 +664,12 @@ if (isset($_POST["soumis"])) {
 							
 							/*
 							if ($type == "institution") {
-								$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=name_t:(".$code.")%20AND%20type_s:".$type."%20AND%20-valid_s:%22INCOMING%22&fl=*&rows=1000&fl=docid,valid_s,name_s,type_s&sort=docid%20asc&sort=valid_s%20desc";
+								$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=name_t:(".$code.")%20AND%20type_s:".$type."%20AND%20-valid_s:%22INCOMING%22&fl=*&rows=1000&fl=docid,valid_s,name_s,type_s&sort=valid_s%20desc&sort=docid%20asc";
 							}else{
-								$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=%22".$code."%22%20AND%20-valid_s:%22INCOMING%22&fl=*&rows=1000&fl=docid,valid_s,name_s,type_s&sort=docid%20asc&sort=valid_s%20desc";
+								$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=%22".$code."%22%20AND%20-valid_s:%22INCOMING%22&fl=*&rows=1000&fl=docid,valid_s,name_s,type_s&sort=valid_s%20desc&sort=docid%20asc";
 							}
 							*/
-							$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:".$code."%20OR%20code_t:".$code."%20OR%20acronym_t:".$code.")%20AND%20type_s:".$type."%20AND%20valid_s:(VALID%20OR%20OLD)&fl=docid,valid_s,name_s,type_s&sort=docid%20asc&sort=valid_s%20desc";
+							$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:".$code."%20OR%20code_t:".$code."%20OR%20acronym_t:".$code.")%20AND%20type_s:".$type."%20AND%20valid_s:(VALID%20OR%20OLD)&fl=docid,valid_s,name_s,type_s&sort=valid_s%20desc&sort=docid%20asc";
 							
 							$reqAff = str_replace(" ", "%20", $reqAff);
 							//echo $reqAff.'<br>';
@@ -796,7 +796,7 @@ if (isset($_POST["soumis"])) {
 								$orgName = str_replace(array("[", "]", "&", "="), array("%5B", "%5D", "%26", "%3D"), $orgName);
 								//Est-ce une affiliation 'longue' (avec beaucoup de virgules) ou 'courte' ?
 								//if (substr_count($orgName, ',') > 2) {$loncou = "longue";}else{$loncou = "courte";}								
-								$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=%22".$orgName."%22%20AND%20valid_s:(VALID%20OR%20OLD)&fl=docid,valid_s,name_s,type_s&sort=docid%20asc&sort=valid_s%20desc";
+								$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=%22".$orgName."%22%20AND%20valid_s:(VALID%20OR%20OLD)&fl=docid,valid_s,name_s,type_s&sort=valid_s%20desc&sort=docid%20asc";
 								$reqAff = str_replace(" ", "%20", $reqAff);
 								//echo $reqAff.'<br>';
 								$contAff = file_get_contents($reqAff);
@@ -848,7 +848,7 @@ if (isset($_POST["soumis"])) {
 									$orgName = str_replace(array("[", "]", "&", "="), array("%5B", "%5D", "%26", "%3D"), $orgName);
 									//Est-ce une affiliation 'longue' (avec beaucoup de virgules) ou 'courte' ?
 									//if (substr_count($orgName, ',') > 2) {$loncou = "longue";}else{$loncou = "courte";}				
-									$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=%22".$orgName."%22%20AND%20valid_s:(VALID%20OR%20OLD)&fl=docid,valid_s,name_s,type_s&sort=docid%20asc&sort=valid_s%20desc";
+									$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=%22".$orgName."%22%20AND%20valid_s:(VALID%20OR%20OLD)&fl=docid,valid_s,name_s,type_s&sort=valid_s%20desc&sort=docid%20asc";
 									$reqAff = str_replace(" ", "%20", $reqAff);
 									//echo $reqAff.'<br>';
 									$contAff = file_get_contents($reqAff);
