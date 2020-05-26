@@ -321,7 +321,7 @@ if (isset($_POST["soumis"])) {
 			$numFound = 0;
 			if (isset($results->response->numFound)) {$numFound=$results->response->numFound;}
 			
-			echo('<br><b><font style=\'color:#fe6d02; font-size:14px;\'>Traitement du fichier '.str_replace($dir."/", "", $nomfic).'</font></b><br><br>');
+			echo('<br><b><font style=\'color:#fe6d02; font-size:14px;\'>Traitement du fichier '.str_replace($dir."/", "", $nomfic).'</font></b><br>');
 			
 			echo('<b>Etape 1 : recherche des doublons potentiels</b><br>');
 			echo('<a target="_blank" href="'.$reqAPI.'">URL requête API HAL</a><br>');
@@ -545,6 +545,7 @@ if (isset($_POST["soumis"])) {
 					$lastNameT = strtolower(wd_remove_accents($lastName));
 					$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=firstName_t:%22".$firstNameT."%22%20AND%20lastName_t:%22".$lastNameT."%22%20AND%20valid_s:%22VALID%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s";
 					$reqAut = str_replace(" ", "%20", $reqAut);
+					echo('<a target="_blank" href="'.$reqAut.'">URL requête auteurs HAL</a><br>');
 					//echo $reqAut.'<br>';
 					$contAut = file_get_contents($reqAut);
 					$resAut = json_decode($contAut);
@@ -670,6 +671,7 @@ if (isset($_POST["soumis"])) {
 							$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:".$test."%20OR%20code_t:".$test."%20OR%20acronym_t:".$test.")%20AND%20type_s:".$type."%20AND%20valid_s:(VALID%20OR%20OLD)&fl=docid,valid_s,name_s,type_s&sort=valid_s desc,docid asc";
 							
 							$reqAff = str_replace(" ", "%20", $reqAff);
+							echo('<a target="_blank" href="'.$reqAff.'">URL requête affiliations (1ère méthode) HAL</a><br>');
 							//echo $reqAff.'<br>';
 							$contAff = file_get_contents($reqAff);
 							$resAff = json_decode($contAff);
@@ -704,6 +706,7 @@ if (isset($_POST["soumis"])) {
 										$facetSep = $lastName.' '.$firstName;
 										$reqAff = "https://api.archives-ouvertes.fr/search/index/?q=authLastName_sci:%22".$lastName."%22%20AND%20authFirstName_sci:%22".$firstName."%22&fq=-labStructValid_s:INCOMING%20OR%20(structAcronym_sci:%22".$code."%22%20OR%20structName_sci:%22u1085%22%20OR%20structCode_sci:%22".$code."%22)&fl=structPrimaryHasAlphaAuthIdHal_fs,authId_i,authLastName_s,authFirstName_s&sort=abs(sub(producedDateY_i,".$annee."))%20asc";
 										$reqAff = str_replace(" ", "%20", $reqAff);
+										echo('<a target="_blank" href="'.$reqAff.'">URL requête affiliations (2ème méthode) HAL</a><br>');
 										//echo $reqAff.'<br>';
 										$contAff = file_get_contents($reqAff);
 										$resAff = json_decode($contAff);
@@ -781,6 +784,7 @@ if (isset($_POST["soumis"])) {
 						
 						$reqAut = "https://api.archives-ouvertes.fr/search/authorstructure/?firstName_t=".$firstNameT."&lastName_t=".$lastNameT;
 						$reqAut = str_replace(" ", "%20", $reqAut);
+						echo('<a target="_blank" href="'.$reqAff.'">URL requête auteur structure HAL</a><br>');
 						//echo $reqAut.'<br>';
 						$contAut = file_get_contents($reqAut);
 						$resAut = json_decode($contAut);
@@ -921,6 +925,7 @@ if (isset($_POST["soumis"])) {
 								$afill = str_replace("&", "%24", $affil);
 								$reqId = "https://api.archives-ouvertes.fr/search/index/?q=authLastName_sci:%22".$halAut[$i]['lastName']."%22%20AND%20authFirstName_sci:%22".$halAut[$i]['firstName']."%22&fq=(structAcronym_sci:%22".$affil."%22%20OR%20structName_sci:%22".$affil."%22%20OR%20structCode_sci:%22".$affil."%22)&fl=authIdLastNameFirstName_fs&sort=abs(sub(producedDateY_i,".$year."))%20asc";
 								$reqId = str_replace(" ", "%20", $reqId);
+								echo('<a target="_blank" href="'.$reqId.'">URL requête docid HAL</a><br>');
 								//echo $reqId.'<br>';
 								$contId = file_get_contents($reqId);
 								$resId = json_decode($contId);
