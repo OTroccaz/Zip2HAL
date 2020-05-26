@@ -608,6 +608,7 @@ if (isset($_POST["soumis"])) {
 				$nomAff = array();//Code initial des affiliations (à parir du XML)
 				$halAff = array();
 				//$aTester = array('UMR', 'UMS', 'UPR', 'ERL', 'IFR', 'UR', 'USR', 'USC', 'CIC', 'CIC-P', 'CIC-IT', 'FRE', 'EA', 'INSERM', 'U', 'CHU');
+				$anepasTester = array('UMR', 'CNRS', 'INSERM', 'INRA');
 
 				
 				echo('<b>Etape 3a : recherche des id structures des affiliations</b><br>');
@@ -655,9 +656,6 @@ if (isset($_POST["soumis"])) {
 						}			
 					}
 					*/
-					//Test pour éliminer le nom du pays (ex: Centre Eugène Marquis, France)
-					$code = str_replace(", France", "", $code);//TODO > à appliquer à d'autres pays ???
-					$code = str_replace(" ", "+", $code);
 					//$code = str_replace(array("[", "]", "&", "="), array("%5B", "%5D", "%26", "%3D"), $code);
 					$code = str_replace(array("[", "]", "&", "="), array("", "", "", "%3D"), $code);
 					
@@ -665,29 +663,35 @@ if (isset($_POST["soumis"])) {
 						
 						//1ère méthode > avec le référentiel HAL des structures
 						
-						//Si présence de virgules > test sur chacun des éléments
+						//Si présence de virgules > test sur chacun des éléments sauf le dernier qui correspond au pays
+						//Mais, si pas de virgule, il faut naturellement conserver le dernier élément > $cptCode = 0 ou 1
+						if (strpos($code, ",") !== false) {$cptCode = 1;}else{$cptCode = 0;}
 						$tabCode = explode(",", $code);
-						foreach($tabCode as $test) {						
-							$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:".$test."%20OR%20code_t:".$test."%20OR%20acronym_t:".$test.")%20AND%20type_s:".$type."%20AND%20valid_s:(VALID%20OR%20OLD)&fl=docid,valid_s,name_s,type_s&sort=valid_s desc,docid asc";
-							
-							$reqAff = str_replace(" ", "%20", $reqAff);
-							echo('<a target="_blank" href="'.$reqAff.'">URL requête affiliations (1ère méthode) HAL</a><br>');
-							//echo $reqAff.'<br>';
-							$contAff = file_get_contents($reqAff);
-							$resAff = json_decode($contAff);
-							if (isset($resAff->response->numFound)) {$numFound=$resAff->response->numFound;}
-							if ($numFound != 0) {			
-								//foreach($resAff->response->docs as $affil) { > Non, on ne prend que la première affiliation trouvée
-									$halAff[$iAff]['docid'] = $resAff->response->docs[0]->docid;
-									$halAff[$iAff]['lsAff'] = $nomAff[$i]['lsAff'];
-									$halAff[$iAff]['valid'] = $resAff->response->docs[0]->valid_s;
-									$halAff[$iAff]['names'] = $resAff->response->docs[0]->name_s;
-									$halAff[$iAff]['fname'] = "";
-									$halAff[$iAff]['lname'] = "";
-									$iAff++;
-									$trouve++;
-								//}
+						foreach($tabCode as $test) {
+							$test = str_replace(" ", "+", trim($test));
+							if ($cptCode < count($tabCode) && !in_array($test, $anepasTester)) {
+								$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:".$test."%20OR%20code_t:".$test."%20OR%20acronym_t:".$test.")%20AND%20type_s:".$type."%20AND%20valid_s:(VALID%20OR%20OLD)&fl=docid,valid_s,name_s,type_s&sort=valid_s desc,docid asc";
+								
+								$reqAff = str_replace(" ", "%20", $reqAff);
+								echo('<a target="_blank" href="'.$reqAff.'">URL requête affiliations (1ère méthode) HAL</a><br>');
+								//echo $reqAff.'<br>';
+								$contAff = file_get_contents($reqAff);
+								$resAff = json_decode($contAff);
+								if (isset($resAff->response->numFound)) {$numFound=$resAff->response->numFound;}
+								if ($numFound != 0) {			
+									//foreach($resAff->response->docs as $affil) { > Non, on ne prend que la première affiliation trouvée
+										$halAff[$iAff]['docid'] = $resAff->response->docs[0]->docid;
+										$halAff[$iAff]['lsAff'] = $nomAff[$i]['lsAff'];
+										$halAff[$iAff]['valid'] = $resAff->response->docs[0]->valid_s;
+										$halAff[$iAff]['names'] = $resAff->response->docs[0]->name_s;
+										$halAff[$iAff]['fname'] = "";
+										$halAff[$iAff]['lname'] = "";
+										$iAff++;
+										$trouve++;
+									//}
+								}
 							}
+							$cptCode++;
 						}
 						
 						//2ème méthode, si la 1ère méthode n'a pas abouti > avec le référentiel HAL des notices
@@ -784,7 +788,7 @@ if (isset($_POST["soumis"])) {
 						
 						$reqAut = "https://api.archives-ouvertes.fr/search/authorstructure/?firstName_t=".$firstNameT."&lastName_t=".$lastNameT;
 						$reqAut = str_replace(" ", "%20", $reqAut);
-						echo('<a target="_blank" href="'.$reqAff.'">URL requête auteur structure HAL</a><br>');
+						echo('<a target="_blank" href="'.$reqAut.'">URL requête auteur structure HAL</a><br>');
 						//echo $reqAut.'<br>';
 						$contAut = file_get_contents($reqAut);
 						$resAut = json_decode($contAut);
@@ -801,6 +805,7 @@ if (isset($_POST["soumis"])) {
 							//if (substr_count($orgName, ',') > 2) {$loncou = "longue";}else{$loncou = "courte";}								
 							$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=%22".$orgName."%22%20AND%20valid_s:(VALID%20OR%20OLD)&fl=docid,valid_s,name_s,type_s&sort=valid_s desc,docid asc";
 							$reqAff = str_replace(" ", "%20", $reqAff);
+							echo('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a target="_blank" href="'.$reqAff.'">URL requête test validité affiliation trouvée</a><br>');
 							//echo $reqAff.'<br>';
 							$contAff = file_get_contents($reqAff);
 							$resAff = json_decode($contAff);
@@ -853,6 +858,7 @@ if (isset($_POST["soumis"])) {
 								//if (substr_count($orgName, ',') > 2) {$loncou = "longue";}else{$loncou = "courte";}				
 								$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=%22".$orgName."%22%20AND%20valid_s:(VALID%20OR%20OLD)&fl=docid,valid_s,name_s,type_s&sort=valid_s desc,docid asc";
 								$reqAff = str_replace(" ", "%20", $reqAff);
+								echo('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a target="_blank" href="'.$reqAff.'">URL requête test validité affiliation trouvée</a><br>');
 								//echo $reqAff.'<br>';
 								$contAff = file_get_contents($reqAff);
 								$resAff = json_decode($contAff);
