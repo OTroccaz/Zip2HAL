@@ -662,31 +662,28 @@ if (isset($_POST["soumis"])) {
 							
 							//1ère méthode > avec le référentiel HAL des structures
 							
-							/*
-							if ($type == "institution") {
-								$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=name_t:(".$code.")%20AND%20type_s:".$type."%20AND%20-valid_s:%22INCOMING%22&fl=*&rows=1000&fl=docid,valid_s,name_s,type_s&sort=valid_s%20desc&sort=docid%20asc";
-							}else{
-								$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=%22".$code."%22%20AND%20-valid_s:%22INCOMING%22&fl=*&rows=1000&fl=docid,valid_s,name_s,type_s&sort=valid_s%20desc&sort=docid%20asc";
-							}
-							*/
-							$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:".$code."%20OR%20code_t:".$code."%20OR%20acronym_t:".$code.")%20AND%20type_s:".$type."%20AND%20valid_s:(VALID%20OR%20OLD)&fl=docid,valid_s,name_s,type_s&sort=valid_s%20desc&sort=docid%20asc";
-							
-							$reqAff = str_replace(" ", "%20", $reqAff);
-							//echo $reqAff.'<br>';
-							$contAff = file_get_contents($reqAff);
-							$resAff = json_decode($contAff);
-							if (isset($resAff->response->numFound)) {$numFound=$resAff->response->numFound;}
-							if ($numFound != 0) {			
-								//foreach($resAff->response->docs as $affil) { > Non, on ne prend que la première affiliation trouvée
-									$halAff[$iAff]['docid'] = $resAff->response->docs[0]->docid;
-									$halAff[$iAff]['lsAff'] = $nomAff[$i]['lsAff'];
-									$halAff[$iAff]['valid'] = $resAff->response->docs[0]->valid_s;
-									$halAff[$iAff]['names'] = $resAff->response->docs[0]->name_s;
-									$halAff[$iAff]['fname'] = "";
-									$halAff[$iAff]['lname'] = "";
-									$iAff++;
-									$trouve++;
-								//}
+							//Si présence de virgules > test sur chacun des éléments
+							$tabCode = explode(",", $code);
+							foreach($tabCode as $test) {						
+								$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:".$test."%20OR%20code_t:".$test."%20OR%20acronym_t:".$test.")%20AND%20type_s:".$type."%20AND%20valid_s:(VALID%20OR%20OLD)&fl=docid,valid_s,name_s,type_s&sort=valid_s desc,docid asc";
+								
+								$reqAff = str_replace(" ", "%20", $reqAff);
+								//echo $reqAff.'<br>';
+								$contAff = file_get_contents($reqAff);
+								$resAff = json_decode($contAff);
+								if (isset($resAff->response->numFound)) {$numFound=$resAff->response->numFound;}
+								if ($numFound != 0) {			
+									//foreach($resAff->response->docs as $affil) { > Non, on ne prend que la première affiliation trouvée
+										$halAff[$iAff]['docid'] = $resAff->response->docs[0]->docid;
+										$halAff[$iAff]['lsAff'] = $nomAff[$i]['lsAff'];
+										$halAff[$iAff]['valid'] = $resAff->response->docs[0]->valid_s;
+										$halAff[$iAff]['names'] = $resAff->response->docs[0]->name_s;
+										$halAff[$iAff]['fname'] = "";
+										$halAff[$iAff]['lname'] = "";
+										$iAff++;
+										$trouve++;
+									//}
+								}
 							}
 							
 							//2ème méthode, si la 1ère méthode n'a pas abouti > avec le référentiel HAL des notices
@@ -796,7 +793,7 @@ if (isset($_POST["soumis"])) {
 								$orgName = str_replace(array("[", "]", "&", "="), array("%5B", "%5D", "%26", "%3D"), $orgName);
 								//Est-ce une affiliation 'longue' (avec beaucoup de virgules) ou 'courte' ?
 								//if (substr_count($orgName, ',') > 2) {$loncou = "longue";}else{$loncou = "courte";}								
-								$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=%22".$orgName."%22%20AND%20valid_s:(VALID%20OR%20OLD)&fl=docid,valid_s,name_s,type_s&sort=valid_s%20desc&sort=docid%20asc";
+								$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=%22".$orgName."%22%20AND%20valid_s:(VALID%20OR%20OLD)&fl=docid,valid_s,name_s,type_s&sort=valid_s desc,docid asc";
 								$reqAff = str_replace(" ", "%20", $reqAff);
 								//echo $reqAff.'<br>';
 								$contAff = file_get_contents($reqAff);
@@ -848,7 +845,7 @@ if (isset($_POST["soumis"])) {
 									$orgName = str_replace(array("[", "]", "&", "="), array("%5B", "%5D", "%26", "%3D"), $orgName);
 									//Est-ce une affiliation 'longue' (avec beaucoup de virgules) ou 'courte' ?
 									//if (substr_count($orgName, ',') > 2) {$loncou = "longue";}else{$loncou = "courte";}				
-									$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=%22".$orgName."%22%20AND%20valid_s:(VALID%20OR%20OLD)&fl=docid,valid_s,name_s,type_s&sort=valid_s%20desc&sort=docid%20asc";
+									$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=%22".$orgName."%22%20AND%20valid_s:(VALID%20OR%20OLD)&fl=docid,valid_s,name_s,type_s&sort=valid_s desc,docid asc";
 									$reqAff = str_replace(" ", "%20", $reqAff);
 									//echo $reqAff.'<br>';
 									$contAff = file_get_contents($reqAff);
