@@ -607,8 +607,7 @@ if (isset($_POST["soumis"])) {
 				$iAff = 0;
 				$nomAff = array();//Code initial des affiliations (à parir du XML)
 				$halAff = array();
-				//$aTester = array('UMR', 'UMS', 'UPR', 'ERL', 'IFR', 'UR', 'USR', 'USC', 'CIC', 'CIC-P', 'CIC-IT', 'FRE', 'EA', 'INSERM', 'U', 'CHU');
-				$anepasTester = array('UMR', 'CNRS', 'INSERM', 'INRA');
+				$anepasTester = array('UMR', 'UMS', 'UPR', 'ERL', 'IFR', 'UR', 'USR', 'USC', 'CIC', 'CIC-P', 'CIC-IT', 'FRE', 'EA', 'INSERM', 'U', 'CHU');
 
 				
 				echo('<b>Etape 3a : recherche des id structures des affiliations</b><br>');
@@ -640,105 +639,86 @@ if (isset($_POST["soumis"])) {
 					progression($cpt, $nbAff, 'cpt3a', $iPro, 'affiliation');
 					$code = $nomAff[$i]['org'];
 					$type = $nomAff[$i]['type'];
-					$test = "oui";//Test pour savoir si le code commence par un des éléments du tableau aTester
 					$trouve = 0;//Test pour savoir si la 1ère méthode a permis de trouver un id de structure
-					/*
-					foreach($aTester as $elt) {
-						if (stripos($code, $elt) !== false) {
-							if ($elt == "U" && strlen($code) != 5) {break;}
-							if (($elt == "UR" || $elt == "EA" || $elt == "IFR") && strlen($code) != 6) {break;}
-							if ($elt == "UMR" && strlen($code) > 7) {break;}
-							if (($elt == "UMS" || $elt == "UPR" || $elt == "ERL" || $elt == "USR" || $elt == "USC" || $elt == "FRE" || $elt == "CIC") && strlen($code) != 7) {break;}
-							if ($elt == "CIC-P" && strlen($code) != 9) {break;}
-							if ($elt == "CIC-IT" && strlen($code) != 10) {break;}
-							$test = "oui";
-							break;
-						}			
-					}
-					*/
-					//$code = str_replace(array("[", "]", "&", "="), array("%5B", "%5D", "%26", "%3D"), $code);
 					$code = str_replace(array("[", "]", "&", "="), array("", "", "", "%3D"), $code);
 					
-					if ($test == "oui") {
-						
-						//1ère méthode > avec le référentiel HAL des structures
-						
-						//Si présence de virgules > test sur chacun des éléments sauf le dernier qui correspond au pays
-						//Mais, si pas de virgule, il faut naturellement conserver le dernier élément > $cptCode = 0 ou 1
-						if (strpos($code, ",") !== false) {$cptCode = 1;}else{$cptCode = 0;}
-						$tabCode = explode(",", $code);
-						foreach($tabCode as $test) {
-							$test = str_replace(" ", "+", trim($test));
-							if ($cptCode < count($tabCode) && !in_array($test, $anepasTester)) {
-								$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:".$test."%20OR%20code_t:".$test."%20OR%20acronym_t:".$test.")%20AND%20type_s:".$type."%20AND%20valid_s:(VALID%20OR%20OLD)&fl=docid,valid_s,name_s,type_s&sort=valid_s desc,docid asc";
-								
-								$reqAff = str_replace(" ", "%20", $reqAff);
-								echo('<a target="_blank" href="'.$reqAff.'">URL requête affiliations (1ère méthode) HAL</a><br>');
-								//echo $reqAff.'<br>';
-								$contAff = file_get_contents($reqAff);
-								$resAff = json_decode($contAff);
-								if (isset($resAff->response->numFound)) {$numFound=$resAff->response->numFound;}
-								if ($numFound != 0) {			
-									//foreach($resAff->response->docs as $affil) { > Non, on ne prend que la première affiliation trouvée
-										$halAff[$iAff]['docid'] = $resAff->response->docs[0]->docid;
-										$halAff[$iAff]['lsAff'] = $nomAff[$i]['lsAff'];
-										$halAff[$iAff]['valid'] = $resAff->response->docs[0]->valid_s;
-										$halAff[$iAff]['names'] = $resAff->response->docs[0]->name_s;
-										$halAff[$iAff]['fname'] = "";
-										$halAff[$iAff]['lname'] = "";
-										$iAff++;
-										$trouve++;
-									//}
-								}
+					//1ère méthode > avec le référentiel HAL des structures
+					
+					//Si présence de virgules > test sur chacun des éléments sauf le dernier qui correspond au pays
+					//Mais, si pas de virgule, il faut naturellement conserver le dernier élément > $cptCode = 0 ou 1
+					if (strpos($code, ",") !== false) {$cptCode = 1;}else{$cptCode = 0;}
+					$tabCode = explode(",", $code);
+					foreach($tabCode as $test) {
+						$test = str_replace(" ", "+", trim($test));
+						if ($cptCode < count($tabCode) && !in_array($test, $anepasTester)) {
+							$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:".$test."%20OR%20code_t:".$test."%20OR%20acronym_t:".$test.")%20AND%20type_s:".$type."%20AND%20valid_s:(VALID%20OR%20OLD)&fl=docid,valid_s,name_s,type_s&sort=valid_s desc,docid asc";
+							
+							$reqAff = str_replace(" ", "%20", $reqAff);
+							echo('<a target="_blank" href="'.$reqAff.'">URL requête affiliations (1ère méthode) HAL</a><br>');
+							//echo $reqAff.'<br>';
+							$contAff = file_get_contents($reqAff);
+							$resAff = json_decode($contAff);
+							if (isset($resAff->response->numFound)) {$numFound=$resAff->response->numFound;}
+							if ($numFound != 0) {			
+								//foreach($resAff->response->docs as $affil) { > Non, on ne prend que la première affiliation trouvée
+									$halAff[$iAff]['docid'] = $resAff->response->docs[0]->docid;
+									$halAff[$iAff]['lsAff'] = $nomAff[$i]['lsAff'];
+									$halAff[$iAff]['valid'] = $resAff->response->docs[0]->valid_s;
+									$halAff[$iAff]['names'] = $resAff->response->docs[0]->name_s;
+									$halAff[$iAff]['fname'] = "";
+									$halAff[$iAff]['lname'] = "";
+									$iAff++;
+									$trouve++;
+								//}
 							}
-							$cptCode++;
 						}
-						
-						//2ème méthode, si la 1ère méthode n'a pas abouti > avec le référentiel HAL des notices
-						if ($trouve == 0) {
-							//On récupère tout d'abord l'année de la publication
-							$annee = "";
-							$anns = $xml->getElementsByTagName("date");
-							foreach($anns as $ann) {
-								if ($ann->hasAttribute("type") && $ann->getAttribute("type") == "datePub") {$annee = $ann->nodeValue;}
-							}
-							if ($annee != "") {
-								for($j = 0; $j < count($halAut); $j++) {
-									if ($halAut[$j]['affilName'] == $nomAff[$i]['lsAff']) {//On ne s'intéresse qu'aux auteurs concernés par cette référence d'affiliation
-										$firstName = $halAut[$j]['firstName'];
-										$lastName = $halAut[$j]['lastName'];
-										$facetSep = $lastName.' '.$firstName;
-										$reqAff = "https://api.archives-ouvertes.fr/search/index/?q=authLastName_sci:%22".$lastName."%22%20AND%20authFirstName_sci:%22".$firstName."%22&fq=-labStructValid_s:INCOMING%20OR%20(structAcronym_sci:%22".$code."%22%20OR%20structName_sci:%22u1085%22%20OR%20structCode_sci:%22".$code."%22)&fl=structPrimaryHasAlphaAuthIdHal_fs,authId_i,authLastName_s,authFirstName_s&sort=abs(sub(producedDateY_i,".$annee."))%20asc";
-										$reqAff = str_replace(" ", "%20", $reqAff);
-										echo('<a target="_blank" href="'.$reqAff.'">URL requête affiliations (2ème méthode) HAL</a><br>');
-										//echo $reqAff.'<br>';
-										$contAff = file_get_contents($reqAff);
-										$resAff = json_decode($contAff);
-										if (isset($resAff->response->numFound)) {$numFound=$resAff->response->numFound;}
-										if ($numFound != 0) {
-											foreach($resAff->response->docs as $affil) {
-												foreach($affil->structPrimaryHasAlphaAuthIdHal_fs as $fSep) {
-													if (strpos($fSep, $facetSep) !== false) {
-														$fSepTab = explode('_', $fSep);
-														$ajout = "oui";
-														for($k = 0; $k < count($halAff); $k++) {
-															if (intval($fSepTab[2]) == $halAff[$k]['docid'] && $firstName == $halAff[$k]['fname'] && $lastName == $halAff[$k]['lname']) {$ajout = "non";}
-														}
-														if ($ajout == "oui") {
-															//VALID ou OLD ?
-															$reqVoO = "https://api.archives-ouvertes.fr/ref/structure/?q=docid:%22".$fSepTab[2]."%22%20AND%20-valid_s:%22INCOMING%22&fl=*&rows=1000&fl=docid,valid_s,name_s";
-															$reqVoO = str_replace(" ", "%20", $reqVoO);
-															$contVoO = file_get_contents($reqVoO);
-															$resVoO = json_decode($contVoO);
-															$halAff[$iAff]['docid'] = intval($fSepTab[2]);
-															$halAff[$iAff]['lsAff'] = $nomAff[$i]['lsAff'];
-															$halAff[$iAff]['valid'] = $resVoO->response->docs[0]->valid_s;
-															$halAff[$iAff]['names'] = $fSepTab[4];
-															$halAff[$iAff]['fname'] = $firstName;
-															$halAff[$iAff]['lname'] = $lastName;
-															$iAff++;
-															$trouve++;
-														}
+						$cptCode++;
+					}
+					
+					//2ème méthode, si la 1ère méthode n'a pas abouti > avec le référentiel HAL des notices
+					if ($trouve == 0) {
+						//On récupère tout d'abord l'année de la publication
+						$annee = "";
+						$anns = $xml->getElementsByTagName("date");
+						foreach($anns as $ann) {
+							if ($ann->hasAttribute("type") && $ann->getAttribute("type") == "datePub") {$annee = $ann->nodeValue;}
+						}
+						if ($annee != "") {
+							for($j = 0; $j < count($halAut); $j++) {
+								if ($halAut[$j]['affilName'] == $nomAff[$i]['lsAff']) {//On ne s'intéresse qu'aux auteurs concernés par cette référence d'affiliation
+									$firstName = $halAut[$j]['firstName'];
+									$lastName = $halAut[$j]['lastName'];
+									$facetSep = $lastName.' '.$firstName;
+									$reqAff = "https://api.archives-ouvertes.fr/search/index/?q=authLastName_sci:%22".$lastName."%22%20AND%20authFirstName_sci:%22".$firstName."%22&fq=-labStructValid_s:INCOMING%20OR%20(structAcronym_sci:%22".$code."%22%20OR%20structName_sci:%22u1085%22%20OR%20structCode_sci:%22".$code."%22)&fl=structPrimaryHasAlphaAuthIdHal_fs,authId_i,authLastName_s,authFirstName_s&sort=abs(sub(producedDateY_i,".$annee."))%20asc";
+									$reqAff = str_replace(" ", "%20", $reqAff);
+									echo('<a target="_blank" href="'.$reqAff.'">URL requête affiliations (2ème méthode) HAL</a><br>');
+									//echo $reqAff.'<br>';
+									$contAff = file_get_contents($reqAff);
+									$resAff = json_decode($contAff);
+									if (isset($resAff->response->numFound)) {$numFound=$resAff->response->numFound;}
+									if ($numFound != 0) {
+										foreach($resAff->response->docs as $affil) {
+											foreach($affil->structPrimaryHasAlphaAuthIdHal_fs as $fSep) {
+												if (strpos($fSep, $facetSep) !== false) {
+													$fSepTab = explode('_', $fSep);
+													$ajout = "oui";
+													for($k = 0; $k < count($halAff); $k++) {
+														if (intval($fSepTab[2]) == $halAff[$k]['docid'] && $firstName == $halAff[$k]['fname'] && $lastName == $halAff[$k]['lname']) {$ajout = "non";}
+													}
+													if ($ajout == "oui") {
+														//VALID ou OLD ?
+														$reqVoO = "https://api.archives-ouvertes.fr/ref/structure/?q=docid:%22".$fSepTab[2]."%22%20AND%20-valid_s:%22INCOMING%22&fl=*&rows=1000&fl=docid,valid_s,name_s";
+														$reqVoO = str_replace(" ", "%20", $reqVoO);
+														$contVoO = file_get_contents($reqVoO);
+														$resVoO = json_decode($contVoO);
+														$halAff[$iAff]['docid'] = intval($fSepTab[2]);
+														$halAff[$iAff]['lsAff'] = $nomAff[$i]['lsAff'];
+														$halAff[$iAff]['valid'] = $resVoO->response->docs[0]->valid_s;
+														$halAff[$iAff]['names'] = $fSepTab[4];
+														$halAff[$iAff]['fname'] = $firstName;
+														$halAff[$iAff]['lname'] = $lastName;
+														$iAff++;
+														$trouve++;
 													}
 												}
 											}
@@ -748,6 +728,7 @@ if (isset($_POST["soumis"])) {
 							}
 						}
 					}
+
 					if ($trouve == 0) {
 						//Affiliation sans recherche possible > on réinitialise cette affiliation pour les auteurs concernés
 						for($j = 0; $j < count($halAut); $j++) {
