@@ -652,7 +652,7 @@ if (isset($_POST["soumis"])) {
 					foreach($tabCode as $test) {
 						$test = str_replace(" ", "+", trim($test));
 						if ($cptCode < count($tabCode) && !in_array($test, $anepasTester)) {
-							$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:".$test."%20OR%20code_t:".$test."%20OR%20acronym_t:".$test.")%20AND%20type_s:".$type."%20AND%20valid_s:(VALID%20OR%20OLD)&fl=docid,valid_s,name_s,type_s,country_s,acronym_s&sort=valid_s desc,docid asc";
+							$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:%22".$test."%22%20OR%20name_t:".$test."%20OR%20code_t:%22".$test."%22%20OR%20code_t:".$test."%20%20OR%20acronym_t:%22".$test."%22%20OR%20acronym_t:".$test."%20)%20AND%20type_s:".$type."%20AND%20valid_s:(VALID%20OR%20OLD)&fl=docid,valid_s,name_s,type_s,country_s,acronym_s&sort=valid_s desc,docid asc";
 							$reqAff = str_replace(" ", "%20", $reqAff);
 							echo('<a target="_blank" href="'.$reqAff.'">URL requête affiliations (1ère méthode) HAL</a><br>');
 							//echo $reqAff.'<br>';
@@ -968,6 +968,7 @@ if (isset($_POST["soumis"])) {
 								//echo $reqId.'<br>';
 								$contId = file_get_contents($reqId);
 								$resId = json_decode($contId);
+								$numFound = 0;
 								if (isset($resId->response->numFound)) {$numFound = $resId->response->numFound;}
 								if ($numFound != 0) {
 									$tests = $resId->response->docs[0]->authIdLastNameFirstName_fs;
@@ -1409,10 +1410,10 @@ if (isset($_POST["soumis"])) {
 						echo('</script>');
 					}
 					//echo('<input type="text" id="ajoutAff'.$i.'" name="ajoutAff'.$i.'" class="autoAF form-control" style="height: 18px; width:280px; align:center;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'ajouterAffil\', pos: '.$i.', valeur: $(this).val()});";>');
-					echo('</font><br><br>');
+					echo('</font><br>');
 				}
 				echo('<br>');
-				echo('<b>Ajouter un auteur <i>(Prénom Nom)</i> : </b><input type="text" id="ajoutAuteur" name="ajoutAuteur" class="form-control" style="height: 18px; width:200px; align:center;" onfocusout="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'ajouterAuteur\', pos: '.$i.', valeur: $(this).val()});";>');
+				echo('<b>Ajouter un auteur <i>(Prénom Nom)</i> : </b><input type="text" id="ajoutAuteur" name="ajoutAuteur" class="form-control" style="height: 18px; width:280px; align:center;" onfocusout="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'ajouterAuteur\', pos: '.$i.', valeur: $(this).val()});";>');
 				echo('</span></td>');
 				
 				//Validation du TEI

@@ -20,7 +20,7 @@ if (isset($_GET['css']) && ($_GET['css'] != ""))
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <script type="text/javascript" language="Javascript" src="./Zip2HAL.js"></script>
   <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
-  <link rel="icon" type="type/ico" href="HAL_favicon.ico">
+  <link rel="icon" type="type/ico" href="favicon.ico">
   <link rel="stylesheet" href="./Zip2HAL.css">
 </head>
 <body>
