@@ -210,8 +210,8 @@ if ($action == "supprimerIdHAL") {
 //Ajouter une affiliation
 if ($action == "ajouterAffil") {
 	$i = $_POST["pos"];
-	$tabVal = explode('~ ', $valeur);
-	$affil = "#struct-".str_replace(array('(', ')'), '', $tabVal[1]);
+	$tabVal = explode('~', $valeur);
+	$affil = "#struct-".trim($tabVal[0]);
 	insertNode($xml, "nonodevalue", "author", "persName", $i, "affiliation", "ref", $affil, "", "", "aC", "amont", "");
 	$xml->save($nomfic);
 }

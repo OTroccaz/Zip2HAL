@@ -8,6 +8,10 @@ function majokAffil(affilPos, affilName) {
 	document.getElementById(affilPos).innerHTML = "<s>"+affilName+"</s>";
 }
 
+function majokAffilAjout(affilPos) {
+	document.getElementById(affilPos).value = "";
+}
+
 function majokVu(idNomfic) {
   document.getElementById(idNomfic).innerHTML = "<img src='./img/MAJOK.png'>";
 }
