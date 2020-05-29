@@ -24,3 +24,33 @@ function majokSuppr(suppression) {
 	document.getElementById("validerTEI"+idNomfiv).innerHTML = "";
 	document.getElementById("importerHAL"+idNomfiv).innerHTML = "";
 }
+
+function majokAuteur(auteurPos, auteurName) {
+  document.getElementById("Vu-"+auteurPos).innerHTML = "<img width='12px' src='./img/supprimer_ok.jpg'><br><br>";
+	document.getElementById("Sup-"+auteurPos).style.display = "none";
+	document.getElementById("PN-"+auteurPos).innerHTML = "<s>"+auteurName+"</s>";
+}
+
+function afficacher(id,idFic) {
+	for(var i = 1; i < 14; i++) {
+		if (i != id) {
+			document.getElementById("dom-"+i+"-"+idFic).style.display = "none";
+			document.getElementById("cod-"+i+"-"+idFic).innerHTML = "<a style='cursor:pointer;' onclick='afficacher("+i+","+idFic+")';><font style='color: #FE6D02;'><b>>&nbsp;</b></font></a>";
+		}
+	}
+	if (document.getElementById("dom-"+id+"-"+idFic).style.display == "block") {
+		document.getElementById("dom-"+id+"-"+idFic).style.display = "none";
+		document.getElementById("cod-"+id+"-"+idFic).innerHTML = "<a style='cursor:pointer;' onclick='afficacher("+id+","+idFic+")';><font style='color: #FE6D02;'><b>>&nbsp;</b></font></a>";
+	}else{
+		document.getElementById("dom-"+id+"-"+idFic).style.display = "block";
+		document.getElementById("cod-"+id+"-"+idFic).innerHTML = "<a style='cursor:pointer;' onclick='afficacher("+id+","+idFic+")';><font style='color: #FE6D02;'><b>v&nbsp;</b></font></a>";
+	}
+}
+
+function choixdom(dom, code) {
+	document.getElementById("domaine").innerHTML = dom + ' ~ ' + code + '<br><input type="hidden" name="domaine" value="'+dom+' ~ '+code+'">';
+	document.getElementById("domaine").style.width = "300px";
+	document.getElementById("domaine").style.marginLeft = "30px";
+	document.getElementById("domaine").style.display = "block";
+	document.getElementById("choixdom").style.display = "none";
+}

@@ -23,6 +23,15 @@ if ($action == "suppression") {
 	if(file_exists ($nomfic)) {@unlink($nomfic);}
 }
 
+//Domaine
+if ($action == "domaine") {
+	deleteNode($xml, "textClass", "classCode", 0, "scheme", "halDomain", "", "", "exact");
+	$xml->save($nomfic);
+	$tabDom = explode(" ~ ", $valeur);
+	insertNode($xml, $tabDom[0], "textClass", "classCode", 0, "classCode", "scheme", "halDomain", "n", $tabDom[1], "aC", "amont", "");
+	$xml->save($nomfic);
+}
+
 //Titre
 if ($action == "titre") {
 	insertNode($xml, $valeur, "analytic", "", 0, "title", "xml:lang", $lang, "", "", "iB", "tagName", "");
@@ -182,6 +191,38 @@ if ($action == "abstract") {
 	deleteNode($xml, "profileDesc", "abstract", 0, "xml:lang", $lang, "", "", "exact");
 	$xml->save($nomfic);
 	insertNode($xml, $valeur, "profileDesc", "", 0, "abstract", "xml:lang", $lang, "", "", "iB", "tagName", "");
+	$xml->save($nomfic);
+}
+
+//Supprimer un auteur
+if ($action == "supprimerAuteur") {
+	$i = $_POST["pos"];
+	$tabVal = explode(' ~ ', $valeur);
+	$firstName = $tabVal[0];
+	$lastName = $tabVal[1];
+	$cpt = 0;
+
+	$auts = $xml->getElementsByTagName("author");
+	foreach($auts as $aut) {
+		if ($aut->hasChildNodes()) {
+			foreach($aut->childNodes as $item) {
+				if ($item->hasChildNodes()) {
+					foreach($item->childNodes as $nompre) {
+						if ($nompre->nodeName == "forename") {$prenom = $nompre->nodeValue;}
+					}
+					foreach($item->childNodes as $nompre) {
+						if ($nompre->nodeName == "surname") {$nom = $nompre->nodeValue;}
+					}
+					if ($prenom == $firstName && $nom == $lastName) {
+						$qui = $xml->getElementsByTagName("author")[$cpt];
+						$qui->parentNode->removeChild($qui);
+						break 2;
+					}
+				}
+			}
+		}
+		$cpt++;
+	}
 	$xml->save($nomfic);
 }
 
