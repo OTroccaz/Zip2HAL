@@ -592,7 +592,7 @@ if (isset($_POST["soumis"])) {
 					$lastNameT = strtolower(wd_remove_accents($lastName));
 					$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=firstName_t:%22".$firstNameT."%22%20AND%20lastName_t:%22".$lastNameT."%22%20AND%20valid_s:%22VALID%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s";
 					$reqAut = str_replace(" ", "%20", $reqAut);
-					echo('<a target="_blank" href="'.$reqAut.'">URL requête auteurs HAL</a><br>');
+					echo('<a target="_blank" href="'.$reqAut.'">URL requête auteurs HAL (1ère méthode)</a><br>');
 					//echo $reqAut.'<br>';
 					$contAut = file_get_contents($reqAut);
 					$resAut = json_decode($contAut);
@@ -601,6 +601,7 @@ if (isset($_POST["soumis"])) {
 					$docid = "";
 					$nbdocid = 0;
 					$iHi = "non";//Test pour savoir si un idHal_i a été trouvé
+					$trouve = 0;//Test pour savoir si la 1ère méthode a permis de trouver quelque chose
 			
 					if ($numFound != 0) {				
 						foreach($resAut->response->docs as $author) {
@@ -615,6 +616,7 @@ if (isset($_POST["soumis"])) {
 								if (isset($author->docid)) {$halAut[$iAut]['docid'] = $author->docid;}
 								$iHi = "oui";
 								$cptiHi++;
+								$trouve++;
 								break;
 							}else{//Pas d'idHal
 								$docid .= $author->docid;
@@ -631,12 +633,37 @@ if (isset($_POST["soumis"])) {
 						$halAut[$iAut]['mailDom'] = "";
 						$halAut[$iAut]['docid'] = $docid;
 						$cptdoc++;
+						$trouve++;
 						//echo($firstName.' '.$lastName.' : '.$docid);
 					}
+					
+					if ($trouve == 0) {
+						$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=firstName_t:%22".$firstNameT."%22%20AND%20lastName_t:%22".$lastNameT."%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s";
+						$reqAut = str_replace(" ", "%20", $reqAut);
+						echo('<a target="_blank" href="'.$reqAut.'">URL requête auteurs HAL (2ème méthode)</a><br>');
+						//echo $reqAut.'<br>';
+						$contAut = file_get_contents($reqAut);
+						$resAut = json_decode($contAut);
+						$numFound = 0;
+						if (isset($resAut->response->numFound)) {$numFound=$resAut->response->numFound;}
+						if ($numFound != 0) {
+							$halAut[$iAut]['firstName'] = $firstName;
+							$halAut[$iAut]['lastName'] = $lastName;
+							$halAut[$iAut]['affilName'] = $affilName;
+							//if (isset($resAut->response->docs[0]->idHal_i)) {$halAut[$iAut]['idHali'] = $resAut->response->docs[0]->idHal_i;}else{$halAut[$iAut]['idHali'] = "";}
+							//if (isset($resAut->response->docs[0]->idHal_s)) {$halAut[$iAut]['idHals'] = $resAut->response->docs[0]->idHal_s;}else{$halAut[$iAut]['idHals'] = "";}
+							if (isset($resAut->response->docs[0]->emailDomain_s)) {$halAut[$iAut]['mailDom'] = $resAut->response->docs[0]->emailDomain_s;}else{$halAut[$iAut]['mailDom'] = "";}
+							if (isset($resAut->response->docs[0]->docid)) {$halAut[$iAut]['docid'] = $resAut->response->docs[0]->docid;}
+							$cptdoc++;
+						}
+					}
+					
 					$iAut++;
 					//echo ('<br>');
 					$cpt++;
 				}
+				
+				
 				//var_dump($halAut);
 				$halAutinit = $halAut;//Sauvegarde des affiliations et idHal initiaux remontées par OverHAL
 				echo($cptiHi. ' idHal et '.$cptdoc.' docid trouvé(s)');
