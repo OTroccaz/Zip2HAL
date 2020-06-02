@@ -49,7 +49,7 @@ function afficacher(id,idFic) {
 
 function choixdom(dom, code) {
 	document.getElementById("domaine").innerHTML = dom + ' ~ ' + code + '<br><input type="hidden" name="domaine" value="'+dom+' ~ '+code+'">';
-	document.getElementById("domaine").style.width = "300px";
+	document.getElementById("domaine").style.width = "900px";
 	document.getElementById("domaine").style.marginLeft = "30px";
 	document.getElementById("domaine").style.display = "block";
 	document.getElementById("choixdom").style.display = "none";

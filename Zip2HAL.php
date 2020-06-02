@@ -263,14 +263,14 @@ if ($domaine == "") {
 			$codF = $tabCode[0];
 			if ($codI != $codF) {//Nouveau groupe de disciplines
 				if ($cpt != 1) {echo ('</span>');}
-				$domF = str_replace("'", "&#39;", $entry->fr_domain_s);
+				$domF = str_replace("'", "’", $entry->fr_domain_s);
 				echo ('<span style=\'margin-left: 30px;\' id=\'cod-'.$cpt.'-0\'><a style=\'cursor:pointer;\' onclick=\'afficacher('.$cpt.','.'0'.')\';><font style=\'color: #FE6D02;\'><b>>&nbsp;</b></font></a></span>');
 				echo ('<span><a style=\'cursor:pointer;\' onclick=\'choixdom("'.$domF.'","'.$code.'");\'>'.$domF.'</a></span><br>');
 				$codI = $codF;
 				echo ('<span id=\'dom-'.$cpt.'-0\' style=\'display:none;\'>');
 				$cpt++;
 			}else{//Liste des différentes sous-matières de la discipline
-				$sMat = str_replace($domF.'/', '', str_replace("'", "&#39;", $entry->fr_domain_s));
+				$sMat = str_replace($domF.'/', '', str_replace("'", "’", $entry->fr_domain_s));
 				//$sMatTab = explode("/", $entry->fr_domain_s);
 				//$num = count($sMatTab) - 1;
 				//$sMatVal = $sMatTab[$num];
@@ -1250,19 +1250,20 @@ if (isset($_POST["soumis"])) {
 					$codF = $tabCode[0];
 					if ($codI != $codF) {//Nouveau groupe de disciplines
 						if ($cpt != 1) {echo ('</span>');}
-						$domF = str_replace("'", "&#39;", $entry->fr_domain_s);
+						$domF = str_replace("'", "’", $entry->fr_domain_s);
 						echo ('<span style=\'margin-left: 30px;\' id=\'cod-'.$cpt.'-'.$idFic.'\'><a style=\'cursor:pointer;\' onclick=\'afficacher('.$cpt.', '.$idFic.');\';><font style=\'color: #FE6D02;\'><b>>&nbsp;</b></font></a></span>');
 						echo ('<span><a style=\'cursor:pointer;\' onclick=\'document.getElementById("domaine-'.$idFic.'").value="'.$domF.' ~ '.$code.'"; $.post("Zip2HAL_liste_actions.php", {nomfic : "'.$nomfic.'", action: "domaine", valeur: "'.$domF.' ~ '.$code.'"});\'>'.$domF.'</a></span><br>');
 						$codI = $codF;
 						echo ('<span id=\'dom-'.$cpt.'-'.$idFic.'\' style=\'display:none;\'>');
 						$cpt++;
 					}else{//Liste des différentes sous-matières de la discipline
-						$sMat = str_replace($domF.'/', '', str_replace("'", "&#39;", $entry->fr_domain_s));
+						$sMat = str_replace($domF.'/', '', str_replace("'", "’", $entry->fr_domain_s));
 						//$sMatTab = explode("/", $entry->fr_domain_s);
 						//$num = count($sMatTab) - 1;
 						//$sMatVal = $sMatTab[$num];
-						$sMatVal = $entry->fr_domain_s;
-						echo ('<span style=\'margin-left: 60px;\'><a style=\'cursor:pointer;\' onclick=\'document.getElementById("domaine-'.$idFic.'").value="'.$sMatVal.'"; $.post("Zip2HAL_liste_actions.php", {nomfic : "'.$nomfic.'", action: "domaine", valeur: "'.$sMatVal.'"});\'>'.$sMat.'</a></span><br>');
+						$sMatVal = str_replace($domF.'/', '', str_replace("'", "’", $entry->fr_domain_s));
+						$code = $entry->code_s;
+						echo ('<span style=\'margin-left: 60px;\'><a style=\'cursor:pointer;\' onclick=\'document.getElementById("domaine-'.$idFic.'").value="'.$sMatVal.' ~ '.$code.'"; $.post("Zip2HAL_liste_actions.php", {nomfic : "'.$nomfic.'", action: "domaine", valeur: "'.$sMatVal.' ~ '.$code.'"});\'>'.$sMat.'</a></span><br>');
 					}
 				}
 				echo ('</span><br>');
