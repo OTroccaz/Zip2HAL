@@ -688,6 +688,13 @@ if (isset($_POST["soumis"])) {
 					$code = $nomAff[$i]['org'];
 					$type = $nomAff[$i]['type'];
 					$trouve = 0;//Test pour savoir si la 1ère méthode a permis de trouver un id de structure
+					//Si présence d'un terme entre crochets, il faut isoler ce terme et l'ajouter comme recherche prioritaire > ajout au début du tableau
+					$crochet = "";
+					if (strpos($code, "[") !== false && strpos($code, "]") !== false) {
+						$tabCro = explode("[", $code);
+						$croTab = explode("]", $tabCro[1]);
+						$crochet = $croTab[0];
+					}
 					$code = str_replace(array("[", "]", "&", "="), array("", "", "", "%3D"), $code);
 					
 					
@@ -697,6 +704,7 @@ if (isset($_POST["soumis"])) {
 					//Mais, si pas de virgule, il faut naturellement conserver le dernier élément > $cptCode = 0 ou 1
 					if (strpos($code, ",") !== false) {$cptCode = 1;}else{$cptCode = 0;}
 					$tabCode = explode(",", $code);
+					if ($crochet != "") {array_unshift($tabCode, $crochet);}
 					foreach($tabCode as $test) {
 						$test = str_replace(" ", "+", trim($test));
 						if ($cptCode < count($tabCode) && !in_array($test, $anepasTester)) {
