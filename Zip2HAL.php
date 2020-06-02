@@ -1453,7 +1453,7 @@ if (isset($_POST["soumis"])) {
 					echo('<span id="PN-aut'.$i.'-'.$idFic.'"><b>'.$halAutinit[$i]['firstName'].' '.$halAutinit[$i]['lastName'].'</b></span>');
 					
 					//Possibilité de supprimer l'auteur
-					echo('&nbsp;<span id="Vu-aut'.$i.'-'.$idFic.'"><a style="cursor:pointer;" onclick="confirm(\'Etes-vous sûr de supprimer cet auteur ?\'); $.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'supprimerAuteur\', pos: '.$i.', valeur: \''.$halAutinit[$i]['firstName'].' ~ '.$halAutinit[$i]['lastName'].'\'}); majokAuteur(\'aut'.$i.'-'.$idFic.'\', \''.str_replace("'", "\'", $halAutinit[$i]['firstName'].' '.$halAutinit[$i]['lastName']).'\');"><img width=\'12px\' alt=\'Supprimer l\'auteur\' src=\'./img/supprimer.jpg\'></a></span>');
+					echo('&nbsp;<span id="Vu-aut'.$i.'-'.$idFic.'"><a style="cursor:pointer;" onclick="if (confirm(\'Etes-vous sûr de vouloir supprimer cet auteur ?\')) { $.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'supprimerAuteur\', pos: '.$i.', valeur: \''.$halAutinit[$i]['firstName'].' ~ '.$halAutinit[$i]['lastName'].'\'}); majokAuteur(\'aut'.$i.'-'.$idFic.'\', \''.str_replace("'", "\'", $halAutinit[$i]['firstName'].' '.$halAutinit[$i]['lastName']).'\');}"><img width=\'12px\' alt=\'Supprimer l\'auteur\' src=\'./img/supprimer.jpg\'></a></span>');
 					
 					//Début span suppression auteur
 					echo('&nbsp;<span id="Sup-aut'.$i.'-'.$idFic.'">');
