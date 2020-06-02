@@ -27,7 +27,7 @@ if ($action == "suppression") {
 if ($action == "domaine") {
 	deleteNode($xml, "textClass", "classCode", 0, "scheme", "halDomain", "", "", "exact");
 	$xml->save($nomfic);
-	$tabDom = explode(" ~ ", $valeur);
+	$tabDom = explode(" ~ ", str_replace("’", "'", $valeur));
 	insertNode($xml, $tabDom[0], "textClass", "classCode", 0, "classCode", "scheme", "halDomain", "n", $tabDom[1], "aC", "amont", "");
 	$xml->save($nomfic);
 }

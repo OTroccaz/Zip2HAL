@@ -271,10 +271,10 @@ if ($domaine == "") {
 				$cpt++;
 			}else{//Liste des différentes sous-matières de la discipline
 				$sMat = str_replace($domF.'/', '', str_replace("'", "’", $entry->fr_domain_s));
+				$sMatVal = str_replace("'", "’", $entry->fr_domain_s);
 				//$sMatTab = explode("/", $entry->fr_domain_s);
 				//$num = count($sMatTab) - 1;
 				//$sMatVal = $sMatTab[$num];
-				$sMatVal = $entry->fr_domain_s;
 				echo ('<span style=\'margin-left: 60px;\'><a style=\'cursor:pointer;\' onclick=\'choixdom("'.$sMatVal.'","'.$code.'");\'>'.$sMat.'</a></span><br>');
 			}
 		}
@@ -1091,7 +1091,7 @@ if (isset($_POST["soumis"])) {
 				
 				//Ajout du domaine
 				if ($domaine != "") {
-					$tabDom = explode(" ~ ", $domaine);
+					$tabDom = explode(" ~ ", str_replace("’", "'", $domaine));
 					insertNode($xml, $tabDom[0], "textClass", "classCode", 0, "classCode", "scheme", "halDomain", "n", $tabDom[1], "aC", "amont", "");
 					$xml->save($nomfic);
 				}
@@ -1231,7 +1231,7 @@ if (isset($_POST["soumis"])) {
 				$elts = $xml->getElementsByTagName("classCode");
 				foreach($elts as $elt) {
 					if ($domOK == "non") {
-						echo('<p class="form-inline">Domaine : <input type="text" id="domaine-'.$idFic.'" name="domaine-'.$idFic.'" value="'.$domaine.'" class="form-control" style="height: 18px; width:300px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'domaine\', valeur: $(this).val()});"></p>');
+						echo('<p class="form-inline">Domaine : <input type="text" id="domaine-'.$idFic.'" name="domaine-'.$idFic.'" value="'.$domaine.'" class="form-control" style="height: 18px; width:400px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'domaine\', valeur: $(this).val()});"></p>');
 						$domOK = "oui";
 					}
 				}
@@ -1258,10 +1258,10 @@ if (isset($_POST["soumis"])) {
 						$cpt++;
 					}else{//Liste des différentes sous-matières de la discipline
 						$sMat = str_replace($domF.'/', '', str_replace("'", "’", $entry->fr_domain_s));
+						$sMatVal = str_replace("'", "’", $entry->fr_domain_s);
 						//$sMatTab = explode("/", $entry->fr_domain_s);
 						//$num = count($sMatTab) - 1;
 						//$sMatVal = $sMatTab[$num];
-						$sMatVal = str_replace($domF.'/', '', str_replace("'", "’", $entry->fr_domain_s));
 						$code = $entry->code_s;
 						echo ('<span style=\'margin-left: 60px;\'><a style=\'cursor:pointer;\' onclick=\'document.getElementById("domaine-'.$idFic.'").value="'.$sMatVal.' ~ '.$code.'"; $.post("Zip2HAL_liste_actions.php", {nomfic : "'.$nomfic.'", action: "domaine", valeur: "'.$sMatVal.' ~ '.$code.'"});\'>'.$sMat.'</a></span><br>');
 					}
