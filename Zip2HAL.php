@@ -152,7 +152,20 @@ $(function() {
 			font-family: 'Corbel', sans-serif;
 			font-size:12px;       
 	} 
-</style>  
+</style>
+
+<!--Autocomplete domaine-->
+<script type="text/javascript">
+$(function() {
+    
+	//autocomplete
+	$(".autoDO").autocomplete({
+			source: "AC_DO.php",
+			minLength: 1
+	});                
+
+});
+</script>
 
 <table width="100%">
 <tr>
@@ -241,7 +254,7 @@ if (isset($team) && $team != "") {
 ?>
 <input type="text" id ="team" name="team" class="form-control" style="height: 25px; width:300px" value="<?php echo $team1;?>" onClick="this.value='<?php echo $team2;?>';" >&nbsp;<a target="_blank" href="https://hal-univ-rennes1.archives-ouvertes.fr/page/codes-collections">Trouver le code de mon équipe / labo</a><br>
 
-<p class="form-inline"><b><label for="domaine">Domaine disciplinaire : </label></b>
+<p class="form-inline"><b><label for="domaine">Domaine disciplinaire : </label></b>&nbsp;si vous connaissez une partie du code, utilisez le champ ci-dessous puis validez avec le bouton vert, autrement, l'arborescence dynamique ci-après.
 <?php
 if ($domaine == "") {
 	if (isset($_POST["soumis"])) {
@@ -250,6 +263,9 @@ if ($domaine == "") {
 		echo ('<span id="domaine" style="display:none;">');
 		echo ('</span>');
 		echo ('<span id="choixdom">');
+		echo ('<br>');
+		echo ('<input type="text" id ="inputdom" name="inputdom" class="autoDO form-control" style="margin-left: 30px; height: 18px; width:300px">');
+		echo ('&nbsp;<a style="cursor:pointer;" onclick="choixdom($(\'#inputdom\').val(),\'\');"><img width=\'12px\' alt=\'Valider le domaine\' src=\'./img/done.png\'></a>');
 		echo ('<br>');
 
 		$codI = "";

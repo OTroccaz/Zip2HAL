@@ -48,7 +48,12 @@ function afficacher(id,idFic) {
 }
 
 function choixdom(dom, code) {
-	document.getElementById("domaine").innerHTML = dom + ' ~ ' + code + '<br><input type="hidden" name="domaine" value="'+dom+' ~ '+code+'">';
+	if (dom.indexOf(" ~ ") == -1) {
+		document.getElementById("domaine").innerHTML = dom + ' ~ ' + code + '<br><input type="hidden" name="domaine" value="'+dom+' ~ '+code+'">';
+	}else{
+		var tab = dom.split(" ~ ");
+		document.getElementById("domaine").innerHTML = tab[0] + ' ~ ' + tab[1] + '<br><input type="hidden" name="domaine" value="'+dom+' ~ '+code+'">';
+	}
 	document.getElementById("domaine").style.width = "900px";
 	document.getElementById("domaine").style.marginLeft = "30px";
 	document.getElementById("domaine").style.display = "block";
