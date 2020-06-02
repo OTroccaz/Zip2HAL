@@ -1514,7 +1514,7 @@ if (isset($_POST["soumis"])) {
 					echo('Ajouter des affiliations : <br>');
 					
 					for($dni = $j; $dni < $j + 5; $dni++) {						
-						echo('<span class="form-inline"><input type="text" draggable="true" id="aut'.$i.'-ajoutAff'.$dni.'-'.$idFic.'" name="aut'.$i.'-ajoutAff'.$dni.'-'.$idFic.'" value="" class="autoAF form-control" style="height: 18px; width: 280px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'ajouterAffil\', pos: '.$i.', valeur: $(this).val()});">');
+						echo('<span class="form-inline"><input type="text" draggable="true" id="aut'.$i.'-ajoutAff'.$dni.'-'.$idFic.'" name="aut'.$i.'-ajoutAff'.$dni.'-'.$idFic.'" value="" class="autoAF form-control" style="height: 18px; width: 280px;" onclick="this.setSelectionRange(0, this.value.length);" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'ajouterAffil\', pos: '.$i.', valeur: $(this).val()});">');
 						echo('&nbsp;<span id="Vu-aut'.$i.'-ajoutAff'.$dni.'-'.$idFic.'"><a style="cursor:pointer;" onclick="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'supprimerAffil\', pos: '.$i.', valeur: $(\'#aut'.$i.'-ajoutAff'.$dni.'-'.$idFic.'\').val().split(\'~\')[0].trim()}); majokAffilAjout(\'aut'.$i.'-ajoutAff'.$dni.'-'.$idFic.'\');"><img width=\'12px\' alt=\'Supprimer l\'affiliation\' src=\'./img/supprimer.jpg\'></a></span></span><br>');
 						
 						//Drag and drop
