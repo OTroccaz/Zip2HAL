@@ -306,7 +306,6 @@ echo('<p class="form-inline"><a href="./TEI_OverHAL.php">Nouvelle soumission d\'
 <?php
 
 if (isset($_POST["soumis"])) {
-	
 	$dir = str_replace(array("TEI_OverHAL_", ".zip"), "", $nomficZip);
 	$tabFic = scandir($dir);
 	$idFic = 1;
@@ -1091,9 +1090,11 @@ if (isset($_POST["soumis"])) {
 				$xml->save($nomfic);
 				
 				//Ajout du domaine
-				$tabDom = explode(" ~ ", $domaine);
-				insertNode($xml, $tabDom[0], "textClass", "classCode", 0, "classCode", "scheme", "halDomain", "n", $tabDom[1], "aC", "amont", "");
-				$xml->save($nomfic);
+				if ($domaine != "") {
+					$tabDom = explode(" ~ ", $domaine);
+					insertNode($xml, $tabDom[0], "textClass", "classCode", 0, "classCode", "scheme", "halDomain", "n", $tabDom[1], "aC", "amont", "");
+					$xml->save($nomfic);
+				}
 
 				//Ajout des IdHAL et/ou docid
 				$auts = $xml->getElementsByTagName("author");
@@ -1229,9 +1230,8 @@ if (isset($_POST["soumis"])) {
 				$domOK = "non";
 				$elts = $xml->getElementsByTagName("classCode");
 				foreach($elts as $elt) {
-					if ($elt->hasAttribute("scheme") && $elt->getAttribute("scheme") == "halDomain") {$domaine = $elt->getAttribute("n");}
 					if ($domOK == "non") {
-						echo('<p class="form-inline">Domaine : <input type="text" id="domaine-'.$idFic.'" name="domaine" value="'.$domaine.'" class="form-control" style="height: 18px; width:300px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'domaine\', valeur: $(this).val()});"></p>');
+						echo('<p class="form-inline">Domaine : <input type="text" id="domaine-'.$idFic.'" name="domaine-'.$idFic.'" value="'.$domaine.'" class="form-control" style="height: 18px; width:300px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'domaine\', valeur: $(this).val()});"></p>');
 						$domOK = "oui";
 					}
 				}
@@ -1277,7 +1277,7 @@ if (isset($_POST["soumis"])) {
 				foreach($elts as $elt) {
 					if ($elt->hasAttribute("xml:lang")) {
 						if ($titreOK == "non") {//Le titre est parfois présent plusieurs fois
-							echo('Titre : <textarea id="titre-'.$idFic.'" name="titre" class="textarea form-control" style="width: 500px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'titre\', valeur: $(this).val(), langue : \''.$lang.'\'});";>'.str_replace("'", "\'", $elt->nodeValue).'</textarea><br>');
+							echo('Titre : <textarea id="titre-'.$idFic.'" name="titre-'.$idFic.'" class="textarea form-control" style="width: 500px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'titre\', valeur: $(this).val(), langue : \''.$lang.'\'});";>'.str_replace("'", "\'", $elt->nodeValue).'</textarea><br>');
 							$titreOK = "oui";
 						};
 						}
@@ -1291,10 +1291,10 @@ if (isset($_POST["soumis"])) {
 					}
 				}
 				if ($target != "") {//N'afficher les métadonnées de la notice uniquement s'il y en a une
-					echo('<p class="form-inline">Texte intégral : <input type="text" id="notice-'.$idFic.'" name="notice" value="'.$target.'" class="form-control" style="height: 18px; width:350px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'notice\', valeur: $(this).val(), valeur2: $(\'#subtype\').val()});";>');
+					echo('<p class="form-inline">Texte intégral : <input type="text" id="notice-'.$idFic.'" name="notice-'.$idFic.'" value="'.$target.'" class="form-control" style="height: 18px; width:350px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'notice\', valeur: $(this).val(), valeur2: $(\'#subtype\').val()});";>');
 					if ($target != "") {echo(' - <a target="_blank" href="'.$target.'">Lien</a></p>');}
 					//Subtype
-					echo('<p class="form-inline">Type de dépôt : <select id="subtype-'.$idFic.'" name="subtype" class="form-control" style="height: 18px; padding: 0px; width:150px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'notice\', valeur: $(\'#notice\').val(), valeur2: $(this).val()});">');
+					echo('<p class="form-inline">Type de dépôt : <select id="subtype-'.$idFic.'" name="subtype-'.$idFic.'" class="form-control" style="height: 18px; padding: 0px; width:150px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'notice\', valeur: $(\'#notice\').val(), valeur2: $(this).val()});">');
 					if ($elt->getAttribute("subtype") == "author") {$txt = "selected";}else{$txt = "";}
 					echo('<option '.$txt.' value="author">author</option>');
 					if ($elt->getAttribute("subtype") == "greenPublisher") {$txt = "selected";}else{$txt = "";}
@@ -1312,19 +1312,19 @@ if (isset($_POST["soumis"])) {
 							$licence = $elt->getAttribute("target");
 						}
 					}
-					echo('<p class="form-inline">Licence : <input type="text-'.$idFic.'" id="licence" name="licence" value="'.$licence.'" class="form-control" style="height: 18px; width:400px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'licence\', valeur: $(this).val()});";>');
+					echo('<p class="form-inline">Licence : <input type="text-'.$idFic.'" id="licence" name="licence-'.$idFic.'" value="'.$licence.'" class="form-control" style="height: 18px; width:400px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'licence\', valeur: $(this).val()});";>');
 				}
 				
 				//Métadonnées > Date de publication
 				$elts = $xml->getElementsByTagName("date");
 				foreach($elts as $elt) {
-					if ($elt->hasAttribute("type") && $elt->getAttribute("type") == "datePub") {echo('<p class="form-inline">Date de publication : <input type="text" id="datePub-'.$idFic.'" name="datePub" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:100px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'datePub\', valeur: $(this).val()});";></p>');}
+					if ($elt->hasAttribute("type") && $elt->getAttribute("type") == "datePub") {echo('<p class="form-inline">Date de publication : <input type="text" id="datePub-'.$idFic.'" name="datePub-'.$idFic.'" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:100px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'datePub\', valeur: $(this).val()});";></p>');}
 				}
 				
 				//Métadonnées > Date d'édition
 				$elts = $xml->getElementsByTagName("date");
 				foreach($elts as $elt) {
-					if ($elt->hasAttribute("type") && $elt->getAttribute("type") == "dateEpub") {echo('<p class="form-inline">Date d\'édition : <input type="text" id="dateEpub-'.$idFic.'" name="dateEpub" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:100px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'dateEpub\', valeur: $(this).val()});";></p>');}
+					if ($elt->hasAttribute("type") && $elt->getAttribute("type") == "dateEpub") {echo('<p class="form-inline">Date d\'édition : <input type="text" id="dateEpub-'.$idFic.'" name="dateEpub-'.$idFic.'" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:100px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'dateEpub\', valeur: $(this).val()});";></p>');}
 				}
 				
 				//Métadonnées > Langue
@@ -1344,7 +1344,7 @@ if (isset($_POST["soumis"])) {
 				//Métadonnées > Revue
 				$elts = $xml->getElementsByTagName("title");
 				foreach($elts as $elt) {
-					if ($elt->hasAttribute("level")) {echo('<p class="form-inline">Nom de la revue :<br> <input type="text" id="revue-'.$idFic.'" name="revue" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:500px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'revue\', valeur: $(this).val()});";></p>');}
+					if ($elt->hasAttribute("level")) {echo('<p class="form-inline">Nom de la revue :<br> <input type="text" id="revue-'.$idFic.'" name="revue-'.$idFic.'" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:500px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'revue\', valeur: $(this).val()});";></p>');}
 				}
 				
 				//Métadonnées > Audience, vulgarisation et comité de lecture
@@ -1367,18 +1367,18 @@ if (isset($_POST["soumis"])) {
 					if ($elt->hasAttribute("type") && $elt->getAttribute("type") == "popular") {
 						if ($elt->nodeValue == "Yes") {$txtO = "checked"; $txtN = "";}else{$txtO = ""; $txtN = "checked";}
 						echo('<p class="form-inline">Vulgarisation : ');
-						echo('<input type="radio" '.$txtO.' id="popular-'.$idFic.'" name="popular" value="Yes" class="form-control" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'vulgarisation\', valeur: $(this).val()});";> Oui');
+						echo('<input type="radio" '.$txtO.' id="popular-'.$idFic.'" name="popular-'.$idFic.'" value="Yes" class="form-control" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'vulgarisation\', valeur: $(this).val()});";> Oui');
 						echo('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
-						echo('<input type="radio" '.$txtN.' id="popular-'.$idFic.'" name="popular" value="No" class="form-control" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'vulgarisation\', valeur: $(this).val()});";> Non');
+						echo('<input type="radio" '.$txtN.' id="popular-'.$idFic.'" name="popular-'.$idFic.'" value="No" class="form-control" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'vulgarisation\', valeur: $(this).val()});";> Non');
 						echo('</p>');
 					}
 					//Comité de lecture
 					if ($elt->hasAttribute("type") && $elt->getAttribute("type") == "peer") {
 						if ($elt->nodeValue == "Yes") {$txtO = "checked"; $txtN = "";}else{$txtO = ""; $txtN = "checked";}
 						echo('<p class="form-inline">Comité de lecture : ');
-						echo('<input type="radio" '.$txtO.' id="peer-'.$idFic.'" name="peer" value="Yes" class="form-control" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'peer\', valeur: $(this).val()});";> Oui');
+						echo('<input type="radio" '.$txtO.' id="peer-'.$idFic.'" name="peer-'.$idFic.'" value="Yes" class="form-control" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'peer\', valeur: $(this).val()});";> Oui');
 						echo('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
-						echo('<input type="radio" '.$txtN.' id="peer-'.$idFic.'" name="peer" value="No" class="form-control" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'peer\', valeur: $(this).val()});";> Non');
+						echo('<input type="radio" '.$txtN.' id="peer-'.$idFic.'" name="peer-'.$idFic.'" value="No" class="form-control" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'peer\', valeur: $(this).val()});";> Non');
 						echo('</p>');
 					}
 				}
@@ -1386,28 +1386,28 @@ if (isset($_POST["soumis"])) {
 				//Métadonnées > Editeur
 				$elts = $xml->getElementsByTagName("publisher");
 				foreach($elts as $elt) {
-					echo('<p class="form-inline">Editeur : <input type="text" id="publisher-'.$idFic.'" name="publisher" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:280px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'editeur\', valeur: $(this).val()});";></p>');
+					echo('<p class="form-inline">Editeur : <input type="text" id="publisher-'.$idFic.'" name="publisher-'.$idFic.'" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:280px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'editeur\', valeur: $(this).val()});";></p>');
 				}
 				
 				//Métadonnées > ISSN et EISSN
 				$elts = $xml->getElementsByTagName("idno");
 				foreach($elts as $elt) {
-					if ($elt->hasAttribute("type") && $elt->getAttribute("type") == "issn") {echo('<p class="form-inline">ISSN : <input type="text" id="issn-'.$idFic.'" name="issn" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:100px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'issn\', valeur: $(this).val()});";></p>');}
-					if ($elt->hasAttribute("type") && $elt->getAttribute("type") == "eissn") {echo('<p class="form-inline">EISSN : <input type="text" id="eissn-'.$idFic.'" name="eissn" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:100px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'eissn\', valeur: $(this).val()});";></p>');}
+					if ($elt->hasAttribute("type") && $elt->getAttribute("type") == "issn") {echo('<p class="form-inline">ISSN : <input type="text" id="issn-'.$idFic.'" name="issn-'.$idFic.'" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:100px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'issn\', valeur: $(this).val()});";></p>');}
+					if ($elt->hasAttribute("type") && $elt->getAttribute("type") == "eissn") {echo('<p class="form-inline">EISSN : <input type="text" id="eissn-'.$idFic.'" name="eissn-'.$idFic.'" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:100px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'eissn\', valeur: $(this).val()});";></p>');}
 				}
 				
 				//Métadonnées > Volume, numéro et pages
 				$elts = $xml->getElementsByTagName("biblScope");
 				foreach($elts as $elt) {
-					if ($elt->hasAttribute("unit") && $elt->getAttribute("unit") == "volume") {echo('<p class="form-inline">Volume : <input type="text" id="volume-'.$idFic.'" name="volume" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:100px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'volume\', valeur: $(this).val()});";></p>');}
-					if ($elt->hasAttribute("unit") && $elt->getAttribute("unit") == "issue") {echo('<p class="form-inline">Numéro : <input type="text" id="issue-'.$idFic.'" name="issue" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:100px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'issue\', valeur: $(this).val()});";></p>');}
-					if ($elt->hasAttribute("unit") && $elt->getAttribute("unit") == "pp") {echo('<p class="form-inline">Pages : <input type="text" id="pp-'.$idFic.'" name="pp" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:150px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'pages\', valeur: $(this).val()});";"></p>');}
+					if ($elt->hasAttribute("unit") && $elt->getAttribute("unit") == "volume") {echo('<p class="form-inline">Volume : <input type="text" id="volume-'.$idFic.'" name="volume-'.$idFic.'" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:100px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'volume\', valeur: $(this).val()});";></p>');}
+					if ($elt->hasAttribute("unit") && $elt->getAttribute("unit") == "issue") {echo('<p class="form-inline">Numéro : <input type="text" id="issue-'.$idFic.'" name="issue-'.$idFic.'" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:100px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'issue\', valeur: $(this).val()});";></p>');}
+					if ($elt->hasAttribute("unit") && $elt->getAttribute("unit") == "pp") {echo('<p class="form-inline">Pages : <input type="text" id="pp-'.$idFic.'" name="pp-'.$idFic.'" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:150px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'pages\', valeur: $(this).val()});";"></p>');}
 				}
 				
 				//Métadonnées > Financement
 				$elts = $xml->getElementsByTagName("funder");
 				foreach($elts as $elt) {
-					echo('Financement : <textarea id="funder-'.$idFic.'" name="funder" class="textarea form-control" style="width: 500px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'financement\', valeur: $(this).val()});";>'.str_replace("'", "\'", $elt->nodeValue).'</textarea><br>');
+					echo('Financement : <textarea id="funder-'.$idFic.'" name="funder-'.$idFic.'" class="textarea form-control" style="width: 500px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'financement\', valeur: $(this).val()});";>'.str_replace("'", "\'", $elt->nodeValue).'</textarea><br>');
 				}
 				
 				//Métadonnées > Mots-clés
@@ -1416,7 +1416,7 @@ if (isset($_POST["soumis"])) {
 				$ind = 0;
 				foreach($keys as $key) {
 					foreach($key->childNodes as $elt) {
-						echo('<input type="text" id="mots-cles'.$ind.'-'.$idFic.'" name="mots-cles'.$ind.'" value="'.str_replace("'", "\'", $elt->nodeValue).'" class="form-control" style="height: 18px; width: 500px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'mots-cles\', pos: '.$ind.', valeur: $(this).val(), langue: $(\'#language\').val()});";>');
+						echo('<input type="text" id="mots-cles'.$ind.'-'.$idFic.'" name="mots-cles'.$ind.'-'.$idFic.'" value="'.str_replace("'", "\'", $elt->nodeValue).'" class="form-control" style="height: 18px; width: 500px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'mots-cles\', pos: '.$ind.', valeur: $(this).val(), langue: $(\'#language\').val()});";>');
 						$ind++;
 					}
 				}
@@ -1424,14 +1424,14 @@ if (isset($_POST["soumis"])) {
 				echo('<br>');
 				echo('Ajouter des mots-clés :');
 				for($dni = $ind; $dni < $ind + 5; $dni++) {
-					echo('<input type="text" id="mots-cles'.$dni.'-'.$idFic.'" name="mots-cles'.$dni.'" value="" class="form-control" style="height: 18px; width: 280px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'ajout-mots-cles\', pos: '.$dni.', valeur: $(this).val(), langue: $(\'#language\').val()});";>');
+					echo('<input type="text" id="mots-cles'.$dni.'-'.$idFic.'" name="mots-cles'.$dni.'-'.$idFic.'" value="" class="form-control" style="height: 18px; width: 280px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'ajout-mots-cles\', pos: '.$dni.', valeur: $(this).val(), langue: $(\'#language\').val()});";>');
 				}
 				echo('<br>');
 						
 				//Métadonnées > Résumé
 				$elts = $xml->getElementsByTagName("abstract");
 				foreach($elts as $elt) {
-					if ($elt->hasAttribute("xml:lang")) {echo('Résumé : <textarea id="abstract-'.$idFic.'" name="abstract" class="textarea form-control" style="width: 280px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'abstract\', valeur: $(this).val(), langue: $(\'#language\').val()});";>'.str_replace("'", "\'", $elt->nodeValue).'</textarea><br>');}
+					if ($elt->hasAttribute("xml:lang")) {echo('Résumé : <textarea id="abstract-'.$idFic.'" name="abstract-'.$idFic.'" class="textarea form-control" style="width: 280px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'abstract\', valeur: $(this).val(), langue: $(\'#language\').val()});";>'.str_replace("'", "\'", $elt->nodeValue).'</textarea><br>');}
 				}
 				
 				echo('</span></td>');
