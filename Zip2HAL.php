@@ -708,7 +708,7 @@ if (isset($_POST["soumis"])) {
 					foreach($tabCode as $test) {
 						$test = str_replace(" ", "+", trim($test));
 						if ($cptCode < count($tabCode) && !in_array($test, $anepasTester)) {
-							$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=acronym_t:".$test."%20OR%20acronym_sci:".$test."%20OR%20acronym_t:%22".$test."%22%20OR%20acronym_sci:%22".$test."%22%20AND%20valid_s:(VALID%20OR%20OLD)&fl=docid,valid_s,name_s,type_s,country_s,acronym_s&sort=valid_s%20desc,docid%20asc";
+							$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=acronym_t:".$test."%20OR%20acronym_sci:".$test."%20AND%20valid_s:(VALID%20OR%20OLD)&fl=docid,valid_s,name_s,type_s,country_s,acronym_s&sort=valid_s%20desc,docid%20asc";
 							$reqAff = str_replace(" ", "%20", $reqAff);
 							echo('<a target="_blank" href="'.$reqAff.'">URL requête affiliations (1ère méthode) HAL</a><br>');
 							//echo $reqAff.'<br>';
@@ -745,7 +745,7 @@ if (isset($_POST["soumis"])) {
 						foreach($tabCode as $test) {
 							$test = str_replace(" ", "+", trim($test));
 							if ($cptCode < count($tabCode) && !in_array($test, $anepasTester)) {
-								$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:%22".$test."%22%20OR%20name_t:".$test."%20OR%20code_t:%22".$test."%22%20OR%20code_t:".$test."%20OR%20acronym_t:%22".$test."%22%20OR%20acronym_t:".$test.")%20AND%20type_s:".$type."%20AND%20valid_s:(VALID%20OR%20OLD)&fl=docid,valid_s,name_s,type_s,country_s,acronym_s&sort=valid_s desc,docid asc";
+								$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:".$test."%20OR%20code_t:".$test."%20OR%20acronym_t:".$test.")%20AND%20type_s:".$type."%20AND%20valid_s:(VALID%20OR%20OLD)&fl=docid,valid_s,name_s,type_s,country_s,acronym_s&sort=valid_s desc,docid asc";
 								$reqAff = str_replace(" ", "%20", $reqAff);
 								echo('<a target="_blank" href="'.$reqAff.'">URL requête affiliations (2ème méthode) HAL</a><br>');
 								//echo $reqAff.'<br>';
