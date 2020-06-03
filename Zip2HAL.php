@@ -254,7 +254,7 @@ if (isset($team) && $team != "") {
 ?>
 <input type="text" id ="team" name="team" class="form-control" style="height: 25px; width:300px" value="<?php echo $team1;?>" onClick="this.value='<?php echo $team2;?>';" >&nbsp;<a target="_blank" href="https://hal-univ-rennes1.archives-ouvertes.fr/page/codes-collections">Trouver le code de mon équipe / labo</a><br>
 
-<p class="form-inline"><b><label for="domaine">Domaine disciplinaire : </label></b>&nbsp;si vous connaissez une partie du code, utilisez le champ ci-dessous puis validez avec le bouton vert, autrement, l'arborescence dynamique ci-après.
+<p class="form-inline"><b><label for="domaine">Domaine disciplinaire : </label></b>
 <?php
 if ($domaine == "") {
 	if (isset($_POST["soumis"])) {
@@ -263,6 +263,7 @@ if ($domaine == "") {
 		echo ('<span id="domaine" style="display:none;">');
 		echo ('</span>');
 		echo ('<span id="choixdom">');
+		echo ('&nbsp;si vous connaissez une partie du code, utilisez le champ ci-dessous puis validez avec le bouton vert, autrement, l\'arborescence dynamique ci-après.');
 		echo ('<br>');
 		echo ('<input type="text" id ="inputdom" name="inputdom" class="autoDO form-control" style="margin-left: 30px; height: 18px; width:300px">');
 		echo ('&nbsp;<a style="cursor:pointer;" onclick="choixdom($(\'#inputdom\').val(),\'\');"><img width=\'12px\' alt=\'Valider le domaine\' src=\'./img/done.png\'></a>');
@@ -1288,9 +1289,11 @@ if (isset($_POST["soumis"])) {
 						$domOK = "oui";
 					}
 				}
-				echo('Pour modifier le domaine, utilisez l\'arborescence ci-dessous :');
+				echo('Pour modifier le domaine, utilisez le champ ou l\'arborescence dynamique ci-dessous :');
 				echo ('<span id="choixdom-'.$idFic.'">');
 				echo ('<br>');
+				echo ('<p class="form-inline"><input type="text" id ="inputdom-'.$idFic.'" name="inputdom-'.$idFic.'" class="autoDO form-control" style="margin-left: 30px; height: 18px; width:300px">');
+				echo ('&nbsp;<a style="cursor:pointer;" onclick=\'document.getElementById("domaine-'.$idFic.'").value=$("#inputdom-'.$idFic.'").val(); $.post("Zip2HAL_liste_actions.php", {nomfic : "'.$nomfic.'", action: "domaine", valeur: $("#inputdom-'.$idFic.'").val()});\'><img width=\'12px\' alt=\'Valider le domaine\' src=\'./img/done.png\'></a></p>');
 
 				$codI = "";
 				$cpt = 1;
