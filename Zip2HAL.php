@@ -167,13 +167,26 @@ $(function() {
 });
 </script>
 
-<!--Autocomplete financements-->
+<!--Autocomplete financements ANR-->
 <script type="text/javascript">
 $(function() {
     
     //autocomplete
     $(".autoANR").autocomplete({
         source: "AC_ANR.php",
+        minLength: 1
+    });                
+
+});
+</script>
+
+<!--Autocomplete financements EUR-->
+<script type="text/javascript">
+$(function() {
+    
+    //autocomplete
+    $(".autoEUR").autocomplete({
+        source: "AC_EUR.php",
         minLength: 1
     });                
 
@@ -1487,6 +1500,13 @@ if (isset($_POST["soumis"])) {
 				echo ('Indiquez le ou les projets ANR liés à ce travail :<br>');
 				for ($iANR=1; $iANR < 4; $iANR++) {
 					echo('<input type="text" id="ANR'.$iANR.'-'.$idFic.'" name="ANR'.$iANR.'-'.$idFic.'" class="autoANR form-control" style="height: 18px; width: 500px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'ANR\', valeur: $(this).val()});";>');
+				}
+				echo ('<br>');
+				
+				//Métadonnées > Financement EUR
+				echo ('Indiquez le ou les projets EU liés à ce travail :<br>');
+				for ($iEUR=1; $iEUR < 4; $iEUR++) {
+					echo('<input type="text" id="EUR'.$iEUR.'-'.$idFic.'" name="EUR'.$iEUR.'-'.$idFic.'" class="autoEUR form-control" style="height: 18px; width: 500px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'EUR\', valeur: $(this).val()});";>');
 				}
 				echo ('<br>');
 				

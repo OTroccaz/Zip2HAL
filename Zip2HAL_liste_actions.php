@@ -244,6 +244,106 @@ if ($action == "ANR") {
 	$xml->save($nomfic);
 }
 
+//Financement EUR
+if ($action == "EUR") {
+	$tabVal = explode("~", $valeur);
+	$docid = $tabVal[0];
+	$ref = "projeurop-".$docid;
+	$ref_s = $tabVal[1];
+	$finan = $tabVal[2];
+	$calid = $tabVal[3];
+	$acron = $tabVal[4];
+	$titre = $tabVal[5];
+	$anneS = $tabVal[6];
+	$anneE = $tabVal[7];
+	$valid = $tabVal[8];
+	
+	insertNode($xml, "nonodevalue", "titleStmt", "", 0, "funder", "ref", "#".$ref, "", "", "aC", "tagName", "");
+	$xml->save($nomfic);
+	
+	//Y-a-t-il déjà un noeud listOrg pour les projets ?
+	$listOrg = "non";
+	$orgs = $xml->getElementsByTagName("listOrg");
+	foreach($orgs as $org) {
+		if ($org->hasAttribute("type") && $org->getAttribute("type") == "projects") {
+			$listOrg = "oui";
+		}
+	}
+	if ($listOrg == "non") {
+		insertNode($xml, "nonodevalue", "back", "", 0, "listOrg", "type", "projects", "", "", "aC", "tagName", "");
+		$xml->save($nomfic);
+	}
+	
+	//Positionnement au noeud <listOrg type="projects"> pour ajout des noeuds enfants
+	foreach($orgs as $org) {
+		if ($org->hasAttribute("type") && $org->getAttribute("type") == "projects") {
+			break;
+		}
+	}
+	$bimoc = $xml->createElement("org");
+	$moc = $xml->createTextNode("");
+	$bimoc->setAttribute("type", "europeanProject");
+	$bimoc->setAttribute("xml:id", $ref);
+	$bimoc->setAttribute("status", $valid);
+	$bimoc->appendChild($moc);
+	$org->appendChild($bimoc);
+	$xml->save($nomfic);
+	
+	$orgs = $xml->getElementsByTagName("org");
+	foreach($orgs as $org) {
+		if ($org->hasAttribute("xml:id") && $org->getAttribute("xml:id") == $ref) {
+			break;
+		}
+	}
+	
+	$bimoc = $xml->createElement("idno");
+	$moc = $xml->createTextNode($ref_s);
+	$bimoc->setAttribute("type", "number");
+	$bimoc->appendChild($moc);
+	$org->appendChild($bimoc);
+	$xml->save($nomfic);
+	
+	$bimoc = $xml->createElement("idno");
+	$moc = $xml->createTextNode($finan);
+	$bimoc->setAttribute("type", "program");
+	$bimoc->appendChild($moc);
+	$org->appendChild($bimoc);
+	$xml->save($nomfic);
+	
+	$bimoc = $xml->createElement("idno");
+	$moc = $xml->createTextNode($calid);
+	$bimoc->setAttribute("type", "call");
+	$bimoc->appendChild($moc);
+	$org->appendChild($bimoc);
+	$xml->save($nomfic);
+	
+	$bimoc = $xml->createElement("orgName");
+	$moc = $xml->createTextNode($acron);
+	$bimoc->appendChild($moc);
+	$org->appendChild($bimoc);
+	$xml->save($nomfic);
+	
+	$bimoc = $xml->createElement("desc");
+	$moc = $xml->createTextNode($titre);
+	$bimoc->appendChild($moc);
+	$org->appendChild($bimoc);
+	$xml->save($nomfic);
+	
+	$bimoc = $xml->createElement("date");
+	$moc = $xml->createTextNode($anneS);
+	$bimoc->setAttribute("type", "start");
+	$bimoc->appendChild($moc);
+	$org->appendChild($bimoc);
+	$xml->save($nomfic);
+	
+	$bimoc = $xml->createElement("date");
+	$moc = $xml->createTextNode($anneE);
+	$bimoc->setAttribute("type", "end");
+	$bimoc->appendChild($moc);
+	$org->appendChild($bimoc);
+	$xml->save($nomfic);
+}
+
 //Mots-clés
 if ($action == "mots-cles") {
 	$lang = $countries[$_POST["langue"]];
