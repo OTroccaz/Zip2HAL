@@ -724,6 +724,8 @@ if (isset($_POST["soumis"])) {
 					}
 					$code = str_replace(array("[", "]", "&", "="), array("", "", "", "%3D"), $code);
 					
+					//Suppression du terme 'Univ'
+					$code = str_ireplace(array("Univ", "Univ."), "", $code);
 					
 					//1ère méthode, sur le référentiel des structures et uniquement sur l'acronyme
 
