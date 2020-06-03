@@ -167,6 +167,19 @@ $(function() {
 });
 </script>
 
+<!--Autocomplete financements-->
+<script type="text/javascript">
+$(function() {
+    
+    //autocomplete
+    $(".autoANR").autocomplete({
+        source: "AC_ANR.php",
+        minLength: 1
+    });                
+
+});
+</script>
+
 <table width="100%">
 <tr>
 <td style="text-align: left;"><img alt="Zip2HAL" title="Zip2HAL" width="250px" src="./img/logo_Zip2hal.png"></td>
@@ -266,7 +279,7 @@ if ($domaine == "") {
 		echo ('&nbsp;si vous connaissez une partie du code, utilisez le champ ci-dessous puis validez avec le bouton vert, autrement, l\'arborescence dynamique ci-après.');
 		echo ('<br>');
 		echo ('<input type="text" id ="inputdom" name="inputdom" class="autoDO form-control" style="margin-left: 30px; height: 18px; width:300px">');
-		echo ('&nbsp;<a style="cursor:pointer;" onclick="choixdom($(\'#inputdom\').val(),\'\');"><img width=\'12px\' alt=\'Valider le domaine\' src=\'./img/done.png\'></a>');
+		echo ('&nbsp;<b>+</b>&nbsp;<a style="cursor:pointer;" onclick="choixdom($(\'#inputdom\').val(),\'\');"><img width=\'12px\' alt=\'Valider le domaine\' src=\'./img/done.png\'></a>');
 		echo ('<br>');
 
 		$codI = "";
@@ -726,7 +739,7 @@ if (isset($_POST["soumis"])) {
 					$code = str_replace(array("[", "]", "&", "="), array("", "", "", "%3D"), $code);
 					
 					//Suppression du terme 'Univ'
-					$code = str_ireplace(array("Univ", "Univ."), "", $code);
+					$code = str_ireplace(array("Univ ", "Univ. ", "Univ, ", "Univ., "), "", $code);
 					
 					//1ère méthode, sur le référentiel des structures et uniquement sur l'acronyme
 
@@ -1296,7 +1309,7 @@ if (isset($_POST["soumis"])) {
 				echo ('<span id="choixdom-'.$idFic.'">');
 				echo ('<br>');
 				echo ('<p class="form-inline"><input type="text" id ="inputdom-'.$idFic.'" name="inputdom-'.$idFic.'" class="autoDO form-control" style="margin-left: 30px; height: 18px; width:300px">');
-				echo ('&nbsp;<a style="cursor:pointer;" onclick=\'document.getElementById("domaine-'.$idFic.'").value=$("#inputdom-'.$idFic.'").val(); $.post("Zip2HAL_liste_actions.php", {nomfic : "'.$nomfic.'", action: "domaine", valeur: $("#inputdom-'.$idFic.'").val()});\'><img width=\'12px\' alt=\'Valider le domaine\' src=\'./img/done.png\'></a></p>');
+				echo ('&nbsp;<b>+</b>&nbsp;<a style="cursor:pointer;" onclick=\'document.getElementById("domaine-'.$idFic.'").value=$("#inputdom-'.$idFic.'").val(); $.post("Zip2HAL_liste_actions.php", {nomfic : "'.$nomfic.'", action: "domaine", valeur: $("#inputdom-'.$idFic.'").val()});\'><img width=\'12px\' alt=\'Valider le domaine\' src=\'./img/done.png\'></a></p>');
 
 				$codI = "";
 				$cpt = 1;
@@ -1470,6 +1483,13 @@ if (isset($_POST["soumis"])) {
 					echo('Financement : <textarea id="funder-'.$idFic.'" name="funder-'.$idFic.'" class="textarea form-control" style="width: 500px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'financement\', valeur: $(this).val()});";>'.str_replace("'", "\'", $elt->nodeValue).'</textarea><br>');
 				}
 				
+				//Métadonnées > Financement ANR
+				echo ('Indiquez le ou les projets ANR liés à ce travail :<br>');
+				for ($iANR=1; $iANR < 4; $iANR++) {
+					echo('<input type="text" id="ANR'.$iANR.'-'.$idFic.'" name="ANR'.$iANR.'-'.$idFic.'" class="autoANR form-control" style="height: 18px; width: 500px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'ANR\', valeur: $(this).val()});";>');
+				}
+				echo ('<br>');
+				
 				//Métadonnées > Mots-clés
 				echo('Mots-clés :');
 				$keys = $xml->getElementsByTagName("keywords");
@@ -1491,7 +1511,7 @@ if (isset($_POST["soumis"])) {
 				//Métadonnées > Résumé
 				$elts = $xml->getElementsByTagName("abstract");
 				foreach($elts as $elt) {
-					if ($elt->hasAttribute("xml:lang")) {echo('Résumé : <textarea id="abstract-'.$idFic.'" name="abstract-'.$idFic.'" class="textarea form-control" style="width: 280px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'abstract\', valeur: $(this).val(), langue: $(\'#language\').val()});";>'.str_replace("'", "\'", $elt->nodeValue).'</textarea><br>');}
+					if ($elt->hasAttribute("xml:lang")) {echo('Résumé : <textarea id="abstract-'.$idFic.'" name="abstract-'.$idFic.'" class="textarea form-control" style="width: 500px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'abstract\', valeur: $(this).val(), langue: $(\'#language\').val()});";>'.str_replace("'", "\'", $elt->nodeValue).'</textarea><br>');}
 				}
 				
 				echo('</span></td>');
