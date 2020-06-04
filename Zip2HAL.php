@@ -554,6 +554,7 @@ if (isset($_POST["soumis"])) {
 				$affAut = array();//Affiliation des auteurs
 				$xmlIds = array();//IdHALs trouvés
 				$xmlIdi = array();//IdHALi trouvés
+				$melAut = array();//Emails trouvés
 				$halAut = array();
 				$tabIdHAL = array();//Si plusieurs idHAL remontés pour un même auteur
 				
@@ -566,6 +567,7 @@ if (isset($_POST["soumis"])) {
 					$xmlIds[$iAut] = "";
 					$xmlIdi[$iAut] = "";
 					$affAut[$iAut] = "";
+					$melAut[$iAut] = "";
 					foreach($aut->childNodes as $elt) {
 						//Prénom/Nom
 						if ($elt->nodeName == "persName") {
@@ -585,6 +587,10 @@ if (isset($_POST["soumis"])) {
 								if ($elt->hasAttribute("notation") && $elt->getAttribute("notation") == "numeric") {$xmlIdi[$iAut] = $elt->nodeValue;}
 							}
 						}
+						//Email
+						if ($elt->nodeName == "email") {
+							$melAut[$iAut] = str_replace('@', '', strstr($elt->nodeValue, '@'));
+						}
 						//Affiliations
 						if ($elt->nodeName == "affiliation") {
 							if ($elt->hasAttribute("ref")) {$affAut[$iAut] .= $elt->getAttribute("ref").'~';}
@@ -594,6 +600,7 @@ if (isset($_POST["soumis"])) {
 				}
 				//var_dump($preAut);
 				//var_dump($nomAut);
+				//var_dump($melAut);
 				//var_dump($affAut);
 				
 				$nbAut = $iAut;
@@ -614,7 +621,7 @@ if (isset($_POST["soumis"])) {
 					$halAut[$iAut]['xmlIds'] = $xmlIds[$i];
 					$halAut[$iAut]['idHali'] = "";
 					$halAut[$iAut]['idHals'] = "";
-					$halAut[$iAut]['mailDom'] = "";
+					$halAut[$iAut]['mailDom'] = $melAut[$i];
 					$halAut[$iAut]['docid'] = "";
 					$firstNameT = strtolower(wd_remove_accents($firstName));
 					$lastNameT = strtolower(wd_remove_accents($lastName));
@@ -633,22 +640,38 @@ if (isset($_POST["soumis"])) {
 			
 					if ($numFound != 0) {				
 						foreach($resAut->response->docs as $author) {
+							//Test sur le domaine des adresses mail s'il y en déjà une dans le XML
+							$testMel = "oui";//Ok par défaut
+							if ($halAut[$iAut]['mailDom'] != "") {
+								$melXML = $halAut[$iAut]['mailDom'];
+								$tabMelXML = explode(".", $melXML);
+								$testXML = $tabMelXML[count($tabMelXML) - 1];
+								if (isset($author->emailDomain_s)) {$melHAL = $author->emailDomain_s;}else{$melHAL = "";}
+								$tabMelHAL = explode(".", $melHAL);
+								$testHAL = $tabMelHAL[count($tabMelHAL) - 1];
+								if ($testXML != $testHAL) {$testMel = "non";}//Les domaines/pays des mails sont différents > ne pas remonter l'idHAL, ni le docid si pas d'idHAL
+								//echo $testXML.' - '.$testHAL.' > '.$testMel.'<br>';
+							}
 							if (isset($author->idHal_i) && $author->idHal_i != 0 && $author->valid_s == "VALID") {
-								//echo $firstName.' '.$lastName.' : '.$author->idHal_i.' -> '.$author->idHal_s.' - ';
-								$halAut[$iAut]['firstName'] = $firstName;
-								$halAut[$iAut]['lastName'] = $lastName;
-								$halAut[$iAut]['affilName'] = $affilName;
-								if (isset($author->idHal_i)) {$halAut[$iAut]['idHali'] = $author->idHal_i;}else{$halAut[$iAut]['idHali'] = "";}
-								if (isset($author->idHal_s)) {$halAut[$iAut]['idHals'] = $author->idHal_s;}else{$halAut[$iAut]['idHals'] = "";}
-								if (isset($author->emailDomain_s)) {$halAut[$iAut]['mailDom'] = $author->emailDomain_s;}else{$halAut[$iAut]['mailDom'] = "";}
-								if (isset($author->docid)) {$halAut[$iAut]['docid'] = $author->docid;}
-								$iHi = "oui";
-								$cptiHi++;
-								$trouve++;
-								break;
+								if ($testMel == "oui") {
+									//echo $firstName.' '.$lastName.' : '.$author->idHal_i.' -> '.$author->idHal_s.' - ';
+									$halAut[$iAut]['firstName'] = $firstName;
+									$halAut[$iAut]['lastName'] = $lastName;
+									$halAut[$iAut]['affilName'] = $affilName;
+									if (isset($author->idHal_i)) {$halAut[$iAut]['idHali'] = $author->idHal_i;}else{$halAut[$iAut]['idHali'] = "";}
+									if (isset($author->idHal_s)) {$halAut[$iAut]['idHals'] = $author->idHal_s;}else{$halAut[$iAut]['idHals'] = "";}
+									if (isset($author->emailDomain_s)) {$halAut[$iAut]['mailDom'] = str_replace('@', '', strstr($author->emailDomain_s, '@'));}else{$halAut[$iAut]['mailDom'] = "";}
+									if (isset($author->docid)) {$halAut[$iAut]['docid'] = $author->docid;}
+									$iHi = "oui";
+									$cptiHi++;
+									$trouve++;
+									break;
+								}
 							}else{//Pas d'idHal
-								$docid .= $author->docid;
-								$nbdocid++;
+								if ($testMel == "oui") {
+									$docid .= $author->docid;
+									$nbdocid++;
+								}
 							}
 						}
 					}
@@ -666,7 +689,7 @@ if (isset($_POST["soumis"])) {
 					}
 					
 					if ($trouve == 0) {
-						$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=firstName_t:(%22".$firstNameT."%22%20OR%20%22".substr($firstNameT, 0, 1)."%22)%20AND%20lastName_t:%22".$lastNameT."%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s&sort=valid_s desc,docid asc";
+						$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=firstName_t:(%22".$firstNameT."%22%20OR%20%22".substr($firstNameT, 0, 1)."%22)%20AND%20lastName_t:%22".$lastNameT."%22%20AND%20valid_s:(%22OLD%22%20OR%20%22INCOMING%22)&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s&sort=valid_s desc,docid asc";
 						$reqAut = str_replace(" ", "%20", $reqAut);
 						echo('<a target="_blank" href="'.$reqAut.'">URL requête auteurs HAL (2ème méthode)</a><br>');
 						//echo $reqAut.'<br>';
@@ -677,44 +700,50 @@ if (isset($_POST["soumis"])) {
 						if ($numFound != 0) {
 							$old = "non";
 							foreach($resAut->response->docs as $author) {
-								//On parcours toutes les formes OLD et si plusieurs résultats, stockage dans un tableau à part en vue de prévenir l'utilisateur lors de l'affichage final
-								if ($author->valid_s == "OLD") {
-									if ($old == "non") {
+								//Test sur le domaine des adresses mail s'il y en déjà une dans le XML
+								$testMel = "oui";//Ok par défaut
+								if ($halAut[$iAut]['mailDom'] != "") {
+									$melXML = $halAut[$iAut]['mailDom'];
+									$tabMelXML = explode(".", $melXML);
+									$testXML = $tabMelXML[count($tabMelXML) - 1];
+									if (isset($author->emailDomain_s)) {$melHAL = $author->emailDomain_s;}else{$melHAL = "";}
+									$tabMelHAL = explode(".", $melHAL);
+									$testHAL = $tabMelHAL[count($tabMelHAL) - 1];
+									if ($testXML != $testHAL) {$testMel = "non";}//Les domaines/pays des mails sont différents > ne pas remonter l'idHAL, ni le docid si pas d'idHAL
+									//echo $testXML.' - '.$testHAL.' > '.$testMel.'<br>';
+								}
+								if ($testMel == "oui") {
+									//On parcours toutes les formes OLD et si plusieurs résultats, stockage dans un tableau à part en vue de prévenir l'utilisateur lors de l'affichage final
+									if ($author->valid_s == "OLD") {
+										if ($old == "non") {
+											$halAut[$iAut]['firstName'] = $firstName;
+											$halAut[$iAut]['lastName'] = $lastName;
+											$halAut[$iAut]['affilName'] = $affilName;
+											if (isset($author->idHal_i) && $author->idHal_i != 0) {$halAut[$iAut]['idHali'] = $author->idHal_i; $cptiHi++;}else{$halAut[$iAut]['idHali'] = "";}
+											if (isset($author->idHal_s)) {$halAut[$iAut]['idHals'] = $author->idHal_s;}else{$halAut[$iAut]['idHals'] = "";}
+											if (isset($author->emailDomain_s)) {$halAut[$iAut]['mailDom'] = str_replace('@', '', strstr($author->emailDomain_s, '@'));}else{$halAut[$iAut]['mailDom'] = "";}
+											if (isset($author->docid)) {$halAut[$iAut]['docid'] = $author->docid;}
+											$cptdoc++;
+											$old = "oui";
+										}else{
+											$nbCel = count($tabIdHAL);
+											$tabIdHAL[$nbCel]['firstName'] = $firstName;
+											$tabIdHAL[$nbCel]['lastName'] = $lastName;
+											$tabIdHAL[$nbCel]['reqAut'] = $reqAut;
+											break;
+										}
+									}else{//Forme INCOMING
 										$halAut[$iAut]['firstName'] = $firstName;
 										$halAut[$iAut]['lastName'] = $lastName;
 										$halAut[$iAut]['affilName'] = $affilName;
 										if (isset($author->idHal_i) && $author->idHal_i != 0) {$halAut[$iAut]['idHali'] = $author->idHal_i; $cptiHi++;}else{$halAut[$iAut]['idHali'] = "";}
 										if (isset($author->idHal_s)) {$halAut[$iAut]['idHals'] = $author->idHal_s;}else{$halAut[$iAut]['idHals'] = "";}
-										if (isset($author->emailDomain_s)) {$halAut[$iAut]['mailDom'] = $author->emailDomain_s;}else{$halAut[$iAut]['mailDom'] = "";}
+										if (isset($author->emailDomain_s)) {$halAut[$iAut]['mailDom'] = str_replace('@', '', strstr($author->emailDomain_s, '@'));}else{$halAut[$iAut]['mailDom'] = "";}
 										if (isset($author->docid)) {$halAut[$iAut]['docid'] = $author->docid;}
 										$cptdoc++;
-										$old = "oui";
-									}else{
-										$nbCel = count($tabIdHAL);
-										$tabIdHAL[$nbCel]['firstName'] = $firstName;
-										$tabIdHAL[$nbCel]['lastName'] = $lastName;
-										$tabIdHAL[$nbCel]['reqAut'] = $reqAut;
-										break;
+										break;//On ne prend en compte que la 1ère forme INCOMING trouvée
 									}
-								}else{//Forme INCOMING
-									$halAut[$iAut]['firstName'] = $firstName;
-									$halAut[$iAut]['lastName'] = $lastName;
-									$halAut[$iAut]['affilName'] = $affilName;
-									if (isset($author->idHal_i) && $author->idHal_i != 0) {$halAut[$iAut]['idHali'] = $author->idHal_i; $cptiHi++;}else{$halAut[$iAut]['idHali'] = "";}
-									if (isset($author->idHal_s)) {$halAut[$iAut]['idHals'] = $author->idHal_s;}else{$halAut[$iAut]['idHals'] = "";}
-									if (isset($author->emailDomain_s)) {$halAut[$iAut]['mailDom'] = $author->emailDomain_s;}else{$halAut[$iAut]['mailDom'] = "";}
-									if (isset($author->docid)) {$halAut[$iAut]['docid'] = $author->docid;}
-									$cptdoc++;
-									break;//On ne prend en compte que la 1ère forme INCOMING trouvée
 								}
-								$halAut[$iAut]['firstName'] = $firstName;
-								$halAut[$iAut]['lastName'] = $lastName;
-								$halAut[$iAut]['affilName'] = $affilName;
-								if (isset($resAut->response->docs[0]->idHal_i) && $resAut->response->docs[0]->idHal_i != 0) {$halAut[$iAut]['idHali'] = $resAut->response->docs[0]->idHal_i; $cptiHi++;}else{$halAut[$iAut]['idHali'] = "";}
-								if (isset($resAut->response->docs[0]->idHal_s)) {$halAut[$iAut]['idHals'] = $resAut->response->docs[0]->idHal_s;}else{$halAut[$iAut]['idHals'] = "";}
-								if (isset($resAut->response->docs[0]->emailDomain_s)) {$halAut[$iAut]['mailDom'] = $resAut->response->docs[0]->emailDomain_s;}else{$halAut[$iAut]['mailDom'] = "";}
-								if (isset($resAut->response->docs[0]->docid)) {$halAut[$iAut]['docid'] = $resAut->response->docs[0]->docid;}
-								$cptdoc++;
 							}
 						}
 					}
@@ -1201,7 +1230,7 @@ if (isset($_POST["soumis"])) {
 						if ($numFound != 0) {
 							$halAut[$i]['idHali'] = $resId->response->docs[0]->idHal_i;
 							$halAut[$i]['idHals'] = $resId->response->docs[0]->idHal_s;
-							if (isset($resId->response->docs[0]->emailDomain_s)) {$halAut[$i]['mailDom'] = $resId->response->docs[0]->emailDomain_s;}
+							if (isset($resId->response->docs[0]->emailDomain_s)) {$halAut[$i]['mailDom'] = str_replace('@', '', strstr($resId->response->docs[0]->emailDomain_s, '@'));}
 							$cptId++;
 							break;
 						}
