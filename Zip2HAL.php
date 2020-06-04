@@ -555,6 +555,7 @@ if (isset($_POST["soumis"])) {
 				$xmlIds = array();//IdHALs trouvés
 				$xmlIdi = array();//IdHALi trouvés
 				$halAut = array();
+				$tabIdHAL = array();//Si plusieurs idHAL remontés pour un même auteur
 				
 				echo('<b>Etape 2 : recherche des idHAL et docid des auteurs</b><br>');
 				echo('<div id=\'cpt2\'></div>');
@@ -665,7 +666,7 @@ if (isset($_POST["soumis"])) {
 					}
 					
 					if ($trouve == 0) {
-						$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=firstName_t:(%22".$firstNameT."%22%20OR%20%22".substr($firstNameT, 0, 1)."%22)%20AND%20lastName_t:%22".$lastNameT."%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s&sort=valid_s desc";
+						$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=firstName_t:(%22".$firstNameT."%22%20OR%20%22".substr($firstNameT, 0, 1)."%22)%20AND%20lastName_t:%22".$lastNameT."%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s&sort=valid_s desc,docid asc";
 						$reqAut = str_replace(" ", "%20", $reqAut);
 						echo('<a target="_blank" href="'.$reqAut.'">URL requête auteurs HAL (2ème méthode)</a><br>');
 						//echo $reqAut.'<br>';
@@ -674,14 +675,47 @@ if (isset($_POST["soumis"])) {
 						$numFound = 0;
 						if (isset($resAut->response->numFound)) {$numFound=$resAut->response->numFound;}
 						if ($numFound != 0) {
-							$halAut[$iAut]['firstName'] = $firstName;
-							$halAut[$iAut]['lastName'] = $lastName;
-							$halAut[$iAut]['affilName'] = $affilName;
-							if (isset($resAut->response->docs[0]->idHal_i) && $resAut->response->docs[0]->idHal_i != 0) {$halAut[$iAut]['idHali'] = $resAut->response->docs[0]->idHal_i; $cptiHi++;}else{$halAut[$iAut]['idHali'] = "";}
-							if (isset($resAut->response->docs[0]->idHal_s)) {$halAut[$iAut]['idHals'] = $resAut->response->docs[0]->idHal_s;}else{$halAut[$iAut]['idHals'] = "";}
-							if (isset($resAut->response->docs[0]->emailDomain_s)) {$halAut[$iAut]['mailDom'] = $resAut->response->docs[0]->emailDomain_s;}else{$halAut[$iAut]['mailDom'] = "";}
-							if (isset($resAut->response->docs[0]->docid)) {$halAut[$iAut]['docid'] = $resAut->response->docs[0]->docid;}
-							$cptdoc++;
+							$old = "non";
+							foreach($resAut->response->docs as $author) {
+								//On parcours toutes les formes OLD et si plusieurs résultats, stockage dans un tableau à part en vue de prévenir l'utilisateur lors de l'affichage final
+								if ($author->valid_s == "OLD") {
+									if ($old == "non") {
+										$halAut[$iAut]['firstName'] = $firstName;
+										$halAut[$iAut]['lastName'] = $lastName;
+										$halAut[$iAut]['affilName'] = $affilName;
+										if (isset($author->idHal_i) && $author->idHal_i != 0) {$halAut[$iAut]['idHali'] = $author->idHal_i; $cptiHi++;}else{$halAut[$iAut]['idHali'] = "";}
+										if (isset($author->idHal_s)) {$halAut[$iAut]['idHals'] = $author->idHal_s;}else{$halAut[$iAut]['idHals'] = "";}
+										if (isset($author->emailDomain_s)) {$halAut[$iAut]['mailDom'] = $author->emailDomain_s;}else{$halAut[$iAut]['mailDom'] = "";}
+										if (isset($author->docid)) {$halAut[$iAut]['docid'] = $author->docid;}
+										$cptdoc++;
+										$old = "oui";
+									}else{
+										$nbCel = count($tabIdHAL);
+										$tabIdHAL[$nbCel]['firstName'] = $firstName;
+										$tabIdHAL[$nbCel]['lastName'] = $lastName;
+										$tabIdHAL[$nbCel]['reqAut'] = $reqAut;
+										break;
+									}
+								}else{//Forme INCOMING
+									$halAut[$iAut]['firstName'] = $firstName;
+									$halAut[$iAut]['lastName'] = $lastName;
+									$halAut[$iAut]['affilName'] = $affilName;
+									if (isset($author->idHal_i) && $author->idHal_i != 0) {$halAut[$iAut]['idHali'] = $author->idHal_i; $cptiHi++;}else{$halAut[$iAut]['idHali'] = "";}
+									if (isset($author->idHal_s)) {$halAut[$iAut]['idHals'] = $author->idHal_s;}else{$halAut[$iAut]['idHals'] = "";}
+									if (isset($author->emailDomain_s)) {$halAut[$iAut]['mailDom'] = $author->emailDomain_s;}else{$halAut[$iAut]['mailDom'] = "";}
+									if (isset($author->docid)) {$halAut[$iAut]['docid'] = $author->docid;}
+									$cptdoc++;
+									break;//On ne prend en compte que la 1ère forme INCOMING trouvée
+								}
+								$halAut[$iAut]['firstName'] = $firstName;
+								$halAut[$iAut]['lastName'] = $lastName;
+								$halAut[$iAut]['affilName'] = $affilName;
+								if (isset($resAut->response->docs[0]->idHal_i) && $resAut->response->docs[0]->idHal_i != 0) {$halAut[$iAut]['idHali'] = $resAut->response->docs[0]->idHal_i; $cptiHi++;}else{$halAut[$iAut]['idHali'] = "";}
+								if (isset($resAut->response->docs[0]->idHal_s)) {$halAut[$iAut]['idHals'] = $resAut->response->docs[0]->idHal_s;}else{$halAut[$iAut]['idHals'] = "";}
+								if (isset($resAut->response->docs[0]->emailDomain_s)) {$halAut[$iAut]['mailDom'] = $resAut->response->docs[0]->emailDomain_s;}else{$halAut[$iAut]['mailDom'] = "";}
+								if (isset($resAut->response->docs[0]->docid)) {$halAut[$iAut]['docid'] = $resAut->response->docs[0]->docid;}
+								$cptdoc++;
+							}
 						}
 					}
 					
@@ -689,7 +723,6 @@ if (isset($_POST["soumis"])) {
 					//echo ('<br>');
 					$cpt++;
 				}
-				
 				
 				//var_dump($halAut);
 				$halAutinit = $halAut;//Sauvegarde des affiliations et idHal initiaux remontées par OverHAL
@@ -1612,6 +1645,14 @@ if (isset($_POST["soumis"])) {
 					
 					echo('Ajouter un idHAL : <input type="text" id="ajoutIdh'.$i.'-'.$idFic.'" name="ajoutIdh'.$i.'-'.$idFic.'" value="'.$idHAL.'" class="autoID form-control" style="height: 18px; width:280px; align:center;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'ajouterIdHAL\', pos: '.$i.', valeur: $(this).val()});";>');
 					echo('<a target="_blank" href="https://aurehal.archives-ouvertes.fr/author/browse?critere='.$halAut[$i]['firstName'].'+'.$halAut[$i]['lastName'].'">Consulter le référentiel auteur</a><br>');
+					
+					//Lors de l'étape 2 (2ème méthode), d'autres idHAL ont-ils été trouvés via la requête ?
+					for($id = 0; $id < count($tabIdHAL); $id++) {
+						if (isset($tabIdHAL[$id]['firstName']) && $tabIdHAL[$id]['firstName'] == $halAut[$i]['firstName'] && isset($tabIdHAL[$id]['lastName']) && $tabIdHAL[$id]['lastName'] == $halAut[$i]['lastName']) {
+							$reqAut = $tabIdHAL[$id]['reqAut'];
+							echo('<a target="_blank" href="'.$reqAut.'"><font color=\'red\'>D\'autres idHAL ont été trouvés</font></a><br>');
+						}
+					}
 					
 					//Affiliations remontées par OverHAL
 					echo('<i><font style=\'color: #999999;\'>Affiliation(s) remontée(s) par OverHAL:<br>');
