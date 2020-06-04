@@ -617,7 +617,7 @@ if (isset($_POST["soumis"])) {
 					$halAut[$iAut]['docid'] = "";
 					$firstNameT = strtolower(wd_remove_accents($firstName));
 					$lastNameT = strtolower(wd_remove_accents($lastName));
-					$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=firstName_t:%22".$firstNameT."%22%20AND%20lastName_t:%22".$lastNameT."%22%20AND%20valid_s:%22VALID%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s";
+					$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=firstName_t:(%22".$firstNameT."%22%20OR%20%22".substr($firstNameT, 0, 1)."%22)%20AND%20lastName_t:%22".$lastNameT."%22%20AND%20valid_s:%22VALID%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s";
 					$reqAut = str_replace(" ", "%20", $reqAut);
 					echo('<a target="_blank" href="'.$reqAut.'">URL requête auteurs HAL (1ère méthode)</a><br>');
 					//echo $reqAut.'<br>';
@@ -665,7 +665,7 @@ if (isset($_POST["soumis"])) {
 					}
 					
 					if ($trouve == 0) {
-						$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=firstName_t:%22".$firstNameT."%22%20AND%20lastName_t:%22".$lastNameT."%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s";
+						$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=firstName_t:(%22".$firstNameT."%22%20OR%20%22".substr($firstNameT, 0, 1)."%22)%20AND%20lastName_t:%22".$lastNameT."%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s&sort=valid_s desc";
 						$reqAut = str_replace(" ", "%20", $reqAut);
 						echo('<a target="_blank" href="'.$reqAut.'">URL requête auteurs HAL (2ème méthode)</a><br>');
 						//echo $reqAut.'<br>';
@@ -677,8 +677,8 @@ if (isset($_POST["soumis"])) {
 							$halAut[$iAut]['firstName'] = $firstName;
 							$halAut[$iAut]['lastName'] = $lastName;
 							$halAut[$iAut]['affilName'] = $affilName;
-							//if (isset($resAut->response->docs[0]->idHal_i)) {$halAut[$iAut]['idHali'] = $resAut->response->docs[0]->idHal_i;}else{$halAut[$iAut]['idHali'] = "";}
-							//if (isset($resAut->response->docs[0]->idHal_s)) {$halAut[$iAut]['idHals'] = $resAut->response->docs[0]->idHal_s;}else{$halAut[$iAut]['idHals'] = "";}
+							if (isset($resAut->response->docs[0]->idHal_i) && $resAut->response->docs[0]->idHal_i != 0) {$halAut[$iAut]['idHali'] = $resAut->response->docs[0]->idHal_i; $cptiHi++;}else{$halAut[$iAut]['idHali'] = "";}
+							if (isset($resAut->response->docs[0]->idHal_s)) {$halAut[$iAut]['idHals'] = $resAut->response->docs[0]->idHal_s;}else{$halAut[$iAut]['idHals'] = "";}
 							if (isset($resAut->response->docs[0]->emailDomain_s)) {$halAut[$iAut]['mailDom'] = $resAut->response->docs[0]->emailDomain_s;}else{$halAut[$iAut]['mailDom'] = "";}
 							if (isset($resAut->response->docs[0]->docid)) {$halAut[$iAut]['docid'] = $resAut->response->docs[0]->docid;}
 							$cptdoc++;
@@ -1126,7 +1126,7 @@ if (isset($_POST["soumis"])) {
 								if ($numFound != 0) {
 									$tests = $resId->response->docs[0]->authIdLastNameFirstName_fs;
 									foreach($tests as $test) {
-										if (strpos($test, $halAut[$i]['firstName']) !== false && strpos($test, $halAut[$i]['lastName']) !== false) {
+										if ((strpos($test, ($halAut[$i]['firstName'])) !== false || strpos($test, (substr($halAut[$i]['firstName'], 0, 1))) !== false) && strpos($test, $halAut[$i]['lastName']) !== false) {
 											$testTab = explode('_FacetSep_', $test);
 											$halAut[$i]['docid'] = $testTab[0];
 											$cptId++;
@@ -1146,6 +1146,42 @@ if (isset($_POST["soumis"])) {
 				echo('document.getElementById(\'cpt3c\').style.display = \'none\';');
 				echo('</script>');
 				//Fin étape 3c
+				
+				//Etape 3d - Recherche idHAL auteur grâce aux docid auteur trouvés précédemment
+				echo('<br><br>');
+				$cpt = 1;
+				$cptId = 0;
+				
+				echo('<b>Etape 3d : recherche des idHAL auteur grâce aux docid auteur trouvés précédemment</b><br>');
+				echo('<div id=\'cpt3d\'></div>');
+				
+				for($i = 0; $i < count($halAut); $i++) {
+					progression($cpt, count($halAut), 'cpt3d', $iPro, 'auteur');
+					if ($halAut[$i]['docid'] != "" && $halAut[$i]['idHals'] == "") {//L'auteur a bien un docid mais pas d'idHAL
+						$reqId = "https://api.archives-ouvertes.fr/ref/author/?q=docid:".$halAut[$i]['docid']."%20AND%20valid_s:(VALID%20OR%20OLD)&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s";
+						$reqId = str_replace(" ", "%20", $reqId);
+						echo('<a target="_blank" href="'.$reqId.'">URL requête idHAL auteur</a><br>');
+						$contId = file_get_contents($reqId);
+						$resId = json_decode($contId);
+						$numFound = 0;
+						if (isset($resId->response->numFound)) {$numFound = $resId->response->numFound;}
+						if ($numFound != 0) {
+							$halAut[$i]['idHali'] = $resId->response->docs[0]->idHal_i;
+							$halAut[$i]['idHals'] = $resId->response->docs[0]->idHal_s;
+							if (isset($resId->response->docs[0]->emailDomain_s)) {$halAut[$i]['mailDom'] = $resId->response->docs[0]->emailDomain_s;}
+							$cptId++;
+							break;
+						}
+					}
+					$cpt++;
+				}
+				
+				echo($cptId.' idHAL auteur trouvé(s)');
+				
+				echo('<script>');
+				echo('document.getElementById(\'cpt3d\').style.display = \'none\';');
+				echo('</script>');
+				//Fin étape 3d
 				
 				//var_dump($halAut);
 				//var_dump($halAff);
@@ -1550,32 +1586,32 @@ if (isset($_POST["soumis"])) {
 				echo('<td style=\'text-align: left;\'><span id=\'affiliations-'.$idFic.'\'>');
 				//$i = compteur auteur / $j = compteur affiliation
 				for($i = 0; $i < count($halAut); $i++) {
-					echo('<span id="PN-aut'.$i.'-'.$idFic.'"><b>'.$halAutinit[$i]['firstName'].' '.$halAutinit[$i]['lastName'].'</b></span>');
+					echo('<span id="PN-aut'.$i.'-'.$idFic.'"><b>'.$halAut[$i]['firstName'].' '.$halAut[$i]['lastName'].'</b></span>');
 					
 					//Possibilité de supprimer l'auteur
-					echo('&nbsp;<span id="Vu-aut'.$i.'-'.$idFic.'"><a style="cursor:pointer;" onclick="if (confirm(\'Etes-vous sûr de vouloir supprimer cet auteur ?\')) { $.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'supprimerAuteur\', pos: '.$i.', valeur: \''.$halAutinit[$i]['firstName'].' ~ '.$halAutinit[$i]['lastName'].'\'}); majokAuteur(\'aut'.$i.'-'.$idFic.'\', \''.str_replace("'", "\'", $halAutinit[$i]['firstName'].' '.$halAutinit[$i]['lastName']).'\');}"><img width=\'12px\' alt=\'Supprimer l\'auteur\' src=\'./img/supprimer.jpg\'></a></span>');
+					echo('&nbsp;<span id="Vu-aut'.$i.'-'.$idFic.'"><a style="cursor:pointer;" onclick="if (confirm(\'Etes-vous sûr de vouloir supprimer cet auteur ?\')) { $.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'supprimerAuteur\', pos: '.$i.', valeur: \''.$halAut[$i]['firstName'].' ~ '.$halAut[$i]['lastName'].'\'}); majokAuteur(\'aut'.$i.'-'.$idFic.'\', \''.str_replace("'", "\'", $halAut[$i]['firstName'].' '.$halAut[$i]['lastName']).'\');}"><img width=\'12px\' alt=\'Supprimer l\'auteur\' src=\'./img/supprimer.jpg\'></a></span>');
 					
 					//Début span suppression auteur
 					echo('&nbsp;<span id="Sup-aut'.$i.'-'.$idFic.'">');
 					
-					if ($halAutinit[$i]['mailDom'] != "") {echo(' (@'.$halAutinit[$i]['mailDom'].')');}
+					if ($halAut[$i]['mailDom'] != "") {echo(' (@'.$halAut[$i]['mailDom'].')');}
 					echo('<br>');
-					if ($halAutinit[$i]['xmlIds'] != "") {
-						echo('<span id="Txt'.$halAutinit[$i]['xmlIds'].'-'.$idFic.'">Supprimer l\'idHAL '.$halAutinit[$i]['xmlIds'].'</span> <span id="Vu'.$halAutinit[$i]['xmlIds'].'-'.$idFic.'"><a style="cursor:pointer;" onclick="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'supprimerIdHAL\', pos: '.$i.', valeur: \''.$halAutinit[$i]['xmlIds'].'\'}); majokIdHAL(\''.$halAutinit[$i]['xmlIds'].'-'.$idFic.'\');";><img width=\'12px\' alt=\'Supprimer l\'idHAL\' src=\'./img/supprimer.jpg\'></a></span><br>');
+					if ($halAut[$i]['xmlIds'] != "") {
+						echo('<span id="Txt'.$halAut[$i]['xmlIds'].'-'.$idFic.'">Supprimer l\'idHAL '.$halAut[$i]['xmlIds'].'</span> <span id="Vu'.$halAut[$i]['xmlIds'].'-'.$idFic.'"><a style="cursor:pointer;" onclick="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'supprimerIdHAL\', pos: '.$i.', valeur: \''.$halAut[$i]['xmlIds'].'\'}); majokIdHAL(\''.$halAut[$i]['xmlIds'].'-'.$idFic.'\');";><img width=\'12px\' alt=\'Supprimer l\'idHAL\' src=\'./img/supprimer.jpg\'></a></span><br>');
 					}
 					//Si pas d'idHAL et si id auteur existe, afficher l'id
 					if ($halAut[$i]['idHals'] == "" && $halAut[$i]['docid'] != "") {
 						echo('id '.$halAut[$i]['docid'].'<br>');
 					}
-					if ($halAutinit[$i]['idHals'] != "") {
+					if ($halAut[$i]['idHals'] != "") {
 						//echo('Remonter le bon auteur du référentiel auteurs <a class=info><img src=\'./img/pdi.jpg\'><span>L\'idHAL n\'est pas ajouté automatiquement car c\'est juste une suggestion que vous devrez valider en l\'ajoutant dans le champ ci-dessous prévu à cet effet.</span></a> :<br><input type="text" id="ajoutidHAL'.$i.'" value="'.$halAutinit[$i]['idHals'].'" name="ajoutidHAL'.$i.'" class="form-control" style="height: 18px; width:200px; align:center;">');
-						$idHAL = $halAutinit[$i]['idHals'].' ('.$halAutinit[$i]['idHali'].')';
+						$idHAL = $halAut[$i]['idHals'].' ('.$halAut[$i]['idHali'].')';
 					}else{
 						$idHAL = "";
 					}
 					
 					echo('Ajouter un idHAL : <input type="text" id="ajoutIdh'.$i.'-'.$idFic.'" name="ajoutIdh'.$i.'-'.$idFic.'" value="'.$idHAL.'" class="autoID form-control" style="height: 18px; width:280px; align:center;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'ajouterIdHAL\', pos: '.$i.', valeur: $(this).val()});";>');
-					echo('<a target="_blank" href="https://aurehal.archives-ouvertes.fr/author/browse?critere='.$halAutinit[$i]['firstName'].'+'.$halAutinit[$i]['lastName'].'">Consulter le référentiel auteur</a><br>');
+					echo('<a target="_blank" href="https://aurehal.archives-ouvertes.fr/author/browse?critere='.$halAut[$i]['firstName'].'+'.$halAut[$i]['lastName'].'">Consulter le référentiel auteur</a><br>');
 					
 					//Affiliations remontées par OverHAL
 					echo('<i><font style=\'color: #999999;\'>Affiliation(s) remontée(s) par OverHAL:<br>');
