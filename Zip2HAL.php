@@ -791,6 +791,17 @@ if (isset($_POST["soumis"])) {
 						if ($elt->nodeName == "orgName") {
 							$nomAff[$iAff]['org'] = $elt->nodeValue;
 						}
+						if ($elt->nodeName == "desc") {
+							foreach($elt->childNodes as $b) {//Recherche noeud address
+								if ($b->nodeName == "address") {
+									foreach($b->childNodes as $c) {//Recherche noeud country
+										if ($c->nodeName == "country") {
+											if ($c->hasAttribute("key")) {$nomAff[$iAff]['pays'] = $c->getAttribute("key");}
+										}
+									}
+								}
+							}
+						}
 					}
 					$iAff++;
 				}
@@ -803,6 +814,8 @@ if (isset($_POST["soumis"])) {
 					progression($cpt, $nbAff, 'cpt3a', $iPro, 'affiliation');
 					$code = $nomAff[$i]['org'];
 					$type = $nomAff[$i]['type'];
+					$pays = $nomAff[$i]['pays'];
+					if ($pays != "") {$special = "%20AND%20country_s:%22".strtolower($pays)."%22";}else{$special = "";}
 					$trouve = 0;//Test pour savoir si la 1ère méthode a permis de trouver un id de structure
 					//Si présence d'un terme entre crochets, il faut isoler ce terme et l'ajouter comme recherche prioritaire > ajout au début du tableau
 					$crochet = "";
@@ -826,7 +839,7 @@ if (isset($_POST["soumis"])) {
 					foreach($tabCode as $test) {
 						$test = str_replace(" ", "+", trim($test));
 						if ($cptCode < count($tabCode) && !in_array($test, $anepasTester)) {
-							$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=acronym_t:".$test."%20OR%20acronym_sci:".$test."%20AND%20valid_s:(VALID%20OR%20OLD)&fl=docid,valid_s,name_s,type_s,country_s,acronym_s&sort=valid_s%20desc,docid%20asc";
+							$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=acronym_t:".$test."%20OR%20acronym_sci:".$test."%20AND%20valid_s:(VALID%20OR%20OLD)".$special."&fl=docid,valid_s,name_s,type_s,country_s,acronym_s&sort=valid_s%20desc,docid%20asc";
 							$reqAff = str_replace(" ", "%20", $reqAff);
 							echo('<a target="_blank" href="'.$reqAff.'">URL requête affiliations (1ère méthode) HAL</a><br>');
 							//echo $reqAff.'<br>';
@@ -863,7 +876,7 @@ if (isset($_POST["soumis"])) {
 						foreach($tabCode as $test) {
 							$test = str_replace(" ", "+", trim($test));
 							if ($cptCode < count($tabCode) && !in_array($test, $anepasTester)) {
-								$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:".$test."%20OR%20code_t:".$test."%20OR%20acronym_t:".$test.")%20AND%20type_s:".$type."%20AND%20valid_s:(VALID%20OR%20OLD)&fl=docid,valid_s,name_s,type_s,country_s,acronym_s&sort=valid_s desc,docid asc";
+								$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:".$test."%20OR%20code_t:".$test."%20OR%20acronym_t:".$test.")%20AND%20type_s:".$type."%20AND%20valid_s:(VALID%20OR%20OLD)".$special."&fl=docid,valid_s,name_s,type_s,country_s,acronym_s&sort=valid_s desc,docid asc";
 								$reqAff = str_replace(" ", "%20", $reqAff);
 								echo('<a target="_blank" href="'.$reqAff.'">URL requête affiliations (2ème méthode) HAL</a><br>');
 								//echo $reqAff.'<br>';
@@ -901,7 +914,7 @@ if (isset($_POST["soumis"])) {
 							$test = str_replace(" ", "+", trim($test));
 							if ($cptCode < count($tabCode) && !in_array($test, $anepasTester)) {
 								//$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:%22".$test."%22%20OR%20name_t:(".$test.")%20OR%20code_t:%22".$test."%22%20OR%20acronym_t:%22".$test."%22%20OR%20acronym_sci:%22".$test."%22)%20AND%20type_s:".$type."%20AND%20valid_s:(VALID%20OR%20OLD)&fl=docid,valid_s,name_s,type_s&sort=valid_s%20desc,docid%20asc";
-								$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:%22".$test."%22%20OR%20name_t:(".$test.")%20OR%20code_t:%22".$test."%22%20OR%20acronym_t:%22".$test."%22%20OR%20acronym_sci:%22".$test."%22)%20AND%20valid_s:(VALID%20OR%20OLD)&fl=docid,valid_s,name_s,type_s,country_s,acronym_s&sort=valid_s%20desc,docid%20asc";
+								$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:%22".$test."%22%20OR%20name_t:(".$test.")%20OR%20code_t:%22".$test."%22%20OR%20acronym_t:%22".$test."%22%20OR%20acronym_sci:%22".$test."%22)%20AND%20valid_s:(VALID%20OR%20OLD)".$special."&fl=docid,valid_s,name_s,type_s,country_s,acronym_s&sort=valid_s%20desc,docid%20asc";
 								$reqAff = str_replace(" ", "%20", $reqAff);
 								echo('<a target="_blank" href="'.$reqAff.'">URL requête affiliations (3ème méthode) HAL</a><br>');
 								//echo $reqAff.'<br>';
