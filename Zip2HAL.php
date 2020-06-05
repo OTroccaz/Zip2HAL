@@ -389,7 +389,20 @@ if (isset($_POST["soumis"])) {
 			//$reqAPI = "https://api.archives-ouvertes.fr/search/?fq=producedDateY_i:2016&rows=10000&fl=halId_s,doiId_s,title_s,subTitle_s,docType_s";
 			//$reqAPI = "https://api.archives-ouvertes.fr/search/".$portail."/?fq=*:*&rows=10000&fl=halId_s,doiId_s,title_s,subTitle_s,docType_s";
 			//$reqAPI = "https://api.archives-ouvertes.fr/search/".$portail."/?fq=producedDateY_i:2016&rows=10000&fl=halId_s,doiId_s,title_s,subTitle_s,docType_s";
-			$reqAPI = "https://api.archives-ouvertes.fr/search/".$portail."/?fq=title_t:%22".strtolower($tabTit[0])."*%22&rows=10000&fl=halId_s,doiId_s,title_s,subTitle_s,docType_s";
+			
+			//Récupération de l'année de publication
+			$anns = $xml->getElementsByTagName("date");
+			$datePub = "";
+			foreach($anns as $ann) {
+				if ($ann->hasAttribute("type") && $ann->getAttribute("type") == "datePub") {
+					$datePub = $ann->nodeValue;
+					$datePub1 = $datePub - 1;
+					$datePub2 = $datePub + 1;
+				}
+			}
+			if ($datePub != "") {$special = "%20AND%20producedDateY_i:(".$datePub1."%20OR%20".$datePub."%20OR%20".$datePub2.")";}else{$special = "";}
+			
+			$reqAPI = "https://api.archives-ouvertes.fr/search/?fq=title_t:%22".strtolower($tabTit[0])."*%22".$special."&rows=10000&fl=halId_s,doiId_s,title_s,subTitle_s,docType_s";
 			$contents = file_get_contents($reqAPI);
 			$results = json_decode($contents);
 			$numFound = 0;
@@ -770,7 +783,7 @@ if (isset($_POST["soumis"])) {
 				$iAff = 0;
 				$nomAff = array();//Code initial des affiliations (à parir du XML)
 				$halAff = array();
-				$anepasTester = array('UMR', 'UMS', 'UPR', 'ERL', 'IFR', 'UR', 'USR', 'USC', 'CIC', 'CIC-P', 'CIC-IT', 'FRE', 'EA', 'INSERM', 'U', 'CHU', 'CNRS', 'INRA', 'CIRAD', 'INRAE', 'IRSTEA', 'CEA');
+				$anepasTester = array('UMR', 'UMS', 'UPR', 'ERL', 'IFR', 'UR', 'USR', 'USC', 'CIC', 'CIC-P', 'CIC-IT', 'FRE', 'EA', 'INSERM', 'U', 'CHU', 'CNRS', 'INRA', 'CIRAD', 'INRAE', 'IRSTEA', 'CEA', 'AP HP', 'AP-HP');
 				//$affdejaTestee = array();//Tableau des affiliations déjà testées et résultat obtenu pour éviter de refaire des tests
 
 				
