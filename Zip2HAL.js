@@ -3,6 +3,11 @@ function majokIdHAL(halID) {
 	document.getElementById("Txt"+halID).innerHTML = "<s>Supprimer l'idHAL "+halID+"</s>";
 }
 
+function majokIdHALSuppr(halID) {
+  document.getElementById(halID).value = "";
+}
+
+
 function majokAffil(affilPos, affilName) {
   document.getElementById("Vu-"+affilPos).innerHTML = "<img width='12px' src='./img/supprimer_ok.jpg'>";
 	document.getElementById(affilPos).innerHTML = "<s>"+affilName+"</s>";

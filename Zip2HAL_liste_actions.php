@@ -406,15 +406,22 @@ if ($action == "supprimerAuteur") {
 //Ajouter un idHAL
 if ($action == "ajouterIdHAL") {
 	$i = $_POST["pos"];
-	$tabVal = explode('(', $valeur);
-	deleteNode($xml, "author", "idno", $i, "type", "idhal", "notation", "string", "exact");
-	deleteNode($xml, "author", "idno", $i, "type", "idhal", "notation", "numeric", "exact");
-	$xml->save($nomfic);
-	//insertNode($xml, trim($tabVal[0]), "author", "affiliation", $i, "idno", "type", "idhal", "notation", "string", "iB", "amont", "");
-	//insertNode($xml, trim(str_replace(')', '', $tabVal[1])), "author", "affiliation", $i, "idno", "type", "idhal", "notation", "numeric", "iB", "amont", "");
-	insertNode($xml, trim(str_replace(')', '', $tabVal[1])), "author", "persName", $i, "idno", "type", "idhal", "notation", "numeric", "iA", "amont", "");
-	insertNode($xml, trim($tabVal[0]), "author", "persName", $i, "idno", "type", "idhal", "notation", "string", "iA", "amont", "");
-	$xml->save($nomfic);
+	if ($valeur == "") {//C'est en fait une suppression
+		deleteNode($xml, "author", "idno", $i, "type", "idhal", "notation", "string", "exact");
+		deleteNode($xml, "author", "idno", $i, "type", "idhal", "notation", "numeric", "exact");
+		deleteNode($xml, "author", "idno", $i, "type", "halauthorid", "", "", "exact");
+		$xml->save($nomfic);
+	}else{
+		$tabVal = explode('(', $valeur);
+		deleteNode($xml, "author", "idno", $i, "type", "idhal", "notation", "string", "exact");
+		deleteNode($xml, "author", "idno", $i, "type", "idhal", "notation", "numeric", "exact");
+		$xml->save($nomfic);
+		//insertNode($xml, trim($tabVal[0]), "author", "affiliation", $i, "idno", "type", "idhal", "notation", "string", "iB", "amont", "");
+		//insertNode($xml, trim(str_replace(')', '', $tabVal[1])), "author", "affiliation", $i, "idno", "type", "idhal", "notation", "numeric", "iB", "amont", "");
+		insertNode($xml, trim(str_replace(')', '', $tabVal[1])), "author", "persName", $i, "idno", "type", "idhal", "notation", "numeric", "iA", "amont", "");
+		insertNode($xml, trim($tabVal[0]), "author", "persName", $i, "idno", "type", "idhal", "notation", "string", "iA", "amont", "");
+		$xml->save($nomfic);
+	}
 }
 
 //Supprimer un idHAL
@@ -422,6 +429,7 @@ if ($action == "supprimerIdHAL") {
 	$i = $_POST["pos"];
 	deleteNode($xml, "author", "idno", $i, "type", "idhal", "notation", "string", "exact");
 	deleteNode($xml, "author", "idno", $i, "type", "idhal", "notation", "numeric", "exact");
+	deleteNode($xml, "author", "idno", $i, "type", "halauthorid", "", "", "exact");
 	$xml->save($nomfic);
 }
 
