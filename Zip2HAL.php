@@ -477,7 +477,7 @@ if (isset($_POST["soumis"])) {
 							$doublon .= " et du DOI";
 						}
 					}
-							
+					
 					if ($doublon != "non") {
 						//Doublon trouvé dans HAL > Est-il aussi présent dans la collection et de quel type ?
 						$dbl++;
@@ -487,62 +487,72 @@ if (isset($_POST["soumis"])) {
 						$contDbl = file_get_contents($reqDbl);
 						$resDbl = json_decode($contDbl);
 						$numDbl = 0;
-						if (isset($results->response->numFound)) {$numDbl=$results->response->numFound;}
+						if (isset($resDbl->response->numFound)) {$numDbl=$resDbl->response->numFound;}
 						//echo $resDbl.'<br>';
-						foreach($resDbl->response->docs as $entDbl) {
-							$doublonDbl = "non";
-							if(strpos($entDbl->title_s[0], "[") !== false && strpos($entDbl->title_s[0], "]") !== false) {
-								$posi = strpos($entDbl->title_s[0], "[")+1;
-								$posf = strpos($entDbl->title_s[0], "]");
-								$tradTitleDbl = substr($entDbl->title_s[0], $posi, $posf-$posi);
-								$encodedTitleDbl = normalize(utf8_encode(mb_strtolower($tradTitleDbl)));
-							}else{
-								//Y-a-t-il un sous-titre ?
-								$titlePlusDbl = $entDbl->title_s[0];
-								if (isset($entDbl->subTitle_s[0])) {
-									$titreInitDbl = $titlePlusDbl;
-									$titlePlusDbl .= " : ".$entDbl->subTitle_s[0];
-								}
-								$encodedTitleDbl = normalize(utf8_encode(mb_strtolower(utf8_decode($titlePlusDbl))));
-								
-								//On récupère le type de document
-								$docTEIDbl = $entDbl->docType_s;
-								
-								//On compare les titres normalisés
-								if ($enctitTEI == $encodedTitleDbl) {
-									$doublonDbl = "titre";
-								}
-
-								//On compare également les DOI s'ils sont présents
-								if ($doiTEI != "" && isset($entDbl->doiId_s) && $doiTEI == $entDbl->doiId_s) {
-									$docTEIDbl = $entDbl->docType_s;
-									if ($doublonDbl == "non") {
-										$doublonDbl = "DOI";
-									}else{
-										$doublonDbl .= " et du DOI";
-									}
-								}
-								
-								if ($doublonDbl != "non") {//Doublon trouvé dans la collection > vérification du type
-									$txtDbl = " et dans la collection ".$team;
-									if ($typTEI == $docTEIDbl) {//Mêmes types de document
-										$txtDbl .= " et les types sont identiques";
-										$typDbl = "HALCOLLTYP";
-									}else{
-										$txtDbl .= " mais les types sont différents";
-										$typDbl = "HALCOLL";
-									}
-									//echo $typTEI.' - '.$docTEIDbl.'<br>';
-									break 2;//Doublon HALCOLL trouvé > sortie des 2 boucles foreach
+						if ($numDbl != 0) {
+							foreach($resDbl->response->docs as $entDbl) {
+								$doublonDbl = "non";
+								if(strpos($entDbl->title_s[0], "[") !== false && strpos($entDbl->title_s[0], "]") !== false) {
+									$posi = strpos($entDbl->title_s[0], "[")+1;
+									$posf = strpos($entDbl->title_s[0], "]");
+									$tradTitleDbl = substr($entDbl->title_s[0], $posi, $posf-$posi);
+									$encodedTitleDbl = normalize(utf8_encode(mb_strtolower($tradTitleDbl)));
 								}else{
-									if ($typTEI == $docTEIDbl) {//Mêmes types de document
-										$txtDbl = " mais pas dans la collection ".$team. " et les types sont identiques";
-										$typDbl = "HALTYP";
+									//Y-a-t-il un sous-titre ?
+									$titlePlusDbl = $entDbl->title_s[0];
+									if (isset($entDbl->subTitle_s[0])) {
+										$titreInitDbl = $titlePlusDbl;
+										$titlePlusDbl .= " : ".$entDbl->subTitle_s[0];
+									}
+									$encodedTitleDbl = normalize(utf8_encode(mb_strtolower(utf8_decode($titlePlusDbl))));
+									
+									//On récupère le type de document
+									$docTEIDbl = $entDbl->docType_s;
+									
+									//On compare les titres normalisés
+									if ($enctitTEI == $encodedTitleDbl) {
+										$doublonDbl = "titre";
+									}
+
+									//On compare également les DOI s'ils sont présents
+									if ($doiTEI != "" && isset($entDbl->doiId_s) && $doiTEI == $entDbl->doiId_s) {
+										$docTEIDbl = $entDbl->docType_s;
+										if ($doublonDbl == "non") {
+											$doublonDbl = "DOI";
+										}else{
+											$doublonDbl .= " et du DOI";
+										}
+									}
+									echo ($doublonDbl);
+									if ($doublonDbl != "non") {//Doublon trouvé dans la collection > vérification du type
+										$txtDbl = " et dans la collection ".$team;
+										if ($typTEI == $docTEIDbl) {//Mêmes types de document
+											$txtDbl .= " et les types sont identiques";
+											$typDbl = "HALCOLLTYP";
+										}else{
+											$txtDbl .= " mais les types sont différents";
+											$typDbl = "HALCOLL";
+										}
+										//echo $typTEI.' - '.$docTEIDbl.'<br>';
+										break 2;//Doublon HALCOLL trouvé > sortie des 2 boucles foreach
 									}else{
-										$txtDbl = " mais pas dans la collection ".$team. " et les types sont différents";
-										$typDbl = "HAL";
+										if ($typTEI == $docTEIDbl) {//Mêmes types de document
+											$txtDbl = " mais pas dans la collection ".$team. " et les types sont identiques";
+											$typDbl = "HALTYP";
+										}else{
+											$txtDbl = " mais pas dans la collection ".$team. " et les types sont différents";
+											$typDbl = "HAL";
+										}
 									}
 								}
+							}
+						}else{
+							if ($typTEI == $docTEI) {//Mêmes types de document
+								$txtDbl = " mais pas dans la collection ".$team. " et les types sont identiques";
+								$typDbl = "HALTYP";
+							}else{
+								$txtDbl = " mais pas dans la collection ".$team. " et les types sont différents";
+								$typDbl = "HAL";
 							}
 						}
 					}
@@ -851,7 +861,8 @@ if (isset($_POST["soumis"])) {
 					if ($crochet != "") {array_unshift($tabCode, $crochet);}
 					foreach($tabCode as $test) {
 						$test = str_replace(" ", "+", trim($test));
-						if ($cptCode < (count($tabCode) - 1) && !in_array($test, $anepasTester)) {
+						if (count($tabCode) > 1) {$max = count($tabCode) - 1;}else{$max = 1;}
+						if ($cptCode < $max && !in_array($test, $anepasTester)) {
 							$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=acronym_t:".$test."%20OR%20acronym_sci:".$test."%20AND%20valid_s:(VALID%20OR%20OLD)".$special."&fl=docid,valid_s,name_s,type_s,country_s,acronym_s&sort=valid_s%20desc,docid%20asc";
 							$reqAff = str_replace(" ", "%20", $reqAff);
 							echo('<a target="_blank" href="'.$reqAff.'">URL requête affiliations (1ère méthode) HAL</a><br>');
@@ -888,7 +899,8 @@ if (isset($_POST["soumis"])) {
 						$tabCode = explode(",", $code);
 						foreach($tabCode as $test) {
 							$test = str_replace(" ", "+", trim($test));
-							if ($cptCode < (count($tabCode) - 1) && !in_array($test, $anepasTester)) {
+							if (count($tabCode) > 1) {$max = count($tabCode) - 1;}else{$max = 1;}
+							if ($cptCode < $max && !in_array($test, $anepasTester)) {
 								$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:".$test."%20OR%20code_t:".$test."%20OR%20acronym_t:".$test.")%20AND%20type_s:".$type."%20AND%20valid_s:(VALID%20OR%20OLD)".$special."&fl=docid,valid_s,name_s,type_s,country_s,acronym_s&sort=valid_s desc,docid asc";
 								$reqAff = str_replace(" ", "%20", $reqAff);
 								echo('<a target="_blank" href="'.$reqAff.'">URL requête affiliations (2ème méthode) HAL</a><br>');
@@ -925,7 +937,8 @@ if (isset($_POST["soumis"])) {
 						$tabCode = explode(",", $code);
 						foreach($tabCode as $test) {
 							$test = str_replace(" ", "+", trim($test));
-							if ($cptCode < (count($tabCode) - 1) && !in_array($test, $anepasTester)) {
+							if (count($tabCode) > 1) {$max = count($tabCode) - 1;}else{$max = 1;}
+							if ($cptCode < $max && !in_array($test, $anepasTester)) {
 								//$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:%22".$test."%22%20OR%20name_t:(".$test.")%20OR%20code_t:%22".$test."%22%20OR%20acronym_t:%22".$test."%22%20OR%20acronym_sci:%22".$test."%22)%20AND%20type_s:".$type."%20AND%20valid_s:(VALID%20OR%20OLD)&fl=docid,valid_s,name_s,type_s&sort=valid_s%20desc,docid%20asc";
 								$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:%22".$test."%22%20OR%20name_t:(".$test.")%20OR%20code_t:%22".$test."%22%20OR%20acronym_t:%22".$test."%22%20OR%20acronym_sci:%22".$test."%22)%20AND%20valid_s:(VALID%20OR%20OLD)".$special."&fl=docid,valid_s,name_s,type_s,country_s,acronym_s&sort=valid_s%20desc,docid%20asc";
 								$reqAff = str_replace(" ", "%20", $reqAff);
@@ -969,7 +982,7 @@ if (isset($_POST["soumis"])) {
 									$firstName = $halAut[$j]['firstName'];
 									$lastName = $halAut[$j]['lastName'];
 									$facetSep = $lastName.' '.$firstName;
-									$reqAff = "https://api.archives-ouvertes.fr/search/index/?q=authLastName_sci:%22".$lastName."%22%20AND%20authFirstName_sci:%22".$firstName."%22&fq=-labStructValid_s:INCOMING%20OR%20(structAcronym_sci:%22".$code."%22%20OR%20structName_sci:%22u1085%22%20OR%20structCode_sci:%22".$code."%22)&fl=structPrimaryHasAlphaAuthIdHal_fs,authId_i,authLastName_s,authFirstName_s&sort=abs(sub(producedDateY_i,".$annee."))%20asc";
+									$reqAff = "https://api.archives-ouvertes.fr/search/index/?q=authLastName_sci:%22".$lastName."%22%20AND%20authFirstName_sci:%22".$firstName."%22&fq=-labStructValid_s:INCOMING%20OR%20(structAcronym_sci:%22".$code."%22%20OR%20structName_sci:%22".$code."%22%20OR%20structCode_sci:%22".$code."%22)&fl=structPrimaryHasAlphaAuthIdHal_fs,authId_i,authLastName_s,authFirstName_s&sort=abs(sub(producedDateY_i,".$annee."))%20asc";
 									$reqAff = str_replace(" ", "%20", $reqAff);
 									echo('<a target="_blank" href="'.$reqAff.'">URL requête affiliations (4ème méthode) HAL</a><br>');
 									//echo $reqAff.'<br>';
