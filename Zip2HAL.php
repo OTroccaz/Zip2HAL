@@ -801,7 +801,7 @@ if (isset($_POST["soumis"])) {
 				$iAff = 0;
 				$nomAff = array();//Code initial des affiliations (à parir du XML)
 				$halAff = array();
-				$anepasTester = array('UMR', 'UMS', 'UPR', 'ERL', 'IFR', 'UR', 'USR', 'USC', 'CIC', 'CIC-P', 'CIC-IT', 'FRE', 'EA', 'INSERM', 'U', 'CHU', 'CNRS', 'INRA', 'CIRAD', 'INRAE', 'IRSTEA', 'CEA', 'AP HP', 'AP-HP', 'France');
+				$anepasTester = array('UMR', 'UMS', 'UPR', 'ERL', 'IFR', 'UR', 'USR', 'USC', 'CIC', 'CIC-P', 'CIC-IT', 'FRE', 'EA', 'INSERM', 'U', 'CHU', 'CNRS', 'INRA', 'CIRAD', 'INRAE', 'IRSTEA', 'CEA', 'AP HP', 'AP-HP', 'France', 'Université de Rennes');
 				//$affdejaTestee = array();//Tableau des affiliations déjà testées et résultat obtenu pour éviter de refaire des tests
 
 				
@@ -862,15 +862,15 @@ if (isset($_POST["soumis"])) {
 					
 					//1ère méthode, sur le référentiel des structures et uniquement sur l'acronyme
 
-					//Si présence de virgules > test sur chacun des éléments sauf les 2 derniers qui correspondent souvent à la ville et au pays
-					//Mais, si pas de virgule, il faut naturellement conserver le dernier élément > $cptCode = 0 ou 1
-					if (strpos($code, ",") !== false) {$cptCode = 1;}else{$cptCode = 0;}
+					//Si présence d'au moins 3 virgules > test sur chacun des éléments sauf les 2 derniers qui correspondent souvent à la ville et au pays
+					//Mais, si pas de virgule ou nombre de virgules < 3, il faut naturellement conserver le dernier élément
+					$cptCode = 0;
 					$tabCode = explode(",", $code);
 					if ($crochet != "") {array_unshift($tabCode, $crochet);}
 					foreach($tabCode as $test) {
 						$test = str_replace(" ", "+", trim($test));
-						if (count($tabCode) > 1) {$max = count($tabCode) - 1;}else{$max = 1;}
-						if ($cptCode < $max && !in_array($test, $anepasTester)) {
+						if (count($tabCode) > 2) {$max = count($tabCode) - 2;}else{$max = count($tabCode);}
+						if ($cptCode <= $max && !in_array($test, $anepasTester)) {
 							$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=acronym_t:".$test."%20OR%20acronym_sci:".$test."%20AND%20valid_s:(VALID%20OR%20OLD)".$special."&fl=docid,valid_s,name_s,type_s,country_s,acronym_s&sort=valid_s%20desc,docid%20asc";
 							$reqAff = str_replace(" ", "%20", $reqAff);
 							echo('<a target="_blank" href="'.$reqAff.'">URL requête affiliations (1ère méthode) HAL</a><br>');
@@ -899,17 +899,21 @@ if (isset($_POST["soumis"])) {
 					}
 					
 					if ($trouve == 0) {
-						//2ème méthode > avec le référentiel HAL des structures
+						//2ème méthode > avec le référentiel HAL des structures avec le type d'institution
 						
-						//Si présence de virgules > test sur chacun des éléments sauf les 2 derniers qui correspondent souvent à la ville et au pays
-						//Mais, si pas de virgule, il faut naturellement conserver le dernier élément > $cptCode = 0 ou 1
-						if (strpos($code, ",") !== false) {$cptCode = 1;}else{$cptCode = 0;}
+						//Si présence d'au moins 3 virgules > test sur chacun des éléments sauf les 2 derniers qui correspondent souvent à la ville et au pays
+						//Mais, si pas de virgule ou nombre de virgules < 3, il faut naturellement conserver le dernier élément
+						$cptCode = 0;
 						$tabCode = explode(",", $code);
 						foreach($tabCode as $test) {
 							$test = str_replace(" ", "+", trim($test));
-							if (count($tabCode) > 1) {$max = count($tabCode) - 1;}else{$max = 1;}
-							if ($cptCode < $max && !in_array($test, $anepasTester)) {
-								$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:".$test."%20OR%20code_t:".$test."%20OR%20acronym_t:".$test.")%20AND%20type_s:".$type."%20AND%20valid_s:(VALID%20OR%20OLD)".$special."&fl=docid,valid_s,name_s,type_s,country_s,acronym_s&sort=valid_s desc,docid asc";
+							if (count($tabCode) > 2) {$max = count($tabCode) - 2;}else{$max = count($tabCode);}
+							if ($cptCode <= $max && !in_array($test, $anepasTester)) {
+								$typeSpe = "";
+								if ($special != "") {//Dans HAL, on signale le plus souvent des institutions étrangères, pas des labos
+									if (strpos($special, "fr") === false) {$typeSpe = "%20AND%20type_s:(institution%20OR%20regroupinstitution%20OR%20regrouplaboratory)";}else{$typeSpe = "%20AND%20type_s:".$type;}
+								}
+								$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:".$test."%20OR%20code_t:".$test."%20OR%20acronym_t:".$test.")".$typeSpe."%20AND%20valid_s:(VALID%20OR%20OLD)".$special."&fl=docid,valid_s,name_s,type_s,country_s,acronym_s&sort=valid_s desc,docid asc";
 								$reqAff = str_replace(" ", "%20", $reqAff);
 								echo('<a target="_blank" href="'.$reqAff.'">URL requête affiliations (2ème méthode) HAL</a><br>');
 								//echo $reqAff.'<br>';
@@ -931,22 +935,48 @@ if (isset($_POST["soumis"])) {
 										$trouve++;
 										break;
 									//}
+								}else{
+									//3ème méthode > avec le référentiel HAL des structures sans le type d'institution
+									$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:".$test."%20OR%20code_t:".$test."%20OR%20acronym_t:".$test.")%20AND%20valid_s:(VALID%20OR%20OLD)".$special."&fl=docid,valid_s,name_s,type_s,country_s,acronym_s&sort=valid_s desc,docid asc";
+									$reqAff = str_replace(" ", "%20", $reqAff);
+									echo('<a target="_blank" href="'.$reqAff.'">URL requête affiliations (3ème méthode) HAL</a><br>');
+									//echo $reqAff.'<br>';
+									$contAff = file_get_contents($reqAff);
+									$resAff = json_decode($contAff);
+									if (isset($resAff->response->numFound)) {$numFound=$resAff->response->numFound;}
+									if ($numFound != 0) {			
+										//foreach($resAff->response->docs as $affil) { > Non, on ne prend que la première affiliation trouvée
+											$halAff[$iAff]['docid'] = $resAff->response->docs[0]->docid;
+											$halAff[$iAff]['lsAff'] = $nomAff[$i]['lsAff'];
+											$halAff[$iAff]['valid'] = $resAff->response->docs[0]->valid_s;
+											$halAff[$iAff]['names'] = $resAff->response->docs[0]->name_s;
+											if (isset($resAff->response->docs[0]->acronym_s)) {$acronym = " [".$resAff->response->docs[0]->acronym_s."], ";}else{$acronym = ", ";}
+											if (isset($resAff->response->docs[0]->country_s)) {$country = ", ".$resAff->response->docs[0]->country_s;}else{$country = "";}
+											$halAff[$iAff]['ncplt'] = $resAff->response->docs[0]->docid." ~ ".$resAff->response->docs[0]->name_s.$acronym.$resAff->response->docs[0]->type_s.$country;
+											$halAff[$iAff]['fname'] = "";
+											$halAff[$iAff]['lname'] = "";
+											$iAff++;
+											$trouve++;
+											break;
+										//}
+									}
 								}
 							}
 							$cptCode++;
 						}
 					}
 					
-					//3ème méthode, toujours sur le référentiel des structures mais avec une autre requête
+					
+					//4ème méthode, toujours sur le référentiel des structures mais avec une autre requête
 					if ($trouve == 0) {
-						//Si présence de virgules > test sur chacun des éléments sauf les 2 derniers qui correspondent souvent à la ville et au pays
-						//Mais, si pas de virgule, il faut naturellement conserver le dernier élément > $cptCode = 0 ou 1
+						//Si présence d'au moins 3 virgules > test sur chacun des éléments sauf les 2 derniers qui correspondent souvent à la ville et au pays
+					//Mais, si pas de virgule ou nombre de virgules < 3, il faut naturellement conserver le dernier élément
 						if (strpos($code, ",") !== false) {$cptCode = 1;}else{$cptCode = 0;}
 						$tabCode = explode(",", $code);
 						foreach($tabCode as $test) {
 							$test = str_replace(" ", "+", trim($test));
-							if (count($tabCode) > 1) {$max = count($tabCode) - 1;}else{$max = 1;}
-							if ($cptCode < $max && !in_array($test, $anepasTester)) {
+							if (count($tabCode) > 2) {$max = count($tabCode) - 2;}else{$max = count($tabCode);}
+							if ($cptCode <= $max && !in_array($test, $anepasTester)) {
 								//$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:%22".$test."%22%20OR%20name_t:(".$test.")%20OR%20code_t:%22".$test."%22%20OR%20acronym_t:%22".$test."%22%20OR%20acronym_sci:%22".$test."%22)%20AND%20type_s:".$type."%20AND%20valid_s:(VALID%20OR%20OLD)&fl=docid,valid_s,name_s,type_s&sort=valid_s%20desc,docid%20asc";
 								$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:%22".$test."%22%20OR%20name_t:(".$test.")%20OR%20code_t:%22".$test."%22%20OR%20acronym_t:%22".$test."%22%20OR%20acronym_sci:%22".$test."%22)%20AND%20valid_s:(VALID%20OR%20OLD)".$special."&fl=docid,valid_s,name_s,type_s,country_s,acronym_s&sort=valid_s%20desc,docid%20asc";
 								$reqAff = str_replace(" ", "%20", $reqAff);
@@ -976,7 +1006,7 @@ if (isset($_POST["soumis"])) {
 						}
 					}
 						
-					//4ème méthode, si les 3 précédentes n'ont pas abouti > avec le référentiel HAL des notices
+					//5ème méthode, si les 4 précédentes n'ont pas abouti > avec le référentiel HAL des notices
 					if ($trouve == 0) {
 						//On récupère tout d'abord l'année de la publication
 						$annee = "";
