@@ -870,13 +870,14 @@ if (isset($_POST["soumis"])) {
 					foreach($tabCode as $test) {
 						$test = str_replace(" ", "+", trim($test));
 						if (count($tabCode) > 2) {$max = count($tabCode) - 2;}else{$max = count($tabCode);}
-						if ($cptCode <= $max && !in_array($test, $anepasTester)) {
+						if ($cptCode <= $max && !in_array($test, $anepasTester)) {						
 							$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=acronym_t:".$test."%20OR%20acronym_sci:".$test."%20AND%20valid_s:(VALID%20OR%20OLD)".$special."&fl=docid,valid_s,name_s,type_s,country_s,acronym_s&sort=valid_s%20desc,docid%20asc";
 							$reqAff = str_replace(" ", "%20", $reqAff);
 							echo('<a target="_blank" href="'.$reqAff.'">URL requête affiliations (1ère méthode) HAL</a><br>');
 							//echo $reqAff.'<br>';
 							$contAff = file_get_contents($reqAff);
 							$resAff = json_decode($contAff);
+							$numFound = 0;
 							if (isset($resAff->response->numFound)) {$numFound=$resAff->response->numFound;}
 							if ($numFound != 0) {			
 								//foreach($resAff->response->docs as $affil) { > Non, on ne prend que la première affiliation trouvée
@@ -919,6 +920,7 @@ if (isset($_POST["soumis"])) {
 								//echo $reqAff.'<br>';
 								$contAff = file_get_contents($reqAff);
 								$resAff = json_decode($contAff);
+								$numFound = 0;
 								if (isset($resAff->response->numFound)) {$numFound=$resAff->response->numFound;}
 								if ($numFound != 0) {			
 									//foreach($resAff->response->docs as $affil) { > Non, on ne prend que la première affiliation trouvée
@@ -936,29 +938,34 @@ if (isset($_POST["soumis"])) {
 										break;
 									//}
 								}else{
-									//3ème méthode > avec le référentiel HAL des structures sans le type d'institution
-									$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:".$test."%20OR%20code_t:".$test."%20OR%20acronym_t:".$test.")%20AND%20valid_s:(VALID%20OR%20OLD)".$special."&fl=docid,valid_s,name_s,type_s,country_s,acronym_s&sort=valid_s desc,docid asc";
-									$reqAff = str_replace(" ", "%20", $reqAff);
-									echo('<a target="_blank" href="'.$reqAff.'">URL requête affiliations (3ème méthode) HAL</a><br>');
-									//echo $reqAff.'<br>';
-									$contAff = file_get_contents($reqAff);
-									$resAff = json_decode($contAff);
-									if (isset($resAff->response->numFound)) {$numFound=$resAff->response->numFound;}
-									if ($numFound != 0) {			
-										//foreach($resAff->response->docs as $affil) { > Non, on ne prend que la première affiliation trouvée
-											$halAff[$iAff]['docid'] = $resAff->response->docs[0]->docid;
-											$halAff[$iAff]['lsAff'] = $nomAff[$i]['lsAff'];
-											$halAff[$iAff]['valid'] = $resAff->response->docs[0]->valid_s;
-											$halAff[$iAff]['names'] = $resAff->response->docs[0]->name_s;
-											if (isset($resAff->response->docs[0]->acronym_s)) {$acronym = " [".$resAff->response->docs[0]->acronym_s."], ";}else{$acronym = ", ";}
-											if (isset($resAff->response->docs[0]->country_s)) {$country = ", ".$resAff->response->docs[0]->country_s;}else{$country = "";}
-											$halAff[$iAff]['ncplt'] = $resAff->response->docs[0]->docid." ~ ".$resAff->response->docs[0]->name_s.$acronym.$resAff->response->docs[0]->type_s.$country;
-											$halAff[$iAff]['fname'] = "";
-											$halAff[$iAff]['lname'] = "";
-											$iAff++;
-											$trouve++;
-											break;
-										//}
+									//3ème méthode > avec le référentiel HAL des structures sans le type d'institution uniquement si country_s = 'fr'
+									if ($special != "") {//Dans HAL, on signale le plus souvent des institutions étrangères, pas des labos
+										if (strpos($special, "fr") !== false) {
+											$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:".$test."%20OR%20code_t:".$test."%20OR%20acronym_t:".$test.")%20AND%20valid_s:(VALID%20OR%20OLD)".$special."&fl=docid,valid_s,name_s,type_s,country_s,acronym_s&sort=valid_s desc,docid asc";
+											$reqAff = str_replace(" ", "%20", $reqAff);
+											echo('<a target="_blank" href="'.$reqAff.'">URL requête affiliations (3ème méthode) HAL</a><br>');
+											//echo $reqAff.'<br>';
+											$contAff = file_get_contents($reqAff);
+											$resAff = json_decode($contAff);
+											$numFound = 0;
+											if (isset($resAff->response->numFound)) {$numFound=$resAff->response->numFound;}
+											if ($numFound != 0) {			
+												//foreach($resAff->response->docs as $affil) { > Non, on ne prend que la première affiliation trouvée
+													$halAff[$iAff]['docid'] = $resAff->response->docs[0]->docid;
+													$halAff[$iAff]['lsAff'] = $nomAff[$i]['lsAff'];
+													$halAff[$iAff]['valid'] = $resAff->response->docs[0]->valid_s;
+													$halAff[$iAff]['names'] = $resAff->response->docs[0]->name_s;
+													if (isset($resAff->response->docs[0]->acronym_s)) {$acronym = " [".$resAff->response->docs[0]->acronym_s."], ";}else{$acronym = ", ";}
+													if (isset($resAff->response->docs[0]->country_s)) {$country = ", ".$resAff->response->docs[0]->country_s;}else{$country = "";}
+													$halAff[$iAff]['ncplt'] = $resAff->response->docs[0]->docid." ~ ".$resAff->response->docs[0]->name_s.$acronym.$resAff->response->docs[0]->type_s.$country;
+													$halAff[$iAff]['fname'] = "";
+													$halAff[$iAff]['lname'] = "";
+													$iAff++;
+													$trouve++;
+													break;
+												//}
+											}
+										}
 									}
 								}
 							}
@@ -984,6 +991,7 @@ if (isset($_POST["soumis"])) {
 								//echo $reqAff.'<br>';
 								$contAff = file_get_contents($reqAff);
 								$resAff = json_decode($contAff);
+								$numFound = 0;
 								if (isset($resAff->response->numFound)) {$numFound=$resAff->response->numFound;}
 								if ($numFound != 0) {			
 									//foreach($resAff->response->docs as $affil) { > Non, on ne prend que la première affiliation trouvée
@@ -1026,6 +1034,7 @@ if (isset($_POST["soumis"])) {
 									//echo $reqAff.'<br>';
 									$contAff = file_get_contents($reqAff);
 									$resAff = json_decode($contAff);
+									$numFound = 0;
 									if (isset($resAff->response->numFound)) {$numFound=$resAff->response->numFound;}
 									if ($numFound != 0) {
 										foreach($resAff->response->docs as $affil) {
