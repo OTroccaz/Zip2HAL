@@ -523,7 +523,7 @@ if (isset($_POST["soumis"])) {
 											$doublonDbl .= " et du DOI";
 										}
 									}
-									echo ($doublonDbl);
+									//echo ($doublonDbl);
 									if ($doublonDbl != "non") {//Doublon trouvé dans la collection > vérification du type
 										$txtDbl = " et dans la collection ".$team;
 										if ($typTEI == $docTEIDbl) {//Mêmes types de document
@@ -645,6 +645,7 @@ if (isset($_POST["soumis"])) {
 					$halAut[$iAut]['idHali'] = "";
 					$halAut[$iAut]['idHals'] = "";
 					$halAut[$iAut]['mailDom'] = $melAut[$i];
+					$halAut[$iAut]['mail'] = "";
 					$halAut[$iAut]['docid'] = "";
 					$firstNameT = strtolower(wd_remove_accents($firstName));
 					$lastNameT = strtolower(wd_remove_accents($lastName));
@@ -813,21 +814,59 @@ if (isset($_POST["soumis"])) {
 				//Affiliations
 				$affs = $xml->getElementsByTagName("org");
 				foreach($affs as $aff) {
+					$nomAff[$iAff]['pays'] = "";
 					if ($aff) {
-						if ($aff->hasAttribute("xml:id")) {$nomAff[$iAff]['lsAff'] = '#'.$aff->getAttribute("xml:id").'~';}
+						if ($aff->hasAttribute("xml:id")) {$nomAff[$iAff]['lsAff'] = '#'.$aff->getAttribute("xml:id").'~'; $lsOrg = '#'.$aff->getAttribute("xml:id").'~';}
 						if ($aff->hasAttribute("type")) {$nomAff[$iAff]['type'] = $aff->getAttribute("type");}
 						$cptAff++;
 					}
 					foreach($aff->childNodes as $elt) {
 						if ($elt->nodeName == "orgName") {
-							$nomAff[$iAff]['org'] = $elt->nodeValue;
+							$orgAff = str_replace("Electronic address", "", $elt->nodeValue);
+							//Si présence d'un @, il y a alors possibilité de remonter le domaine mail pour l'auteur
+							if (strpos($orgAff, "@") !== false) {
+								$tabDomel = explode("@", $orgAff);
+								$tabOrg = explode(" ", str_replace("  ", " ", $tabDomel[0]));
+								$debMel = $tabOrg[count($tabOrg) - 1];
+								$domMel = $tabDomel[1];
+								//Si le dernier caractère du domaine est un point, le retirer
+								if (substr($domMel, -1) == ".") {$domMel = substr($domMel, 0, (strlen($domMel) - 1));}
+								$melAut = $debMel."@".$domMel;
+								for($i = 0; $i < count($halAut); $i++) {
+									if (strpos($halAutinit[$i]["affilName"], $lsOrg) !== false) {
+										$halAut[$i]["mailDom"] = $domMel;
+										$aut = $i + 1;
+										$halAut[$i]["mail"] = $melAut;
+									}
+								}
+								$orgAff = str_replace($melAut, "", $orgAff);
+								$orgAff = trim(str_replace(array(".  .", ". ."), "", $orgAff));
+								$tabPay = explode(",", $orgAff);
+								$payAff = trim($tabPay[count($tabPay) - 1]);
+								//Si le dernier caractère du pays est un point, le retirer
+								if (substr($payAff, -1) == ".") {$payAff = substr($payAff, 0, (strlen($payAff) - 1));}
+								if (array_key_exists($payAff, $countries)) {$nomAff[$iAff]['pays'] = strtoupper($countries[$payAff]);}
+								//echo $melAut.' - '.$orgAff.' - '.$payAff.'<br>';
+							}else{
+								//Si présence de plus de 3 termes séparés par des virgules, le dernier est très certainement le pays
+								$tabOrg = explode(",", $orgAff);
+								if (count($tabOrg > 3)) {
+									$payAff = trim($tabOrg[count($tabOrg) - 1]);
+									//Si le dernier caractère du pays est un point, le retirer
+									if (substr($payAff, -1) == ".") {$payAff = substr($payAff, 0, (strlen($payAff) - 1));}
+									if ($nomAff[$iAff]['pays'] == "" && array_key_exists($payAff, $countries)) {$nomAff[$iAff]['pays'] = strtoupper($countries[$payAff]);}
+								}
+							}
+							$nomAff[$iAff]['org'] = $orgAff;							
 						}
-						if ($elt->nodeName == "desc") {
-							foreach($elt->childNodes as $b) {//Recherche noeud address
-								if ($b->nodeName == "address") {
-									foreach($b->childNodes as $c) {//Recherche noeud country
-										if ($c->nodeName == "country") {
-											if ($c->hasAttribute("key")) {$nomAff[$iAff]['pays'] = $c->getAttribute("key");}
+						if (isset($nomAff[$iAff]['pays']) && $nomAff[$iAff]['pays'] == "") {
+							if ($elt->nodeName == "desc") {
+								foreach($elt->childNodes as $b) {//Recherche noeud address
+									if ($b->nodeName == "address") {
+										foreach($b->childNodes as $c) {//Recherche noeud country
+											if ($c->nodeName == "country") {
+												if ($c->hasAttribute("key")) {$nomAff[$iAff]['pays'] = $c->getAttribute("key");}
+											}
 										}
 									}
 								}
@@ -837,6 +876,7 @@ if (isset($_POST["soumis"])) {
 					$iAff++;
 				}
 				//var_dump($nomAff);
+				//var_dump($halAut);
 				
 				$nbAff = $iAff;
 				$iAff = 0;//Servira aussi comme compteur d'id structures des affiliations trouvé(s)
@@ -1363,14 +1403,15 @@ if (isset($_POST["soumis"])) {
 					$xml->save($nomfic);
 				}
 
-				//Ajout des IdHAL et/ou docid
+				//Ajout des IdHAL et/ou docid et/ou mail
 				$auts = $xml->getElementsByTagName("author");
 				foreach($auts as $aut) {
 					//Initialisation des variables
 					$fname = "";//Prénom
 					$lname = "";//Nom
-					$listIdHAL = "~";//Variable pour assurer l'univité de l'insertion des IdHAL
-					$listdocid = "~";//Variable pour assurer l'univité de l'insertion des docid
+					$listIdHAL = "~";//Variable pour assurer l'unicité de l'insertion des IdHAL
+					$listdocid = "~";//Variable pour assurer l'unicité de l'insertion des docid
+					$listmails = "~";//Variable pour assurer l'unicité de l'insertion des mails
 					foreach($aut->childNodes as $elt) {
 						//Prénom/Nom
 						if ($elt->nodeName == "persName") {
@@ -1387,15 +1428,34 @@ if (isset($_POST["soumis"])) {
 						//Ajouts divers
 						for($i = 0; $i < count($halAut); $i++) {
 							if ($halAut[$i]['firstName'] == $fname && $halAut[$i]['lastName'] == $lname) {
+								$ou = "iB";
+								//Y-a-t-il un mail ?
+								if ($halAut[$i]['mail'] != "" && strpos($listmails, $halAut[$i]['mail']) === false) {
+									$auts = $xml->getElementsByTagName('author')->item($i);
+									$bimoc = $xml->createElement("email");
+									$moc = $xml->createTextNode($halAut[$i]['mail']);
+									$bimoc->appendChild($moc);
+									$auts->appendChild($bimoc);
+									$listmails .= $halAut[$i]['mail'].'~';
+									$ou = "iA";//Le noeud mail doit être juste après persName pour que le TEI soit valide
+								}
 								//Y-a-t-il un IdHAL ?
 								if ($halAut[$i]['idHals'] != "" && strpos($listIdHAL, $halAut[$i]['idHals']) === false) {
-									insertNode($xml, $halAut[$i]['idHali'], "author", "affiliation", $i, "idno", "type", "idhal", "notation", "numeric", "iB", "amont", "");	
+									if ($ou == "iB") {
+										insertNode($xml, $halAut[$i]['idHali'], "author", "affiliation", $i, "idno", "type", "idhal", "notation", "numeric", "iB", "amont", "");	
+									}else{
+										insertNode($xml, $halAut[$i]['idHali'], "author", "email", $i, "idno", "type", "idhal", "notation", "numeric", "iA", "amont", "");	
+									}
 									insertNode($xml, $halAut[$i]['idHals'], "author", "idno", $i, "idno", "type", "idhal", "notation", "string", "iB", "amont", "");
 									$listIdHAL .= $halAut[$i]['idHals'].'~';
 								}
 								//Y-a-t-il un docid ?
 								if ($halAut[$i]['docid'] != "" && strpos($listdocid, $halAut[$i]['docid']) === false) {
-									insertNode($xml, $halAut[$i]['docid'], "author", "affiliation", $i, "idno", "type", "halauthorid", "", "", "iB", "amont", "");
+									if ($ou == "iB") {
+										insertNode($xml, $halAut[$i]['docid'], "author", "affiliation", $i, "idno", "type", "halauthorid", "", "", "iB", "amont", "");
+									}else{
+										insertNode($xml, $halAut[$i]['docid'], "author", "email", $i, "idno", "type", "halauthorid", "", "", "iA", "amont", "");
+									}
 									$listdocid .= $halAut[$i]['docid'].'~';
 								}
 								//Id structures des affiliations
