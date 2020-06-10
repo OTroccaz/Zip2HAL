@@ -68,6 +68,7 @@ $countries = array(
 'Ecuador'=>'ec',
 'Egypt'=>'eg',
 'El Salvador'=>'sv',
+'England'=>'en',
 'Equatorial Guinea'=>'gq',
 'Eritrea'=>'er',
 'Estonia'=>'ee',

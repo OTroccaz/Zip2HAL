@@ -31,6 +31,7 @@ if (isset($_GET['css']) && ($_GET['css'] != ""))
 
 include "./Zip2HAL_nodes.php";
 include "./Zip2HAL_codes_pays.php";
+include "./Zip2HAL_codes_langues.php";
 
 function progression($indice, $iMax, $id, &$iPro, $quoi) {
 	$iPro = $indice;
@@ -1658,14 +1659,14 @@ if (isset($_POST["soumis"])) {
 				}
 				
 				//Métadonnées > Langue
-				$tabLang = array_keys($countries);
+				$tabLang = array_keys($languages);
 				$elts = $xml->getElementsByTagName("language");
 				foreach($elts as $elt) {
 					if ($elt->hasAttribute("ident")) {$lang = $elt->nodeValue;}else{$lang = "";}
 				}
 				echo('<p class="form-inline">Langue : ');
 				echo('<select id="language-'.$idFic.'" name="language" class="form-control" style="height: 18px; padding: 0px; width:150px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'language\', valeur: $(this).val()});";>>');
-				for($i = 0; $i < count($countries); $i++) {
+				for($i = 0; $i < count($languages); $i++) {
 					if ($lang == $tabLang[$i]) {$txt = "selected";}else{$txt = "";}
 					echo('<option '.$txt.' value="'.$tabLang[$i].'">'.$tabLang[$i].'</option>');
 				}
@@ -1725,6 +1726,85 @@ if (isset($_POST["soumis"])) {
 					if ($elt->hasAttribute("type") && $elt->getAttribute("type") == "issn") {echo('<p class="form-inline">ISSN : <input type="text" id="issn-'.$idFic.'" name="issn-'.$idFic.'" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:100px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'issn\', valeur: $(this).val()});";></p>');}
 					if ($elt->hasAttribute("type") && $elt->getAttribute("type") == "eissn") {echo('<p class="form-inline">EISSN : <input type="text" id="eissn-'.$idFic.'" name="eissn-'.$idFic.'" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:100px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'eissn\', valeur: $(this).val()});";></p>');}
 				}
+				
+				//Métadonnées spécifiques au COMM et POSTER
+				if ($typDoc == "COMM" || $typDoc == "POSTER") {
+					
+					//Métadonnées > Ville, dates, titre, pays, ISBN, actes et éditeur scientifique
+					$settlement = "";
+					$startDate = "";
+					$endDate = "";
+					$titreConf = "";
+					$paysConf = "";
+					$isbnConf = "";
+					$procConf = "";
+					$editConf = "";
+					
+					$elts = $xml->getElementsByTagName("meeting");
+					foreach($elts as $elt) {
+						if ($elt->hasChildNodes()) {
+							foreach($elt->childNodes as $item) {
+								//Ville de la conférence
+								if ($item->nodeName == "settlement") {$settlement = $item->nodeValue;}
+								//Date de début de conférence
+								if ($item->nodeName == "date" && $item->hasAttribute("type") && $item->getAttribute("type") == "start") {$startDate = $item->nodeValue;}
+								//Date de fin de conférence
+								if ($item->nodeName == "date" && $item->hasAttribute("type") && $item->getAttribute("type") == "end") {$endDate = $item->nodeValue;}
+								//Titre de la conférence
+								if ($item->nodeName == "title") {$titreConf = $item->nodeValue;}
+								//Pays de la conférence
+								if ($item->nodeName == "country" && $item->hasAttribute("key")) {$paysConf = $item->getAttribute("key");}
+							}
+						}
+					}
+					$elts = $xml->getElementsByTagName("idno");
+					foreach($elts as $elt) {
+						//ISBN
+						if ($elt->hasAttribute("type") && $elt->getAttribute("type") == "isbn") {$isbnConf = $elt->nodeValue;}
+						//Proceedings
+						if ($elt->hasAttribute("type") && $elt->getAttribute("type") == "proceedings") {
+							if ($elt->nodeValue == "Yes") {$txtO = "checked"; $txtN = "";}else{$txtO = ""; $txtN = "checked";}
+						}
+					}
+					$elts = $xml->getElementsByTagName("monogr");
+					foreach($elts as $elt) {
+						if ($elt->hasChildNodes()) {
+							foreach($elt->childNodes as $item) {
+								//Editeur scientifique
+								if ($item->nodeName == "editor") {$editConf = $item->nodeValue;}
+							}
+						}
+					}
+					//Ville de la conférence
+					echo('<p class="form-inline">Ville : <input type="text" id="settlement-'.$idFic.'" name="settlement-'.$idFic.'" value="'.$settlement.'" class="form-control" style="height: 18px; width:280px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'ville\', valeur: $(this).val()});";></p>');
+					//Date de début de conférence
+					echo('<p class="form-inline">Date de début de conférence : <input type="text" id="startDate-'.$idFic.'" name="startDate-'.$idFic.'" value="'.$startDate.'" class="form-control" style="height: 18px; width:140px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'startDate\', valeur: $(this).val()});";></p>');
+					//Date de fin de conférence
+					echo('<p class="form-inline">Date de fin de conférence : <input type="text" id="endDate-'.$idFic.'" name="endDate-'.$idFic.'" value="'.$endDate.'" class="form-control" style="height: 18px; width:140px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'endDate\', valeur: $(this).val()});";></p>');
+					//Titre de la conférence
+					echo('Titre de la conférence : <textarea id="titreConf-'.$idFic.'" name="titreConf-'.$idFic.'" class="textarea form-control" style="width: 500px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'titreConf\', valeur: $(this).val()});";>'.str_replace("'", "\'", $titreConf).'</textarea><br>');
+					//Pays de la conférence
+					$valPays = array_values($countries);
+					$keyPays = array_keys($countries);
+					echo('<p class="form-inline">Pays : ');
+					echo('<select id="paysConf-'.$idFic.'" name="paysConf" class="form-control" style="height: 18px; padding: 0px; width:150px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'paysConf\', valeur: $(this).val()});";>>');
+					for($i = 0; $i < count($countries); $i++) {
+						if (strtolower($paysConf) == $valPays[$i]) {$txt = "selected";}else{$txt = "";}
+						echo('<option '.$txt.' value="'.strtoupper($valPays[$i]).'">'.$keyPays[$i].'</option>');
+					}
+					echo('</select></p>');
+					//ISBN de la conférence
+					echo('<p class="form-inline">ISBN : <input type="text" id="issn-'.$idFic.'" name="issn-'.$idFic.'" value="'.$isbnConf.'" class="form-control" style="height: 18px; width:200px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'isbn\', valeur: $(this).val()});";></p>');
+					//Proceedings de la conférence
+					echo('<p class="form-inline">Proceedings : ');
+					echo('<input type="radio" '.$txtO.' id="procConf-'.$idFic.'" name="procConf-'.$idFic.'" value="Yes" class="form-control" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'procConf\', valeur: $(this).val()});";> Oui');
+					echo('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+					echo('<input type="radio" '.$txtN.' id="procConf-'.$idFic.'" name="procConf-'.$idFic.'" value="No" class="form-control" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'procConf\', valeur: $(this).val()});";> Non');
+					echo('</p>');
+					//Editeur scientifique
+					echo('<p class="form-inline">Editeur scientifique: <input type="text" id="scientificEditor-'.$idFic.'" name="scientificEditor-'.$idFic.'" value="'.$editConf.'" class="form-control" style="height: 18px; width:280px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'scientificEditor\', valeur: $(this).val()});";></p>');					
+				}
+				//Fin métadonnées spécifiques au COMM et POSTER
 				
 				//Métadonnées > Volume, numéro et pages
 				$elts = $xml->getElementsByTagName("biblScope");

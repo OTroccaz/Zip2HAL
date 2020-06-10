@@ -1,6 +1,8 @@
 <?php
 include "./Zip2HAL_nodes.php";
 include "./Zip2HAL_codes_pays.php";
+include "./Zip2HAL_codes_langues.php";
+
 $halID = "";
 $nomfic = $_POST["nomfic"];
 $action = $_POST["action"];
@@ -74,7 +76,7 @@ if ($action == "dateEpub") {
 
 //Langue
 if ($action == "language") {
-	$lang = $countries[$valeur];
+	$lang = $languages[$valeur];
 	insertNode($xml, $valeur, "langUsage", "", 0, "language", "ident", $lang, "", "", "iB", "tagName", "");
 	$xml->save($nomfic);
 }
@@ -134,6 +136,97 @@ if ($action == "eissn") {
 	insertNode($xml, $valeur, "monogr", "title", 0, "idno", "type", "eissn", "", "", "iB", "tagName", "");
 	$xml->save($nomfic);
 }
+
+//Métadonnées spécifiques au COMM et POSTER
+	//COMM ou POSTER > Ville de la conférence
+	if ($action == "ville") {
+		deleteNode($xml, "meeting", "settlement", 0, "", "", "", "", "exact");
+		$xml->save($nomfic);
+		//Le noeud 'settlement' doit obligatoirement être situé après la date de fin s'il y en a une, sinon après la date de début 
+		$ajout = "non";
+		$bimoc = $xml->createElement("settlement");
+		$moc = $xml->createTextNode($valeur);
+		$bimoc->appendChild($moc);
+		$elts = $xml->getElementsByTagName("date");
+		foreach($elts as $elt) {
+			if ($elt->hasAttribute("type") && $elt->getAttribute("type") == "end") {
+				insertAfter($bimoc, $elt);
+				$xml->save($nomfic);
+				$ajout = "oui";
+			}
+		}
+		if ($ajout == "non") {
+			foreach($elts as $elt) {
+				if ($elt->hasAttribute("type") && $elt->getAttribute("type") == "start") {
+					insertAfter($bimoc, $elt);
+					$xml->save($nomfic);
+					$ajout = "oui";
+				}
+			}
+		}
+	}
+
+	//COMM ou POSTER > Date de début de conférence
+	if ($action == "startDate") {
+		deleteNode($xml, "meeting", "date", 0, "type", "start", "", "", "exact");
+		$xml->save($nomfic);
+		insertNode($xml, $valeur, "meeting", "title", 0, "date", "type", "start", "", "", "iA", "tagName", "");
+		$xml->save($nomfic);
+	}
+
+	//COMM ou POSTER > Date de fin de conférence
+	if ($action == "endDate") {
+		deleteNode($xml, "meeting", "date", 0, "type", "end", "", "", "exact");
+		$xml->save($nomfic);
+		insertNode($xml, $valeur, "meeting", "date", 0, "date", "type", "end", "", "", "iA", "tagName", "");
+		$xml->save($nomfic);
+	}
+
+	//COMM ou POSTER > Titre de la conférence
+	if ($action == "titreConf") {
+		deleteNode($xml, "meeting", "title", 0, "", "", "", "", "exact");
+		$xml->save($nomfic);
+		//$bimoc = $xml->createElement("title");
+		//$moc = $xml->createTextNode($valeur);
+		//$bimoc->appendChild($moc);
+		insertNode($xml, $valeur, "meeting", "date", 0, "title", "", "", "", "", "iB", "tagName", "");
+		$xml->save($nomfic);
+	}
+
+	//COMM ou POSTER > Pays de la conférence
+	if ($action == "paysConf") {
+		deleteNode($xml, "meeting", "country", 0, "", "", "", "", "exact");
+		$xml->save($nomfic);
+		insertNode($xml, "nonodevalue", "meeting", "", 0, "country", "key", $valeur, "", "", "aC", "tagName", "");
+		$xml->save($nomfic);
+	}
+
+	//COMM ou POSTER > ISBN de la conférence
+	if ($action == "isbn") {
+		deleteNode($xml, "monogr", "idno", 0, "type", "isbn", "", "", "exact");
+		$xml->save($nomfic);
+		insertNode($xml, $valeur, "monogr", "title", 0, "idno", "type", "isbn", "", "", "iB", "tagName", "");
+		$xml->save($nomfic);
+	}
+
+	//COMM ou POSTER > Proceedings de la conférence
+	if ($action == "procConf") {
+		deleteNode($xml, "notesStmt", "note", 0, "type", "proceedings", "", "", "exact");
+		$xml->save($nomfic);
+		if ($valeur == "Yes") {$val = "1";}else{$val = "0";}
+		insertNode($xml, $valeur, "notesStmt", "", 0, "note", "type", "proceedings", "n", $val, "iB", "tagName", "");
+		$xml->save($nomfic);
+	}
+
+	//COMM ou POSTER > Editeur scientifique
+	if ($action == "scientificEditor") {
+		deleteNode($xml, "monogr", "editor", 0, "", "", "", "", "exact");
+		$xml->save($nomfic);
+		insertNode($xml, $valeur, "monogr", "meeting", 0, "editor", "", "", "", "", "iA", "tagName", "");
+		$xml->save($nomfic);
+	}
+//Fin métadonnées spécifiques au COMM et POSTER
+
 
 //Volume
 if ($action == "volume") {
