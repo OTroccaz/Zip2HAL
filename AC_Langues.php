@@ -1,0 +1,1 @@
+<?php//Autocomplete paysinclude "./Zip2HAL_codes_langues.php";$keyLang = array_keys($languages);$return_arr = array();if (isset($_GET['term'])){	foreach($keyLang as $entry) {		if (stripos($entry, $_GET['term']) !== false) {			$return_arr[] = str_replace("'", "’", $entry);		}	}}echo json_encode($return_arr);?>

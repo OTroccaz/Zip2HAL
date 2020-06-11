@@ -195,9 +195,11 @@ if ($action == "eissn") {
 
 	//COMM ou POSTER > Pays de la conférence
 	if ($action == "paysConf") {
+		$valeur = str_replace("’", "'", $valeur);
+		$pays = strtoupper($countries[$valeur]);
 		deleteNode($xml, "meeting", "country", 0, "", "", "", "", "exact");
 		$xml->save($nomfic);
-		insertNode($xml, "nonodevalue", "meeting", "", 0, "country", "key", $valeur, "", "", "aC", "tagName", "");
+		insertNode($xml, "nonodevalue", "meeting", "", 0, "country", "key", $pays, "", "", "aC", "tagName", "");
 		$xml->save($nomfic);
 	}
 

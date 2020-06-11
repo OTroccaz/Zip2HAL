@@ -194,6 +194,32 @@ $(function() {
 });
 </script>
 
+<!--Autocomplete pays-->
+<script type="text/javascript">
+$(function() {
+    
+    //autocomplete
+    $(".autoPays").autocomplete({
+        source: "AC_Pays.php",
+        minLength: 1
+    });                
+
+});
+</script>
+
+<!--Autocomplete langues-->
+<script type="text/javascript">
+$(function() {
+    
+    //autocomplete
+    $(".autoLang").autocomplete({
+        source: "AC_Langues.php",
+        minLength: 1
+    });                
+
+});
+</script>
+
 <table width="100%">
 <tr>
 <td style="text-align: left;"><img alt="Zip2HAL" title="Zip2HAL" width="250px" src="./img/logo_Zip2hal.png"></td>
@@ -1664,13 +1690,7 @@ if (isset($_POST["soumis"])) {
 				foreach($elts as $elt) {
 					if ($elt->hasAttribute("ident")) {$lang = $elt->nodeValue;}else{$lang = "";}
 				}
-				echo('<p class="form-inline">Langue : ');
-				echo('<select id="language-'.$idFic.'" name="language" class="form-control" style="height: 18px; padding: 0px; width:150px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'language\', valeur: $(this).val()});";>>');
-				for($i = 0; $i < count($languages); $i++) {
-					if ($lang == $tabLang[$i]) {$txt = "selected";}else{$txt = "";}
-					echo('<option '.$txt.' value="'.$tabLang[$i].'">'.$tabLang[$i].'</option>');
-				}
-				echo('</select></p>');
+				echo('<p class="form-inline">Langue : <input id="language-'.$idFic.'" name="language-'.$idFic.'" value="'.$lang.'"class="autoLang form-control" style="height: 18px; width:150px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'language\', valeur: $(this).val()});";></p>');
 
 				//Métadonnées > Revue
 				$elts = $xml->getElementsByTagName("title");
@@ -1753,7 +1773,14 @@ if (isset($_POST["soumis"])) {
 								//Titre de la conférence
 								if ($item->nodeName == "title") {$titreConf = $item->nodeValue;}
 								//Pays de la conférence
-								if ($item->nodeName == "country" && $item->hasAttribute("key")) {$paysConf = $item->getAttribute("key");}
+								if ($item->nodeName == "country" && $item->hasAttribute("key")) {
+									$paysConf = $item->getAttribute("key");
+									$valPays = array_values($countries);
+									$keyPays = array_keys($countries);
+									for($i = 0; $i < count($countries); $i++) {
+										if (strtolower($paysConf) == $valPays[$i]) {$affPays = $keyPays[$i];}
+									}
+								}
 							}
 						}
 					}
@@ -1784,15 +1811,7 @@ if (isset($_POST["soumis"])) {
 					//Titre de la conférence
 					echo('Titre de la conférence : <textarea id="titreConf-'.$idFic.'" name="titreConf-'.$idFic.'" class="textarea form-control" style="width: 500px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'titreConf\', valeur: $(this).val()});";>'.str_replace("'", "\'", $titreConf).'</textarea><br>');
 					//Pays de la conférence
-					$valPays = array_values($countries);
-					$keyPays = array_keys($countries);
-					echo('<p class="form-inline">Pays : ');
-					echo('<select id="paysConf-'.$idFic.'" name="paysConf" class="form-control" style="height: 18px; padding: 0px; width:150px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'paysConf\', valeur: $(this).val()});";>>');
-					for($i = 0; $i < count($countries); $i++) {
-						if (strtolower($paysConf) == $valPays[$i]) {$txt = "selected";}else{$txt = "";}
-						echo('<option '.$txt.' value="'.strtoupper($valPays[$i]).'">'.$keyPays[$i].'</option>');
-					}
-					echo('</select></p>');
+					echo('<p class="form-inline">Pays : <input type="text" id="paysConf-'.$idFic.'" name="paysConf-'.$idFic.'" value="'.$affPays.'" class="autoPays form-control" style="height: 18px; width:200px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'paysConf\', valeur: $(this).val()});";></p>');
 					//ISBN de la conférence
 					echo('<p class="form-inline">ISBN : <input type="text" id="issn-'.$idFic.'" name="issn-'.$idFic.'" value="'.$isbnConf.'" class="form-control" style="height: 18px; width:200px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'isbn\', valeur: $(this).val()});";></p>');
 					//Proceedings de la conférence
