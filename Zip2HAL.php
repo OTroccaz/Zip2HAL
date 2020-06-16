@@ -45,6 +45,44 @@ function progression($indice, $iMax, $id, &$iPro, $quoi) {
 	flush();
 }
 
+function mb_ucwords($str) {
+  $str = mb_convert_case($str, MB_CASE_TITLE, "UTF-8");
+  return ($str);
+}
+
+function prenomCompInit($prenom) {
+  $prenom = str_replace("  ", " ",$prenom);
+  if (strpos(trim($prenom),"-") !== false) {//Le prénom comporte un tiret
+    $postiret = mb_strpos(trim($prenom),'-', 0, 'UTF-8');
+    if ($postiret != 1) {
+      $prenomg = trim(mb_substr($prenom,0,($postiret-1),'UTF-8'));
+    }else{
+      $prenomg = trim(mb_substr($prenom,0,1,'UTF-8'));
+    }
+    $prenomd = trim(mb_substr($prenom,($postiret+1),strlen($prenom),'UTF-8'));
+    $autg = mb_substr($prenomg,0,1,'UTF-8');
+    $autd = mb_substr($prenomd,0,1,'UTF-8');
+    $prenom = mb_ucwords($autg).".-".mb_ucwords($autd).".";
+  }else{
+    if (strpos(trim($prenom)," ") !== false) {//plusieurs prénoms
+      $tabprenom = explode(" ", trim($prenom));
+      $p = 0;
+      $prenom = "";
+      while (isset($tabprenom[$p])) {
+        if ($p == 0) {
+          $prenom .= mb_ucwords(mb_substr($tabprenom[$p], 0, 1, 'UTF-8')).".";
+        }else{
+          $prenom .= " ".mb_ucwords(mb_substr($tabprenom[$p], 0, 1, 'UTF-8')).".";
+        }
+        $p++;
+      }
+    }else{
+      $prenom = mb_ucwords(mb_substr($prenom, 0, 1, 'UTF-8')).".";
+    }
+  }
+  return $prenom;
+}
+
 //Suppresion des accents
 function wd_remove_accents($str, $charset='utf-8')
 {
@@ -676,8 +714,16 @@ if (isset($_POST["soumis"])) {
 					$halAut[$iAut]['docid'] = "";
 					$firstNameT = strtolower(wd_remove_accents($firstName));
 					$lastNameT = strtolower(wd_remove_accents($lastName));
+					//Si prénom composé, on ne garde que les initiales et on ajuste le test pour qu'il porte aussi uniquement sur l'initiale du premier prénom (J.-B. Le Cam > (j-b* OR j*))
+					if (strpos($firstNameT, "-") !== false) {
+						$firstNameT = strtolower(prenomCompInit($firstNameT));
+						$testPre = "(".$firstNameT."*%20OR%20".substr($firstNameT, 0, 1)."*)";
+						$testPre = str_replace(".", "", $testPre);
+					}else{
+						$testPre = str_replace(".", "", $firstNameT);
+					}
 					if (strlen(str_replace(".", "", $firstNameT))) {//Juste l'initiale du prénom
-					$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=firstName_t:".str_replace(".", "", $firstNameT)."*%20AND%20lastName_t:%22".$lastNameT."%22%20AND%20valid_s:%22VALID%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s&sort=valid_s%20desc,docid%20asc";
+						$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=firstName_t:".$testPre."*%20AND%20lastName_t:%22".$lastNameT."%22%20AND%20valid_s:%22VALID%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s&sort=valid_s%20desc,docid%20asc";
 					}else{
 						$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=firstName_t:(%22".$firstNameT."%22%20OR%20%22".substr($firstNameT, 0, 1)."%22)%20AND%20lastName_t:%22".$lastNameT."%22%20AND%20valid_s:%22VALID%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s";
 					}
@@ -914,6 +960,7 @@ if (isset($_POST["soumis"])) {
 					$type = $nomAff[$i]['type'];
 					$pays = $nomAff[$i]['pays'];
 					if ($pays != "") {$special = "%20AND%20country_s:%22".strtolower($pays)."%22";}else{$special = "";}
+					if ($pays != "fr") {$special .= "%20%20AND%20type_s:(institution%20OR%20regroupinstitution%20OR%20regrouplaboratory)";}
 					$trouve = 0;//Test pour savoir si la 1ère méthode a permis de trouver un id de structure
 					//Si présence d'un terme entre crochets, il faut isoler ce terme et l'ajouter comme recherche prioritaire > ajout au début du tableau
 					$crochet = "";
@@ -1862,6 +1909,7 @@ if (isset($_POST["soumis"])) {
 								//Titre de la conférence
 								if ($item->nodeName == "title") {$titreConf = $item->nodeValue;}
 								//Pays de la conférence
+								$affPays = "";
 								if ($item->nodeName == "country" && $item->hasAttribute("key")) {
 									$paysConf = $item->getAttribute("key");
 									$valPays = array_values($countries);
