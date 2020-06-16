@@ -722,7 +722,7 @@ if (isset($_POST["soumis"])) {
 					}else{
 						$testPre = str_replace(".", "", $firstNameT);
 					}
-					if (strlen(str_replace(".", "", $firstNameT))) {//Juste l'initiale du prénom
+					if (strlen(str_replace(".", "", $firstNameT)) == 1) {//Juste l'initiale du prénom
 						$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=firstName_t:".$testPre."*%20AND%20lastName_t:%22".$lastNameT."%22%20AND%20valid_s:%22VALID%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s&sort=valid_s%20desc,docid%20asc";
 					}else{
 						$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=firstName_t:(%22".$firstNameT."%22%20OR%20%22".substr($firstNameT, 0, 1)."%22)%20AND%20lastName_t:%22".$lastNameT."%22%20AND%20valid_s:%22VALID%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s";
@@ -875,7 +875,7 @@ if (isset($_POST["soumis"])) {
 				$iAff = 0;
 				$nomAff = array();//Code initial des affiliations (à parir du XML)
 				$halAff = array();
-				$anepasTester = array('UMR', 'UMS', 'UPR', 'ERL', 'IFR', 'UR', 'USR', 'USC', 'CIC', 'CIC-P', 'CIC-IT', 'FRE', 'EA', 'INSERM', 'U', 'CHU', 'CNRS', 'INRA', 'CIRAD', 'INRAE', 'IRSTEA', 'CEA', 'AP HP', 'AP-HP', 'France', 'Université de Rennes');
+				$anepasTester = array('UMR', 'UMS', 'UPR', 'ERL', 'IFR', 'UR', 'USR', 'USC', 'CIC', 'CIC-P', 'CIC-IT', 'FRE', 'EA', 'INSERM', 'U', 'CHU', 'CNRS', 'INRA', 'CIRAD', 'INRAE', 'IRSTEA', 'CEA', 'AP HP', 'AP-HP', 'France', 'Université de Rennes', 'INSA');
 				//$affdejaTestee = array();//Tableau des affiliations déjà testées et résultat obtenu pour éviter de refaire des tests
 
 				
@@ -1525,6 +1525,12 @@ if (isset($_POST["soumis"])) {
 					$key->appendChild($bimoc);																		
 					$xml->save($nomfic);
 				}
+				if (!isset($key)) {//Il n'y a pas de mots-clés dans le XML initial > il faut préparer le noeud
+					insertNode($xml, "nonodevalue", "textClass", "classCode", 0, "keywords", "scheme", "author", "", "", "iB", "tagName", "");
+					$xml->save($nomfic);
+					$keys = $xml->getElementsByTagName("keywords");
+					foreach($keys as $key) {}
+				}				
 				//Ajout de 3 mots-clés vides
 				for($mc = 0; $mc < 3; $mc++) {
 					$bimoc = $xml->createElement("term");
@@ -1831,7 +1837,7 @@ if (isset($_POST["soumis"])) {
 				//Métadonnées > Revue
 				$elts = $xml->getElementsByTagName("title");
 				foreach($elts as $elt) {
-					if ($elt->hasAttribute("level")) {echo('<p class="form-inline">Nom de la revue :<br> <input type="text" id="revue-'.$idFic.'" name="revue-'.$idFic.'" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:500px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'revue\', valeur: $(this).val()});"></p>');}
+					if ($elt->hasAttribute("level") && $elt->getAttribute("type") == "j") {echo('<p class="form-inline">Nom de la revue :<br> <input type="text" id="revue-'.$idFic.'" name="revue-'.$idFic.'" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:500px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'revue\', valeur: $(this).val()});"></p>');}
 				}
 				
 				//Métadonnées > Audience, vulgarisation et comité de lecture
@@ -1883,7 +1889,7 @@ if (isset($_POST["soumis"])) {
 					if ($elt->hasAttribute("type") && $elt->getAttribute("type") == "eissn") {echo('<p class="form-inline">EISSN : <input type="text" id="eissn-'.$idFic.'" name="eissn-'.$idFic.'" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:100px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'eissn\', valeur: $(this).val()});"></p>');}
 				}
 				
-				//Métadonnées spécifiques au COMM et POSTER
+				//Métadonnées spécifiques aux COMM et POSTER
 				if ($typDoc == "COMM" || $typDoc == "POSTER") {
 					
 					//Métadonnées > Ville, dates, titre, pays, ISBN, actes et éditeur scientifique
@@ -1950,7 +1956,7 @@ if (isset($_POST["soumis"])) {
 					//Pays de la conférence
 					echo('<p class="form-inline">Pays : <input type="text" id="paysConf-'.$idFic.'" name="paysConf-'.$idFic.'" value="'.$affPays.'" class="autoPays form-control" style="height: 18px; width:200px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'paysConf\', valeur: $(this).val()});"></p>');
 					//ISBN de la conférence
-					echo('<p class="form-inline">ISBN : <input type="text" id="issn-'.$idFic.'" name="issn-'.$idFic.'" value="'.$isbnConf.'" class="form-control" style="height: 18px; width:200px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'isbn\', valeur: $(this).val()});"></p>');
+					echo('<p class="form-inline">ISBN : <input type="text" id="isbnConf-'.$idFic.'" name="isbnConf-'.$idFic.'" value="'.$isbnConf.'" class="form-control" style="height: 18px; width:200px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'isbnConf\', valeur: $(this).val()});"></p>');
 					//Proceedings de la conférence
 					echo('<p class="form-inline">Proceedings : ');
 					echo('<input type="radio" '.$txtO.' id="procConf-'.$idFic.'" name="procConf-'.$idFic.'" value="Yes" class="form-control" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'procConf\', valeur: $(this).val()});"> Oui');
@@ -1958,9 +1964,47 @@ if (isset($_POST["soumis"])) {
 					echo('<input type="radio" '.$txtN.' id="procConf-'.$idFic.'" name="procConf-'.$idFic.'" value="No" class="form-control" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'procConf\', valeur: $(this).val()});"> Non');
 					echo('</p>');
 					//Editeur scientifique
-					echo('<p class="form-inline">Editeur scientifique: <input type="text" id="scientificEditor-'.$idFic.'" name="scientificEditor-'.$idFic.'" value="'.$editConf.'" class="form-control" style="height: 18px; width:280px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'scientificEditor\', valeur: $(this).val()});"></p>');					
+					echo('<p class="form-inline">Editeur scientifique : <input type="text" id="scientificEditor-'.$idFic.'" name="scientificEditor-'.$idFic.'" value="'.$editConf.'" class="form-control" style="height: 18px; width:280px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'scientificEditor\', valeur: $(this).val()});"></p>');					
 				}
-				//Fin métadonnées spécifiques au COMM et POSTER
+				//Fin métadonnées spécifiques aux COMM et POSTER
+				
+				
+				//Métadonnées spécifiques aux COUV
+				if ($typDoc == "COUV") {
+					
+					//Métadonnées > Titre de l'ouvrage, éditeur(s) scientifique(s) et ISBN
+					$titrOuv = "";
+					$editOuv = array();
+					$isbnOuv = "";
+					
+					$elts = $xml->getElementsByTagName("monogr");
+					foreach($elts as $elt) {
+						if ($elt->hasChildNodes()) {
+							foreach($elt->childNodes as $item) {
+								//Titre de l'ouvrage
+								if ($item->nodeName == "title" && $item->hasAttribute("level") && $item->getAttribute("level") == "m") {$titrOuv = $item->nodeValue;}
+								//Editeur scientifique
+								if ($item->nodeName == "editor") {$editOuv[] = $item->nodeValue;}
+								//ISBN
+								if ($item->nodeName == "idno" && $item->hasAttribute("type") && $item->getAttribute("type") == "isbn") {$isbnOuv = $item->nodeValue;}
+							}
+						}
+					}
+					
+					//Titre de l'ouvrage
+					echo('<p class="form-inline">Titre de l\'ouvrage : <input type="text" id="titrOuv-'.$idFic.'" name="titrOuv-'.$idFic.'" value="'.$titrOuv.'" class="form-control" style="height: 18px; width:280px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'titrOuv\', valeur: $(this).val()});"></p>');
+					//Editeur(s) scientifique(s)
+					$ed = 0;
+					foreach($editOuv as $edit) {
+						echo('<p class="form-inline">Editeur scientifique : <input type="text" id="editOuv-'.$idFic.'-'.$ed.'" name="editOuv-'.$idFic.'-'.$ed.'" value="'.$edit.'" class="form-control" style="height: 18px; width:280px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'editOuv\', pos: '.$ed.', valeur: $(this).val()});"></p>');
+						$ed++;
+					}
+					//ISBN
+					echo('<p class="form-inline">ISBN : <input type="text" id="isbnOuv-'.$idFic.'" name="isbnOuv-'.$idFic.'" value="'.$isbnOuv.'" class="form-control" style="height: 18px; width:200px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'isbnOuv\', valeur: $(this).val()});"></p>');
+					
+					
+				}
+				//Fin métadonnées spécifiques aux COUV
 				
 				//Métadonnées > Volume, numéro et pages
 				$elts = $xml->getElementsByTagName("biblScope");

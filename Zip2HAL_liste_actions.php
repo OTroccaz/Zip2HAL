@@ -9,7 +9,7 @@ $action = $_POST["action"];
 $valeur = str_replace('"', '\"', $_POST["valeur"]);
 if (isset($_POST["langue"])) {
 	$lang = $_POST["langue"];
-	$lang = $countries[$lang];
+	$codeLang = $languages[$lang];
 }
 
 //Chargement du fichier XML
@@ -36,7 +36,17 @@ if ($action == "domaine") {
 
 //Titre
 if ($action == "titre") {
-	insertNode($xml, $valeur, "analytic", "", 0, "title", "xml:lang", $lang, "", "", "iB", "tagName", "");
+	deleteNode($xml, "analytic", "title", 0, "xml:lang", $codeLang, "", "", "exact");
+	$xml->save($nomfic);
+	insertNode($xml, $valeur, "analytic", "author", 0, "title", "xml:lang", $codeLang, "", "", "iB", "tagName", "");
+	$xml->save($nomfic);
+}
+
+//Titre traduit
+if ($action == "titreT") {
+	deleteNode($xml, "analytic", "title", 0, "xml:lang", "en", "", "", "exact");
+	$xml->save($nomfic);
+	insertNode($xml, $valeur, "analytic", "author", 0, "title", "xml:lang", "en", "", "", "iB", "tagName", "");
 	$xml->save($nomfic);
 }
 
@@ -76,9 +86,62 @@ if ($action == "dateEpub") {
 
 //Langue
 if ($action == "language") {
-	$lang = $languages[$valeur];
-	insertNode($xml, $valeur, "langUsage", "", 0, "language", "ident", $lang, "", "", "iB", "tagName", "");
+	insertNode($xml, $valeur, "langUsage", "", 0, "language", "ident", $languages[$valeur], "", "", "iB", "tagName", "");
 	$xml->save($nomfic);
+	
+	//Ajout de la langue au titre
+	$titreOK = "non";
+	$elts = $xml->getElementsByTagName("title");
+	foreach($elts as $elt) {
+		if ($elt->hasAttribute("xml:lang")) {
+			if ($titreOK == "non") {//Le titre est parfois présent plusieurs fois
+				deleteNode($xml, "analytic", "title", 0, "", "", "", "", "exact");
+				$xml->save($nomfic);
+				insertNode($xml, str_replace("'", "\'", $elt->nodeValue), "analytic", "author", 0, "title", "xml:lang", $languages[$valeur], "", "", "iB", "tagName", "");
+				$xml->save($nomfic);
+				$titreOK = "oui";
+			}
+		}
+	}
+	
+	//Ajout de la langue aux mots-clés
+	$keys = $xml->getElementsByTagName("keywords");
+	$ind = 0;
+	$tabKey = array();
+	$domArray = array();
+	
+	//Sauvegarde des mots-clés
+	foreach($keys as $key) {
+		foreach($key->childNodes as $elt) {
+			$tabKey[] = $elt->nodeValue;
+			$domArray[] = $elt;
+		}
+	}
+	//Suppression des mots-clés
+	foreach($domArray as $node){ 
+		$node->parentNode->removeChild($node);
+	}
+	$xml->save($nomfic);
+	//Ajout des mots-clés avec la langue
+	foreach($tabKey as $keyw){
+		$bimoc = $xml->createElement("term");
+		$moc = $xml->createTextNode($keyw);
+		$bimoc->setAttribute("xml:lang", $languages[$valeur]);
+		$bimoc->appendChild($moc);
+		$key->appendChild($bimoc);																		
+		$xml->save($nomfic);
+	}
+	
+	//Ajout de la langue au résumé
+	$elts = $xml->getElementsByTagName("abstract");
+	foreach($elts as $elt) {
+		if ($elt->hasAttribute("xml:lang")) {
+			deleteNode($xml, "profileDesc", "abstract", 0, "", "", "", "", "exact");
+			$xml->save($nomfic);
+			insertNode($xml, $elt->nodeValue, "profileDesc", "", 0, "abstract", "xml:lang", $languages[$valeur], "", "", "iB", "tagName", "");
+			$xml->save($nomfic);
+		}
+	}
 }
 
 //Revue
@@ -137,7 +200,7 @@ if ($action == "eissn") {
 	$xml->save($nomfic);
 }
 
-//Métadonnées spécifiques au COMM et POSTER
+//Métadonnées spécifiques aux COMM et POSTER
 	//COMM ou POSTER > Ville de la conférence
 	if ($action == "ville") {
 		deleteNode($xml, "meeting", "settlement", 0, "", "", "", "", "exact");
@@ -204,7 +267,7 @@ if ($action == "eissn") {
 	}
 
 	//COMM ou POSTER > ISBN de la conférence
-	if ($action == "isbn") {
+	if ($action == "isbnConf") {
 		deleteNode($xml, "monogr", "idno", 0, "type", "isbn", "", "", "exact");
 		$xml->save($nomfic);
 		insertNode($xml, $valeur, "monogr", "title", 0, "idno", "type", "isbn", "", "", "iB", "tagName", "");
@@ -227,7 +290,51 @@ if ($action == "eissn") {
 		insertNode($xml, $valeur, "monogr", "meeting", 0, "editor", "", "", "", "", "iA", "tagName", "");
 		$xml->save($nomfic);
 	}
-//Fin métadonnées spécifiques au COMM et POSTER
+//Fin métadonnées spécifiques aux COMM et POSTER
+
+//Métadonnées spécifiques aux COUV
+	//COUV > Titre de l'ouvrage
+	if ($action == "titrOuv") {
+		deleteNode($xml, "monogr", "title", 0, "level", "m", "", "", "exact");
+		$xml->save($nomfic);
+		insertNode($xml, $valeur, "monogr", "editor", 0, "title", "level", "m", "", "", "iB", "tagName", "");
+		$xml->save($nomfic);
+	}
+	
+	//COUV > Editeur(s) scientifique(s)
+	if ($action == "editOuv") {
+		$elts = $xml->getElementsByTagName("monogr");
+		$ind = 0;
+		$pos = $_POST["pos"];
+		foreach($elts as $elt) {
+			if ($elt->hasChildNodes()) {
+				foreach($elt->childNodes as $item) {
+					if ($item->nodeName == "editor") {
+						if ($ind != $pos) {
+						}else{
+							$bimoc = $xml->createElement("editor");
+							$moc = $xml->createTextNode($valeur);
+							$bimoc->appendChild($moc);
+							$elt->replaceChild($bimoc, $item);
+							break 2;
+						}
+						$ind++;
+					}
+				}
+			}
+		}
+		$xml->save($nomfic);
+	}
+	
+	//COUV > ISBN
+	if ($action == "isbnOuv") {
+		deleteNode($xml, "monogr", "idno", 0, "type", "isbn", "", "", "exact");
+		$xml->save($nomfic);
+		insertNode($xml, $valeur, "monogr", "title", 0, "idno", "type", "isbn", "", "", "iB", "tagName", "");
+		$xml->save($nomfic);
+	}
+	
+//Fin métadonnées spécifiques aux COUV
 
 
 //Volume
@@ -441,28 +548,122 @@ if ($action == "EUR") {
 
 //Mots-clés
 if ($action == "mots-cles") {
-	$lang = $countries[$_POST["langue"]];
+	$keys = $xml->getElementsByTagName("keywords");
+	$ind = 0;
 	$pos = $_POST["pos"];
-	insertNode($xml, $valeur, "keywords", "", $pos, "term", "xml:lang", $lang, "", "", "aC", "tagName", "");
-	$xml->save($nomfic);
-}
-//Ajout de mots-clés
-if ($action == "ajout-mots-cles") {
-	$lang = $countries[$_POST["langue"]];
-	$keyw = $xml->getElementsByTagName('keywords')->item(0);
-	$bimoc = $xml->createElement("term");
-	$moc = $xml->createTextNode($valeur);
-	$bimoc->setAttribute("xml:lang", $lang);
-	$bimoc->appendChild($moc);
-	$keyw->appendChild($bimoc);
+	foreach($keys as $key) {
+		foreach($key->childNodes as $elt) {
+			if ($elt->hasAttribute("xml:lang") && ($elt->getAttribute("xml:lang") == $codeLang || $elt->getAttribute("xml:lang") == "")) {
+				if ($ind != $pos) {
+				}else{
+					$bimoc = $xml->createElement("term");
+					$moc = $xml->createTextNode($valeur);
+					$bimoc->setAttribute("xml:lang", $codeLang);
+					$bimoc->appendChild($moc);
+					$key->replaceChild($bimoc, $elt);
+					break 2;
+				}
+			}
+			$ind++;
+		}
+	}
 	$xml->save($nomfic);
 }
 
-if ($action == "abstract") {
-	$lang = $countries[$_POST["langue"]];
-	deleteNode($xml, "profileDesc", "abstract", 0, "xml:lang", $lang, "", "", "exact");
+//Mots-clés traduits
+if ($action == "mots-clesT") {
+	$keys = $xml->getElementsByTagName("keywords");
+	$ind = 0;
+	$exist = "non";
+	$pos = $_POST["pos"];
+	foreach($keys as $key) {
+		foreach($key->childNodes as $elt) {
+			if ($elt->hasAttribute("xml:lang") && ($elt->getAttribute("xml:lang") == "en")) {
+				if ($ind != $pos) {
+				}else{
+					$bimoc = $xml->createElement("term");
+					$moc = $xml->createTextNode($valeur);
+					$bimoc->setAttribute("xml:lang", "en");
+					$bimoc->appendChild($moc);
+					$key->replaceChild($bimoc, $elt);
+					$exist = "oui";
+					break 2;
+				}
+			}
+			$ind++;
+		}
+	}
 	$xml->save($nomfic);
-	insertNode($xml, $valeur, "profileDesc", "", 0, "abstract", "xml:lang", $lang, "", "", "iB", "tagName", "");
+	if ($exist == "non") {
+		insertNode($xml, $valeur, "keywords", "", 0, "term", "xml:lang", "en", "", "", "aC", "tagName", "");
+		$xml->save($nomfic);
+	}
+}
+
+//Ajout de mots-clés
+if ($action == "ajout-mots-cles") {
+	$keys = $xml->getElementsByTagName("keywords");
+	$ind = 0;
+	$exist = "non";
+	$pos = $_POST["pos"];
+	foreach($keys as $key) {
+		foreach($key->childNodes as $elt) {
+			if ($elt->hasAttribute("xml:lang") && ($elt->getAttribute("xml:lang") == $codeLang)) {
+				if ($ind != $pos) {
+				}else{
+					$bimoc = $xml->createElement("term");
+					$moc = $xml->createTextNode($valeur);
+					$bimoc->setAttribute("xml:lang", $codeLang);
+					$bimoc->appendChild($moc);
+					$key->replaceChild($bimoc, $elt);
+					$exist = "oui";
+					break 2;
+				}
+			}
+			$ind++;
+		}
+	}
+	$xml->save($nomfic);
+	if ($exist == "non") {
+		foreach($keys as $key) {
+			foreach($key->childNodes as $elt) {
+				if ($elt->hasAttribute("xml:lang") && ($elt->getAttribute("xml:lang") == $codeLang)) {
+					if ($ind != $pos) {
+					}else{
+						$bimoc = $xml->createElement("term");
+						$moc = $xml->createTextNode($valeur);
+						$bimoc->setAttribute("xml:lang", $codeLang);
+						$bimoc->appendChild($moc);
+						$key->appendChild($bimoc);
+						break 2;
+					}
+				}
+				$ind++;
+			}
+		}
+	}
+	$xml->save($nomfic);
+}
+
+//Résumé
+if ($action == "abstract") {
+	deleteNode($xml, "profileDesc", "abstract", 0, "xml:lang", $codeLang, "", "", "exact");
+	$xml->save($nomfic);
+	insertNode($xml, $valeur, "profileDesc", "", 0, "abstract", "xml:lang", $codeLang, "", "", "iB", "tagName", "");
+	$xml->save($nomfic);
+}
+
+//Résumé traduit
+if ($action == "abstractT") {
+	deleteNode($xml, "profileDesc", "abstract", 0, "xml:lang", "en", "", "", "exact");
+	$xml->save($nomfic);
+	//insertNode($xml, $valeur, "profileDesc", "", 0, "abstract", "xml:lang", "en", "", "", "iB", "tagName", "");
+	$elts = $xml->getElementsByTagName("profileDesc");
+	$bimoc = $xml->createElement("abstract");
+	$moc = $xml->createTextNode($valeur);
+	$bimoc->setAttribute("xml:lang", "en");
+	$bimoc->appendChild($moc);
+	$elts->item(0)->appendChild($bimoc);	
 	$xml->save($nomfic);
 }
 
