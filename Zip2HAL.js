@@ -36,6 +36,18 @@ function majokAuteur(auteurPos, auteurName) {
 	document.getElementById("PN-"+auteurPos).innerHTML = "<s>"+auteurName+"</s>";
 }
 
+function afficacherLang(lang, idFic) {
+	if(lang == "English") {
+		document.getElementById("lantitreT-"+idFic).style.display = "none";
+		document.getElementById("lanMCT-"+idFic).style.display = "none";
+		document.getElementById("lanresumeT-"+idFic).style.display = "none";
+	}else{
+		document.getElementById("lantitreT-"+idFic).style.display = "block";
+		document.getElementById("lanMCT-"+idFic).style.display = "block";
+		document.getElementById("lanresumeT-"+idFic).style.display = "block";
+	}
+}
+
 function afficacher(id,idFic) {
 	for(var i = 1; i < 14; i++) {
 		if (i != id) {
@@ -64,3 +76,8 @@ function choixdom(dom, code) {
 	document.getElementById("domaine").style.display = "block";
 	document.getElementById("choixdom").style.display = "none";
 }
+
+function schemaVal(idFic) {
+	document.getElementById("validerTEI-"+idFic).innerHTML = "Validation en cours ...";
+}
+
