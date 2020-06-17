@@ -358,7 +358,7 @@ function afficherPopupConfirmation(question) {
 <!--Modal confirmation-->
 <script type="text/javascript">
 $(document).ready(function() {
-	$('span[data-confirm]').click(function(ev) {
+	$('a[data-confirm]').click(function(ev) {
 		var href = $(this).attr('href');
 		if (!$('#dataConfirmModal').length) {
 			$('body').append('<div id="dataConfirmModal" class="modal" role="dialog" aria-labelledby="dataConfirmLabel" aria-hidden="true"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button><h3 id="dataConfirmLabel">Please Confirm</h3></div><div class="modal-body"></div><div class="modal-footer"><button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button><a class="btn btn-primary" id="dataConfirmOK">OK</a></div></div>');
@@ -1653,12 +1653,13 @@ if(isset($_POST["soumis"])) {
 					foreach($keys as $key) {}
 				}				
 				//Ajout de 3 mots-clés vides
+				$keys = $xml->getElementsByTagName("keywords");
 				for($mc = 0; $mc < 3; $mc++) {
 					$bimoc = $xml->createElement("term");
 					$moc = $xml->createTextNode("");
 					$bimoc->setAttribute("xml:lang", $languages[$lang]);
 					$bimoc->appendChild($moc);
-					$key->appendChild($bimoc);																		
+					$keys->item(0)->appendChild($bimoc);																		
 					$xml->save($nomfic);
 				}
 				
@@ -1972,7 +1973,7 @@ if(isset($_POST["soumis"])) {
 					$nomRevue = "";
 					$elts = $xml->getElementsByTagName("title");
 					foreach($elts as $elt) {
-						if($elt->hasAttribute("level") && $elt->getAttribute("type") == "j") {
+						if($elt->hasAttribute("level") && $elt->getAttribute("level") == "j") {
 							$nomRevue = $elt->nodeValue;
 							$testMeta = "ok";
 						}
@@ -2339,7 +2340,7 @@ if(isset($_POST["soumis"])) {
 					
 					//Possibilité de supprimer l'auteur
 					echo('&nbsp;<span id="Vu-aut'.$i.'-'.$idFic.'"><a style="cursor:pointer;" onclick="if(confirm(\'Etes-vous sûr de vouloir supprimer cet auteur ?\')) { $.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'supprimerAuteur\', pos: '.$i.', valeur: \''.$halAut[$i]['firstName'].' ~ '.$halAut[$i]['lastName'].'\'}); majokAuteur(\'aut'.$i.'-'.$idFic.'\', \''.str_replace("'", "\'", $halAut[$i]['firstName'].' '.$halAut[$i]['lastName']).'\');}"><img width=\'12px\' alt=\'Supprimer l\'auteur\' src=\'./img/supprimer.jpg\'></a></span>');
-					//echo('&nbsp;<span id="Vu-aut'.$i.'-'.$idFic.'"><a style="cursor:pointer;" data-confirm="if(\'Êtes-vous sûr de vouloir supprimer cet auteur ?\') {$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'supprimerAuteur\', pos: '.$i.', valeur: \''.$halAut[$i]['firstName'].' ~ '.$halAut[$i]['lastName'].'\'}); majokAuteur(\'aut'.$i.'-'.$idFic.'\', \''.str_replace("'", "\'", $halAut[$i]['firstName'].' '.$halAut[$i]['lastName']).'\');}"><img width=\'12px\' alt=\'Supprimer l\'auteur\' src=\'./img/supprimer.jpg\'></a></span>');
+					//echo('&nbsp;<span id="Vu-aut'.$i.'-'.$idFic.'"><a style="cursor:pointer;" if(data-confirm=\'Êtes-vous sûr de vouloir supprimer cet auteur ?\') {$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'supprimerAuteur\', pos: '.$i.', valeur: \''.$halAut[$i]['firstName'].' ~ '.$halAut[$i]['lastName'].'\'}); majokAuteur(\'aut'.$i.'-'.$idFic.'\', \''.str_replace("'", "\'", $halAut[$i]['firstName'].' '.$halAut[$i]['lastName']).'\');}"><img width=\'12px\' alt=\'Supprimer l\'auteur\' src=\'./img/supprimer.jpg\'></a></span>');
 					
 					//Début span suppression auteur
 					echo('&nbsp;<span id="Sup-aut'.$i.'-'.$idFic.'">');
@@ -2505,19 +2506,21 @@ if(isset($_POST["soumis"])) {
 	//var_dump($tabMetaMQ);
 	$tabKey = array_keys($tabMetaMQ);
 	$message = "";
+	$arrayMQ = "non";
 	if(!empty($tabMetaMQ)) {
 		foreach($tabKey as $key) {
 			if(!empty($tabMetaMQ[$key])) {
 				$message .= "Fichier ".str_replace($dir."/", "", $key)." :<br>";
 				foreach($tabMetaMQ[$key] as $elt) {
 					$message .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;La métadonnée concernant ".$elt." est manquante.<br>";
+					$arrayMQ = "oui";
 				}
 				$message .= "<br>";
 			}
 			
 		}
-		echo('<script>afficherPopupAvertissement("'.$message.'");</script>');
 	}
+	if($arrayMQ == "oui") {echo('<script>afficherPopupAvertissement("'.$message.'");</script>');}
 }
 ?>
 
