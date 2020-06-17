@@ -201,6 +201,15 @@ if ($action == "eissn") {
 }
 
 //Métadonnées spécifiques aux COMM et POSTER
+
+	////COMM ou POSTER > Titre du volume
+	if ($action == "titreV") {
+		deleteNode($xml, "imprint", "biblScope", 0, "unit", "serie", "", "", "exact");
+		$xml->save($nomfic);
+		insertNode($xml, $valeur, "imprint", "date", 0, "biblScope", "unit", "serie", "", "", "iB", "tagName", "");
+		$xml->save($nomfic);
+	}
+	
 	//COMM ou POSTER > Ville de la conférence
 	if ($action == "ville") {
 		deleteNode($xml, "meeting", "settlement", 0, "", "", "", "", "exact");
@@ -288,6 +297,15 @@ if ($action == "eissn") {
 		deleteNode($xml, "monogr", "editor", 0, "", "", "", "", "exact");
 		$xml->save($nomfic);
 		insertNode($xml, $valeur, "monogr", "meeting", 0, "editor", "", "", "", "", "iA", "tagName", "");
+		$xml->save($nomfic);
+	}
+	
+	//COMM ou POSTER > Conférence invitée O/N
+	if ($action == "invitConf") {
+		deleteNode($xml, "notesStmt", "note", 0, "type", "invited", "", "", "exact");
+		$xml->save($nomfic);
+		if ($valeur == "Yes") {$val = "1";}else{$val = "0";}
+		insertNode($xml, $valeur, "notesStmt", "", 0, "note", "type", "invited", "n", $val, "iB", "tagName", "");
 		$xml->save($nomfic);
 	}
 //Fin métadonnées spécifiques aux COMM et POSTER
