@@ -1,5 +1,14 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "https://www.w3.org/TR/html4/loose.dtd">
 <?php
+//authentification CAS ou autre ?
+if(strpos($_SERVER['HTTP_HOST'], '127.0.0.1') !== false || strpos($_SERVER['HTTP_HOST'], 'ecobio') !== false) {
+  include('./_connexion.php');
+  $HAL_USER = $user;
+  $HAL_PASSWD = $pass;
+}else{
+  require_once('./CAS_connect.php');
+}
+
 //Avant tout, vérification de l'étape de chargement du fichier zip des TEI xml OverHAL
 if(isset($_GET['nomficZip'])) {
 	$nomficZip = $_GET['nomficZip'];
@@ -414,29 +423,6 @@ $(function(){
 
 <br>
 <?php
-/*
-//authentification CAS ou autre ?
-if(strpos($_SERVER['HTTP_HOST'], '127.0.0.1') !== false || strpos($_SERVER['HTTP_HOST'], 'ecobio') !== false) {
-  include('./_connexion.php');
-  $HAL_USER = $user;
-  $HAL_PASSWD = $pass;
-}else{
-  require_once('./CAS_connect.php');
-  
-  session_start();
-  $HAL_USER = phpCAS::getUser();
-  $_SESSION['HAL_USER'] = $HAL_USER;
-  $HAL_PASSWD = "";
-  if(isset($_POST['password']) && $_POST['password'] != "") {$_SESSION['HAL_PASSWD'] = htmlspecialchars($_POST['password']);}
-
-  if(isset($_SESSION['HAL_PASSWD']) && $_SESSION['HAL_PASSWD'] != "") {
-    $HAL_PASSWD = $_SESSION['HAL_PASSWD'];
-  }else{
-    include('./Zip2HALForm.php');
-    die();
-  }
-}
-*/
 //echo time();
 echo('<br>');
 echo('<div id="haut"><a href="#top">Haut de page</a></div>');
