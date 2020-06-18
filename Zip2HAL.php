@@ -155,7 +155,7 @@ include('./DOMValidator.php');
   <link rel="stylesheet" href="./Zip2HAL.css">
 </head>
 <body>
-
+<div id="top"></div>
 <noscript>
 <div align='center' id='noscript'><font color='red'><b>ATTENTION !!! JavaScript est désactivé ou non pris en charge par votre navigateur : cette procédure ne fonctionnera pas correctement.</b></font><br>
 <b>Pour modifier cette option, voir <a target='_blank' href='https://www.libellules.ch/browser_javascript_activ.php'>ce lien</a>.</b></div><br>
@@ -209,6 +209,65 @@ $(function() {
     padding: 15px;
     background-color: rgba(255,255,255,0.8);;
     border-top: 1px solid lightgrey;
+	}
+	
+	.dialogstyleperso .ui-state-information {
+			border: 1px solid #2c2f81;
+			background: #3774a0;   /* bleu - pour anciens navigateurs */
+			background: -moz-linear-gradient(top, #3774a0 0%, #3774a0 55%, #316e9b 57%, #316e9b 100%); /* FF3.6-15 */
+			background: -webkit-linear-gradient(top, #3774a0 0%,#3774a0 55%,#316e9b 57%,#316e9b 100%); /* Chrome10-25,Safari5.1-6 */
+			background: linear-gradient(to bottom, #3774a0 0%,#3774a0 55%,#316e9b 57%,#316e9b 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+			filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3774a0', endColorstr='#316e9b',GradientType=0 ); /* IE6-9 */
+			color: #ffffff;
+			padding: 2px 6px;
+			border-radius: 5px;
+	}
+
+	.dialogstyleperso .ui-state-warning {
+			border: 1px solid #e36802;
+			background: #fd8119;   /* orangé - pour anciens navigateurs */
+			background: -moz-linear-gradient(top, #fd8119 0%, #fd8119 55%, #f8790f 57%, #f8790f 100%); /* FF3.6-15 */
+			background: -webkit-linear-gradient(top, #fd8119 0%,#fd8119 55%,#f8790f 57%,#f8790f 100%); /* Chrome10-25,Safari5.1-6 */
+			background: linear-gradient(to bottom, #fd8119 0%,#fd8119 55%,#f8790f 57%,#f8790f 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+			filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fd8119', endColorstr='#f8790f',GradientType=0 ); /* IE6-9 */
+			color: #ffffff;
+			padding: 2px 6px;
+			border-radius: 5px;
+	}
+
+	.dialogstyleperso .ui-state-error {
+			border: 1px solid #cd0a0a;
+			background: #c71515;   /* rouge framboise - pour anciens navigateurs */
+			background: -moz-linear-gradient(top, #c71515 0%, #c71515 55%, #b71d1d 57%, #b71d1d 100%); /* FF3.6-15 */
+			background: -webkit-linear-gradient(top, #c71515 0%,#c71515 55%,#b71d1d 57%,#b71d1d 100%); /* Chrome10-25,Safari5.1-6 */
+			background: linear-gradient(to bottom, #c71515 0%,#c71515 55%,#b71d1d 57%,#b71d1d 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+			filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#c71515', endColorstr='#b71d1d',GradientType=0 ); /* IE6-9 */
+			color: #ffffff;
+			padding: 2px 6px;
+			border-radius: 5px;
+	}
+
+	.dialogstyleperso .ui-state-question,
+	.dialogstyleperso .ui-state-neutral {
+			border: 1px solid #d4ccb0;
+			background: #f6f4ed;   /* beige - pour anciens navigateurs */
+			background: -moz-linear-gradient(top, #f6f4ed 0%, #f6f4ed 55%, #f0ede1 57%, #f0ede1 100%); /* FF3.6-15 */
+			background: -webkit-linear-gradient(top, #f6f4ed 0%,#f6f4ed 55%,#f0ede1 57%,#f0ede1 100%); /* Chrome10-25,Safari5.1-6 */
+			background: linear-gradient(to bottom, #f6f4ed 0%,#f6f4ed 55%,#f0ede1 57%,#f0ede1 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+			filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f6f4ed', endColorstr='#f0ede1',GradientType=0 ); /* IE6-9 */
+			color: #000000;
+			padding: 2px 6px;
+			border-radius: 5px;
+	}
+
+	.dialogstyleperso .ui-dialog-titlebar-close {
+			top: 12px;
+	}
+
+	.dialogstyleperso .ui-dialog-titlebar-close::before {
+			content: "\274c";
+			font-weight: bold;
+			font-size: 0.8em;
 	}
 </style>
 
@@ -335,10 +394,10 @@ function effacerPopup(popup) {
 
 <!--Popup JQuery de confirmation-->
 <script type="text/javascript">
-function afficherPopupConfirmation(question) {
+function afficherPopupConfirmation(question, Cnomfic, Cpos, Cprenomnom, Cauteur) {
     // crée la division qui sera convertie en popup
     $('body').append('<div id="popupconfirmation" title="Confirmation"></div>');
-    $("#popupconfirmation").html(question);
+    $("#popupconfirmation").html(question, Cnomfic, Cpos, Cprenomnom, Cauteur);
 
     // transforme la division en popup
     var popup = $("#popupconfirmation").dialog({
@@ -354,7 +413,8 @@ function afficherPopupConfirmation(question) {
                 click: function () {
                     $(this).dialog("close");
                     $("#popupconfirmation").remove();
-										return true;
+										$.post("Zip2HAL_liste_actions.php", {nomfic : Cnomfic, action: 'supprimerAuteur', pos: Cpos, valeur: Cprenomnom});
+										majokAuteur(Cauteur, Cprenomnom);
                 }
             },
             {
@@ -363,7 +423,6 @@ function afficherPopupConfirmation(question) {
                 click: function () {
                     $(this).dialog("close");
                     $("#popupconfirmation").remove();
-										return false;
                 }
             }
         ]
@@ -372,22 +431,6 @@ function afficherPopupConfirmation(question) {
     $("#popupconfirmation").prev().addClass('ui-state-question');
     return popup;
 }
-</script>
-
-<!--Modal confirmation-->
-<script type="text/javascript">
-$(document).ready(function() {
-	$('a[data-confirm]').click(function(ev) {
-		var href = $(this).attr('href');
-		if (!$('#dataConfirmModal').length) {
-			$('body').append('<div id="dataConfirmModal" class="modal" role="dialog" aria-labelledby="dataConfirmLabel" aria-hidden="true"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button><h3 id="dataConfirmLabel">Please Confirm</h3></div><div class="modal-body"></div><div class="modal-footer"><button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button><a class="btn btn-primary" id="dataConfirmOK">OK</a></div></div>');
-		} 
-		$('#dataConfirmModal').find('.modal-body').text($(this).attr('data-confirm'));
-		$('#dataConfirmOK').attr('href', href);
-		$('#dataConfirmModal').modal({show:true});
-		return false;
-	});
-});
 </script>
 
 <script type="text/javascript">
@@ -418,7 +461,6 @@ $(function(){
 </table>
 <hr style="color: #467666; height: 1px; border-width: 1px; border-top-color: #467666; border-style: inset;">
 
-<div id="top"></div>
 <p>Zip2HAL permet ...</p>
 
 <br>
@@ -2350,8 +2392,7 @@ if(isset($_POST["soumis"])) {
 					echo('<span id="PN-aut'.$i.'-'.$idFic.'"><b>'.$halAut[$i]['firstName'].' '.$halAut[$i]['lastName'].'</b></span>');
 					
 					//Possibilité de supprimer l'auteur
-					echo('&nbsp;<span id="Vu-aut'.$i.'-'.$idFic.'"><a style="cursor:pointer;" onclick="if(confirm(\'Etes-vous sûr de vouloir supprimer cet auteur ?\')) { $.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'supprimerAuteur\', pos: '.$i.', valeur: \''.$halAut[$i]['firstName'].' ~ '.$halAut[$i]['lastName'].'\'}); majokAuteur(\'aut'.$i.'-'.$idFic.'\', \''.str_replace("'", "\'", $halAut[$i]['firstName'].' '.$halAut[$i]['lastName']).'\');}"><img width=\'12px\' alt=\'Supprimer l\'auteur\' src=\'./img/supprimer.jpg\'></a></span>');
-					//echo('&nbsp;<span id="Vu-aut'.$i.'-'.$idFic.'"><a style="cursor:pointer;" if(data-confirm=\'Êtes-vous sûr de vouloir supprimer cet auteur ?\') {$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'supprimerAuteur\', pos: '.$i.', valeur: \''.$halAut[$i]['firstName'].' ~ '.$halAut[$i]['lastName'].'\'}); majokAuteur(\'aut'.$i.'-'.$idFic.'\', \''.str_replace("'", "\'", $halAut[$i]['firstName'].' '.$halAut[$i]['lastName']).'\');}"><img width=\'12px\' alt=\'Supprimer l\'auteur\' src=\'./img/supprimer.jpg\'></a></span>');
+					echo('&nbsp;<span id="Vu-aut'.$i.'-'.$idFic.'"><a style="cursor:pointer;" onclick="event.preventDefault(); afficherPopupConfirmation(\'Êtes-vous sûr de vouloir supprimer cet auteur ?\', \''.$nomfic.'\', '.$i.', \''.$halAut[$i]['firstName'].' ~ '.$halAut[$i]['lastName'].'\', \'aut'.$i.'-'.$idFic.'\');"><img width=\'12px\' alt=\'Suppression auteur\' src=\'./img/supprimer.jpg\'></a></span>');
 					
 					//Début span suppression auteur
 					echo('&nbsp;<span id="Sup-aut'.$i.'-'.$idFic.'">');
