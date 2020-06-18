@@ -190,7 +190,17 @@ $(function() {
 	.ui-autocomplete {
 			font-family: 'Corbel', sans-serif;
 			font-size:12px;       
-	} 
+	}
+	
+	#haut {
+    display: none;
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    padding: 15px;
+    background-color: rgba(255,255,255,0.8);;
+    border-top: 1px solid lightgrey;
+	}
 </style>
 
 <!--Autocomplete domaine-->
@@ -372,10 +382,23 @@ $(document).ready(function() {
 </script>
 
 <script type="text/javascript">
-	function goto(Page) {
-		$('#content').load(Page);           
-  }
+function goto(Page) {
+	$('#content').load(Page);           
+}
 </script>
+
+<script type="text/javascript">
+$(function(){
+	$(window).scroll(function() {
+		if ($(this).scrollTop() >= 200) {
+			$('#haut').css({'display': 'block'});
+		}else{
+			$('#haut').css({'display': 'none'});
+		}
+	});
+});
+</script>
+
 <div id='content'></div>
 
 <table width="100%">
@@ -386,6 +409,7 @@ $(document).ready(function() {
 </table>
 <hr style="color: #467666; height: 1px; border-width: 1px; border-top-color: #467666; border-style: inset;">
 
+<div id="top"></div>
 <p>Zip2HAL permet ...</p>
 
 <br>
@@ -414,7 +438,8 @@ if(strpos($_SERVER['HTTP_HOST'], '127.0.0.1') !== false || strpos($_SERVER['HTTP
 }
 */
 //echo time();
-echo ('<br>');
+echo('<br>');
+echo('<div id="haut"><a href="#top">Haut de page</a></div>');
 
 $team = "";//Code collection HAL
 $racine = "";//Portail de dépôt
@@ -469,16 +494,16 @@ if(isset($team) && $team != "") {
 <?php
 if($domaine == "") {
 	if(isset($_POST["soumis"])) {
-		echo ('-');
+		echo('-');
 	}else{
-		echo ('<span id="domaine" style="display:none;">');
-		echo ('</span>');
-		echo ('<span id="choixdom">');
-		echo ('&nbsp;si vous connaissez une partie du code, utilisez le champ ci-dessous puis validez avec le bouton vert, autrement, l\'arborescence dynamique ci-après.');
-		echo ('<br>');
-		echo ('<input type="text" id ="inputdom" name="inputdom" class="autoDO form-control" style="margin-left: 30px; height: 18px; width:300px">');
-		echo ('&nbsp;<b>+</b>&nbsp;<a style="cursor:pointer;" onclick="choixdom($(\'#inputdom\').val(),\'\');"><img width=\'12px\' alt=\'Valider le domaine\' src=\'./img/done.png\'></a>');
-		echo ('<br>');
+		echo('<span id="domaine" style="display:none;">');
+		echo('</span>');
+		echo('<span id="choixdom">');
+		echo('&nbsp;si vous connaissez une partie du code, utilisez le champ ci-dessous puis validez avec le bouton vert, autrement, l\'arborescence dynamique ci-après.');
+		echo('<br>');
+		echo('<input type="text" id ="inputdom" name="inputdom" class="autoDO form-control" style="margin-left: 30px; height: 18px; width:300px">');
+		echo('&nbsp;<b>+</b>&nbsp;<a style="cursor:pointer;" onclick="choixdom($(\'#inputdom\').val(),\'\');"><img width=\'12px\' alt=\'Valider le domaine\' src=\'./img/done.png\'></a>');
+		echo('<br>');
 
 		$codI = "";
 		$cpt = 1;
@@ -490,12 +515,12 @@ if($domaine == "") {
 			$tabCode = explode(".", $code);
 			$codF = $tabCode[0];
 			if($codI != $codF) {//Nouveau groupe de disciplines
-				if($cpt != 1) {echo ('</span>');}
+				if($cpt != 1) {echo('</span>');}
 				$domF = str_replace("'", "’", $entry->fr_domain_s);
-				echo ('<span style=\'margin-left: 30px;\' id=\'cod-'.$cpt.'-0\'><a style=\'cursor:pointer;\' onclick=\'afficacher('.$cpt.','.'0'.')\';><font style=\'color: #FE6D02;\'><b>>&nbsp;</b></font></a></span>');
-				echo ('<span><a style=\'cursor:pointer;\' onclick=\'choixdom("'.$domF.'","'.$code.'");\'>'.$domF.'</a></span><br>');
+				echo('<span style=\'margin-left: 30px;\' id=\'cod-'.$cpt.'-0\'><a style=\'cursor:pointer;\' onclick=\'afficacher('.$cpt.','.'0'.')\';><font style=\'color: #FE6D02;\'><b>>&nbsp;</b></font></a></span>');
+				echo('<span><a style=\'cursor:pointer;\' onclick=\'choixdom("'.$domF.'","'.$code.'");\'>'.$domF.'</a></span><br>');
 				$codI = $codF;
-				echo ('<span id=\'dom-'.$cpt.'-0\' style=\'display:none;\'>');
+				echo('<span id=\'dom-'.$cpt.'-0\' style=\'display:none;\'>');
 				$cpt++;
 			}else{//Liste des différentes sous-matières de la discipline
 				$sMat = str_replace($domF.'/', '', str_replace("'", "’", $entry->fr_domain_s));
@@ -503,13 +528,13 @@ if($domaine == "") {
 				//$sMatTab = explode("/", $entry->fr_domain_s);
 				//$num = count($sMatTab) - 1;
 				//$sMatVal = $sMatTab[$num];
-				echo ('<span style=\'margin-left: 60px;\'><a style=\'cursor:pointer;\' onclick=\'choixdom("'.$sMatVal.'","'.$code.'");\'>'.$sMat.'</a></span><br>');
+				echo('<span style=\'margin-left: 60px;\'><a style=\'cursor:pointer;\' onclick=\'choixdom("'.$sMatVal.'","'.$code.'");\'>'.$sMat.'</a></span><br>');
 			}
 		}
-		echo ('</span>');
+		echo('</span>');
 	}
 }else{
-	echo ($domaine);
+	echo($domaine);
 }
 ?>
 </p>
@@ -708,7 +733,7 @@ if(isset($_POST["soumis"])) {
 											$doublonDbl .= " et du DOI";
 										}
 									}
-									//echo ($doublonDbl);
+									//echo($doublonDbl);
 									if($doublonDbl != "non") {//Doublon trouvé dans la collection > vérification du type
 										$txtDbl = " et dans la collection ".$team;
 										if($typTEI == $docTEIDbl) {//Mêmes types de document
@@ -975,7 +1000,7 @@ if(isset($_POST["soumis"])) {
 					}
 					
 					$iAut++;
-					//echo ('<br>');
+					//echo('<br>');
 					$cpt++;
 				}
 				
@@ -998,7 +1023,7 @@ if(isset($_POST["soumis"])) {
 				$halAff = array();
 				$anepasTester = array('UMR', 'UMS', 'UPR', 'ERL', 'IFR', 'UR', 'USR', 'USC', 'CIC', 'CIC-P', 'CIC-IT', 'FRE', 'EA', 'INSERM', 'U', 'CHU', 'CNRS', 'INRA', 'CIRAD', 'INRAE', 'IRSTEA', 'CEA', 'AP HP', 'AP-HP', 'France', 'Université de Rennes', 'INSA');
 				//$affdejaTestee = array();//Tableau des affiliations déjà testées et résultat obtenu pour éviter de refaire des tests
-
+				
 				
 				echo('<b>Etape 3a : recherche des id structures des affiliations</b><br>');
 				echo('<div id=\'cpt3a\'></div>');
@@ -1852,10 +1877,10 @@ if(isset($_POST["soumis"])) {
 					}
 				}
 				echo('Pour modifier le domaine, utilisez le champ ou l\'arborescence dynamique ci-dessous :');
-				echo ('<span id="choixdom-'.$idFic.'">');
-				echo ('<br>');
-				echo ('<p class="form-inline"><input type="text" id ="inputdom-'.$idFic.'" name="inputdom-'.$idFic.'" class="autoDO form-control" style="margin-left: 30px; height: 18px; width:300px">');
-				echo ('&nbsp;<b>+</b>&nbsp;<a style="cursor:pointer;" onclick=\'document.getElementById("domaine-'.$idFic.'").value=$("#inputdom-'.$idFic.'").val(); $.post("Zip2HAL_liste_actions.php", {nomfic : "'.$nomfic.'", action: "domaine", valeur: $("#inputdom-'.$idFic.'").val()});\'><img width=\'12px\' alt=\'Valider le domaine\' src=\'./img/done.png\'></a></p>');
+				echo('<span id="choixdom-'.$idFic.'">');
+				echo('<br>');
+				echo('<p class="form-inline"><input type="text" id ="inputdom-'.$idFic.'" name="inputdom-'.$idFic.'" class="autoDO form-control" style="margin-left: 30px; height: 18px; width:300px">');
+				echo('&nbsp;<b>+</b>&nbsp;<a style="cursor:pointer;" onclick=\'document.getElementById("domaine-'.$idFic.'").value=$("#inputdom-'.$idFic.'").val(); $.post("Zip2HAL_liste_actions.php", {nomfic : "'.$nomfic.'", action: "domaine", valeur: $("#inputdom-'.$idFic.'").val()});\'><img width=\'12px\' alt=\'Valider le domaine\' src=\'./img/done.png\'></a></p>');
 
 				$codI = "";
 				$cpt = 1;
@@ -1867,12 +1892,12 @@ if(isset($_POST["soumis"])) {
 					$tabCode = explode(".", $code);
 					$codF = $tabCode[0];
 					if($codI != $codF) {//Nouveau groupe de disciplines
-						if($cpt != 1) {echo ('</span>');}
+						if($cpt != 1) {echo('</span>');}
 						$domF = str_replace("'", "’", $entry->fr_domain_s);
-						echo ('<span style=\'margin-left: 30px;\' id=\'cod-'.$cpt.'-'.$idFic.'\'><a style=\'cursor:pointer;\' onclick=\'afficacher('.$cpt.', '.$idFic.');\';><font style=\'color: #FE6D02;\'><b>>&nbsp;</b></font></a></span>');
-						echo ('<span><a style=\'cursor:pointer;\' onclick=\'document.getElementById("domaine-'.$idFic.'").value="'.$domF.' ~ '.$code.'"; $.post("Zip2HAL_liste_actions.php", {nomfic : "'.$nomfic.'", action: "domaine", valeur: "'.$domF.' ~ '.$code.'"});\'>'.$domF.'</a></span><br>');
+						echo('<span style=\'margin-left: 30px;\' id=\'cod-'.$cpt.'-'.$idFic.'\'><a style=\'cursor:pointer;\' onclick=\'afficacher('.$cpt.', '.$idFic.');\';><font style=\'color: #FE6D02;\'><b>>&nbsp;</b></font></a></span>');
+						echo('<span><a style=\'cursor:pointer;\' onclick=\'document.getElementById("domaine-'.$idFic.'").value="'.$domF.' ~ '.$code.'"; $.post("Zip2HAL_liste_actions.php", {nomfic : "'.$nomfic.'", action: "domaine", valeur: "'.$domF.' ~ '.$code.'"});\'>'.$domF.'</a></span><br>');
 						$codI = $codF;
-						echo ('<span id=\'dom-'.$cpt.'-'.$idFic.'\' style=\'display:none;\'>');
+						echo('<span id=\'dom-'.$cpt.'-'.$idFic.'\' style=\'display:none;\'>');
 						$cpt++;
 					}else{//Liste des différentes sous-matières de la discipline
 						$sMat = str_replace($domF.'/', '', str_replace("'", "’", $entry->fr_domain_s));
@@ -1881,10 +1906,10 @@ if(isset($_POST["soumis"])) {
 						//$num = count($sMatTab) - 1;
 						//$sMatVal = $sMatTab[$num];
 						$code = $entry->code_s;
-						echo ('<span style=\'margin-left: 60px;\'><a style=\'cursor:pointer;\' onclick=\'document.getElementById("domaine-'.$idFic.'").value="'.$sMatVal.' ~ '.$code.'"; $.post("Zip2HAL_liste_actions.php", {nomfic : "'.$nomfic.'", action: "domaine", valeur: "'.$sMatVal.' ~ '.$code.'"});\'>'.$sMat.'</a></span><br>');
+						echo('<span style=\'margin-left: 60px;\'><a style=\'cursor:pointer;\' onclick=\'document.getElementById("domaine-'.$idFic.'").value="'.$sMatVal.' ~ '.$code.'"; $.post("Zip2HAL_liste_actions.php", {nomfic : "'.$nomfic.'", action: "domaine", valeur: "'.$sMatVal.' ~ '.$code.'"});\'>'.$sMat.'</a></span><br>');
 					}
 				}
-				echo ('</span><br>');
+				echo('</span><br>');
 				
 				//Métadonnées > Titre
 				$titreNot = "";
@@ -2246,18 +2271,18 @@ if(isset($_POST["soumis"])) {
 				}
 				
 				//Métadonnées > Financement ANR
-				echo ('Indiquez le ou les projets ANR liés à ce travail :<br>');
+				echo('Indiquez le ou les projets ANR liés à ce travail :<br>');
 				for ($iANR=1; $iANR < 4; $iANR++) {
 					echo('<input type="text" id="ANR'.$iANR.'-'.$idFic.'" name="ANR'.$iANR.'-'.$idFic.'" class="autoANR form-control" style="height: 18px; width: 500px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'ANR\', valeur: $(this).val()});">');
 				}
-				echo ('<br>');
+				echo('<br>');
 				
 				//Métadonnées > Financement EUR
-				echo ('Indiquez le ou les projets EU liés à ce travail :<br>');
+				echo('Indiquez le ou les projets EU liés à ce travail :<br>');
 				for ($iEUR=1; $iEUR < 4; $iEUR++) {
 					echo('<input type="text" id="EUR'.$iEUR.'-'.$idFic.'" name="EUR'.$iEUR.'-'.$idFic.'" class="autoEUR form-control" style="height: 18px; width: 500px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'EUR\', valeur: $(this).val()});">');
 				}
-				echo ('<br>');
+				echo('<br>');
 				
 				//Métadonnées > Mots-clés
 				echo('Mots-clés :');
@@ -2430,7 +2455,7 @@ if(isset($_POST["soumis"])) {
 					//echo('<input type="text" id="ajoutAff'.$i.'" name="ajoutAff'.$i.'" class="autoAF form-control" style="height: 18px; width:280px; align:center;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'ajouterAffil\', pos: '.$i.', valeur: $(this).val()});">');
 					echo('</font><br>');
 					
-					echo ('</span>');//Fin span suppression auteur
+					echo('</span>');//Fin span suppression auteur
 				}
 				echo('<br>');
 				echo('<b>Ajouter un auteur <i>(Prénom Nom)</i> : </b><input type="text" id="ajoutAuteur-'.$idFic.'" name="ajoutAuteur" class="form-control" style="height: 18px; width:280px; align:center;" onfocusout="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'ajouterAuteur\', pos: '.$i.', valeur: $(this).val()});">');
