@@ -172,10 +172,8 @@ $(function() {
 	});                
 
 });
-</script>
 
 <!--Autocomplete affiliations-->
-<script type="text/javascript">
 $(function() {
     
 	//autocomplete
@@ -193,86 +191,8 @@ $(function() {
 	})
 
 });
-</script>
-
-<style type="text/css">
-	.ui-autocomplete {
-			font-family: 'Corbel', sans-serif;
-			font-size:12px;       
-	}
-	
-	#haut {
-    display: none;
-    position: fixed;
-    right: 0;
-    bottom: 0;
-    padding: 15px;
-    background-color: rgba(255,255,255,0.8);;
-    border-top: 1px solid lightgrey;
-	}
-	
-	.dialogstyleperso .ui-state-information {
-			border: 1px solid #2c2f81;
-			background: #3774a0;   /* bleu - pour anciens navigateurs */
-			background: -moz-linear-gradient(top, #3774a0 0%, #3774a0 55%, #316e9b 57%, #316e9b 100%); /* FF3.6-15 */
-			background: -webkit-linear-gradient(top, #3774a0 0%,#3774a0 55%,#316e9b 57%,#316e9b 100%); /* Chrome10-25,Safari5.1-6 */
-			background: linear-gradient(to bottom, #3774a0 0%,#3774a0 55%,#316e9b 57%,#316e9b 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-			filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3774a0', endColorstr='#316e9b',GradientType=0 ); /* IE6-9 */
-			color: #ffffff;
-			padding: 2px 6px;
-			border-radius: 5px;
-	}
-
-	.dialogstyleperso .ui-state-warning {
-			border: 1px solid #e36802;
-			background: #fd8119;   /* orangé - pour anciens navigateurs */
-			background: -moz-linear-gradient(top, #fd8119 0%, #fd8119 55%, #f8790f 57%, #f8790f 100%); /* FF3.6-15 */
-			background: -webkit-linear-gradient(top, #fd8119 0%,#fd8119 55%,#f8790f 57%,#f8790f 100%); /* Chrome10-25,Safari5.1-6 */
-			background: linear-gradient(to bottom, #fd8119 0%,#fd8119 55%,#f8790f 57%,#f8790f 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-			filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fd8119', endColorstr='#f8790f',GradientType=0 ); /* IE6-9 */
-			color: #ffffff;
-			padding: 2px 6px;
-			border-radius: 5px;
-	}
-
-	.dialogstyleperso .ui-state-error {
-			border: 1px solid #cd0a0a;
-			background: #c71515;   /* rouge framboise - pour anciens navigateurs */
-			background: -moz-linear-gradient(top, #c71515 0%, #c71515 55%, #b71d1d 57%, #b71d1d 100%); /* FF3.6-15 */
-			background: -webkit-linear-gradient(top, #c71515 0%,#c71515 55%,#b71d1d 57%,#b71d1d 100%); /* Chrome10-25,Safari5.1-6 */
-			background: linear-gradient(to bottom, #c71515 0%,#c71515 55%,#b71d1d 57%,#b71d1d 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-			filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#c71515', endColorstr='#b71d1d',GradientType=0 ); /* IE6-9 */
-			color: #ffffff;
-			padding: 2px 6px;
-			border-radius: 5px;
-	}
-
-	.dialogstyleperso .ui-state-question,
-	.dialogstyleperso .ui-state-neutral {
-			border: 1px solid #d4ccb0;
-			background: #f6f4ed;   /* beige - pour anciens navigateurs */
-			background: -moz-linear-gradient(top, #f6f4ed 0%, #f6f4ed 55%, #f0ede1 57%, #f0ede1 100%); /* FF3.6-15 */
-			background: -webkit-linear-gradient(top, #f6f4ed 0%,#f6f4ed 55%,#f0ede1 57%,#f0ede1 100%); /* Chrome10-25,Safari5.1-6 */
-			background: linear-gradient(to bottom, #f6f4ed 0%,#f6f4ed 55%,#f0ede1 57%,#f0ede1 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-			filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f6f4ed', endColorstr='#f0ede1',GradientType=0 ); /* IE6-9 */
-			color: #000000;
-			padding: 2px 6px;
-			border-radius: 5px;
-	}
-
-	.dialogstyleperso .ui-dialog-titlebar-close {
-			top: 12px;
-	}
-
-	.dialogstyleperso .ui-dialog-titlebar-close::before {
-			content: "\274c";
-			font-weight: bold;
-			font-size: 0.8em;
-	}
-</style>
 
 <!--Autocomplete domaine-->
-<script type="text/javascript">
 $(function() {
     
 	//autocomplete
@@ -282,10 +202,8 @@ $(function() {
 	});                
 
 });
-</script>
 
 <!--Autocomplete financements ANR-->
-<script type="text/javascript">
 $(function() {
     
     //autocomplete
@@ -295,10 +213,8 @@ $(function() {
     });                
 
 });
-</script>
 
 <!--Autocomplete financements EUR-->
-<script type="text/javascript">
 $(function() {
     
     //autocomplete
@@ -308,10 +224,8 @@ $(function() {
     });                
 
 });
-</script>
 
 <!--Autocomplete pays-->
-<script type="text/javascript">
 $(function() {
     
     //autocomplete
@@ -321,10 +235,8 @@ $(function() {
     });                
 
 });
-</script>
 
 <!--Autocomplete langues-->
-<script type="text/javascript">
 $(function() {
     
     //autocomplete
@@ -334,112 +246,8 @@ $(function() {
     });                
 
 });
-</script>
 
-<!--Popup JQuery d'avertissement-->
-<script type="text/javascript">
-function afficherPopupAvertissement(message) {
-    // crée la division qui sera convertie en popup 
-    $('body').append('<div id="popupavertissement" title="Avertissement"></div>');
-    $("#popupavertissement").html(message);
-
-    // transforme la division en popup
-    var popup = $("#popupavertissement").dialog({
-        autoOpen: true,
-        width: 600,
-        dialogClass: 'dialogstyleperso',
-        buttons: [
-            {
-                text: "OK",
-                "class": 'ui-state-warning',
-                click: function () {
-                    $(this).dialog("close");
-                    $('#popupavertissement').remove();
-                }
-            }
-        ]
-    });
-
-    $("#popupavertissement").prev().addClass('ui-state-warning');
-
-    return popup;
-}
-</script>
-
-<!--Popup travail en cours-->
-<script type="text/javascript">
-function afficherPopupAttente(titre='Veuillez patienter', message='Validation du TEI en cours ...') {
-    // crée la division qui sera convertie en popup
-    $('body').append('<div id="popupattente" title="' + titre + '"></div>');
-    $("#popupattente").html(message);
-
-    // transforme la division en popup
-    var popup = $("#popupattente").dialog({
-        autoOpen: true,
-        width: 400,
-        dialogClass: 'dialogstyleperso',
-        hide: "fade"
-    });
-
-    $("#popupattente").prev().addClass('ui-state-information');
-
-    return popup;
-}
-
-function effacerPopup(popup) {
-    $(popup).dialog("close");
-    $('#popupattente').remove();
-}
-</script>
-
-<!--Popup JQuery de confirmation-->
-<script type="text/javascript">
-function afficherPopupConfirmation(question, Cnomfic, Cpos, Cprenomnom, Cauteur) {
-    // crée la division qui sera convertie en popup
-    $('body').append('<div id="popupconfirmation" title="Confirmation"></div>');
-    $("#popupconfirmation").html(question, Cnomfic, Cpos, Cprenomnom, Cauteur);
-
-    // transforme la division en popup
-    var popup = $("#popupconfirmation").dialog({
-        autoOpen: true,
-				modal: true,
-        width: 400,
-        dialogClass: 'dialogstyleperso',
-        hide: "fade",
-        buttons: [
-            {
-                text: "Oui",
-                class: "ui-state-question",
-                click: function () {
-                    $(this).dialog("close");
-                    $("#popupconfirmation").remove();
-										$.post("Zip2HAL_liste_actions.php", {nomfic : Cnomfic, action: 'supprimerAuteur', pos: Cpos, valeur: Cprenomnom});
-										majokAuteur(Cauteur, Cprenomnom);
-                }
-            },
-            {
-                text: "Non",
-                class: "ui-state-question",
-                click: function () {
-                    $(this).dialog("close");
-                    $("#popupconfirmation").remove();
-                }
-            }
-        ]
-    });
-
-    $("#popupconfirmation").prev().addClass('ui-state-question');
-    return popup;
-}
-</script>
-
-<script type="text/javascript">
-function goto(Page) {
-	$('#content').load(Page);           
-}
-</script>
-
-<script type="text/javascript">
+//Haut de page
 $(function(){
 	$(window).scroll(function() {
 		if ($(this).scrollTop() >= 200) {

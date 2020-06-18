@@ -86,7 +86,8 @@ if ($action == "dateEpub") {
 
 //Langue
 if ($action == "language") {
-	insertNode($xml, $valeur, "langUsage", "", 0, "language", "ident", $languages[$valeur], "", "", "iB", "tagName", "");
+	if(isset($languages[$valeur])) {$language = $languages[$valeur];}else{$language = "";}
+	insertNode($xml, $valeur, "langUsage", "", 0, "language", "ident", $language, "", "", "iB", "tagName", "");
 	$xml->save($nomfic);
 	
 	//Ajout de la langue au titre
@@ -97,9 +98,7 @@ if ($action == "language") {
 			if ($titreOK == "non") {//Le titre est parfois présent plusieurs fois
 				deleteNode($xml, "analytic", "title", 0, "", "", "", "", "exact");
 				$xml->save($nomfic);
-				insertNode($xml, str_replace("'", "\'", $elt->nodeValue), "analytic", "author", 0, "title", "xml:lang", $languages[$valeur], "", "", "iB", "tagName", "");
-				$xml->save($nomfic);
-				$titreOK = "oui";
+				insertNode($xml, $elt->nodeValue, "analytic", "author", 0, "title", "xml:lang", $language, "", "", "iB", "tagName", "");
 			}
 		}
 	}
@@ -126,7 +125,7 @@ if ($action == "language") {
 	foreach($tabKey as $keyw){
 		$bimoc = $xml->createElement("term");
 		$moc = $xml->createTextNode($keyw);
-		$bimoc->setAttribute("xml:lang", $languages[$valeur]);
+		$bimoc->setAttribute("xml:lang", $language);
 		$bimoc->appendChild($moc);
 		$key->appendChild($bimoc);																		
 		$xml->save($nomfic);
@@ -138,7 +137,7 @@ if ($action == "language") {
 		if ($elt->hasAttribute("xml:lang")) {
 			deleteNode($xml, "profileDesc", "abstract", 0, "", "", "", "", "exact");
 			$xml->save($nomfic);
-			insertNode($xml, $elt->nodeValue, "profileDesc", "", 0, "abstract", "xml:lang", $languages[$valeur], "", "", "iB", "tagName", "");
+			insertNode($xml, $elt->nodeValue, "profileDesc", "", 0, "abstract", "xml:lang", $language, "", "", "iB", "tagName", "");
 			$xml->save($nomfic);
 		}
 	}

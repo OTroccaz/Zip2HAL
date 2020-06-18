@@ -81,3 +81,99 @@ function schemaVal(idFic) {
 	document.getElementById("validerTEI-"+idFic).innerHTML = "Validation en cours ...";
 }
 
+
+//Popup JQuery d'avertissement
+function afficherPopupAvertissement(message) {
+    // crée la division qui sera convertie en popup 
+    $('body').append('<div id="popupavertissement" title="Avertissement"></div>');
+    $("#popupavertissement").html(message);
+
+    // transforme la division en popup
+    var popup = $("#popupavertissement").dialog({
+        autoOpen: true,
+        width: 600,
+        dialogClass: 'dialogstyleperso',
+        buttons: [
+            {
+                text: "OK",
+                "class": 'ui-state-warning',
+                click: function () {
+                    $(this).dialog("close");
+                    $('#popupavertissement').remove();
+                }
+            }
+        ]
+    });
+    $("#popupavertissement").prev().addClass('ui-state-warning');
+    return popup;
+}
+
+
+//Popup travail en cours
+function afficherPopupAttente(titre='Veuillez patienter', message='Validation du TEI en cours ...') {
+    // crée la division qui sera convertie en popup
+    $('body').append('<div id="popupattente" title="' + titre + '"></div>');
+    $("#popupattente").html(message);
+
+    // transforme la division en popup
+    var popup = $("#popupattente").dialog({
+        autoOpen: true,
+        width: 400,
+        dialogClass: 'dialogstyleperso',
+        hide: "fade"
+    });
+    $("#popupattente").prev().addClass('ui-state-information');
+    return popup;
+}
+
+function effacerPopup(popup) {
+    $(popup).dialog("close");
+    $('#popupattente').remove();
+}
+
+
+//Popup JQuery de confirmation
+function afficherPopupConfirmation(question, Cnomfic, Cpos, Cprenomnom, Cauteur) {
+    // crée la division qui sera convertie en popup
+    $('body').append('<div id="popupconfirmation" title="Confirmation"></div>');
+    $("#popupconfirmation").html(question, Cnomfic, Cpos, Cprenomnom, Cauteur);
+
+    // transforme la division en popup
+    var popup = $("#popupconfirmation").dialog({
+        autoOpen: true,
+				modal: true,
+        width: 400,
+        dialogClass: 'dialogstyleperso',
+        hide: "fade",
+        buttons: [
+            {
+                text: "Oui",
+                class: "ui-state-question",
+                click: function () {
+                    $(this).dialog("close");
+                    $("#popupconfirmation").remove();
+										$.post("Zip2HAL_liste_actions.php", {nomfic : Cnomfic, action: 'supprimerAuteur', pos: Cpos, valeur: Cprenomnom});
+										majokAuteur(Cauteur, Cprenomnom);
+                }
+            },
+            {
+                text: "Non",
+                class: "ui-state-question",
+                click: function () {
+                    $(this).dialog("close");
+                    $("#popupconfirmation").remove();
+                }
+            }
+        ]
+    });
+    $("#popupconfirmation").prev().addClass('ui-state-question');
+    return popup;
+}
+
+function goto(Page) {
+	$('#content').load(Page);           
+}
+
+
+
+
