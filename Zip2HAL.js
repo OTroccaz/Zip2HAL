@@ -91,6 +91,10 @@ function afficherPopupAvertissement(message) {
     // transforme la division en popup
     var popup = $("#popupavertissement").dialog({
         autoOpen: true,
+				closeOnEscape: false,
+				open: function(event, ui) {
+						$(".ui-dialog-titlebar-close", $(this).parent()).hide();
+				},
         width: 600,
         dialogClass: 'dialogstyleperso',
         buttons: [
@@ -117,7 +121,10 @@ function afficherPopupAttente(titre='Veuillez patienter', message='Validation du
 
     // transforme la division en popup
     var popup = $("#popupattente").dialog({
-        autoOpen: true,
+        autoOpen: true,closeOnEscape: false,
+				open: function(event, ui) {
+						$(".ui-dialog-titlebar-close", $(this).parent()).hide();
+				},	
         width: 400,
         dialogClass: 'dialogstyleperso',
         hide: "fade"
@@ -141,6 +148,10 @@ function afficherPopupConfirmation(question, Cnomfic, Cpos, Cprenomnom, Cauteur)
     // transforme la division en popup
     var popup = $("#popupconfirmation").dialog({
         autoOpen: true,
+				closeOnEscape: false,
+				open: function(event, ui) {
+						$(".ui-dialog-titlebar-close", $(this).parent()).hide();
+				},
 				modal: true,
         width: 400,
         dialogClass: 'dialogstyleperso',
@@ -174,6 +185,100 @@ function goto(Page) {
 	$('#content').load(Page);           
 }
 
+//Autocomplete idHAL
+$(function() {
+    
+	//autocomplete
+	$(".autoID").autocomplete({
+			source: "AC_ID.php",
+			minLength: 1
+	});                
 
+});
+
+//Autocomplete affiliations
+$(function() {
+    
+	//autocomplete
+	$(".autoAF").autocomplete({
+			source: "AC_AF.php",
+			minLength: 1,
+			open: function (event, ui) {
+				$('.ui-autocomplete > li').css("background-color", function() {
+						return $(this).text().indexOf('VALID') > -1 ? '#dff0d8' : ($(this).text().indexOf('INCOMING') > -1 ? '#fcf8e3' : '#f2dede');
+				});
+				$('.ui-menu-item > div').css("color", function() {
+						return $(this).text().indexOf('VALID') > -1 ? '#698d53' : ($(this).text().indexOf('INCOMING') > -1 ? '#cfac72' : '#b96f7b');
+				});
+			}	
+	})
+
+});
+
+//Autocomplete domaine
+$(function() {
+    
+	//autocomplete
+	$(".autoDO").autocomplete({
+			source: "AC_DO.php",
+			minLength: 1
+	});                
+
+});
+
+//Autocomplete financements ANR
+$(function() {
+    
+    //autocomplete
+    $(".autoANR").autocomplete({
+        source: "AC_ANR.php",
+        minLength: 1
+    });                
+
+});
+
+//Autocomplete financements EUR
+$(function() {
+    
+    //autocomplete
+    $(".autoEUR").autocomplete({
+        source: "AC_EUR.php",
+        minLength: 1
+    });                
+
+});
+
+//Autocomplete pays
+$(function() {
+    
+    //autocomplete
+    $(".autoPays").autocomplete({
+        source: "AC_Pays.php",
+        minLength: 1
+    });                
+
+});
+
+//Autocomplete langues
+$(function() {
+    
+    //autocomplete
+    $(".autoLang").autocomplete({
+        source: "AC_Langues.php",
+        minLength: 1
+    });                
+
+});
+
+//Haut de page
+$(function(){
+	$(window).scroll(function() {
+		if ($(this).scrollTop() >= 200) {
+			$('#haut').css({'display': 'block'});
+		}else{
+			$('#haut').css({'display': 'none'});
+		}
+	});
+});
 
 
