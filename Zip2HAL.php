@@ -89,7 +89,7 @@ include('./DOMValidator.php');
 <?php
 //echo time();
 echo('<br>');
-echo('<div id="haut"><a href="#top">Haut de page</a></div>');
+echo('<div id="haut"><a href="#top"><img style="opacity: 0.8;" src="./img/fleche_haut_petite.png"></a></div>');
 
 $team = "";//Code collection HAL
 $racine = "";//Portail de dépôt

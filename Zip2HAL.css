@@ -52,9 +52,9 @@ a.info2:hover span{
 	position: fixed;
 	right: 0;
 	bottom: 0;
-	padding: 15px;
-	background-color: rgba(255,255,255,0.8);;
-	border-top: 1px solid lightgrey;
+	padding: 5px;
+	/*background-color: rgba(255,255,255,0.8);*/
+	/*border-top: 1px solid lightgrey;*/
 }
 
 .dialogstyleperso .ui-state-information {
