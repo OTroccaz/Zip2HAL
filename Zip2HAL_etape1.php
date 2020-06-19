@@ -47,6 +47,7 @@ if($numFound == 0) {
 		}
 		
 		//On compare les titres normalisés
+		$idTEI = "";
 		if($enctitTEI == $encodedTitle) {
 			$idTEI = $entry->halId_s;
 			$docTEI = $entry->docType_s;

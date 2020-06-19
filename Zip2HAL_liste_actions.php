@@ -809,6 +809,10 @@ if ($action == "ajouterAuteur") {
 }
 
 if ($action == "statistiques") {
+	$idTEI = $_POST["idTEI"];
+	$typDoc = $_POST["typDoc"];
+	$titreNot = $_POST["titreNot"];
+	$datePub = $_POST["datePub"];
 	$Fnm = "./Zip2HAL_actions.php";
 	include $Fnm;
 	array_multisort($ACTIONS_LISTE);
@@ -817,9 +821,12 @@ if ($action == "statistiques") {
 	foreach ($tabAct as $act) {
 		if ($act != "") {
 			$ajout = count($ACTIONS_LISTE);
-			$ACTIONS_LISTE[$ajout]["action"] = $act;
-			$ACTIONS_LISTE[$ajout]["valeur"] = $valeur;
 			$ACTIONS_LISTE[$ajout]["quand"] = time();
+			$ACTIONS_LISTE[$ajout]["valeur"] = $valeur.".xml";
+			$ACTIONS_LISTE[$ajout]["titre"] = $titreNot;
+			$ACTIONS_LISTE[$ajout]["type"] = $typDoc;
+			$ACTIONS_LISTE[$ajout]["annee"] = $datePub;
+			$ACTIONS_LISTE[$ajout]["idHAL"] = $idTEI;
 		}
 	}
 	$total = count($ACTIONS_LISTE);
@@ -832,20 +839,23 @@ if ($action == "statistiques") {
 	fwrite($inF,$chaine);
 	foreach($ACTIONS_LISTE AS $i => $valeur) {
 		$chaine = $i.' => array(';
-		$chaine .= '"action"=>"'.$ACTIONS_LISTE[$i]["action"].'", ';
-		$chaine .= '"valeur"=>"'.str_replace('"', '\"', $ACTIONS_LISTE[$i]["valeur"]).'", ';
-		$chaine .= '"quand"=>"'.$ACTIONS_LISTE[$i]["quand"].'")';
+		$chaine .= '"quand"=>"'.$ACTIONS_LISTE[$i]["quand"].'", ';
+		$chaine .= '"valeur"=>"'.$ACTIONS_LISTE[$i]["valeur"].'", ';
+		$chaine .= '"titre"=>"'.$ACTIONS_LISTE[$i]["titre"].'", ';
+		$chaine .= '"type"=>"'.$ACTIONS_LISTE[$i]["type"].'", ';
+		$chaine .= '"annee"=>"'.$ACTIONS_LISTE[$i]["annee"].'", ';
+		$chaine .= '"idHAL"=>"'.$ACTIONS_LISTE[$i]["idHAL"].'")';
 		if ($i != $total-1) {$chaine .= ',';}
 		$chaine .= chr(13);
 		//session 1 day test
 		//$hier = time() - 86400;
 		//session 7 days test
-		$hier = time() - 604800;
-		if ($ACTIONS_LISTE[$i]["quand"] > $hier) {
+		//$hier = time() - 604800;
+		//if ($ACTIONS_LISTE[$i]["quand"] > $hier) {
 			fwrite($inF,$chaine);
-		}else{
-			$i -= 1;
-		}
+		//}else{
+			//$i -= 1;
+		//}
 	}
 	$chaine = ');'.chr(13);
 	$chaine .= '?>';

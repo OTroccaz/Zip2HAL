@@ -687,9 +687,10 @@ if(isset($typDbl) && $typDbl == "HALCOLLTYP") {//Doublon de type HAL et COLL > i
 		}
 		echo('</span></td>');
 	}else{
+		$titreNotS = str_replace("'", "\'", $titreNot);
 		$idNomfic = str_replace(array(".xml", "./XML/"), "", $nomfic);
 		$lienMAJ = "./Zip2HALModif.php?action=MAJ&Id=".$idNomfic;
-		echo('<td><center><span id=\'validerTEI-'.$idFic.'\'>Après avoir complété les champs manquants, cliquez sur l\'icône ci-dessous afin de vérifier la validité du TEI pour pouvoir ensuite l\'importer dans HAL.<br><a style="cursor:pointer;" onclick="schemaVal('.$idFic.'); afficherPopupAttente(); goto(\'Zip2HAL_schema_validate.php?idFic='.$idFic.'&nomfic='.$nomfic.'&idNomfic='.$idNomfic.'\');"><img alt=\'Vérifier la validité du TEI\' src=\'./img/question.jpg\'></a></span></center></td>');
+		echo('<td><center><span id=\'validerTEI-'.$idFic.'\'>Après avoir complété les champs manquants, cliquez sur l\'icône ci-dessous afin de vérifier la validité du TEI pour pouvoir ensuite l\'importer dans HAL.<br><a style="cursor:pointer;" onclick="schemaVal('.$idFic.'); afficherPopupAttente(); goto(\'Zip2HAL_schema_validate.php?idFic='.$idFic.'&nomfic='.$nomfic.'&idNomfic='.$idNomfic.'&idTEI='.$idTEI.'&typDoc='.$typDoc.'&titreNot='.$titreNotS.'&datePub='.$datePub.'\');"><img alt=\'Vérifier la validité du TEI\' src=\'./img/question.jpg\'></a></span></center></td>');
 	}
 	
 	//Importer dans HAL
@@ -698,7 +699,8 @@ if(isset($typDbl) && $typDbl == "HALCOLLTYP") {//Doublon de type HAL et COLL > i
 		$lienMAJ = "./Zip2HALModif.php?action=MAJ&Id=".$idNomfic;
 		//$lienMAJ = "https://ecobio.univ-rennes1.fr";//Pour test
 		include "./Zip2HAL_actions.php";
-		echo('<td><span id=\'importerHAL-'.$idFic.'\'><center><span id=\''.$idNomfic.'-'.$idFic.'\'><a target=\'_blank\' href=\''.$lienMAJ.'\' onclick="$.post(\'Zip2HAL_liste_actions.php\', { idNomfic : \''.$idNomfic.'\', action: \'statistiques\', valeur: \''.$idNomfic.'\'}); majokVu(\''.$idNomfic.'-'.$idFic.'\');"><img alt=\'MAJ\' src=\'./img/MAJ.png\'></a></span></center></span></td>');
+		$titreNotS = str_replace("'", "\'", $titreNot);
+		echo('<td><span id=\'importerHAL-'.$idFic.'\'><center><span id=\''.$idNomfic.'-'.$idFic.'\'><a target=\'_blank\' href=\''.$lienMAJ.'\' onclick="$.post(\'Zip2HAL_liste_actions.php\', { idNomfic : \''.$idNomfic.'\', action: \'statistiques\', valeur: \''.$idNomfic.'\, idTEI: \''.$idTEI.'\', typDoc: \''.$typDoc.'\', titreNot: \''.$titreNotS.'\', datePub: \''.$datePub.'\'}); majokVu(\''.$idNomfic.'-'.$idFic.'\');"><img alt=\'MAJ\' src=\'./img/MAJ.png\'></a></span></center></span></td>');
 	}else{
 		echo('<td><span id=\'importerHAL-'.$idFic.'\'><center><img alt=\'MAJ\' src=\'./img/MAJImpossible.png\'></center></span></td>');
 	}
