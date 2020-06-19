@@ -18,9 +18,11 @@ if (isset($_GET['css']) && ($_GET['css'] != ""))
   <link rel="stylesheet" href="<?php echo $css;?>" type="text/css">
   <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <script type="text/javascript" language="Javascript" src="./Zip2HAL.js"></script>
   <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+	<script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/ui-lightness/jquery-ui.css" type="text/css">
   <link rel="icon" type="type/ico" href="favicon.ico">
+	<script type="text/javascript" language="Javascript" src="./Zip2HAL.js"></script>
   <link rel="stylesheet" href="./Zip2HAL.css">
 </head>
 <body>
@@ -46,15 +48,15 @@ La première étape consiste à fournir votre extraction TEI d'OverHAL :
 if (isset($_GET["erreur"]))
 {
 	$erreur = $_GET["erreur"];
-	if ($erreur == 1) {echo("<script type=\"text/javascript\">alert(\"Le fichier dépasse la limite autorisée par le serveur (fichier php.ini) !\")</script>");}
-	if ($erreur == 2) {echo("<script type=\"text/javascript\">alert(\"Le fichier dépasse la limite autorisée dans le formulaire HTML !\")</script>");}
-	if ($erreur == 3) {echo("<script type=\"text/javascript\">alert(\"L'envoi du fichier a été interrompu pendant le transfert !\")</script>");}
-	//if ($erreur == 4) {echo("<script type=\"text/javascript\">alert(\"Aucun fichier envoyé ou bien il a une taille nulle !\")</script>");}
-	if ($erreur == 5) {echo("<script type=\"text/javascript\">alert(\"Mauvaise extension de fichier !\")</script>");}
-	if ($erreur == 6) {echo("<script type=\"text/javascript\">alert(\"Vous devez au préalable fournir votre extraction TEI d'OverHAL !\")</script>");}
-	if ($erreur == 7) {echo("<script type=\"text/javascript\">alert(\"Le répertoire de dépôt de fichier est automatiquement nettoyé chaque heure et votre fichier ZIP des extractions TEI d'OverHAL n'existe plus : vous devez procéder de nouveau à son chargement !\")</script>");}
-	if ($erreur == 8) {echo("<script type=\"text/javascript\">alert(\"Archive ZIP incorrecte !\")</script>");}
-	if ($erreur == 9) {echo("<script type=\"text/javascript\">alert(\"Au moins un des fichiers de votre archive ZIP n'a pas l'extension XML !\")</script>");}
+	if ($erreur == 1) {echo("<script type=\"text/javascript\">afficherPopupAvertissement(\"Le fichier dépasse la limite autorisée par le serveur (fichier php.ini) !\")</script>");}
+	if ($erreur == 2) {echo("<script type=\"text/javascript\">afficherPopupAvertissement(\"Le fichier dépasse la limite autorisée dans le formulaire HTML !\")</script>");}
+	if ($erreur == 3) {echo("<script type=\"text/javascript\">afficherPopupAvertissement(\"L'envoi du fichier a été interrompu pendant le transfert !\")</script>");}
+	//if ($erreur == 4) {echo("<script type=\"text/javascript\">afficherPopupAvertissement(\"Aucun fichier envoyé ou bien il a une taille nulle !\")</script>");}
+	if ($erreur == 5) {echo("<script type=\"text/javascript\">afficherPopupAvertissement(\"Mauvaise extension de fichier !\")</script>");}
+	if ($erreur == 6) {echo("<script type=\"text/javascript\">afficherPopupAvertissement(\"Vous devez au préalable fournir votre extraction TEI d'OverHAL !\")</script>");}
+	if ($erreur == 7) {echo("<script type=\"text/javascript\">afficherPopupAvertissement(\"Le répertoire de dépôt de fichier est automatiquement nettoyé chaque heure et votre fichier ZIP des extractions TEI d'OverHAL n'existe plus : vous devez procéder de nouveau à son chargement !\")</script>");}
+	if ($erreur == 8) {echo("<script type=\"text/javascript\">afficherPopupAvertissement(\"Archive ZIP incorrecte !\")</script>");}
+	if ($erreur == 9) {echo("<script type=\"text/javascript\">afficherPopupAvertissement(\"Au moins un des fichiers de votre archive ZIP n'a pas l'extension XML !\")</script>");}
 }
 ?>
 

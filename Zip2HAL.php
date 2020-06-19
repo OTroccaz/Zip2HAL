@@ -103,11 +103,14 @@ if(isset($_POST["soumis"])) {
 	$racine = htmlspecialchars($_POST["racine"]);
 	if(isset($_POST["domaine"])) {$domaine = htmlspecialchars($_POST["domaine"]);}
 }
-?>
 
-<form method="POST" accept-charset="utf-8" name="zip2hal" action="Zip2HAL.php?nomficZip=<?php echo($nomficZip); ?>">
+if(isset($nomficZip)) {
+	echo('<form method="POST" accept-charset="utf-8" name="zip2hal" action="Zip2HAL.php?nomficZip='.$nomficZip.'">');
+}else{
+	echo('<form method="POST" accept-charset="utf-8" name="zip2hal" action="Zip2HAL.php">');
+}
 
-<?php
+
 if($racine == "") {$racine = "https://hal-univ-rennes1.archives-ouvertes.fr/";}
 ?>
 
