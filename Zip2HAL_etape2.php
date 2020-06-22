@@ -1,6 +1,6 @@
 <?php
 //Etape 2 - Recherche des idHAL des auteurs				
-echo('<br><br>');
+echo '<br><br>';
 $cpt = 1;
 $iAut = 0;
 $preAut = array();//Prénoms des auteurs
@@ -12,8 +12,8 @@ $melAut = array();//Emails trouvés
 $halAut = array();
 $tabIdHAL = array();//Si plusieurs idHAL remontés pour un même auteur
 
-echo('<b>Etape 2 : recherche des idHAL et docid des auteurs</b><br>');
-echo('<div id=\'cpt2\'></div>');
+echo '<b>Etape 2 : recherche des idHAL et docid des auteurs</b><br>';
+echo '<div id=\'cpt2\'></div>';
 
 $auts = $xml->getElementsByTagName("author");
 foreach($auts as $aut) {
@@ -35,20 +35,17 @@ foreach($auts as $aut) {
 			}
 		}
 		//IdHAL
-		if($elt->nodeName == "idno") {
-			if($elt->hasAttribute("type") && $elt->getAttribute("type") == "idhal") {
-				if($elt->hasAttribute("notation") && $elt->getAttribute("notation") == "string") {$xmlIds[$iAut] = $elt->nodeValue;}
-				if($elt->hasAttribute("notation") && $elt->getAttribute("notation") == "numeric") {$xmlIdi[$iAut] = $elt->nodeValue;}
-			}
+		$notation = "notation";
+		if($elt->nodeName == "idno" && $elt->hasAttribute("type") && $elt->getAttribute("type") == "idhal") {
+			if($elt->hasAttribute($notation) && $elt->getAttribute($notation) == "string") {$xmlIds[$iAut] = $elt->nodeValue;}
+			if($elt->hasAttribute($notation) && $elt->getAttribute($notation) == "numeric") {$xmlIdi[$iAut] = $elt->nodeValue;}
 		}
 		//Email
 		if($elt->nodeName == "email") {
 			$melAut[$iAut] = str_replace('@', '', strstr($elt->nodeValue, '@'));
 		}
 		//Affiliations
-		if($elt->nodeName == "affiliation") {
-			if($elt->hasAttribute("ref")) {$affAut[$iAut] .= $elt->getAttribute("ref").'~';}
-		}
+		if($elt->nodeName == "affiliation" && $elt->hasAttribute("ref")) {$affAut[$iAut] .= $elt->getAttribute("ref").'~';}
 	}
 	$iAut++;
 }
@@ -95,7 +92,7 @@ for($i = 0; $i < count($preAut); $i++) {
 		$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=firstName_t:(%22".$firstNameT."%22%20OR%20%22".substr($firstNameT, 0, 1)."%22)%20AND%20lastName_t:%22".$lastNameT."%22%20AND%20valid_s:%22VALID%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s";
 	}
 	$reqAut = str_replace(" ", "%20", $reqAut);
-	echo('<a target="_blank" href="'.$reqAut.'">URL requête auteurs HAL (1ère méthode)</a><br>');
+	echo '<a target="_blank" href="'.$reqAut.'">URL requête auteurs HAL (1ère méthode)</a><br>';
 	//echo $reqAut.'<br>';
 	$contAut = file_get_contents($reqAut);
 	$resAut = json_decode($contAut);
@@ -163,7 +160,7 @@ for($i = 0; $i < count($preAut); $i++) {
 			$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=firstName_t:(%22".$firstNameT."%22%20OR%20%22".substr($firstNameT, 0, 1)."%22)%20AND%20lastName_t:%22".$lastNameT."%22%20AND%20valid_s:(%22OLD%22%20OR%20%22INCOMING%22)&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s&sort=valid_s desc,docid asc";
 		}
 		$reqAut = str_replace(" ", "%20", $reqAut);
-		echo('<a target="_blank" href="'.$reqAut.'">URL requête auteurs HAL (2ème méthode)</a><br>');
+		echo '<a target="_blank" href="'.$reqAut.'">URL requête auteurs HAL (2ème méthode)</a><br>';
 		//echo $reqAut.'<br>';
 		$contAut = file_get_contents($reqAut);
 		$resAut = json_decode($contAut);
@@ -227,10 +224,10 @@ for($i = 0; $i < count($preAut); $i++) {
 
 //var_dump($halAut);
 $halAutinit = $halAut;//Sauvegarde des affiliations et idHal initiaux remontées par OverHAL
-echo($cptiHi. ' idHal et '.$cptdoc.' docid trouvé(s)');
+echo $cptiHi. ' idHal et '.$cptdoc.' docid trouvé(s)';
 
-echo('<script>');
-echo('document.getElementById(\'cpt2\').style.display = \'none\';');
-echo('</script>');
+echo '<script>';
+echo 'document.getElementById(\'cpt2\').style.display = \'none\';';
+echo '</script>';
 //Fin étape 2
 ?>

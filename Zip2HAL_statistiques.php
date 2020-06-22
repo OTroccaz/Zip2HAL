@@ -30,31 +30,32 @@ include("./Zip2HAL_actions.php");
 <body>
 
 <noscript>
-<div align='center' id='noscript'><font color='red'><b>ATTENTION !!! JavaScript est désactivé ou non pris en charge par votre navigateur : cette procédure ne fonctionnera pas correctement.</b></font><br>
-<b>Pour modifier cette option, voir <a target='_blank' rel='noopener noreferrer' href='https://www.libellules.ch/browser_javascript_activ.php'>ce lien</a>.</b></div><br>
+<div align='center' id='noscript'class='red'><strong>ATTENTION !!! JavaScript est désactivé ou non pris en charge par votre navigateur : cette procédure ne fonctionnera pas correctement.</strong><br>
+<strong>Pour modifier cette option, voir <a target='_blank' rel='noopener noreferrer' href='https://www.libellules.ch/browser_javascript_activ.php'>ce lien</a>.</strong></div><br>
 </noscript>
 
 <div id='content'></div>
 
-<table width="100%">
+<table class="table100" aria-describedby="Entêtes">
 <tr>
-<td style="text-align: left;"><img alt="Zip2HAL" title="Zip2HAL" width="250px" src="./img/logo_Zip2hal.png"></td>
-<td style="text-align: right;"><img alt="Université de Rennes 1" title="Université de Rennes 1" width="150px" src="./img/logo_UR1_gris_petit.jpg"></td>
+<th scope="col" style="text-align: left;"><img alt="Zip2HAL" title="Zip2HAL" width="250px" src="./img/logo_Zip2hal.png"></td>
+<th scope="col" style="text-align: right;"><img alt="Université de Rennes 1" title="Université de Rennes 1" width="150px" src="./img/logo_UR1_gris_petit.jpg"></td>
 </tr>
 </table>
 <hr style="color: #467666; height: 1px; border-width: 1px; border-top-color: #467666; border-style: inset;">
 
-Zip2HAL statistiques
-
-<table class='table table-striped table-bordered table-hover;'>
+Statistiques Zip2HAL
+<br>
+<br>
+<table class='table table-striped table-bordered table-hover;' aria-describedby='Statistiques Zip2HAL'>
 <tr>
-<td style='text-align: center; background-color: #eeeeee; color: #999999;'><b>Date du dépôt</b></td>
-<td style='text-align: center; background-color: #eeeeee; color: #999999;'><b>Nom du fichier XML</b></td>
-<td style='text-align: center; background-color: #eeeeee; color: #999999;'><b>Titre</b></td>
-<td style='text-align: center; background-color: #eeeeee; color: #999999;'><b>Type</b></td>
-<td style='text-align: center; background-color: #eeeeee; color: #999999;'><b>Année</b></td>
-<td style='text-align: center; background-color: #eeeeee; color: #999999;'><b>IdHAL</b></td>
-<td style='text-align: center; background-color: #eeeeee; color: #999999;'><b>Lien HAL</b></td>
+<th scope='col' style='text-align: center; background-color: #eeeeee; color: #999999;'><strong>Date du dépôt</strong></td>
+<th scope='col' style='text-align: center; background-color: #eeeeee; color: #999999;'><strong>Nom du fichier XML</strong></td>
+<th scope='col' style='text-align: center; background-color: #eeeeee; color: #999999;'><strong>Titre</strong></td>
+<th scope='col' style='text-align: center; background-color: #eeeeee; color: #999999;'><strong>Type</strong></td>
+<th scope='col' style='text-align: center; background-color: #eeeeee; color: #999999;'><strong>Année</strong></td>
+<th scope='col' style='text-align: center; background-color: #eeeeee; color: #999999;'><strong>IdHAL</strong></td>
+<th scope='col' style='text-align: center; background-color: #eeeeee; color: #999999;'><strong>Lien HAL</strong></td>
 </tr>
 
 <?php

@@ -27,7 +27,7 @@ register_shutdown_function(function() {
     $error = error_get_last();
 
     if($error['type'] === E_ERROR && strpos($error['message'], 'Maximum execution time of') === 0) {
-        echo "<br><b><font color='red'>Le script a été arrêté car son temps d'exécution dépasse la limite maximale autorisée.</font></b><br>";
+        echo "<br><strong><font color='red'>Le script a été arrêté car son temps d'exécution dépasse la limite maximale autorisée.</font></strong><br>";
     }
 });
 
@@ -69,16 +69,16 @@ include('./DOMValidator.php');
 <body>
 <div id="top"></div>
 <noscript>
-<div align='center' id='noscript'><font color='red'><b>ATTENTION !!! JavaScript est désactivé ou non pris en charge par votre navigateur : cette procédure ne fonctionnera pas correctement.</b></font><br>
-<b>Pour modifier cette option, voir <a target='_blank' href='https://www.libellules.ch/browser_javascript_activ.php'>ce lien</a>.</b></div><br>
+<div class='red center' id='noscript'><strong>ATTENTION !!! JavaScript est désactivé ou non pris en charge par votre navigateur : cette procédure ne fonctionnera pas correctement.</strong><br>
+<strong>Pour modifier cette option, voir <a target='_blank' rel='noopener noreferrer' href='https://www.libellules.ch/browser_javascript_activ.php'>ce lien</a>.</strong></div><br>
 </noscript>
 
 <div id='content'></div>
 
-<table width="100%">
+<table class="table100" aria-describedby="Entêtes">
 <tr>
-<td style="text-align: left;"><img alt="Zip2HAL" title="Zip2HAL" width="250px" src="./img/logo_Zip2hal.png"></td>
-<td style="text-align: right;"><img alt="Université de Rennes 1" title="Université de Rennes 1" width="150px" src="./img/logo_UR1_gris_petit.jpg"></td>
+<th scope="col" style="text-align: left;"><img alt="Zip2HAL" title="Zip2HAL" width="250px" src="./img/logo_Zip2hal.png"></td>
+<th scope="col" style="text-align: right;"><img alt="Université de Rennes 1" title="Université de Rennes 1" width="150px" src="./img/logo_UR1_gris_petit.jpg"></td>
 </tr>
 </table>
 <hr style="color: #467666; height: 1px; border-width: 1px; border-top-color: #467666; border-style: inset;">
@@ -87,9 +87,8 @@ include('./DOMValidator.php');
 
 <br>
 <?php
-//echo time();
-echo('<br>');
-echo('<div id="haut"><a href="#top"><img style="opacity: 0.8;" src="./img/fleche_haut_petite.png"></a></div>');
+echo '<br>';
+echo '<div id="haut"><a href="#top"><img style="opacity: 0.8;" src="./img/fleche_haut_petite.png"></a></div>';
 
 $team = "";//Code collection HAL
 $racine = "";//Portail de dépôt
@@ -105,9 +104,9 @@ if(isset($_POST["soumis"])) {
 }
 
 if(isset($nomficZip)) {
-	echo('<form method="POST" accept-charset="utf-8" name="zip2hal" action="Zip2HAL.php?nomficZip='.$nomficZip.'">');
+	echo '<form method="POST" accept-charset="utf-8" name="zip2hal" action="Zip2HAL.php?nomficZip='.$nomficZip.'">';
 }else{
-	echo('<form method="POST" accept-charset="utf-8" name="zip2hal" action="Zip2HAL.php">');
+	echo '<form method="POST" accept-charset="utf-8" name="zip2hal" action="Zip2HAL.php">';
 }
 
 
@@ -121,14 +120,14 @@ if($racine == "") {$racine = "https://hal-univ-rennes1.archives-ouvertes.fr/";}
 $tabcoll = array_keys($collport);
 for ($i=0; $i < count($tabcoll); $i++) {
 	if($racine == $tabcoll[$i]) {$txt = "selected";}else{$txt = "";}
-	echo('<option '.$txt.' value="'.$tabcoll[$i].'">'.$tabcoll[$i].'</option>');
+	echo '<option '.$txt.' value="'.$tabcoll[$i].'">'.$tabcoll[$i].'</option>';
 }
 ?>
 </select>
 </p>
 
-<p class="form-inline"><b><label for="team">Code collection HAL</label></b> <a class=info onclick='return false' href="#">(qu’est-ce que c’est ?)<span>Code visible dans l’URL d’une collection.
-Exemple : IPR-MOL est le code de la collection https://hal.archives-ouvertes.fr/<b>IPR-PMOL</b> de l’équipe Physique moléculaire
+<p class="form-inline"><strong><label for="team">Code collection HAL</label></strong> <a class=info onclick='return false' href="#">(qu’est-ce que c’est ?)<span>Code visible dans l’URL d’une collection.
+Exemple : IPR-MOL est le code de la collection https://hal.archives-ouvertes.fr/<strong>IPR-PMOL</strong> de l’équipe Physique moléculaire
 de l’unité IPR UMR CNRS 6251</span></a> :
 <?php
 $team1 = "";
@@ -141,22 +140,23 @@ if(isset($team) && $team != "") {
 	$team2 = "";
 }
 ?>
-<input type="text" id ="team" name="team" class="form-control" style="height: 25px; width:300px" value="<?php echo $team1;?>" onClick="this.value='<?php echo $team2;?>';" >&nbsp;<a target="_blank" href="https://hal-univ-rennes1.archives-ouvertes.fr/page/codes-collections">Trouver le code de mon équipe / labo</a><br>
+<input type="text" id ="team" name="team" class="form-control" style="height: 25px; width:300px" value="<?php echo $team1;?>" onClick="this.value='<?php echo $team2;?>';" >&nbsp;<a target="_blank" rel="noopener noreferrer" href="https://hal-univ-rennes1.archives-ouvertes.fr/page/codes-collections">Trouver le code de mon équipe / labo</a><br>
 
-<p class="form-inline"><b><label for="domaine">Domaine disciplinaire : </label></b>
+<p class="form-inline"><strong><label for="domaine">Domaine disciplinaire : </label></strong>
 <?php
 if($domaine == "") {
 	if(isset($_POST["soumis"])) {
-		echo('-');
+		echo '-';
 	}else{
-		echo('<span id="domaine" style="display:none;">');
-		echo('</span>');
-		echo('<span id="choixdom">');
-		echo('&nbsp;si vous connaissez une partie du code, utilisez le champ ci-dessous puis validez avec le bouton vert, autrement, l\'arborescence dynamique ci-après.');
-		echo('<br>');
-		echo('<input type="text" id ="inputdom" name="inputdom" class="autoDO form-control" style="margin-left: 30px; height: 18px; width:300px">');
-		echo('&nbsp;<b>+</b>&nbsp;<a style="cursor:pointer;" onclick="choixdom($(\'#inputdom\').val(),\'\');"><img width=\'12px\' alt=\'Valider le domaine\' src=\'./img/done.png\'></a>');
-		echo('<br>');
+		$endSpan = '</span>';
+		echo '<span id="domaine" style="display:none;"></span>';
+		echo $endSpan;
+		echo '<span id="choixdom">';
+		echo '&nbsp;si vous connaissez une partie du code, utilisez le champ ci-dessous puis validez avec le bouton vert, autrement, l\'arborescence dynamique ci-après.';
+		echo '<br>';
+		echo '<input type="text" id ="inputdom" name="inputdom" class="autoDO form-control" style="margin-left: 30px; height: 18px; width:300px">';
+		echo '&nbsp;<strong>+</strong>&nbsp;<a style="cursor:pointer;" onclick="choixdom($(\'#inputdom\').val(),\'\');"><img width=\'12px\' alt=\'Valider le domaine\' src=\'./img/done.png\'></a>';
+		echo '<br>';
 
 		$codI = "";
 		$cpt = 1;
@@ -168,38 +168,35 @@ if($domaine == "") {
 			$tabCode = explode(".", $code);
 			$codF = $tabCode[0];
 			if($codI != $codF) {//Nouveau groupe de disciplines
-				if($cpt != 1) {echo('</span>');}
+				if($cpt != 1) {echo $endSpan;}
 				$domF = str_replace("'", "’", $entry->fr_domain_s);
-				echo('<span style=\'margin-left: 30px;\' id=\'cod-'.$cpt.'-0\'><a style=\'cursor:pointer;\' onclick=\'afficacher('.$cpt.','.'0'.')\';><font style=\'color: #FE6D02;\'><b>>&nbsp;</b></font></a></span>');
-				echo('<span><a style=\'cursor:pointer;\' onclick=\'choixdom("'.$domF.'","'.$code.'");\'>'.$domF.'</a></span><br>');
+				echo('<span style=\'margin-left: 30px;\' id=\'cod-'.$cpt.'-0\'><a style=\'cursor:pointer;\' onclick=\'afficacher('.$cpt.','.'0'.')\';><font style=\'color: #FE6D02;\'><strong>>&nbsp;</strong></font></a></span>');
+				echo '<span><a style=\'cursor:pointer;\' onclick=\'choixdom("'.$domF.'","'.$code.'");\'>'.$domF.'</a></span><br>';
 				$codI = $codF;
-				echo('<span id=\'dom-'.$cpt.'-0\' style=\'display:none;\'>');
+				echo '<span id=\'dom-'.$cpt.'-0\' style=\'display:none;\'>';
 				$cpt++;
 			}else{//Liste des différentes sous-matières de la discipline
 				$sMat = str_replace($domF.'/', '', str_replace("'", "’", $entry->fr_domain_s));
 				$sMatVal = str_replace("'", "’", $entry->fr_domain_s);
-				//$sMatTab = explode("/", $entry->fr_domain_s);
-				//$num = count($sMatTab) - 1;
-				//$sMatVal = $sMatTab[$num];
-				echo('<span style=\'margin-left: 60px;\'><a style=\'cursor:pointer;\' onclick=\'choixdom("'.$sMatVal.'","'.$code.'");\'>'.$sMat.'</a></span><br>');
+				echo '<span style=\'margin-left: 60px;\'><a style=\'cursor:pointer;\' onclick=\'choixdom("'.$sMatVal.'","'.$code.'");\'>'.$sMat.'</a></span><br>';
 			}
 		}
-		echo('</span>');
+		echo $endSpan;
 	}
 }else{
-	echo($domaine);
+	echo $domaine;
 }
 ?>
 </p>
 
-<p class="form-inline"><b><label for="teioverhal">Fichier ZIP TEI OverHAL : </label></b>
+<p class="form-inline"><strong><label for="teioverhal">Fichier ZIP TEI OverHAL : </label></strong>
 <?php
 if(file_exists($nomficZip)) {
-	echo($nomficZip);
+	echo $nomficZip;
 }
 
 //Nouvelle soumission d'archive
-echo('<p class="form-inline"><a href="./TEI_OverHAL.php">Nouvelle soumission d\'archive</a></p>');
+echo '<p class="form-inline"><a href="./TEI_OverHAL.php">Nouvelle soumission d\'archive</a></p>';
 ?>
 
 </p>
@@ -249,9 +246,6 @@ if(isset($_POST["soumis"])) {
 			$tabTit = explode(' ', $titTEI);
 				
 			$portail = $collport[$racine];
-			//$reqAPI = "https://api.archives-ouvertes.fr/search/?fq=producedDateY_i:2016&rows=10000&fl=halId_s,doiId_s,title_s,subTitle_s,docType_s";
-			//$reqAPI = "https://api.archives-ouvertes.fr/search/".$portail."/?fq=*:*&rows=10000&fl=halId_s,doiId_s,title_s,subTitle_s,docType_s";
-			//$reqAPI = "https://api.archives-ouvertes.fr/search/".$portail."/?fq=producedDateY_i:2016&rows=10000&fl=halId_s,doiId_s,title_s,subTitle_s,docType_s";
 			
 			//Récupération de l'année de publication
 			$anns = $xml->getElementsByTagName("date");
@@ -271,7 +265,7 @@ if(isset($_POST["soumis"])) {
 			$numFound = 0;
 			if(isset($results->response->numFound)) {$numFound=$results->response->numFound;}
 			
-			echo('<br><b><font style=\'color:#fe6d02; font-size:14px;\'>Traitement du fichier '.str_replace($dir."/", "", $nomfic).'</font></b><br>');
+			echo('<br><strong><font style=\'color:#fe6d02; font-size:14px;\'>Traitement du fichier '.str_replace($dir."/", "", $nomfic).'</font></strong><br>');
 			
 			include('./Zip2HAL_etape1.php');
 			
@@ -286,20 +280,19 @@ if(isset($_POST["soumis"])) {
 				//var_dump($halAut);
 				//var_dump($halAff);
 
-				/*
-				echo('<br><br>');
-				echo('Tableau initial obtenu pour les idHAL des auteurs ($halAutinit) :');
+				echo '<br><br><span style="display: none;"';
+				echo 'Tableau initial obtenu pour les idHAL des auteurs ($halAutinit) :';
 				var_dump($halAutinit);
-				echo('<br><br>');
-				echo('Tableau final obtenu pour les idHAL des auteurs ($halAut) :');
+				echo '<br><br>';
+				echo 'Tableau final obtenu pour les idHAL des auteurs ($halAut) :';
 				var_dump($halAut);
-				echo('<br><br>');
-				echo('Tableau des noms des affiliations ($nomAff) :');
+				echo '<br><br>';
+				echo 'Tableau des noms des affiliations ($nomAff) :';
 				var_dump($nomAff);
-				echo('<br><br>');
-				echo('Tableau obtenu pour les id structure des affiliations ($halAff) :');
+				echo '<br><br>';
+				echo 'Tableau obtenu pour les id structure des affiliations ($halAff) :';
 				var_dump($halAff);
-				*/
+				echo '</span>';
 
 
 			}
@@ -308,13 +301,10 @@ if(isset($_POST["soumis"])) {
 			
 			include('./Zip2HAL_tableau_resultats.php');
 			
-			//TODO stats à mettre en place
-			
 		}
 		$idFic++;
 	}
 	//Vérification si des métadonnées sont manquantes
-	//var_dump($tabMetaMQ);
 	$tabKey = array_keys($tabMetaMQ);
 	$message = "";
 	$arrayMQ = "non";
@@ -331,7 +321,7 @@ if(isset($_POST["soumis"])) {
 			
 		}
 	}
-	if($arrayMQ == "oui") {echo('<script>afficherPopupAvertissement("'.$message.'");</script>');}
+	if($arrayMQ == "oui") {echo '<script>afficherPopupAvertissement("'.$message.'");</script>';}
 }
 ?>
 

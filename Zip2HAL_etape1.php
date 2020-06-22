@@ -1,10 +1,10 @@
 <?php
-echo('<b>Etape 1 : recherche des doublons potentiels</b><br>');
-echo('<a target="_blank" href="'.$reqAPI.'">URL requête API HAL</a><br>');
+echo '<b>Etape 1 : recherche des doublons potentiels</b><br>';
+echo '<a target="_blank" href="'.$reqAPI.'">URL requête API HAL</a><br>';
 
 //Etape 1 - Parcours des notices à la recherche de doublons potentiels (DOI ou titre exact)		
 if($numFound == 0) {			
-	echo('Aucune notice trouvée dans HAL, donc, pas de doublon');
+	echo 'Aucune notice trouvée dans HAL, donc, pas de doublon';
 	$typDbl = "";
 }else{
 	//echo('<br><br>');
@@ -16,8 +16,8 @@ if($numFound == 0) {
 	$typDbl = "";
 	$txtDbl = "";
 	
-	echo($numFound. ' notice(s) examinée(s)<br>');
-	echo('<div id=\'cpt1\'></div>');
+	echo $numFound. ' notice(s) examinée(s)<br>';
+	echo '<div id=\'cpt1\'></div>';
 	
 	foreach($results->response->docs as $entry) {
 		progression($cpt, $numFound, 'cpt1', $iPro, 'notice');
@@ -148,12 +148,12 @@ if($numFound == 0) {
 		}
 		$cpt++;
 	}
-	if($dbl == 0) {echo('Aucune notice trouvée dans HAL, donc, pas de doublon');}//Notice non trouvée > pas de doublon
-	if($dbl >= 1) {echo('La notice est déjà présente dans HAL'.$txtDbl);}//Présence de doublon(s)
+	if($dbl == 0) {echo 'Aucune notice trouvée dans HAL, donc, pas de doublon';}//Notice non trouvée > pas de doublon
+	if($dbl >= 1) {echo 'La notice est déjà présente dans HAL'.$txtDbl;}//Présence de doublon(s)
 
-	echo('<script>');
-	echo('document.getElementById(\'cpt1\').style.display = \'none\';');
-	echo('</script>');
+	echo '<script>';
+	echo 'document.getElementById(\'cpt1\').style.display = \'none\';';
+	echo '</script>';
 }
 //Fin étape 1
 ?>

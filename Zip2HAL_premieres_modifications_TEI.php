@@ -60,7 +60,7 @@ foreach($tabKey as $keyw){
 	$key->appendChild($bimoc);																		
 	$xml->save($nomfic);
 }
-if(!isset($key)) {//Il n'y a pas de mots-clés dans le XML initial > il faut préparer le noeud
+if(empty($tabKey)) {//Il n'y a pas de mots-clés dans le XML initial > il faut préparer le noeud
 	insertNode($xml, "nonodevalue", "textClass", "classCode", 0, "keywords", "scheme", "author", "", "", "iB", "tagName", "");
 	$xml->save($nomfic);
 	$keys = $xml->getElementsByTagName("keywords");

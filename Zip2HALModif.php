@@ -1,3 +1,4 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "https://www.w3.org/TR/html4/loose.dtd">
 <?php
 header('Content-type: text/html; charset=UTF-8');
 
@@ -8,21 +9,21 @@ if (isset($_GET['css']) && ($_GET['css'] != ""))
   $css = "https://ecobio.univ-rennes1.fr/HAL_SCD.css";
 }
 ?>
-<html>
+<html lang="fr">
 <head>
   <title>Zip2HAL</title>
   <meta name="Description" content="Zip2HAL">
-  <link rel="stylesheet" href="<?php echo($css);?>" type="text/css">
+  <link rel="stylesheet" href="<?php echo $css;?>" type="text/css">
   <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <link rel="icon" type="type/ico" href="HAL_favicon.ico">
   <link rel="stylesheet" href="./Zip2HAL.css">
 </head>
 <body>
-<table width="100%">
+<table class="table100" aria-describedby="Entêtes">
 <tr>
-<td style="text-align: left;"><img alt="Zip2HAL" title="Zip2HAL" width="250px" src="./img/logo_Zip2hal.png"></td>
-<td style="text-align: right;"><img alt="Université de Rennes 1" title="Université de Rennes 1" width="150px" src="./img/logo_UR1_gris_petit.jpg"></td>
+<th scope="col" style="text-align: left;"><img alt="Zip2HAL" title="Zip2HAL" width="250px" src="./img/logo_Zip2hal.png"></td>
+<th scope="col" style="text-align: right;"><img alt="Université de Rennes 1" title="Université de Rennes 1" width="150px" src="./img/logo_UR1_gris_petit.jpg"></td>
 </tr>
 </table>
 <br><br>
@@ -52,12 +53,10 @@ if (strpos($_SERVER['HTTP_HOST'], '127.0.0.1') !== false || strpos($_SERVER['HTT
 
 if (isset($_GET['Id']) && ($_GET['Id'] != ""))
 {
-  //$halid = "hal-01179051";
   $idNomfic = $_GET['Id'];
 }else{
   if (isset($_GET['DOI']) && ($_GET['DOI'] != ""))
   {
-    //$halid = "hal-01179051";
     $doi = $_GET['DOI'];
   }else{
     header('Location: Zip2HAL.php');
@@ -73,19 +72,6 @@ $urlStamp = "https://api-preprod.archives-ouvertes.fr/";
 */
 $url = "https://api.archives-ouvertes.fr/sword/";
 $urlStamp = "https://api.archives-ouvertes.fr/";
-
-/*
-if ($_GET['action'] == "MAJ") {
-  $nomfic = "./XML/".$halid.".xml";
-  $nomficFin = "./XML/".$halid."-Fin.xml";
-  copy($nomfic, $nomficFin);
-}
-if ($_GET['action'] == "PDF") {
-  $nomfic = "./XML/".$halid."_PDF.xml";
-  $nomficFin = "./XML/".$halid."_PDF-Fin.xml";
-  copy($nomfic, $nomficFin);
-}
-*/
 
 $nomfic = "./XML/".$idNomfic.".xml";
 $nomficFin = "./XML/".$idNomfic."-Fin.xml";
@@ -139,7 +125,7 @@ $fp = fopen($nomficFin, "r");
 $ENDPOINTS_RESPONDER["TIMOUT"] = 20;
 
 $ch = curl_init($url.$halid);
-curl_setopt($ch, CURLOPT_PUT, true);
+curl_setopt($ch, CURLOPT_POST, true);
 curl_setopt($ch, CURLOPT_HEADER, false);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLINFO_HEADER_OUT, true);
@@ -167,7 +153,7 @@ $return = curl_exec($ch);
 
 $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 echo "Code retour http : ".$httpcode."<br>";
-if($return == FALSE)
+if(!$return)
 {
   if ($httpcode == 401) {
     $errStr="Problème d'authentification, mot de passe incorrect.\n";
@@ -175,7 +161,7 @@ if($return == FALSE)
     $errStr="Problème avec l'API sword, contactez le support technique (erreur http=$httpcode)";
   }
   //exit ("ERREUR : ".$art->getCle()." : ".$errStr);
-  exit ("ERREUR : ".$errStr);;
+  exit ("ERREUR : ".$errStr);
 }
 try {
   $entry = new SimpleXMLElement($return);
@@ -185,7 +171,7 @@ try {
   if (in_array($httpcode, array(200, 201, 202))) {
     $id = $entry->id;
     $passwdRes=$entry->xpath('hal:password');
-    if (!empty($passwdRes) and is_array($passwdRes) and !empty($passwdRes[0][0]))
+    if (!empty($passwdRes) && is_array($passwdRes) && !empty($passwdRes[0][0]))
     {
       $passwd=$passwdRes[0][0];
     }
@@ -204,9 +190,9 @@ try {
     //exit ("<b>OK, modification effectuée :</b> id=>$id,passwd=>$passwd,link=> $link \n");
 		if (isset($_GET['etp']) && ($_GET['etp'] == 1))
 		{
-			echo('<script type="text/javascript">');
-			echo('setTimeout(window.close,1000);');
-			echo('</script>');
+			echo '<script type="text/javascript">';
+			echo 'setTimeout(window.close,1000);';
+			echo '</script>';
 		} else {
 			header("Location: ".$linkAttribute['href']);
 		}

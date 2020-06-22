@@ -28,14 +28,14 @@ if (isset($_GET['css']) && ($_GET['css'] != ""))
 <body>
 
 <noscript>
-<div align='center' id='noscript'><font color='red'><b>ATTENTION !!! JavaScript est désactivé ou non pris en charge par votre navigateur : cette procédure ne fonctionnera pas correctement.</b></font><br>
-<b>Pour modifier cette option, voir <a target='_blank' href='https://www.libellules.ch/browser_javascript_activ.php'>ce lien</a>.</b></div><br>
+<div id='noscript' class='red center'><strong>ATTENTION !!! JavaScript est désactivé ou non pris en charge par votre navigateur : cette procédure ne fonctionnera pas correctement.</strong><br>
+<strong>Pour modifier cette option, voir <a target='_blank' rel='noopener noreferrer' href='https://www.libellules.ch/browser_javascript_activ.php'>ce lien</a>.</strong></div><br>
 </noscript>
 
-<table width="100%">
+<table class="table100" aria-describedby="Entêtes">
 <tr>
-<td style="text-align: left;"><img alt="Zip2HAL" title="Zip2HAL" width="250px" src="./img/logo_Zip2hal.png"></td>
-<td style="text-align: right;"><img alt="Université de Rennes 1" title="Université de Rennes 1" width="150px" src="./img/logo_UR1_gris_petit.jpg"></td>
+<th scope="col" style="text-align: left;"><img alt="Zip2HAL" title="Zip2HAL" width="250px" src="./img/logo_Zip2hal.png"></td>
+<th scope="col" style="text-align: right;"><img alt="Université de Rennes 1" title="Université de Rennes 1" width="150px" src="./img/logo_UR1_gris_petit.jpg"></td>
 </tr>
 </table>
 <hr style="color: #467666; height: 1px; border-width: 1px; border-top-color: #467666; border-style: inset;">
@@ -48,15 +48,15 @@ La première étape consiste à fournir votre extraction TEI d'OverHAL :
 if (isset($_GET["erreur"]))
 {
 	$erreur = $_GET["erreur"];
-	if ($erreur == 1) {echo("<script type=\"text/javascript\">afficherPopupAvertissement(\"Le fichier dépasse la limite autorisée par le serveur (fichier php.ini) !\")</script>");}
-	if ($erreur == 2) {echo("<script type=\"text/javascript\">afficherPopupAvertissement(\"Le fichier dépasse la limite autorisée dans le formulaire HTML !\")</script>");}
-	if ($erreur == 3) {echo("<script type=\"text/javascript\">afficherPopupAvertissement(\"L'envoi du fichier a été interrompu pendant le transfert !\")</script>");}
-	//if ($erreur == 4) {echo("<script type=\"text/javascript\">afficherPopupAvertissement(\"Aucun fichier envoyé ou bien il a une taille nulle !\")</script>");}
-	if ($erreur == 5) {echo("<script type=\"text/javascript\">afficherPopupAvertissement(\"Mauvaise extension de fichier !\")</script>");}
-	if ($erreur == 6) {echo("<script type=\"text/javascript\">afficherPopupAvertissement(\"Vous devez au préalable fournir votre extraction TEI d'OverHAL !\")</script>");}
-	if ($erreur == 7) {echo("<script type=\"text/javascript\">afficherPopupAvertissement(\"Le répertoire de dépôt de fichier est automatiquement nettoyé chaque heure et votre fichier ZIP des extractions TEI d'OverHAL n'existe plus : vous devez procéder de nouveau à son chargement !\")</script>");}
-	if ($erreur == 8) {echo("<script type=\"text/javascript\">afficherPopupAvertissement(\"Archive ZIP incorrecte !\")</script>");}
-	if ($erreur == 9) {echo("<script type=\"text/javascript\">afficherPopupAvertissement(\"Au moins un des fichiers de votre archive ZIP n'a pas l'extension XML !\")</script>");}
+	if ($erreur == 1) {echo "<script type=\"text/javascript\">afficherPopupAvertissement(\"Le fichier dépasse la limite autorisée par le serveur (fichier php.ini) !\")</script>";}
+	if ($erreur == 2) {echo "<script type=\"text/javascript\">afficherPopupAvertissement(\"Le fichier dépasse la limite autorisée dans le formulaire HTML !\")</script>";}
+	if ($erreur == 3) {echo"<script type=\"text/javascript\">afficherPopupAvertissement(\"L'envoi du fichier a été interrompu pendant le transfert !\")</script>";}
+	//if ($erreur == 4) {echo "<script type=\"text/javascript\">afficherPopupAvertissement(\"Aucun fichier envoyé ou bien il a une taille nulle !\")</script>";}
+	if ($erreur == 5) {echo "<script type=\"text/javascript\">afficherPopupAvertissement(\"Mauvaise extension de fichier !\")</script>";}
+	if ($erreur == 6) {echo "<script type=\"text/javascript\">afficherPopupAvertissement(\"Vous devez au préalable fournir votre extraction TEI d'OverHAL !\")</script>";}
+	if ($erreur == 7) {echo "<script type=\"text/javascript\">afficherPopupAvertissement(\"Le répertoire de dépôt de fichier est automatiquement nettoyé chaque heure et votre fichier ZIP des extractions TEI d'OverHAL n'existe plus : vous devez procéder de nouveau à son chargement !\")</script>";}
+	if ($erreur == 8) {echo "<script type=\"text/javascript\">afficherPopupAvertissement(\"Archive ZIP incorrecte !\")</script>";}
+	if ($erreur == 9) {echo"<script type=\"text/javascript\">afficherPopupAvertissement(\"Au moins un des fichiers de votre archive ZIP n'a pas l'extension XML !\")</script>";}
 }
 ?>
 

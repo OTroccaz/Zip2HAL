@@ -26,19 +26,20 @@ if (isset($_GET['css']) && ($_GET['css'] != ""))
 <body>
 
 <noscript>
-<div align='center' id='noscript'><font color='red'><b>ATTENTION !!! JavaScript est désactivé ou non pris en charge par votre navigateur : cette procédure ne fonctionnera pas correctement.</b></font><br>
-<b>Pour modifier cette option, voir <a target='_blank' href='https://www.libellules.ch/browser_javascript_activ.php'>ce lien</a>.</b></div><br>
+<div class=' red center' id='noscript'><strong>ATTENTION !!! JavaScript est désactivé ou non pris en charge par votre navigateur : cette procédure ne fonctionnera pas correctement.</strong><br>
+<b>Pour modifier cette option, voir <a target='_blank' rel='noopener noreferrer' href='https://www.libellules.ch/browser_javascript_activ.php'>ce lien</a>.</b></div><br>
 </noscript>
 
-<table width="100%">
+<table class="table100" aria-describedby="Entêtes">
 <tr>
-<td style="text-align: left;"><img alt="Zip2HAL" title="Zip2HAL" width="250px" src="./img/logo_Zip2hal.png"></td>
-<td style="text-align: right;"><img alt="Université de Rennes 1" title="Université de Rennes 1" width="150px" src="./img/logo_UR1_gris_petit.jpg"></td>
+<th scope="col" style="text-align: left;"><img alt="Zip2HAL" title="Zip2HAL" width="250px" src="./img/logo_Zip2hal.png"></td>
+<th scope="col" style="text-align: right;"><img alt="Université de Rennes 1" title="Université de Rennes 1" width="150px" src="./img/logo_UR1_gris_petit.jpg"></td>
 </tr>
 </table>
 <hr style="color: #467666; height: 1px; border-width: 1px; border-top-color: #467666; border-style: inset;">
 
 <?php
+$location = "Location: "."TEI_OverHAL.php";
 if (isset($_FILES['TEI_OverHAL']['name']) && $_FILES['TEI_OverHAL']['name'] != "") //File has been submitted
 {
 	if ($_FILES['TEI_OverHAL']['error'])
@@ -46,13 +47,13 @@ if (isset($_FILES['TEI_OverHAL']['name']) && $_FILES['TEI_OverHAL']['name'] != "
 		switch ($_FILES['TEI_OverHAL']['error'])
 		{
 			 case 1: // UPLOAD_ERR_INI_SIZE
-			 Header("Location: "."TEI_OverHAL.php?erreur=1");
+			 Header($location."?erreur=1");
 			 break;
 			 case 2: // UPLOAD_ERR_FORM_SIZE
-			 Header("Location: "."TEI_OverHAL.php?erreur=2");
+			 Header($location."?erreur=2");
 			 break;
 			 case 3: // UPLOAD_ERR_PARTIAL
-			 Header("Location: "."TEI_OverHAL.php?erreur=3");
+			 Header($location."?erreur=3");
 			 break;
 			 //case 4: // UPLOAD_ERR_NO_FILE
 			 //Header("Location: "."OverHAL.php?erreur=4");
@@ -61,7 +62,7 @@ if (isset($_FILES['TEI_OverHAL']['name']) && $_FILES['TEI_OverHAL']['name'] != "
 	}
 	$extension = strrchr($_FILES['TEI_OverHAL']['name'], '.');
 	if ($extension != ".zip") {
-		Header("Location: "."TEI_OverHAL.php?erreur=5");
+		Header($location."?erreur=5");
 	}
 	$temps = time();
 	mkdir("./XML/".$temps);
@@ -72,7 +73,7 @@ if (isset($_FILES['TEI_OverHAL']['name']) && $_FILES['TEI_OverHAL']['name'] != "
 		$zip->extractTo('./XML/'.$temps);
 		$zip->close();
 	}else{
-		Header("Location: "."TEI_OverHAL.php?erreur=8");
+		Header($location."?erreur=8");
 	}
 	
 	//Déplacer les fichier sous HAL
@@ -105,7 +106,7 @@ if (isset($_FILES['TEI_OverHAL']['name']) && $_FILES['TEI_OverHAL']['name'] != "
 			}
 			rmdir("./XML/".$temps);
 			unlink($nomfic);
-			Header("Location: "."TEI_OverHAL.php?erreur=9");
+			Header($location."?erreur=9");
 		}
 	}
   closedir($repertoire);

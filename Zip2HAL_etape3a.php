@@ -90,7 +90,7 @@ for($i = 0; $i < count($nomAff); $i++) {
 	$type = $nomAff[$i]['type'];
 	$pays = $nomAff[$i]['pays'];
 	if($pays != "") {$special = "%20AND%20country_s:%22".strtolower($pays)."%22";}else{$special = "";}
-	if($pays != "fr") {$special .= "%20%20AND%20type_s:(institution%20OR%20regroupinstitution%20OR%20regrouplaboratory)";}
+	if(strtolower($pays) != "fr") {$special .= "%20%20AND%20type_s:(institution%20OR%20regroupinstitution%20OR%20regrouplaboratory)";}
 	$trouve = 0;//Test pour savoir si la 1ère méthode a permis de trouver un id de structure
 	//Si présence d'un terme entre crochets, il faut isoler ce terme et l'ajouter comme recherche prioritaire > ajout au début du tableau
 	$crochet = "";
