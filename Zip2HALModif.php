@@ -29,6 +29,9 @@ if (isset($_GET['css']) && ($_GET['css'] != ""))
 <br><br>
 <div style="width: 60%; margin-left: auto ;margin-right: auto ;">
 <?php
+$passw = 'password';
+$h_passwd = 'HAL_PASSWD';
+
 //require_once('./CAS_connect.php')//authentification CAS ou autre ?
 if (strpos($_SERVER['HTTP_HOST'], '127.0.0.1') !== false || strpos($_SERVER['HTTP_HOST'], 'ecobio') !== false) {
   include('./_connexion.php');
@@ -41,10 +44,10 @@ if (strpos($_SERVER['HTTP_HOST'], '127.0.0.1') !== false || strpos($_SERVER['HTT
   $HAL_USER = phpCAS::getUser();
   $_SESSION['HAL_USER'] = $HAL_USER;
   $HAL_PASSWD = "";
-  if (isset($_POST['password']) && $_POST['password'] != "") {$_SESSION['HAL_PASSWD'] = htmlspecialchars($_POST['password']);}
+  if (isset($_POST[$passw ]) && $_POST[$passw ] != "") {$_SESSION[$h_passwd] = htmlspecialchars($_POST[$passw ]);}
 
-  if (isset($_SESSION['HAL_PASSWD']) && $_SESSION['HAL_PASSWD'] != "") {
-    $HAL_PASSWD = $_SESSION['HAL_PASSWD'];
+  if (isset($_SESSION[$hal_passwd]) && $_SESSION[$h_passwd] != "") {
+    $HAL_PASSWD = $_SESSION[$h_passwd];
   }else{
     include('./Zip2HALForm.php');
     die();

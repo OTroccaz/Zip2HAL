@@ -12,6 +12,9 @@ function libxml_display_error($error)
         case LIBXML_ERR_FATAL:
             $return .= "<b>Fatal Error $error->code</b>: ";
             break;
+				default:
+						$return .= "<b>Default Error $error->code</b>: ";
+						break;
     }
     $return .= trim($error->message);
 		/*

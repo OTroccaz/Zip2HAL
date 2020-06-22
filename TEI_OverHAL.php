@@ -48,6 +48,7 @@ La première étape consiste à fournir votre extraction TEI d'OverHAL :
 if (isset($_GET["erreur"]))
 {
 	$erreur = $_GET["erreur"];
+	if ($erreur == 0) {echo "<script type=\"text/javascript\">afficherPopupAvertissement(\"Erreur inconnue !\")</script>";}
 	if ($erreur == 1) {echo "<script type=\"text/javascript\">afficherPopupAvertissement(\"Le fichier dépasse la limite autorisée par le serveur (fichier php.ini) !\")</script>";}
 	if ($erreur == 2) {echo "<script type=\"text/javascript\">afficherPopupAvertissement(\"Le fichier dépasse la limite autorisée dans le formulaire HTML !\")</script>";}
 	if ($erreur == 3) {echo"<script type=\"text/javascript\">afficherPopupAvertissement(\"L'envoi du fichier a été interrompu pendant le transfert !\")</script>";}

@@ -49,6 +49,8 @@ suppression("./XML", 3600);//Suppression des fichiers et dossiers du dossier XML
 include("./normalize.php");
 include("./URLport_coll.php");
 include('./DOMValidator.php');
+
+$brk = '<br><br>';
 ?>
 
 <html lang="fr">
@@ -170,7 +172,7 @@ if($domaine == "") {
 			if($codI != $codF) {//Nouveau groupe de disciplines
 				if($cpt != 1) {echo $endSpan;}
 				$domF = str_replace("'", "’", $entry->fr_domain_s);
-				echo('<span style=\'margin-left: 30px;\' id=\'cod-'.$cpt.'-0\'><a style=\'cursor:pointer;\' onclick=\'afficacher('.$cpt.','.'0'.')\';><font style=\'color: #FE6D02;\'><strong>>&nbsp;</strong></font></a></span>');
+				echo '<span style=\'margin-left: 30px;\' id=\'cod-'.$cpt.'-0\'><a style=\'cursor:pointer;\' onclick=\'afficacher('.$cpt.','.'0'.')\';><font style=\'color: #FE6D02;\'><strong>>&nbsp;</strong></font></a></span>';
 				echo '<span><a style=\'cursor:pointer;\' onclick=\'choixdom("'.$domF.'","'.$code.'");\'>'.$domF.'</a></span><br>';
 				$codI = $codF;
 				echo '<span id=\'dom-'.$cpt.'-0\' style=\'display:none;\'>';
@@ -265,7 +267,7 @@ if(isset($_POST["soumis"])) {
 			$numFound = 0;
 			if(isset($results->response->numFound)) {$numFound=$results->response->numFound;}
 			
-			echo('<br><strong><font style=\'color:#fe6d02; font-size:14px;\'>Traitement du fichier '.str_replace($dir."/", "", $nomfic).'</font></strong><br>');
+			echo '<br><strong><font style=\'color:#fe6d02; font-size:14px;\'>Traitement du fichier '.str_replace($dir."/", "", $nomfic).'</font></strong><br>';
 			
 			include('./Zip2HAL_etape1.php');
 			
@@ -280,16 +282,16 @@ if(isset($_POST["soumis"])) {
 				//var_dump($halAut);
 				//var_dump($halAff);
 
-				echo '<br><br><span style="display: none;"';
+				echo $brk.'<span style="display: none;"';
 				echo 'Tableau initial obtenu pour les idHAL des auteurs ($halAutinit) :';
 				var_dump($halAutinit);
-				echo '<br><br>';
+				echo $brk;
 				echo 'Tableau final obtenu pour les idHAL des auteurs ($halAut) :';
 				var_dump($halAut);
-				echo '<br><br>';
+				echo $brk;
 				echo 'Tableau des noms des affiliations ($nomAff) :';
 				var_dump($nomAff);
-				echo '<br><br>';
+				echo $brk;
 				echo 'Tableau obtenu pour les id structure des affiliations ($halAff) :';
 				var_dump($halAff);
 				echo '</span>';
@@ -332,7 +334,7 @@ if(isset($_POST["soumis"])) {
 </script>
 
 <?php
-echo('<br><br>');
+echo $brk;
 include('./bas.php');
 ?>
 </body>

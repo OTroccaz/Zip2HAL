@@ -27,7 +27,7 @@ if (isset($_GET['css']) && ($_GET['css'] != ""))
 
 <noscript>
 <div class=' red center' id='noscript'><strong>ATTENTION !!! JavaScript est désactivé ou non pris en charge par votre navigateur : cette procédure ne fonctionnera pas correctement.</strong><br>
-<b>Pour modifier cette option, voir <a target='_blank' rel='noopener noreferrer' href='https://www.libellules.ch/browser_javascript_activ.php'>ce lien</a>.</b></div><br>
+<strong>Pour modifier cette option, voir <a target='_blank' rel='noopener noreferrer' href='https://www.libellules.ch/browser_javascript_activ.php'>ce lien</a>.</strong></div><br>
 </noscript>
 
 <table class="table100" aria-describedby="Entêtes">
@@ -40,78 +40,89 @@ if (isset($_GET['css']) && ($_GET['css'] != ""))
 
 <?php
 $location = "Location: "."TEI_OverHAL.php";
-if (isset($_FILES['TEI_OverHAL']['name']) && $_FILES['TEI_OverHAL']['name'] != "") //File has been submitted
+$erreur = "";
+$qui = "TEI_OverHAL";
+$xml = "./XML/";
+$hal = "/HAL/";
+
+if (isset($_FILES[$qui]['name']) && $_FILES[$qui]['name'] != "") //File has been submitted
 {
-	if ($_FILES['TEI_OverHAL']['error'])
+	if ($_FILES[$qui]['error'])
 	{
-		switch ($_FILES['TEI_OverHAL']['error'])
+		switch ($_FILES[$qui]['error'])
 		{
 			 case 1: // UPLOAD_ERR_INI_SIZE
-			 Header($location."?erreur=1");
-			 break;
+				 if($erreur == "") {$erreur = "?erreur=1";}
+				 break;
 			 case 2: // UPLOAD_ERR_FORM_SIZE
-			 Header($location."?erreur=2");
-			 break;
+				  if($erreur == "") {$erreur = "?erreur=2";}
+				 break;
 			 case 3: // UPLOAD_ERR_PARTIAL
-			 Header($location."?erreur=3");
-			 break;
+				  if($erreur == "") {$erreur = "?erreur=3";}
+				 break;
 			 //case 4: // UPLOAD_ERR_NO_FILE
-			 //Header("Location: "."OverHAL.php?erreur=4");
-			 //break;
+				 //if($erreur == "") {$erreur = "?erreur=4";}
+				 //break;
+			 default:
+				  if($erreur == "") {$erreur = "?erreur=0";}
+				 break;
 		}
 	}
-	$extension = strrchr($_FILES['TEI_OverHAL']['name'], '.');
+	$extension = strrchr($_FILES[$qui]['name'], '.');
 	if ($extension != ".zip") {
-		Header($location."?erreur=5");
+		 if($erreur == "") {$erreur = "?erreur=5";}
 	}
 	$temps = time();
-	mkdir("./XML/".$temps);
+	mkdir($xml.$temps);
 	$nomfic = "./XML/TEI_OverHAL_".$temps.".zip";
-	move_uploaded_file($_FILES['TEI_OverHAL']['tmp_name'], $nomfic);
+	move_uploaded_file($_FILES[$qui]['tmp_name'], $nomfic);
 	$zip = new ZipArchive;
 	if ($zip->open($nomfic) === TRUE) {
 		$zip->extractTo('./XML/'.$temps);
 		$zip->close();
 	}else{
-		Header($location."?erreur=8");
+		 if($erreur == "") {$erreur = "?erreur=8";}
 	}
 	
 	//Déplacer les fichier sous HAL
-	if (is_dir("./XML/".$temps."/HAL/")) {
-		if ($dh = opendir("./XML/".$temps."/HAL/")) {
+	if (is_dir($xml.$temps.$hal)) {
+		if ($dh = opendir($xml.$temps.$hal)) {
 			while (($file = readdir($dh)) !== false) {
 				if($file != '.' && $file != '..') {
-					copy("./XML/".$temps."/HAL/".$file, "./XML/".$temps."/".$file );
-					unlink("./XML/".$temps."/HAL/".$file);
+					copy($xml.$temps.$hal.$file, $xml.$temps."/".$file );
+					unlink($xml.$temps.$hal.$file);
 				}
 			}
 			closedir($dh);
-			rmdir("./XML/".$temps."/HAL/");
+			rmdir($xml.$temps.$hal);
 		}
 	}
 	
 	//Vérification que l'archive ne contient bien que des fichiers xml
-	$repertoire = opendir("./XML/".$temps);
+	$repertoire = opendir($xml.$temps);
 	while(false !== ($fichier = readdir($repertoire))) {
-		$chemin = "./XML/".$temps."/".$fichier;
+		$chemin = $xml.$temps."/".$fichier;
 		$infos = pathinfo($chemin);
 		if ($fichier != "." && $fichier != ".." && !is_dir($fichier) && $infos['extension'] != "xml") {
 			//Extension non xml > suppression dossier créé et archive zip copiée
-			$repertoire = opendir("./XML/".$temps);
+			$repertoire = opendir($xml.$temps);
 			while(false !== ($fichier = readdir($repertoire))) {
-				$chemin = "./XML/".$temps."/".$fichier;
+				$chemin = $xml.$temps."/".$fichier;
 				if ($fichier != "." && $fichier != ".." && !is_dir($fichier)) {
 					unlink($chemin);
 				}
 			}
-			rmdir("./XML/".$temps);
+			rmdir($xml.$temps);
 			unlink($nomfic);
-			Header($location."?erreur=9");
+			 if($erreur == "") {$erreur = "?erreur=9";}
 		}
 	}
   closedir($repertoire);
-
-	Header("Location: "."Zip2HAL.php?nomficZip=".$nomfic);
+	if($erreur == "") {
+		Header("Location: "."Zip2HAL.php?nomficZip=".$nomfic);
+	}else{
+		Header("Location: "."TEI_Overhal.php".$erreur);
+	}
 }
 ?>
 

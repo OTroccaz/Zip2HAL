@@ -12,6 +12,14 @@ $melAut = array();//Emails trouvés
 $halAut = array();
 $tabIdHAL = array();//Si plusieurs idHAL remontés pour un même auteur
 
+$cstFN = 'firstName';
+$cstLN = 'lastName';
+$cstAN = 'affilName';
+$cstII = 'idHali';
+$cstIS = 'idHals';
+$cstMD = 'mailDom';
+$cstDI = 'docid';
+
 echo '<b>Etape 2 : recherche des idHAL et docid des auteurs</b><br>';
 echo '<div id=\'cpt2\'></div>';
 
@@ -65,16 +73,16 @@ for($i = 0; $i < count($preAut); $i++) {
 	$lastName = $nomAut[$i];
 	$affilName = $affAut[$i];
 	//Initialisation des variables du tableau
-	$halAut[$iAut]['firstName'] = $firstName;
-	$halAut[$iAut]['lastName'] = $lastName;
-	$halAut[$iAut]['affilName'] = $affilName;
+	$halAut[$iAut][$cstFN] = $firstName;
+	$halAut[$iAut][$cstLN] = $lastName;
+	$halAut[$iAut][$cstAN] = $affilName;
 	$halAut[$iAut]['xmlIdi'] = $xmlIdi[$i];
 	$halAut[$iAut]['xmlIds'] = $xmlIds[$i];
-	$halAut[$iAut]['idHali'] = "";
-	$halAut[$iAut]['idHals'] = "";
-	$halAut[$iAut]['mailDom'] = $melAut[$i];
+	$halAut[$iAut][$cstII] = "";
+	$halAut[$iAut][$cstIS] = "";
+	$halAut[$iAut][$cstMD] = $melAut[$i];
 	$halAut[$iAut]['mail'] = "";
-	$halAut[$iAut]['docid'] = "";
+	$halAut[$iAut][$cstDI] = "";
 	$firstNameT = strtolower(wd_remove_accents($firstName));
 	$lastNameT = strtolower(wd_remove_accents($lastName));
 	//Si prénom composé, on ne garde que les initiales et on ajuste le test pour qu'il porte aussi uniquement sur l'initiale du premier prénom (J.-B. Le Cam > (j-b* OR j*))
@@ -107,8 +115,8 @@ for($i = 0; $i < count($preAut); $i++) {
 		foreach($resAut->response->docs as $author) {
 			//Test sur le domaine des adresses mail s'il y en déjà une dans le XML
 			$testMel = "oui";//Ok par défaut
-			if($halAut[$iAut]['mailDom'] != "") {
-				$melXML = $halAut[$iAut]['mailDom'];
+			if($halAut[$iAut][$cstMD] != "") {
+				$melXML = $halAut[$iAut][$cstMD];
 				$tabMelXML = explode(".", $melXML);
 				$testXML = $tabMelXML[count($tabMelXML) - 1];
 				if(isset($author->emailDomain_s)) {$melHAL = $author->emailDomain_s;}else{$melHAL = "";}
@@ -120,13 +128,13 @@ for($i = 0; $i < count($preAut); $i++) {
 			if(isset($author->idHal_i) && $author->idHal_i != 0 && $author->valid_s == "VALID") {
 				if($testMel == "oui") {
 					//echo $firstName.' '.$lastName.' : '.$author->idHal_i.' -> '.$author->idHal_s.' - ';
-					$halAut[$iAut]['firstName'] = $firstName;
-					$halAut[$iAut]['lastName'] = $lastName;
-					$halAut[$iAut]['affilName'] = $affilName;
-					if(isset($author->idHal_i)) {$halAut[$iAut]['idHali'] = $author->idHal_i;}else{$halAut[$iAut]['idHali'] = "";}
-					if(isset($author->idHal_s)) {$halAut[$iAut]['idHals'] = $author->idHal_s;}else{$halAut[$iAut]['idHals'] = "";}
-					if(isset($author->emailDomain_s)) {$halAut[$iAut]['mailDom'] = str_replace('@', '', strstr($author->emailDomain_s, '@'));}else{$halAut[$iAut]['mailDom'] = "";}
-					if(isset($author->docid)) {$halAut[$iAut]['docid'] = $author->docid;}
+					$halAut[$iAut][$cstFN] = $firstName;
+					$halAut[$iAut][$cstLN] = $lastName;
+					$halAut[$iAut][$cstAN] = $affilName;
+					if(isset($author->idHal_i)) {$halAut[$iAut][$cstII] = $author->idHal_i;}else{$halAut[$iAut][$cstII] = "";}
+					if(isset($author->idHal_s)) {$halAut[$iAut][$cstIS] = $author->idHal_s;}else{$halAut[$iAut][$cstIS] = "";}
+					if(isset($author->emailDomain_s)) {$halAut[$iAut][$cstMD] = str_replace('@', '', strstr($author->emailDomain_s, '@'));}else{$halAut[$iAut][$cstMD] = "";}
+					if(isset($author->docid)) {$halAut[$iAut][$cstDI] = $author->docid;}
 					$iHi = "oui";
 					$cptiHi++;
 					$trouve++;
@@ -141,13 +149,13 @@ for($i = 0; $i < count($preAut); $i++) {
 		}
 	}
 	if($iHi == "non" && $docid != "" && $nbdocid == 1) {//Un seul docid trouvé
-		$halAut[$iAut]['firstName'] = $firstName;
-		$halAut[$iAut]['lastName'] = $lastName;
-		$halAut[$iAut]['affilName'] = $affilName;
-		$halAut[$iAut]['idHali'] = "";
-		$halAut[$iAut]['idHals'] = "";
-		$halAut[$iAut]['mailDom'] = "";
-		$halAut[$iAut]['docid'] = $docid;
+		$halAut[$iAut][$cstFN] = $firstName;
+		$halAut[$iAut][$cstLN] = $lastName;
+		$halAut[$iAut][$cstAN] = $affilName;
+		$halAut[$iAut][$cstII] = "";
+		$halAut[$iAut][$cstIS] = "";
+		$halAut[$iAut][$cstMD] = "";
+		$halAut[$iAut][$cstDI] = $docid;
 		$cptdoc++;
 		$trouve++;
 		//echo($firstName.' '.$lastName.' : '.$docid);
@@ -171,8 +179,8 @@ for($i = 0; $i < count($preAut); $i++) {
 			foreach($resAut->response->docs as $author) {
 				//Test sur le domaine des adresses mail s'il y en déjà une dans le XML
 				$testMel = "oui";//Ok par défaut
-				if($halAut[$iAut]['mailDom'] != "") {
-					$melXML = $halAut[$iAut]['mailDom'];
+				if($halAut[$iAut][$cstMD] != "") {
+					$melXML = $halAut[$iAut][$cstMD];
 					$tabMelXML = explode(".", $melXML);
 					$testXML = $tabMelXML[count($tabMelXML) - 1];
 					if(isset($author->emailDomain_s)) {$melHAL = $author->emailDomain_s;}else{$melHAL = "";}
@@ -185,30 +193,30 @@ for($i = 0; $i < count($preAut); $i++) {
 					//On parcours toutes les formes OLD et si plusieurs résultats, stockage dans un tableau à part en vue de prévenir l'utilisateur lors de l'affichage final
 					if($author->valid_s == "OLD") {
 						if($old == "non") {
-							$halAut[$iAut]['firstName'] = $firstName;
-							$halAut[$iAut]['lastName'] = $lastName;
-							$halAut[$iAut]['affilName'] = $affilName;
-							if(isset($author->idHal_i) && $author->idHal_i != 0) {$halAut[$iAut]['idHali'] = $author->idHal_i; $cptiHi++;}else{$halAut[$iAut]['idHali'] = "";}
-							if(isset($author->idHal_s)) {$halAut[$iAut]['idHals'] = $author->idHal_s;}else{$halAut[$iAut]['idHals'] = "";}
-							if(isset($author->emailDomain_s)) {$halAut[$iAut]['mailDom'] = str_replace('@', '', strstr($author->emailDomain_s, '@'));}else{$halAut[$iAut]['mailDom'] = "";}
-							if(isset($author->docid)) {$halAut[$iAut]['docid'] = $author->docid;}
+							$halAut[$iAut][$cstFN] = $firstName;
+							$halAut[$iAut][$cstLN] = $lastName;
+							$halAut[$iAut][$cstAN] = $affilName;
+							if(isset($author->idHal_i) && $author->idHal_i != 0) {$halAut[$iAut][$cstII] = $author->idHal_i; $cptiHi++;}else{$halAut[$iAut][$cstII] = "";}
+							if(isset($author->idHal_s)) {$halAut[$iAut][$cstIS] = $author->idHal_s;}else{$halAut[$iAut][$cstIS] = "";}
+							if(isset($author->emailDomain_s)) {$halAut[$iAut][$cstMD] = str_replace('@', '', strstr($author->emailDomain_s, '@'));}else{$halAut[$iAut][$cstMD] = "";}
+							if(isset($author->docid)) {$halAut[$iAut][$cstDI] = $author->docid;}
 							$cptdoc++;
 							$old = "oui";
 						}else{
 							$nbCel = count($tabIdHAL);
-							$tabIdHAL[$nbCel]['firstName'] = $firstName;
-							$tabIdHAL[$nbCel]['lastName'] = $lastName;
+							$tabIdHAL[$nbCel][$cstFN] = $firstName;
+							$tabIdHAL[$nbCel][$cstLN] = $lastName;
 							$tabIdHAL[$nbCel]['reqAut'] = $reqAut;
 							break;
 						}
 					}else{//Forme INCOMING
-						$halAut[$iAut]['firstName'] = $firstName;
-						$halAut[$iAut]['lastName'] = $lastName;
-						$halAut[$iAut]['affilName'] = $affilName;
-						if(isset($author->idHal_i) && $author->idHal_i != 0) {$halAut[$iAut]['idHali'] = $author->idHal_i; $cptiHi++;}else{$halAut[$iAut]['idHali'] = "";}
-						if(isset($author->idHal_s)) {$halAut[$iAut]['idHals'] = $author->idHal_s;}else{$halAut[$iAut]['idHals'] = "";}
-						if(isset($author->emailDomain_s)) {$halAut[$iAut]['mailDom'] = str_replace('@', '', strstr($author->emailDomain_s, '@'));}else{$halAut[$iAut]['mailDom'] = "";}
-						if(isset($author->docid)) {$halAut[$iAut]['docid'] = $author->docid;}
+						$halAut[$iAut][$cstFN] = $firstName;
+						$halAut[$iAut][$cstLN] = $lastName;
+						$halAut[$iAut][$cstAN] = $affilName;
+						if(isset($author->idHal_i) && $author->idHal_i != 0) {$halAut[$iAut][$cstII] = $author->idHal_i; $cptiHi++;}else{$halAut[$iAut][$cstII] = "";}
+						if(isset($author->idHal_s)) {$halAut[$iAut][$cstIS] = $author->idHal_s;}else{$halAut[$iAut][$cstIS] = "";}
+						if(isset($author->emailDomain_s)) {$halAut[$iAut][$cstMD] = str_replace('@', '', strstr($author->emailDomain_s, '@'));}else{$halAut[$iAut][$cstMD] = "";}
+						if(isset($author->docid)) {$halAut[$iAut][$cstDI] = $author->docid;}
 						$cptdoc++;
 						break;//On ne prend en compte que la 1ère forme INCOMING trouvée
 					}

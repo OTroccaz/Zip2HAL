@@ -114,10 +114,12 @@ if($numFound == 0) {
 							}
 						}
 						//echo($doublonDbl);
+						$typid = " et les types sont identiques";
+						$nocol = " mais pas dans la collection ";
 						if($doublonDbl != "non") {//Doublon trouvé dans la collection > vérification du type
 							$txtDbl = " et dans la collection ".$team;
 							if($typTEI == $docTEIDbl) {//Mêmes types de document
-								$txtDbl .= " et les types sont identiques";
+								$txtDbl .= $typid;
 								$typDbl = "HALCOLLTYP";
 							}else{
 								$txtDbl .= " mais les types sont différents";
@@ -127,10 +129,10 @@ if($numFound == 0) {
 							break 2;//Doublon HALCOLL trouvé > sortie des 2 boucles foreach
 						}else{
 							if($typTEI == $docTEIDbl) {//Mêmes types de document
-								$txtDbl = " mais pas dans la collection ".$team. " et les types sont identiques";
+								$txtDbl = " mais pas dans la collection ".$team.$typid;
 								$typDbl = "HALTYP";
 							}else{
-								$txtDbl = " mais pas dans la collection ".$team. " et les types sont différents";
+								$txtDbl = $nocol.$team. " et les types sont différents";
 								$typDbl = "HAL";
 							}
 						}
@@ -138,10 +140,10 @@ if($numFound == 0) {
 				}
 			}else{
 				if($typTEI == $docTEI) {//Mêmes types de document
-					$txtDbl = " mais pas dans la collection ".$team. " et les types sont identiques";
+					$txtDbl = $nocol.$team.$typid;
 					$typDbl = "HALTYP";
 				}else{
-					$txtDbl = " mais pas dans la collection ".$team. " et les types sont différents";
+					$txtDbl = $nocol.$team. " et les types sont différents";
 					$typDbl = "HAL";
 				}
 			}
