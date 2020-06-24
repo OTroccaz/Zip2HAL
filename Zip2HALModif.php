@@ -67,14 +67,21 @@ if (isset($_GET['Id']) && ($_GET['Id'] != ""))
   }
 }
 
-//Pour visualiser résultat preprod > https://univ-rennes1.halpreprod.archives-ouvertes.fr/halid
+if (isset($_GET['portail']) && ($_GET['portail'] != ""))
+{
+	$portail = $_GET['portail'];
+	$url = $_GET['portail']."sword/hal/";
+	$urlStamp = $_GET['portail'];
+}else{
+	//Pour visualiser résultat preprod > https://univ-rennes1.halpreprod.archives-ouvertes.fr/halid
 
-/*
-$url = "https://api-preprod.archives-ouvertes.fr/sword/hal/";
-$urlStamp = "https://api-preprod.archives-ouvertes.fr/";
-*/
-$url = "https://api.archives-ouvertes.fr/sword/hal/";
-$urlStamp = "https://api.archives-ouvertes.fr/";
+	/*
+	$url = "https://api-preprod.archives-ouvertes.fr/sword/hal/";
+	$urlStamp = "https://api-preprod.archives-ouvertes.fr/";
+	*/
+	$url = "https://api.archives-ouvertes.fr/sword/hal/";
+	$urlStamp = "https://api.archives-ouvertes.fr/";
+}
 
 $nomfic = "./XML/".$idNomfic.".xml";
 $nomficFin = "./XML/".$idNomfic."-Fin.xml";
@@ -141,6 +148,15 @@ curl_setopt($ch, CURLOPT_VERBOSE, 1);
 $headers=array();
 $headers[] = "Packaging: http://purl.org/net/sword-types/AOfr";
 $headers[] = "Content-Type: text/xml";
+//Métadonnées > Notice
+$elts = $xml->getElementsByTagName("ref");
+foreach($elts as $elt) {
+	if($elt->hasAttribute("type") && $elt->getAttribute("type") == "file") {
+		if($elt->hasAttribute("target")) {
+			$headers[] = "X-Allow-Completion : false";
+		}
+	}
+}
 //$headers[] = "Authorization: Basic";
 if (isset($doi)) {
   $headers[] = "X-Allow-Completion[".$doi."]";

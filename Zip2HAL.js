@@ -64,6 +64,14 @@ function afficacher(id,idFic) {
 	}
 }
 
+function afficacherAff(id,idFic) {
+	if (document.getElementById("Raff-"+id+"-"+idFic).style.display == "block") {
+		document.getElementById("Raff-"+id+"-"+idFic).style.display = "none";
+	}else{
+		document.getElementById("Raff-"+id+"-"+idFic).style.display = "block";
+	}
+}
+
 function choixdom(dom, code) {
 	if (dom.indexOf(" ~ ") == -1) {
 		document.getElementById("domaine").innerHTML = dom + ' ~ ' + code + '<br><input type="hidden" name="domaine" value="'+dom+' ~ '+code+'">';

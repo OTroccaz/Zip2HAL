@@ -566,13 +566,13 @@ if(isset($typDbl) && $typDbl == "HALCOLLTYP") {//Doublon de type HAL et COLL > i
 			echo('id '.$halAut[$i]['docid'].'<br>');
 		}
 		if($halAut[$i]['idHals'] != "") {
-			//echo('Remonter le bon auteur du référentiel auteurs <a class=info><img src=\'./img/pdi.jpg\'><span>L\'idHAL n\'est pas ajouté automatiquement car c\'est juste une suggestion que vous devrez valider en l\'ajoutant dans le champ ci-dessous prévu à cet effet.</span></a> :<br><input type="text" id="ajoutidHAL'.$i.'" value="'.$halAutinit[$i]['idHals'].'" name="ajoutidHAL'.$i.'" class="form-control" style="height: 18px; width:200px; align:center;">');
+			//echo('Remonter le bon auteur du référentiel auteurs <a class=info><img src=\'./img/pdi.jpg\'><span>L\'idHAL n\'est pas ajouté automatiquement car c\'est juste une suggestion que vous devrez valider en l\'ajoutant dans le champ ci-dessous prévu à cet effet.</span></a> :<br><input type="text" id="ajoutidHAL'.$i.'" value="'.$halAutinit[$i]['idHals'].'" name="ajoutidHAL'.$i.'" class="form-control" style="height: 18px; width:200px;">');
 			$idHAL = $halAut[$i]['idHals'].' ('.$halAut[$i]['idHali'].')';
 		}else{
 			$idHAL = "";
 		}
 		
-		echo('Ajouter un idHAL : <span class="form-inline"><input type="text" id="ajoutIdh'.$i.'-'.$idFic.'" name="ajoutIdh'.$i.'-'.$idFic.'" value="'.$idHAL.'" class="autoID form-control" style="height: 18px; width:280px; align:center;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'ajouterIdHAL\', pos: '.$i.', valeur: $(this).val()});">');
+		echo('Ajouter un idHAL : <span class="form-inline"><input type="text" id="ajoutIdh'.$i.'-'.$idFic.'" name="ajoutIdh'.$i.'-'.$idFic.'" value="'.$idHAL.'" class="autoID form-control" style="height: 18px; width:280px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'ajouterIdHAL\', pos: '.$i.', valeur: $(this).val()});">');
 		echo('&nbsp;<span id="Vu'.$halAut[$i]['idHals'].'-'.$idFic.'"><a style="cursor:pointer;" onclick="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'supprimerIdHAL\', pos: '.$i.', valeur: \'\'}); majokIdHALSuppr(\'ajoutIdh'.$i.'-'.$idFic.'\');"><img width=\'12px\' alt=\'Supprimer l\'idHAL\' src=\'./img/supprimer.jpg\'></a></span></span><br>');
 		echo('<a target="_blank" href="https://aurehal.archives-ouvertes.fr/author/browse?critere='.$halAut[$i]['firstName'].'+'.$halAut[$i]['lastName'].'">Consulter le référentiel auteur</a><br>');
 		
@@ -583,6 +583,10 @@ if(isset($typDbl) && $typDbl == "HALCOLLTYP") {//Doublon de type HAL et COLL > i
 				echo('<a target="_blank" href="'.$reqAut.'"><font color=\'red\'>D\'autres idHAL ont été trouvés</font></a><br>');
 			}
 		}
+		
+		//Début bloc affiliations
+		echo '<span><a style="cursor:pointer;" onclick="afficacherAff('.$i.','.$idFic.')";>Affiliations</a><br>';
+		echo '<span id="Raff-'.$i.'-'.$idFic.'" style="display: none;">';
 		
 		//Affiliations remontées par OverHAL
 		echo('<i><font style=\'color: #999999;\'>Affiliation(s) remontée(s) par OverHAL:<br>');
@@ -638,13 +642,16 @@ if(isset($typDbl) && $typDbl == "HALCOLLTYP") {//Doublon de type HAL et COLL > i
 			echo('	});');
 			echo('</script>');
 		}
-		//echo('<input type="text" id="ajoutAff'.$i.'" name="ajoutAff'.$i.'" class="autoAF form-control" style="height: 18px; width:280px; align:center;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'ajouterAffil\', pos: '.$i.', valeur: $(this).val()});">');
-		echo('</font><br>');
+		//echo('<input type="text" id="ajoutAff'.$i.'" name="ajoutAff'.$i.'" class="autoAF form-control" style="height: 18px; width:280px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'ajouterAffil\', pos: '.$i.', valeur: $(this).val()});">');
+		echo('</font>');
 		
 		echo('</span>');//Fin span suppression auteur
+		
+		echo '</span></span><br>';//Fin bloc affiliations
 	}
+	
 	echo('<br>');
-	echo('<b>Ajouter un auteur <i>(Prénom Nom)</i> : </b><input type="text" id="ajoutAuteur-'.$idFic.'" name="ajoutAuteur" class="form-control" style="height: 18px; width:280px; align:center;" onfocusout="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'ajouterAuteur\', pos: '.$i.', valeur: $(this).val()});">');
+	echo('<b>Ajouter un auteur <i>(Prénom Nom)</i> : </b><input type="text" id="ajoutAuteur-'.$idFic.'" name="ajoutAuteur" class="form-control" style="height: 18px; width:280px;" onfocusout="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'ajouterAuteur\', pos: '.$i.', valeur: $(this).val()});">');
 	echo('</span></td>');
 	
 	//Vérification si des métadonnées sont manquantes
@@ -689,14 +696,14 @@ if(isset($typDbl) && $typDbl == "HALCOLLTYP") {//Doublon de type HAL et COLL > i
 	}else{
 		$titreNotS = str_replace("'", "\'", $titreNot);
 		$idNomfic = str_replace(array(".xml", "./XML/"), "", $nomfic);
-		$lienMAJ = "./Zip2HALModif.php?action=MAJ&Id=".$idNomfic;
-		echo('<td><center><span id=\'validerTEI-'.$idFic.'\'>Après avoir complété les champs manquants, cliquez sur l\'icône ci-dessous afin de vérifier la validité du TEI pour pouvoir ensuite l\'importer dans HAL.<br><a style="cursor:pointer;" onclick="schemaVal('.$idFic.'); afficherPopupAttente(); goto(\'Zip2HAL_schema_validate.php?idFic='.$idFic.'&nomfic='.$nomfic.'&idNomfic='.$idNomfic.'&idTEI='.$idTEI.'&typDoc='.$typDoc.'&titreNot='.$titreNotS.'&datePub='.$datePub.'\');"><img alt=\'Vérifier la validité du TEI\' src=\'./img/question.jpg\'></a></span></center></td>');
+		$lienMAJ = "./Zip2HALModif.php?action=MAJ&Id=".$idNomfic."&portail=".$racine;
+		echo('<td><center><span id=\'validerTEI-'.$idFic.'\'>Après avoir complété les champs manquants, cliquez sur l\'icône ci-dessous afin de vérifier la validité du TEI pour pouvoir ensuite l\'importer dans HAL.<br><a style="cursor:pointer;" onclick="schemaVal('.$idFic.'); afficherPopupAttente(); goto(\'Zip2HAL_schema_validate.php?idFic='.$idFic.'&nomfic='.$nomfic.'&idNomfic='.$idNomfic.'&idTEI='.$idTEI.'&typDoc='.$typDoc.'&titreNot='.$titreNotS.'&datePub='.$datePub.'&portail='.$racine.'\');"><img alt=\'Vérifier la validité du TEI\' src=\'./img/question.jpg\'></a></span></center></td>');
 	}
 	
 	//Importer dans HAL
 	if($maj == "oui") {
 		$idNomfic = str_replace(array(".xml", "./XML/"), "", $nomfic);
-		$lienMAJ = "./Zip2HALModif.php?action=MAJ&Id=".$idNomfic;
+		$lienMAJ = "./Zip2HALModif.php?action=MAJ&Id=".$idNomfic."&portail=".$racine;
 		//$lienMAJ = "https://ecobio.univ-rennes1.fr";//Pour test
 		include "./Zip2HAL_actions.php";
 		$titreNotS = str_replace("'", "\'", $titreNot);

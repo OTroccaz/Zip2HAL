@@ -1,28 +1,34 @@
 <?php
 //Etape 3b - Recherche la dernière affiliation associée aux auteurs sans affiliation
-echo('<br><br>');
+echo '<br><br>';
 $cpt = 1;
 $year = date('Y', time());
 
-echo('<b>Etape 3b : recherche de la dernière affiliation associée avec HAL aux auteurs sans affiliation</b><br>');
-echo('<div id=\'cpt3b\'></div>');
+echo '<b>Etape 3b : recherche de la dernière affiliation associée avec HAL aux auteurs sans affiliation</b><br>';
+echo '<div id=\'cpt3b\'></div>';
+
+$cstAN = "affilName";
+$cstFN = "firstname";
+$cstLN = "lastname";
+$cstlSA = "#localStruct-Aff";
+
 //Si un auteur n'a aucune affiliation > rechercher dans le référentiel authorstructure pour remonter la dernière affiliation HAL associée à cet auteur
 //Combien d'auteur(s) concerné(s) ?
 $nbAutnoaff = 0;
 $cptNoaff = 0;//Compteur d'affiliations remontées par cette méthode
 for($i = 0; $i < count($halAut); $i++) {
-	if($halAut[$i]['affilName'] == "") {$nbAutnoaff++;}
+	if($halAut[$i][$cstAN] == "") {$nbAutnoaff++;}
 }
-	
+var_dump($halAut);
 for($i = 0; $i < count($halAut); $i++) {
-	if($halAut[$i]['affilName'] == "") {
+	if($halAut[$i][$cstAN] == "") {
 		progression($cpt, $nbAutnoaff, 'cpt3b', $iPro, 'auteur');
-		$firstNameT = strtolower(wd_remove_accents($halAut[$i]['firstName']));
-		$lastNameT = strtolower(wd_remove_accents($halAut[$i]['lastName']));
+		$firstNameT = strtolower(wd_remove_accents($halAut[$i][$cstFN]));
+		$lastNameT = strtolower(wd_remove_accents($halAut[$i][$cstLN]));
 		
 		$reqAut = "https://api.archives-ouvertes.fr/search/authorstructure/?firstName_t=".$firstNameT."&lastName_t=".$lastNameT."&producedDateY_i=".$year;
 		$reqAut = str_replace(" ", "%20", $reqAut);
-		echo('<a target="_blank" href="'.$reqAut.'">URL requête auteur structure HAL</a><br>');
+		echo '<a target="_blank" href="'.$reqAut.'">URL requête auteur structure HAL</a><br>';
 		//echo $reqAut.'<br>';
 		$contAut = file_get_contents($reqAut);
 		$resAut = json_decode($contAut);
@@ -39,7 +45,7 @@ for($i = 0; $i < count($halAut); $i++) {
 			//if(substr_count($orgName, ',') > 2) {$loncou = "longue";}else{$loncou = "courte";}								
 			$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=%22".$orgName."%22%20AND%20valid_s:(VALID%20OR%20OLD)&fl=docid,valid_s,name_s,type_s,country_s,acronym_s&sort=valid_s desc,docid asc";
 			$reqAff = str_replace(" ", "%20", $reqAff);
-			echo('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a target="_blank" href="'.$reqAff.'">URL requête test validité affiliation trouvée</a><br>');
+			echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a target="_blank" href="'.$reqAff.'">URL requête test validité affiliation trouvée</a><br>';
 			//echo $reqAff.'<br>';
 			$contAff = file_get_contents($reqAff);
 			$resAff = json_decode($contAff);
@@ -51,15 +57,15 @@ for($i = 0; $i < count($halAut); $i++) {
 						$halAff[$iAff]['docid'] = $affil->docid;
 						$cptNoaff++;
 						$cptAff++;
-						$halAff[$iAff]['lsAff'] = "#localStruct-Aff".$cptAff."~";
+						$halAff[$iAff]['lsAff'] = $cstlSA.$cptAff."~";
 						$halAff[$iAff]['valid'] = $affil->valid_s;
 						$halAff[$iAff]['names'] = $affil->name_s;
 						if(isset($affil->acronym_s)) {$acronym = " [".$affil->acronym_s."], ";}else{$acronym = ", ";}
 						if(isset($affil->country_s)) {$country = ", ".$affil->country_s;}else{$country = "";}
 						$halAff[$iAff]['ncplt'] = $affil->docid." ~ ".$affil->name_s.$acronym.$affil->type_s.$country;
-						$halAff[$iAff]['fname'] = $halAut[$i]['firstName'];
-						$halAff[$iAff]['lname'] = $halAut[$i]['lastName'];
-						$halAut[$i]['affilName'] .= "#localStruct-Aff".$cptAff."~";
+						$halAff[$iAff]['fname'] = $halAut[$i][$cstFN];
+						$halAff[$iAff]['lname'] = $halAut[$i][$cstLN];
+						$halAut[$i][$cstAN] .= $cstlSA.$cptAff."~";
 						$iAff++;
 						$docid = "oui";
 						//Pour les affiliations courtes, on ne prend que le premier résultat remonté
@@ -74,7 +80,7 @@ for($i = 0; $i < count($halAut); $i++) {
 				//			$cptNoaff++;
 				//			$cptAff++;
 				//			$halAff[$iAff]['lsAff'] = "localStruct-Aff".$cptAff;
-				//			$halAut[$i]['affilName'] = "localStruct-Aff".$cptAff."~";
+				//			$halAut[$i][$cstAN] = "localStruct-Aff".$cptAff."~";
 				//			$iAff++;
 				//			$docid = "oui";
 				//		}
@@ -96,7 +102,7 @@ for($i = 0; $i < count($halAut); $i++) {
 					//if(substr_count($orgName, ',') > 2) {$loncou = "longue";}else{$loncou = "courte";}				
 					$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=%22".$orgName."%22%20AND%20valid_s:(VALID%20OR%20OLD)&fl=docid,valid_s,name_s,type_s&sort=valid_s desc,docid asc";
 					$reqAff = str_replace(" ", "%20", $reqAff);
-					echo('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a target="_blank" href="'.$reqAff.'">URL requête test validité affiliation trouvée</a><br>');
+					echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a target="_blank" href="'.$reqAff.'">URL requête test validité affiliation trouvée</a><br>';
 					//echo $reqAff.'<br>';
 					$contAff = file_get_contents($reqAff);
 					$resAff = json_decode($contAff);
@@ -108,15 +114,15 @@ for($i = 0; $i < count($halAut); $i++) {
 								$halAff[$iAff]['docid'] = $affil->docid;
 								$cptNoaff++;
 								$cptAff++;
-								$halAff[$iAff]['lsAff'] = "#localStruct-Aff".$cptAff."~";
+								$halAff[$iAff]['lsAff'] = $cstlSA.$cptAff."~";
 								$halAff[$iAff]['valid'] = $affil->valid_s;
 								$halAff[$iAff]['names'] = $affil->name_s;
 								if(isset($affil->acronym_s)) {$acronym = " [".$affil->acronym_s."], ";}else{$acronym = ", ";}
 								if(isset($affil->country_s)) {$country = ", ".$affil->country_s;}else{$country = "";}
 								$halAff[$iAff]['ncplt'] = $affil->docid." ~ ".$affil->name_s.$acronym.$affil->type_s.$country;
-								$halAff[$iAff]['fname'] = $halAut[$i]['firstName'];
-								$halAff[$iAff]['lname'] = $halAut[$i]['lastName'];
-								$halAut[$i]['affilName'] .= "#localStruct-Aff".$cptAff."~";
+								$halAff[$iAff]['fname'] = $halAut[$i][$cstFN];
+								$halAff[$iAff]['lname'] = $halAut[$i][$cstLN];
+								$halAut[$i][$cstAN] .= $cstlSA.$cptAff."~";
 								$iAff++;
 								$docid = "oui";
 								//Pour les affiliations courtes, on ne prend que le premier résultat remonté
@@ -131,7 +137,7 @@ for($i = 0; $i < count($halAut); $i++) {
 						//			$cptNoaff++;
 						//			$cptAff++;
 						//			$halAff[$iAff]['lsAff'] = "localStruct-Aff".$cptAff;
-						//			$halAut[$i]['affilName'] = "localStruct-Aff".$cptAff."~";
+						//			$halAut[$i][$cstAN] = "localStruct-Aff".$cptAff."~";
 						//			$iAff++;
 						//			$docid = "oui";
 						//		}
@@ -147,10 +153,10 @@ for($i = 0; $i < count($halAut); $i++) {
 	}
 }
  
-echo($cptNoaff.' affiliation(s) manquante(s) trouvée(s)');
+echo $cptNoaff.' affiliation(s) manquante(s) trouvée(s)';
 
-echo('<script>');
-echo('document.getElementById(\'cpt3b\').style.display = \'none\';');
-echo('</script>');
+echo '<script>';
+echo 'document.getElementById(\'cpt3b\').style.display = \'none\';';
+echo '</script>';
 //Fin étape 3b
 ?>
