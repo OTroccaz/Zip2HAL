@@ -29,8 +29,15 @@ if (isset($_GET['css']) && ($_GET['css'] != ""))
 <br><br>
 <div style="width: 60%; margin-left: auto ;margin-right: auto ;">
 <?php
+if (strpos(phpversion(), "7") !== false) {//PHP7 > Possibilité d'utiliser la classe CURLFile
+	function curlFile($file, $idNomfic) {
+		$finfo = finfo_open(FILEINFO_MIME_TYPE);
+		return new CURLFile($file, finfo_file($finfo, $file), substr(strrchr($idNomfic, "/"), 1).".xml");
+	}
+}
+
 $passw = 'password';
-$h_passwd = 'HAL_PASSWD';
+$h_passw = 'HAL_PASSWD';
 
 //require_once('./CAS_connect.php')//authentification CAS ou autre ?
 if (strpos($_SERVER['HTTP_HOST'], '127.0.0.1') !== false || strpos($_SERVER['HTTP_HOST'], 'ecobio') !== false) {
@@ -44,10 +51,10 @@ if (strpos($_SERVER['HTTP_HOST'], '127.0.0.1') !== false || strpos($_SERVER['HTT
   $HAL_USER = phpCAS::getUser();
   $_SESSION['HAL_USER'] = $HAL_USER;
   $HAL_PASSWD = "";
-  if (isset($_POST[$passw ]) && $_POST[$passw ] != "") {$_SESSION[$h_passwd] = htmlspecialchars($_POST[$passw ]);}
+  if (isset($_POST[$passw ]) && $_POST[$passw ] != "") {$_SESSION[$h_passw] = htmlspecialchars($_POST[$passw ]);}
 
-  if (isset($_SESSION[$hal_passwd]) && $_SESSION[$h_passwd] != "") {
-    $HAL_PASSWD = $_SESSION[$h_passwd];
+  if (isset($_SESSION[$h_passw]) && $_SESSION[$h_passw] != "") {
+    $HAL_PASSWD = $_SESSION[$h_passw];
   }else{
     include('./Zip2HALForm.php');
     die();
@@ -70,10 +77,10 @@ if (isset($_GET['Id']) && ($_GET['Id'] != ""))
 //Pour visualiser résultat preprod > https://univ-rennes1.halpreprod.archives-ouvertes.fr/halid
 
 /*
-$url = "https://api-preprod.archives-ouvertes.fr/sword/";
+$url = "https://api-preprod.archives-ouvertes.fr/sword/hal/";
 $urlStamp = "https://api-preprod.archives-ouvertes.fr/";
 */
-$url = "https://api.archives-ouvertes.fr/sword/";
+$url = "https://api.archives-ouvertes.fr/sword/hal/";
 $urlStamp = "https://api.archives-ouvertes.fr/";
 
 $nomfic = "./XML/".$idNomfic.".xml";
@@ -120,14 +127,26 @@ foreach($elts as $elt) {
   }
 }
 foreach($eltASup as $elt) {
-  $elt->parentNode->removeChild($elt); 
+  $elt->parentNode->removeChild($elt);
 }
 $xml->save($nomficFin);
 
-$fp = fopen($nomficFin, "r");
+/*
+//Création d'une archive zip pour obtenir un mime-type application/zip acceptable par HAL
+$zip = new ZipArchive();
+$Fname = "./XML/".$idNomfic.".zip";
+if ($zip->open($Fname, ZipArchive::CREATE)!==TRUE) {
+	die("Impossible d'ouvrir le fichier ".$Fname);
+}
+$zip->addFile($nomficFin, substr(strrchr($idNomfic, "/"), 1).".xml");
+//echo "Nombre de fichiers : " . $zip->numFiles . "\n";
+//echo "Statut :" . $zip->status . "\n";
+$zip->close();
+*/
+
 $ENDPOINTS_RESPONDER["TIMOUT"] = 20;
 
-$ch = curl_init($url.$halid);
+$ch = curl_init($url);
 curl_setopt($ch, CURLOPT_POST, true);
 curl_setopt($ch, CURLOPT_HEADER, false);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -137,22 +156,32 @@ curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
 curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
 curl_setopt($ch, CURLOPT_VERBOSE, 1);
+//$attach = substr(strrchr($idNomfic, "/"), 1).".xml";
 $headers=array();
 $headers[] = "Packaging: http://purl.org/net/sword-types/AOfr";
-$headers[] = "Content-Type: text/xml";
+$headers[] = "Content-type: application/xml";
+//$headers[] = "Content-Disposition: attachment; filename=\"".$attach."\"";
 //$headers[] = "Authorization: Basic";
 if (isset($doi)) {
   $headers[] = "X-Allow-Completion[".$doi."]";
 }
 curl_setopt($ch, CURLOPT_USERPWD, ''.$HAL_USER.':'.$HAL_PASSWD.'');
 //var_dump($headers);
+//var_dump(curlFile($nomficFin, $idNomfic));
+//curl_setopt($ch, CURLOPT_POSTFIELDS, array('file' => curlFile($Fname, $idNomfic)));
+if (strpos(phpversion(), "7") !== false) {//PHP7
+	curl_setopt($ch, CURLOPT_POSTFIELDS, array('file' => curlFile($nomficFin, $idNomfic)));
+}else{//PHP5
+	//curl_setopt($ch, CURLOPT_SAFE_UPLOAD, 1);
+	$data = array(
+    'uploaded_file' => '@'.realpath($nomficFin).';type=application/xml;filename='.substr(strrchr($idNomfic, "/"), 1).".xml",
+	);
+	curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+}
 curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-curl_setopt($ch, CURLOPT_INFILE, $fp);
-curl_setopt($ch, CURLOPT_INFILESIZE, filesize($nomficFin));
-curl_setopt($ch, CURLOPT_UPLOAD, TRUE);
 
 $return = curl_exec($ch);
-//var_dump($return);
+//print_r($return);
 
 $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 echo "Code retour http : ".$httpcode."<br>";
@@ -166,39 +195,34 @@ if(!$return)
   //exit ("ERREUR : ".$art->getCle()." : ".$errStr);
   exit ("ERREUR : ".$errStr);
 }
+
 try {
   $entry = new SimpleXMLElement($return);
   $entry->registerXPathNamespace('atom', 'http://www.w3.org/2005/Atom');
   $entry->registerXPathNamespace('sword', 'http://purl.org/net/sword/terms');
   $entry->registerXPathNamespace('hal', 'http://hal.archives-ouvertes.fr/');
+	//var_dump($entry);
   if (in_array($httpcode, array(200, 201, 202))) {
     $id = $entry->id;
-    $passwdRes=$entry->xpath('hal:password');
-    if (!empty($passwdRes) && is_array($passwdRes) && !empty($passwdRes[0][0]))
+    $pwdRes=$entry->xpath('hal:password');
+    if (!empty($pwdRes) && is_array($pwdRes) && !empty($pwdRes[0][0]))
     {
-      $passwd=$passwdRes[0][0];
+      $pss=$pwdRes[0][0];
     }
     else {
-      $passwd='Unknown';
+      $pss='Unknown';
     }
     $link="unknown";
     $linkAttribute=$entry->link->attributes();
     if (isset($linkAttribute) && @count($linkAttribute) > 0) {
       if (!empty($linkAttribute) && isset($linkAttribute['href']) && !empty($linkAttribute['href'])) {
         $link = "<a target='_blank' href='".$linkAttribute['href']."'>prod</a>";
-        $linkpreprod = "<a target='_blank' href='https://univ-rennes1.halpreprod.archives-ouvertes.fr/".$halid."'>preprod</a>";
+        $linkpreprod = "<a target='_blank' href='https://univ-rennes1.halpreprod.archives-ouvertes.fr/'>preprod</a>";
       }
     }
-    //exit ("<b>OK, modification effectuée :</b> id=>$id,passwd=>$passwd,link=> $link ou $linkpreprod \n");
-    //exit ("<b>OK, modification effectuée :</b> id=>$id,passwd=>$passwd,link=> $link \n");
-		if (isset($_GET['etp']) && ($_GET['etp'] == 1))
-		{
-			echo '<script type="text/javascript">';
-			echo 'setTimeout(window.close,1000);';
-			echo '</script>';
-		} else {
-			header("Location: ".$linkAttribute['href']);
-		}
+    //exit ("<b>OK, modification effectuée :</b> id=>$id,passwd=>$pss,link=> $link ou $linkpreprod \n");
+    //exit ("<b>OK, modification effectuée :</b> id=>$id,passwd=>$pss,link=> $link \n");
+		header("Location: ".$linkAttribute['href']);
   } else {
     //var_dump($return);
     $err = $entry->xpath('/sword:error/sword:verboseDescription');
@@ -210,7 +234,8 @@ try {
   return ("ERREUR : Erreur Web service  : ".$e->getMessage()."\n");
 }
 
-curl_close($ch); 
+curl_close($ch);
+
 ?>
 </div>
 </body>
