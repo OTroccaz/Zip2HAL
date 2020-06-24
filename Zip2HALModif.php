@@ -29,13 +29,6 @@ if (isset($_GET['css']) && ($_GET['css'] != ""))
 <br><br>
 <div style="width: 60%; margin-left: auto ;margin-right: auto ;">
 <?php
-if (strpos(phpversion(), "7") !== false) {//PHP7 > Possibilité d'utiliser la classe CURLFile
-	function curlFile($file, $idNomfic) {
-		$finfo = finfo_open(FILEINFO_MIME_TYPE);
-		return new CURLFile($file, finfo_file($finfo, $file), substr(strrchr($idNomfic, "/"), 1).".xml");
-	}
-}
-
 $passw = 'password';
 $h_passw = 'HAL_PASSWD';
 
@@ -131,18 +124,7 @@ foreach($eltASup as $elt) {
 }
 $xml->save($nomficFin);
 
-/*
-//Création d'une archive zip pour obtenir un mime-type application/zip acceptable par HAL
-$zip = new ZipArchive();
-$Fname = "./XML/".$idNomfic.".zip";
-if ($zip->open($Fname, ZipArchive::CREATE)!==TRUE) {
-	die("Impossible d'ouvrir le fichier ".$Fname);
-}
-$zip->addFile($nomficFin, substr(strrchr($idNomfic, "/"), 1).".xml");
-//echo "Nombre de fichiers : " . $zip->numFiles . "\n";
-//echo "Statut :" . $zip->status . "\n";
-$zip->close();
-*/
+$xmlContenu = $xml->saveXML();//Nécessaire pour le mime-type soit bien considéré comme du text/xml
 
 $ENDPOINTS_RESPONDER["TIMOUT"] = 20;
 
@@ -156,29 +138,16 @@ curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
 curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
 curl_setopt($ch, CURLOPT_VERBOSE, 1);
-//$attach = substr(strrchr($idNomfic, "/"), 1).".xml";
 $headers=array();
 $headers[] = "Packaging: http://purl.org/net/sword-types/AOfr";
-$headers[] = "Content-type: application/xml";
-//$headers[] = "Content-Disposition: attachment; filename=\"".$attach."\"";
+$headers[] = "Content-Type: text/xml";
 //$headers[] = "Authorization: Basic";
 if (isset($doi)) {
   $headers[] = "X-Allow-Completion[".$doi."]";
 }
-curl_setopt($ch, CURLOPT_USERPWD, ''.$HAL_USER.':'.$HAL_PASSWD.'');
-//var_dump($headers);
-//var_dump(curlFile($nomficFin, $idNomfic));
-//curl_setopt($ch, CURLOPT_POSTFIELDS, array('file' => curlFile($Fname, $idNomfic)));
-if (strpos(phpversion(), "7") !== false) {//PHP7
-	curl_setopt($ch, CURLOPT_POSTFIELDS, array('file' => curlFile($nomficFin, $idNomfic)));
-}else{//PHP5
-	//curl_setopt($ch, CURLOPT_SAFE_UPLOAD, 1);
-	$data = array(
-    'uploaded_file' => '@'.realpath($nomficFin).';type=application/xml;filename='.substr(strrchr($idNomfic, "/"), 1).".xml",
-	);
-	curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-}
 curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+curl_setopt($ch, CURLOPT_USERPWD, ''.$HAL_USER.':'.$HAL_PASSWD.'');
+curl_setopt($ch, CURLOPT_POSTFIELDS, $xmlContenu);
 
 $return = curl_exec($ch);
 //print_r($return);
