@@ -12,8 +12,8 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	echo 'Recherche inutile car c\'est une notice doublon';
 }else{
 	//Définir des constantes au lieu de dupliquer des littéraux
-	$cstFN = "firstname";
-	$cstLN = "lastname";
+	$cstFN = "firstName";
+	$cstLN = "lastName";
 
 	for($i = 0; $i < count($halAut); $i++) {
 		progression($cpt, count($halAut), 'cpt3c', $iPro, 'auteur');

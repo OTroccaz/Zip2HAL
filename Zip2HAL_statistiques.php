@@ -10,6 +10,9 @@ if (isset($_GET['css']) && ($_GET['css'] != ""))
 }
 
 include("./Zip2HAL_actions.php");
+
+//Définir des constantes au lieu de dupliquer des littéraux
+$cstID = "idhal";
 ?>
 
 <html lang="fr">
@@ -60,19 +63,19 @@ Statistiques Zip2HAL
 
 <?php
 foreach($ACTIONS_LISTE as $act) {
-	echo('<tr>');
-	echo('<td>'.date("d/m/Y", $act["quand"]).'</td>');
-	echo('<td>'.$act["valeur"].'</td>');
-	echo('<td>'.$act["titre"].'</td>');
-	echo('<td>'.$act["type"].'</td>');
-	echo('<td>'.$act["annee"].'</td>');
-	echo('<td>'.$act["idHAL"].'</td>');
-	if($act["idHAL"] != "") {
-		echo('<td><a target="_blank" href="https://hal.archives-ouvertes.fr/'.$act["idHAL"].'">Lien HAL</a></td>');
+	echo '<tr>';
+	echo '<td>'.date("d/m/Y", $act["quand"]).'</td>';
+	echo '<td>'.$act["valeur"].'</td>';
+	echo '<td>'.$act["titre"].'</td>';
+	echo '<td>'.$act["type"].'</td>';
+	echo '<td>'.$act["annee"].'</td>';
+	echo '<td>'.$act[$cstID].'</td>';
+	if($act[$cstID] != "") {
+		echo '<td><a target="_blank" href="https://hal.archives-ouvertes.fr/'.$act[$cstID].'">Lien HAL</a></td>';
 	}else{
-		echo('<td>&nbsp;</td>');
+		echo '<td>&nbsp;</td>';
 	}
-	echo('</tr>');
+	echo '</tr>';
 }
 ?>
 

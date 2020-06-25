@@ -54,7 +54,7 @@ if(isset($_GET["erreur"]))
 	if($erreur == 3) {echo"<script type=\"text/javascript\">afficherPopupAvertissement(\"L'envoi du fichier a été interrompu pendant le transfert !\")</script>";}
 	if($erreur == 5) {echo "<script type=\"text/javascript\">afficherPopupAvertissement(\"Mauvaise extension de fichier !\")</script>";}
 	if($erreur == 6) {echo "<script type=\"text/javascript\">afficherPopupAvertissement(\"Vous devez au préalable fournir votre extraction TEI d'OverHAL !\")</script>";}
-	if($erreur == 7) {echo "<script type=\"text/javascript\">afficherPopupAvertissement(\"Le répertoire de dépôt de fichier est automatiquement nettoyé chaque heure et votre fichier ZIP des extractions TEI d'OverHAL n'existe plus : vous devez procéder de nouveau à son chargement !\")</script>";}
+	if($erreur == 7) {echo "<script type=\"text/javascript\">afficherPopupAvertissement(\"Le répertoire de dépôt de fichier est automatiquement nettoyé chaque jour et votre fichier ZIP des extractions TEI d'OverHAL n'existe plus : vous devez procéder de nouveau à son chargement !\")</script>";}
 	if($erreur == 8) {echo "<script type=\"text/javascript\">afficherPopupAvertissement(\"Archive ZIP incorrecte !\")</script>";}
 	if($erreur == 9) {echo"<script type=\"text/javascript\">afficherPopupAvertissement(\"Au moins un des fichiers de votre archive ZIP n'a pas l'extension XML !\")</script>";}
 }

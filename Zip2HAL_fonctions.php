@@ -1,10 +1,10 @@
 <?php
 function progression($indice, $iMax, $id, &$iPro, $quoi) {
 	$iPro = $indice;
-	echo('<script>');
-  echo('var txt = \'Traitement '.$quoi.' '.$indice.' sur '.$iMax.'<br>\';');
-	echo('document.getElementById(\''.$id.'\').innerHTML = txt');
-	echo('</script>');
+	echo '<script>';
+  echo 'var txt = \'Traitement '.$quoi.' '.$indice.' sur '.$iMax.'<br>\';';
+	echo 'document.getElementById(\''.$id.'\').innerHTML = txt';
+	echo '</script>';
 	ob_flush();
 	flush();
 	ob_flush();

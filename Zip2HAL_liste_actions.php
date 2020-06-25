@@ -3,6 +3,7 @@ include "./Zip2HAL_nodes.php";
 include "./Zip2HAL_codes_pays.php";
 include "./Zip2HAL_codes_langues.php";
 
+//Définir des constantes au lieu de dupliquer des littéraux
 $cstVal = "valeur";
 $cstEX = "exact";
 $cstCC = "classCode";
@@ -20,6 +21,27 @@ $cstDE = "dateEpub";
 $cstKE = "keywords";
 $cstAB = "abstract";
 $cstPD = "profileDesc";
+$cstMO = "monogr";
+$cstLE = "level";
+$cstNS = "notesStmt";
+$cstBS = "biblScope";
+$cstEI = "eissn";
+$cstME = "meeting";
+$cstST = "start";
+$cstED = "editor";
+$cstVO = "volume";
+$cstIS = "issue";
+$cstFU = "funder";
+$cstTS = "titleStmt";
+$cstLO = "listOrg";
+$cstPR = "projects";
+$cstXI = "xml:id";
+$cstNT = "notation";
+$cstID = "idhal";
+$cstSG = "string";
+$cstNU = "numeric";
+$cstPE = "persName";
+$cstAF = "affiliation";
 
 $halID = "";
 
@@ -166,33 +188,33 @@ if ($action == "language") {
 
 //Revue
 if ($action == "revue") {
-	deleteNode($xml, "monogr", $cstTI, 0, "level", "j", "", "", $cstEX);
+	deleteNode($xml, $cstMO, $cstTI, 0, $cstLE, "j", "", "", $cstEX);
 	$xml->save($nomfic);
-	insertNode($xml, $valeur, "monogr", $cstIM, 0, $cstTI, "level", "j", "", "", "iB", $cstTN, "");
+	insertNode($xml, $valeur, $cstMO, $cstIM, 0, $cstTI, $cstLE, "j", "", "", "iB", $cstTN, "");
 	$xml->save($nomfic);
 }
 
 //Audience
 if ($action == "audience") {
-	insertNode($xml, $cstNO, "notesStmt", "", 0, "note", "type", "audience", "n", $valeur, "iB", $cstTN, "");
+	insertNode($xml, $cstNO, $cstNS, "", 0, "note", "type", "audience", "n", $valeur, "iB", $cstTN, "");
 	$xml->save($nomfic);
 }
 
 //Vulgarisation
 if ($action == "vulgarisation") {
-	deleteNode($xml, "notesStmt", "note", 0, "type", "popular", "", "", $cstEX);
+	deleteNode($xml, $cstNS, "note", 0, "type", "popular", "", "", $cstEX);
 	$xml->save($nomfic);
 	if ($valeur == "Yes") {$val = "1";}else{$val = "0";}
-	insertNode($xml, $valeur, "notesStmt", "", 0, "note", "type", "popular", "n", $val, "iB", $cstTN, "");
+	insertNode($xml, $valeur, $cstNS, "", 0, "note", "type", "popular", "n", $val, "iB", $cstTN, "");
 	$xml->save($nomfic);
 }
 
 //Comité de lecture
 if ($action == "peer") {
-	deleteNode($xml, "notesStmt", "note", 0, "type", "peer", "", "", $cstEX);
+	deleteNode($xml, $cstNS, "note", 0, "type", "peer", "", "", $cstEX);
 	$xml->save($nomfic);
 	if ($valeur == "Yes") {$val = "1";}else{$val = "0";}
-	insertNode($xml, $valeur, "notesStmt", "", 0, "note", "type", "peer", "n", $val, "iB", $cstTN, "");
+	insertNode($xml, $valeur, $cstNS, "", 0, "note", "type", "peer", "n", $val, "iB", $cstTN, "");
 	$xml->save($nomfic);
 }
 
@@ -200,23 +222,23 @@ if ($action == "peer") {
 if ($action == "editeur") {
 	deleteNode($xml, $cstIM, "publisher", 0, "", "", "", "", $cstEX);
 	$xml->save($nomfic);
-	insertNode($xml, $valeur, $cstIM, "biblScope", 0, "publisher", "", "", "", "", "iB", $cstTN, "");
+	insertNode($xml, $valeur, $cstIM, $cstBS, 0, "publisher", "", "", "", "", "iB", $cstTN, "");
 	$xml->save($nomfic);
 }
 
 //ISSN
 if ($action == "issn") {
-	deleteNode($xml, "monogr", "idno", 0, "type", "issn", "", "", $cstEX);
+	deleteNode($xml, $cstMO, "idno", 0, "type", "issn", "", "", $cstEX);
 	$xml->save($nomfic);
-	insertNode($xml, $valeur, "monogr", $cstTI, 0, "idno", "type", "issn", "", "", "iB", $cstTN, "");
+	insertNode($xml, $valeur, $cstMO, $cstTI, 0, "idno", "type", "issn", "", "", "iB", $cstTN, "");
 	$xml->save($nomfic);
 }
 
 //EISSN
-if ($action == "eissn") {
-	deleteNode($xml, "monogr", "idno", 0, "type", "eissn", "", "", $cstEX);
+if ($action == $cstEI) {
+	deleteNode($xml, $cstMO, "idno", 0, "type", $cstEI, "", "", $cstEX);
 	$xml->save($nomfic);
-	insertNode($xml, $valeur, "monogr", $cstTI, 0, "idno", "type", "eissn", "", "", "iB", $cstTN, "");
+	insertNode($xml, $valeur, $cstMO, $cstTI, 0, "idno", "type", $cstEI, "", "", "iB", $cstTN, "");
 	$xml->save($nomfic);
 }
 
@@ -224,15 +246,15 @@ if ($action == "eissn") {
 
 	////COMM ou POSTER > Titre du volume
 	if ($action == "titreV") {
-		deleteNode($xml, $cstIM, "biblScope", 0, "unit", "serie", "", "", $cstEX);
+		deleteNode($xml, $cstIM, $cstBS, 0, "unit", "serie", "", "", $cstEX);
 		$xml->save($nomfic);
-		insertNode($xml, $valeur, $cstIM, "date", 0, "biblScope", "unit", "serie", "", "", "iB", $cstTN, "");
+		insertNode($xml, $valeur, $cstIM, "date", 0, $cstBS, "unit", "serie", "", "", "iB", $cstTN, "");
 		$xml->save($nomfic);
 	}
 	
 	//COMM ou POSTER > Ville de la conférence
 	if ($action == "ville") {
-		deleteNode($xml, "meeting", "settlement", 0, "", "", "", "", $cstEX);
+		deleteNode($xml, $cstME, "settlement", 0, "", "", "", "", $cstEX);
 		$xml->save($nomfic);
 		//Le noeud 'settlement' doit obligatoirement être situé après la date de fin s'il y en a une, sinon après la date de début 
 		$ajout = "non";
@@ -249,7 +271,7 @@ if ($action == "eissn") {
 		}
 		if ($ajout == "non") {
 			foreach($elts as $elt) {
-				if ($elt->hasAttribute("type") && $elt->getAttribute("type") == "start") {
+				if ($elt->hasAttribute("type") && $elt->getAttribute("type") == $cstST) {
 					insertAfter($bimoc, $elt);
 					$xml->save($nomfic);
 					$ajout = "oui";
@@ -260,28 +282,28 @@ if ($action == "eissn") {
 
 	//COMM ou POSTER > Date de début de conférence
 	if ($action == "startDate") {
-		deleteNode($xml, "meeting", "date", 0, "type", "start", "", "", $cstEX);
+		deleteNode($xml, $cstME, "date", 0, "type", $cstST, "", "", $cstEX);
 		$xml->save($nomfic);
-		insertNode($xml, $valeur, "meeting", $cstTI, 0, "date", "type", "start", "", "", "iA", $cstTN, "");
+		insertNode($xml, $valeur, $cstME, $cstTI, 0, "date", "type", $cstST, "", "", "iA", $cstTN, "");
 		$xml->save($nomfic);
 	}
 
 	//COMM ou POSTER > Date de fin de conférence
 	if ($action == "endDate") {
-		deleteNode($xml, "meeting", "date", 0, "type", "end", "", "", $cstEX);
+		deleteNode($xml, $cstME, "date", 0, "type", "end", "", "", $cstEX);
 		$xml->save($nomfic);
-		insertNode($xml, $valeur, "meeting", "date", 0, "date", "type", "end", "", "", "iA", $cstTN, "");
+		insertNode($xml, $valeur, $cstME, "date", 0, "date", "type", "end", "", "", "iA", $cstTN, "");
 		$xml->save($nomfic);
 	}
 
 	//COMM ou POSTER > Titre de la conférence
 	if ($action == "titreConf") {
-		deleteNode($xml, "meeting", $cstTI, 0, "", "", "", "", $cstEX);
+		deleteNode($xml, $cstME, $cstTI, 0, "", "", "", "", $cstEX);
 		$xml->save($nomfic);
 		//$bimoc = $xml->createElement($cstTI);
 		//$moc = $xml->createTextNode($valeur);
 		//$bimoc->appendChild($moc);
-		insertNode($xml, $valeur, "meeting", "date", 0, $cstTI, "", "", "", "", "iB", $cstTN, "");
+		insertNode($xml, $valeur, $cstME, "date", 0, $cstTI, "", "", "", "", "iB", $cstTN, "");
 		$xml->save($nomfic);
 	}
 
@@ -289,43 +311,43 @@ if ($action == "eissn") {
 	if ($action == "paysConf") {
 		$valeur = str_replace("’", "'", $valeur);
 		$pays = strtoupper($countries[$valeur]);
-		deleteNode($xml, "meeting", "country", 0, "", "", "", "", $cstEX);
+		deleteNode($xml, $cstME, "country", 0, "", "", "", "", $cstEX);
 		$xml->save($nomfic);
-		insertNode($xml, $cstNO, "meeting", "", 0, "country", "key", $pays, "", "", "aC", $cstTN, "");
+		insertNode($xml, $cstNO, $cstME, "", 0, "country", "key", $pays, "", "", "aC", $cstTN, "");
 		$xml->save($nomfic);
 	}
 
 	//COMM ou POSTER > ISBN de la conférence
 	if ($action == "isbnConf") {
-		deleteNode($xml, "monogr", "idno", 0, "type", "isbn", "", "", $cstEX);
+		deleteNode($xml, $cstMO, "idno", 0, "type", "isbn", "", "", $cstEX);
 		$xml->save($nomfic);
-		insertNode($xml, $valeur, "monogr", $cstTI, 0, "idno", "type", "isbn", "", "", "iB", $cstTN, "");
+		insertNode($xml, $valeur, $cstMO, $cstTI, 0, "idno", "type", "isbn", "", "", "iB", $cstTN, "");
 		$xml->save($nomfic);
 	}
 
 	//COMM ou POSTER > Proceedings de la conférence
 	if ($action == "procConf") {
-		deleteNode($xml, "notesStmt", "note", 0, "type", "proceedings", "", "", $cstEX);
+		deleteNode($xml, $cstNS, "note", 0, "type", "proceedings", "", "", $cstEX);
 		$xml->save($nomfic);
 		if ($valeur == "Yes") {$val = "1";}else{$val = "0";}
-		insertNode($xml, $valeur, "notesStmt", "", 0, "note", "type", "proceedings", "n", $val, "iB", $cstTN, "");
+		insertNode($xml, $valeur, $cstNS, "", 0, "note", "type", "proceedings", "n", $val, "iB", $cstTN, "");
 		$xml->save($nomfic);
 	}
 
 	//COMM ou POSTER > Editeur scientifique
 	if ($action == "scientificEditor") {
-		deleteNode($xml, "monogr", "editor", 0, "", "", "", "", $cstEX);
+		deleteNode($xml, $cstMO, $cstED, 0, "", "", "", "", $cstEX);
 		$xml->save($nomfic);
-		insertNode($xml, $valeur, "monogr", "meeting", 0, "editor", "", "", "", "", "iA", $cstTN, "");
+		insertNode($xml, $valeur, $cstMO, $cstME, 0, $cstED, "", "", "", "", "iA", $cstTN, "");
 		$xml->save($nomfic);
 	}
 	
 	//COMM ou POSTER > Conférence invitée O/N
 	if ($action == "invitConf") {
-		deleteNode($xml, "notesStmt", "note", 0, "type", "invited", "", "", $cstEX);
+		deleteNode($xml, $cstNS, "note", 0, "type", "invited", "", "", $cstEX);
 		$xml->save($nomfic);
 		if ($valeur == "Yes") {$val = "1";}else{$val = "0";}
-		insertNode($xml, $valeur, "notesStmt", "", 0, "note", "type", "invited", "n", $val, "iB", $cstTN, "");
+		insertNode($xml, $valeur, $cstNS, "", 0, "note", "type", "invited", "n", $val, "iB", $cstTN, "");
 		$xml->save($nomfic);
 	}
 //Fin métadonnées spécifiques aux COMM et POSTER
@@ -333,24 +355,24 @@ if ($action == "eissn") {
 //Métadonnées spécifiques aux COUV
 	//COUV > Titre de l'ouvrage
 	if ($action == "titrOuv") {
-		deleteNode($xml, "monogr", $cstTI, 0, "level", "m", "", "", $cstEX);
+		deleteNode($xml, $cstMO, $cstTI, 0, $cstLE, "m", "", "", $cstEX);
 		$xml->save($nomfic);
-		insertNode($xml, $valeur, "monogr", "editor", 0, $cstTI, "level", "m", "", "", "iB", $cstTN, "");
+		insertNode($xml, $valeur, $cstMO, $cstED, 0, $cstTI, $cstLE, "m", "", "", "iB", $cstTN, "");
 		$xml->save($nomfic);
 	}
 	
 	//COUV > Editeur(s) scientifique(s)
 	if ($action == "editOuv") {
-		$elts = $xml->getElementsByTagName("monogr");
+		$elts = $xml->getElementsByTagName($cstMO);
 		$ind = 0;
 		$pos = $_POST["pos"];
 		foreach($elts as $elt) {
 			if ($elt->hasChildNodes()) {
 				foreach($elt->childNodes as $item) {
-					if ($item->nodeName == "editor") {
+					if ($item->nodeName == $cstED) {
 						if ($ind != $pos) {
 						}else{
-							$bimoc = $xml->createElement("editor");
+							$bimoc = $xml->createElement($cstED);
 							$moc = $xml->createTextNode($valeur);
 							$bimoc->appendChild($moc);
 							$elt->replaceChild($bimoc, $item);
@@ -366,9 +388,9 @@ if ($action == "eissn") {
 	
 	//COUV > ISBN
 	if ($action == "isbnOuv") {
-		deleteNode($xml, "monogr", "idno", 0, "type", "isbn", "", "", $cstEX);
+		deleteNode($xml, $cstMO, "idno", 0, "type", "isbn", "", "", $cstEX);
 		$xml->save($nomfic);
-		insertNode($xml, $valeur, "monogr", $cstTI, 0, "idno", "type", "isbn", "", "", "iB", $cstTN, "");
+		insertNode($xml, $valeur, $cstMO, $cstTI, 0, "idno", "type", "isbn", "", "", "iB", $cstTN, "");
 		$xml->save($nomfic);
 	}
 	
@@ -376,34 +398,34 @@ if ($action == "eissn") {
 
 
 //Volume
-if ($action == "volume") {
-	deleteNode($xml, $cstIM, "biblScope", 0, "unit", "volume", "", "", $cstEX);
+if ($action == $cstVO) {
+	deleteNode($xml, $cstIM, $cstBS, 0, "unit", $cstVO, "", "", $cstEX);
 	$xml->save($nomfic);
-	insertNode($xml, $valeur, $cstIM, "date", 0, "biblScope", "unit", "volume", "", "", "iB", $cstTN, "");
+	insertNode($xml, $valeur, $cstIM, "date", 0, $cstBS, "unit", $cstVO, "", "", "iB", $cstTN, "");
 	$xml->save($nomfic);
 }
 
 //Numéro
-if ($action == "issue") {
-	deleteNode($xml, $cstIM, "biblScope", 0, "unit", "issue", "", "", $cstEX);
+if ($action == $cstIS) {
+	deleteNode($xml, $cstIM, $cstBS, 0, "unit", $cstIS, "", "", $cstEX);
 	$xml->save($nomfic);
-	insertNode($xml, $valeur, $cstIM, "date", 0, "biblScope", "unit", "issue", "", "", "iB", $cstTN, "");
+	insertNode($xml, $valeur, $cstIM, "date", 0, $cstBS, "unit", $cstIS, "", "", "iB", $cstTN, "");
 	$xml->save($nomfic);
 }
 
 //Pages
 if ($action == "pages") {
-	deleteNode($xml, $cstIM, "biblScope", 0, "unit", "pp", "", "", $cstEX);
+	deleteNode($xml, $cstIM, $cstBS, 0, "unit", "pp", "", "", $cstEX);
 	$xml->save($nomfic);
-	insertNode($xml, $valeur, $cstIM, "date", 0, "biblScope", "unit", "pp", "", "", "iB", $cstTN, "");
+	insertNode($xml, $valeur, $cstIM, "date", 0, $cstBS, "unit", "pp", "", "", "iB", $cstTN, "");
 	$xml->save($nomfic);
 }
 
 //Financement
 if ($action == "financement") {
-	deleteNode($xml, "titleStmt", "funder", 0, "", "", "", "", $cstEX);
+	deleteNode($xml, $cstTS, $cstFU, 0, "", "", "", "", $cstEX);
 	$xml->save($nomfic);
-	insertNode($xml, $valeur, "titleStmt", "", 0, "funder", "", "", "", "", "iB", $cstTN, "");
+	insertNode($xml, $valeur, $cstTS, "", 0, $cstFU, "", "", "", "", "iB", $cstTN, "");
 	$xml->save($nomfic);
 }
 
@@ -420,32 +442,32 @@ if ($action == "ANR") {
 	$annee = $tabVal[2];
 	$valid = $tabVal[3];
 	
-	insertNode($xml, $cstNO, "titleStmt", "", 0, "funder", "ref", "#".$ref, "", "", "aC", $cstTN, "");
+	insertNode($xml, $cstNO, $cstTS, "", 0, $cstFU, "ref", "#".$ref, "", "", "aC", $cstTN, "");
 	$xml->save($nomfic);
 	
 	//Y-a-t-il déjà un noeud listOrg pour les projets ?
 	$listOrg = "non";
-	$orgs = $xml->getElementsByTagName("listOrg");
+	$orgs = $xml->getElementsByTagName($cstLO);
 	foreach($orgs as $org) {
-		if ($org->hasAttribute("type") && $org->getAttribute("type") == "projects") {
+		if ($org->hasAttribute("type") && $org->getAttribute("type") == $cstPR) {
 			$listOrg = "oui";
 		}
 	}
 	if ($listOrg == "non") {
-		insertNode($xml, $cstNO, "back", "", 0, "listOrg", "type", "projects", "", "", "aC", $cstTN, "");
+		insertNode($xml, $cstNO, "back", "", 0, $cstLO, "type", $cstPR, "", "", "aC", $cstTN, "");
 		$xml->save($nomfic);
 	}
 	
 	//Positionnement au noeud <listOrg type="projects"> pour ajout des noeuds enfants
 	foreach($orgs as $org) {
-		if ($org->hasAttribute("type") && $org->getAttribute("type") == "projects") {
+		if ($org->hasAttribute("type") && $org->getAttribute("type") == $cstPR) {
 			break;
 		}
 	}
 	$bimoc = $xml->createElement("org");
 	$moc = $xml->createTextNode("");
 	$bimoc->setAttribute("type", "anrProject");
-	$bimoc->setAttribute("xml:id", $ref);
+	$bimoc->setAttribute($cstXI, $ref);
 	$bimoc->setAttribute("status", $valid);
 	$bimoc->appendChild($moc);
 	$org->appendChild($bimoc);
@@ -453,7 +475,7 @@ if ($action == "ANR") {
 	
 	$orgs = $xml->getElementsByTagName("org");
 	foreach($orgs as $org) {
-		if ($org->hasAttribute("xml:id") && $org->getAttribute("xml:id") == $ref) {
+		if ($org->hasAttribute($cstXI) && $org->getAttribute($cstXI) == $ref) {
 			break;
 		}
 	}
@@ -478,7 +500,7 @@ if ($action == "ANR") {
 	
 	$bimoc = $xml->createElement("date");
 	$moc = $xml->createTextNode($annee);
-	$bimoc->setAttribute("type", "start");
+	$bimoc->setAttribute("type", $cstST);
 	$bimoc->appendChild($moc);
 	$org->appendChild($bimoc);
 	$xml->save($nomfic);
@@ -498,32 +520,32 @@ if ($action == "EUR") {
 	$anneE = $tabVal[7];
 	$valid = $tabVal[8];
 	
-	insertNode($xml, $cstNO, "titleStmt", "", 0, "funder", "ref", "#".$ref, "", "", "aC", $cstTN, "");
+	insertNode($xml, $cstNO, $cstTS, "", 0, $cstFU, "ref", "#".$ref, "", "", "aC", $cstTN, "");
 	$xml->save($nomfic);
 	
 	//Y-a-t-il déjà un noeud listOrg pour les projets ?
 	$listOrg = "non";
-	$orgs = $xml->getElementsByTagName("listOrg");
+	$orgs = $xml->getElementsByTagName($cstLO);
 	foreach($orgs as $org) {
-		if ($org->hasAttribute("type") && $org->getAttribute("type") == "projects") {
+		if ($org->hasAttribute("type") && $org->getAttribute("type") == $cstPR) {
 			$listOrg = "oui";
 		}
 	}
 	if ($listOrg == "non") {
-		insertNode($xml, $cstNO, "back", "", 0, "listOrg", "type", "projects", "", "", "aC", $cstTN, "");
+		insertNode($xml, $cstNO, "back", "", 0, $cstLO, "type", $cstPR, "", "", "aC", $cstTN, "");
 		$xml->save($nomfic);
 	}
 	
 	//Positionnement au noeud <listOrg type="projects"> pour ajout des noeuds enfants
 	foreach($orgs as $org) {
-		if ($org->hasAttribute("type") && $org->getAttribute("type") == "projects") {
+		if ($org->hasAttribute("type") && $org->getAttribute("type") == $cstPR) {
 			break;
 		}
 	}
 	$bimoc = $xml->createElement("org");
 	$moc = $xml->createTextNode("");
 	$bimoc->setAttribute("type", "europeanProject");
-	$bimoc->setAttribute("xml:id", $ref);
+	$bimoc->setAttribute($cstXI, $ref);
 	$bimoc->setAttribute("status", $valid);
 	$bimoc->appendChild($moc);
 	$org->appendChild($bimoc);
@@ -531,7 +553,7 @@ if ($action == "EUR") {
 	
 	$orgs = $xml->getElementsByTagName("org");
 	foreach($orgs as $org) {
-		if ($org->hasAttribute("xml:id") && $org->getAttribute("xml:id") == $ref) {
+		if ($org->hasAttribute($cstXI) && $org->getAttribute($cstXI) == $ref) {
 			break;
 		}
 	}
@@ -571,7 +593,7 @@ if ($action == "EUR") {
 	
 	$bimoc = $xml->createElement("date");
 	$moc = $xml->createTextNode($anneS);
-	$bimoc->setAttribute("type", "start");
+	$bimoc->setAttribute("type", $cstST);
 	$bimoc->appendChild($moc);
 	$org->appendChild($bimoc);
 	$xml->save($nomfic);
@@ -741,19 +763,19 @@ if ($action == "supprimerAuteur") {
 if ($action == "ajouterIdHAL") {
 	$i = $_POST["pos"];
 	if ($valeur == "") {//C'est en fait une suppression
-		deleteNode($xml, $cstAU, "idno", $i, "type", "idhal", "notation", "string", $cstEX);
-		deleteNode($xml, $cstAU, "idno", $i, "type", "idhal", "notation", "numeric", $cstEX);
+		deleteNode($xml, $cstAU, "idno", $i, "type", $cstID, $cstNT, $cstSG, $cstEX);
+		deleteNode($xml, $cstAU, "idno", $i, "type", $cstID, $cstNT, $cstNU, $cstEX);
 		deleteNode($xml, $cstAU, "idno", $i, "type", "halauthorid", "", "", $cstEX);
 		$xml->save($nomfic);
 	}else{
 		$tabVal = explode('(', $valeur);
-		deleteNode($xml, $cstAU, "idno", $i, "type", "idhal", "notation", "string", $cstEX);
-		deleteNode($xml, $cstAU, "idno", $i, "type", "idhal", "notation", "numeric", $cstEX);
+		deleteNode($xml, $cstAU, "idno", $i, "type", $cstID, $cstNT, $cstSG, $cstEX);
+		deleteNode($xml, $cstAU, "idno", $i, "type", $cstID, $cstNT, $cstNU, $cstEX);
 		$xml->save($nomfic);
-		//insertNode($xml, trim($tabVal[0]), $cstAU, "affiliation", $i, "idno", "type", "idhal", "notation", "string", "iB", $cstAM , "");
-		//insertNode($xml, trim(str_replace(')', '', $tabVal[1])), $cstAU, "affiliation", $i, "idno", "type", "idhal", "notation", "numeric", "iB", $cstAM , "");
-		insertNode($xml, trim(str_replace(')', '', $tabVal[1])), $cstAU, "persName", $i, "idno", "type", "idhal", "notation", "numeric", "iA", $cstAM , "");
-		insertNode($xml, trim($tabVal[0]), $cstAU, "persName", $i, "idno", "type", "idhal", "notation", "string", "iA", $cstAM , "");
+		//insertNode($xml, trim($tabVal[0]), $cstAU, $cstAF, $i, "idno", "type", $cstID, $cstNT, $cstSG, "iB", $cstAM , "");
+		//insertNode($xml, trim(str_replace(')', '', $tabVal[1])), $cstAU, $cstAF, $i, "idno", "type", $cstID, $cstNT, $cstNU, "iB", $cstAM , "");
+		insertNode($xml, trim(str_replace(')', '', $tabVal[1])), $cstAU, $cstPE, $i, "idno", "type", $cstID, $cstNT, $cstNU, "iA", $cstAM , "");
+		insertNode($xml, trim($tabVal[0]), $cstAU, $cstPE, $i, "idno", "type", $cstID, $cstNT, $cstSG, "iA", $cstAM , "");
 		$xml->save($nomfic);
 	}
 }
@@ -761,8 +783,8 @@ if ($action == "ajouterIdHAL") {
 //Supprimer un idHAL
 if ($action == "supprimerIdHAL") {
 	$i = $_POST["pos"];
-	deleteNode($xml, $cstAU, "idno", $i, "type", "idhal", "notation", "string", $cstEX);
-	deleteNode($xml, $cstAU, "idno", $i, "type", "idhal", "notation", "numeric", $cstEX);
+	deleteNode($xml, $cstAU, "idno", $i, "type", $cstID, $cstNT, $cstSG, $cstEX);
+	deleteNode($xml, $cstAU, "idno", $i, "type", $cstID, $cstNT, $cstNU, $cstEX);
 	deleteNode($xml, $cstAU, "idno", $i, "type", "halauthorid", "", "", $cstEX);
 	$xml->save($nomfic);
 }
@@ -772,7 +794,7 @@ if ($action == "ajouterAffil") {
 	$i = $_POST["pos"];
 	$tabVal = explode('~', $valeur);
 	$affil = "#struct-".trim($tabVal[0]);
-	insertNode($xml, $cstNO, $cstAU, "persName", $i, "affiliation", "ref", $affil, "", "", "aC", $cstAM , "");
+	insertNode($xml, $cstNO, $cstAU, $cstPE, $i, $cstAF, "ref", $affil, "", "", "aC", $cstAM , "");
 	$xml->save($nomfic);
 }
 
@@ -780,7 +802,7 @@ if ($action == "ajouterAffil") {
 if ($action == "supprimerAffil") {
 	$i = $_POST["pos"];
 	$affil = "#struct-".$valeur;
-	deleteNode($xml, $cstAU, "affiliation", $i, "ref", $affil, "", "", $cstEX);
+	deleteNode($xml, $cstAU, $cstAF, $i, "ref", $affil, "", "", $cstEX);
 	$xml->save($nomfic);
 }
 
@@ -809,7 +831,7 @@ if ($action == "ajouterAuteur") {
 	$xml->save($nomfic);
 
 	$aut = $xml->getElementsByTagName('author')->item($i);
-	$biaut = $xml->createElement("persName");
+	$biaut = $xml->createElement($cstPE);
 	$aut->appendChild($biaut);
 	$xml->save($nomfic);
 
@@ -847,7 +869,7 @@ if ($action == "statistiques") {
 			$ACTIONS_LISTE[$ajout]["titre"] = $titreNot;
 			$ACTIONS_LISTE[$ajout]["type"] = $typDoc;
 			$ACTIONS_LISTE[$ajout]["annee"] = $datePub;
-			$ACTIONS_LISTE[$ajout]["idHAL"] = $idTEI;
+			$ACTIONS_LISTE[$ajout][$cstID] = $idTEI;
 		}
 	}
 	$total = count($ACTIONS_LISTE);
@@ -861,11 +883,11 @@ if ($action == "statistiques") {
 	foreach($ACTIONS_LISTE AS $i => $valeur) {
 		$chaine = $i.' => array(';
 		$chaine .= '"quand"=>"'.$ACTIONS_LISTE[$i]["quand"].'", ';
-		$chaine .= '"valeur"=>"'.$ACTIONS_LISTE[$i][$cstVal].'", ';
+		$chaine .= $cstVal.'=>"'.$ACTIONS_LISTE[$i][$cstVal].'", ';
 		$chaine .= '"titre"=>"'.$ACTIONS_LISTE[$i]["titre"].'", ';
 		$chaine .= '"type"=>"'.$ACTIONS_LISTE[$i]["type"].'", ';
 		$chaine .= '"annee"=>"'.$ACTIONS_LISTE[$i]["annee"].'", ';
-		$chaine .= '"idHAL"=>"'.$ACTIONS_LISTE[$i]["idHAL"].'")';
+		$chaine .= $cstID.'"=>"'.$ACTIONS_LISTE[$i][$cstID].'")';
 		if ($i != $total-1) {$chaine .= ',';}
 		$chaine .= chr(13);
 		//session 1 day test

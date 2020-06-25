@@ -18,6 +18,9 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	$cstNT = "notation";
 	$cstID = "idhal";
 	$cstAF = "affiliation";
+	$cstDI = "docid";
+	$cstLA = "lsAff";
+	
 
 	//Premières modifications du TEI avec les résultats précédemment obtenus
 
@@ -167,22 +170,22 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 						$listIdHAL .= $halAut[$i][$cstIS].'~';
 					}
 					//Y-a-t-il un docid ?
-					if($halAut[$i]['docid'] != "" && strpos($listdocid, $halAut[$i]['docid']) === false) {
+					if($halAut[$i][$cstDI] != "" && strpos($listdocid, $halAut[$i][$cstDI]) === false) {
 						if($ou == "iB") {
-							insertNode($xml, $halAut[$i]['docid'], $cstAU, $cstAF, $i, "idno", "type", "halauthorid", "", "", "iB", $cstAM, "");
+							insertNode($xml, $halAut[$i][$cstDI], $cstAU, $cstAF, $i, "idno", "type", "halauthorid", "", "", "iB", $cstAM, "");
 						}else{
-							insertNode($xml, $halAut[$i]['docid'], $cstAU, $cstEM, $i, "idno", "type", "halauthorid", "", "", "iA", $cstAM, "");
+							insertNode($xml, $halAut[$i][$cstDI], $cstAU, $cstEM, $i, "idno", "type", "halauthorid", "", "", "iA", $cstAM, "");
 						}
-						$listdocid .= $halAut[$i]['docid'].'~';
+						$listdocid .= $halAut[$i][$cstDI].'~';
 					}
 					//Id structures des affiliations
 					//Recherche des affiliations remontées globalement sur la base du nom de l'organisme, quel que soit l'auteur mais sous réserve du rattachement de l'auteur à cette affiliation (ex : U1085)
 					for($j = 0; $j < count($halAff); $j++) {
-						if($halAff[$j]['fname'] == "" && $halAff[$j]['lname'] == "" && (strpos($halAut[$i]['affilName'], $halAff[$j]['lsAff']) !== false)) {
-							$lsAff = $halAff[$j]['lsAff'];
+						if($halAff[$j]['fname'] == "" && $halAff[$j]['lname'] == "" && (strpos($halAut[$i]['affilName'], $halAff[$j][$cstLA]) !== false)) {
+							$lsAff = $halAff[$j][$cstLA];
 							deleteNode($xml, $cstAU, $cstAF, $i, "ref", $lsAff, "", "", "approx");
 							//Puis on ajoute l'(les) affiliation(s) trouvée(s)
-							$affil = "#struct-".$halAff[$j]['docid'];
+							$affil = "#struct-".$halAff[$j][$cstDI];
 							insertNode($xml, $cstNO, $cstAU, $cstPE, $i, $cstAF, "ref", $affil, "", "", "aC", $cstAM, "");
 						}
 					}
@@ -190,10 +193,10 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 					for($j = 0; $j < count($halAff); $j++) {
 						if($halAff[$j]['fname'] == $fname && $halAff[$j]['lname'] == $lname) {
 							//Au moins une affiliation trouvée > On supprime l'affiliation correspondante du TEI de type '<affiliation ref="#localStruct-Affx"/>' pour cet auteur
-							$lsAff = $halAff[$j]['lsAff'];
+							$lsAff = $halAff[$j][$cstLA];
 							deleteNode($xml, $cstAU, $cstAF, $i, "ref", $lsAff, "", "", "approx");
 							//Puis on ajoute l'(les) affiliation(s) trouvée(s)
-							$affil = "#struct-".$halAff[$j]['docid'];
+							$affil = "#struct-".$halAff[$j][$cstDI];
 							insertNode($xml, $cstNO, $cstAU, $cstPE, $i, $cstAF, "ref", $affil, "", "", "aC", $cstAM, "");
 						}
 					}
@@ -205,10 +208,10 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 			//Y-a-t-il un docid ?
 			for($i = 0; $i < count($halAut); $i++) {
 				if($halAut[$i]['firstName'] == $fname && $halAut[$i]['lastName'] == $lname) {
-					if($halAut[$i]['docid'] != "" && strpos($listdocid, $halAut[$i]['docid']) === false) {
-						insertNode($xml, $halAut[$i]['docid'], $cstAU, $cstAF, $i, "idno", "type", "halauthorid", "", "", "iB");
+					if($halAut[$i][$cstDI] != "" && strpos($listdocid, $halAut[$i][$cstDI]) === false) {
+						insertNode($xml, $halAut[$i][$cstDI], $cstAU, $cstAF, $i, "idno", "type", "halauthorid", "", "", "iB");
 						$xml->save($nomfic);
-						$listdocid .= $halAut[$i]['docid'].'~';
+						$listdocid .= $halAut[$i][$cstDI].'~';
 					}
 				}
 			}
