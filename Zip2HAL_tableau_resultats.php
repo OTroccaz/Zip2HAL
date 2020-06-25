@@ -42,7 +42,7 @@ foreach($elts as $elt) {
 }
 echo('<td>'.$typDoc.'</td>');
 
-if(isset($typDbl) && $typDbl == "HALCOLLTYP") {//Doublon de type HAL et COLL > inutile d'afficher les métadonnées
+if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublon de type TYP > inutile d'afficher les métadonnées
 	echo('<td>&nbsp;</td>');
 }else{
 	$tabMetaMQ[$nomfic] = array();//Tableau regroupant les métadonnées obligatoires manquantes
@@ -538,7 +538,7 @@ if(isset($typDbl) && $typDbl == "HALCOLLTYP") {//Doublon de type HAL et COLL > i
 //DOI
 if(isset($doiTEI)) {echo('<td><a target=\'_blank\' href=\'https://doi.org/'.$doiTEI.'\'><img alt=\'DOI\' src=\'./img/doi.jpg\'></a>');}else{echo('<td>&nbsp;</td>');}
 
-if(isset($typDbl) && $typDbl == "HALCOLLTYP") {//Doublon de type HAL et COLL > inutile d'afficher les affiliations, la validation du TEI et la possibilité d'import dans HAL
+if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublon de type TYP > inutile d'afficher les affiliations, la validation du TEI et la possibilité d'import dans HAL
 	echo('<td>&nbsp;</td>');
 	echo('<td>&nbsp;</td>');
 	echo('<td>&nbsp;</td>');
@@ -583,10 +583,6 @@ if(isset($typDbl) && $typDbl == "HALCOLLTYP") {//Doublon de type HAL et COLL > i
 				echo('<a target="_blank" href="'.$reqAut.'"><font color=\'red\'>D\'autres idHAL ont été trouvés</font></a><br>');
 			}
 		}
-		
-		//Début bloc affiliations
-		echo '<span><a style="cursor:pointer;" onclick="afficacherAff('.$i.','.$idFic.')";>Affiliations</a><br>';
-		echo '<span id="Raff-'.$i.'-'.$idFic.'" style="display: none;">';
 		
 		//Affiliations remontées par OverHAL
 		echo('<i><font style=\'color: #999999;\'>Affiliation(s) remontée(s) par OverHAL:<br>');
@@ -645,9 +641,7 @@ if(isset($typDbl) && $typDbl == "HALCOLLTYP") {//Doublon de type HAL et COLL > i
 		//echo('<input type="text" id="ajoutAff'.$i.'" name="ajoutAff'.$i.'" class="autoAF form-control" style="height: 18px; width:280px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'ajouterAffil\', pos: '.$i.', valeur: $(this).val()});">');
 		echo('</font>');
 		
-		echo('</span>');//Fin span suppression auteur
-		
-		echo '</span></span><br>';//Fin bloc affiliations
+		echo('</span><br>');//Fin span suppression auteur
 	}
 	
 	echo('<br>');
@@ -707,7 +701,8 @@ if(isset($typDbl) && $typDbl == "HALCOLLTYP") {//Doublon de type HAL et COLL > i
 		//$lienMAJ = "https://ecobio.univ-rennes1.fr";//Pour test
 		include "./Zip2HAL_actions.php";
 		$titreNotS = str_replace("'", "\'", $titreNot);
-		echo('<td><span id=\'importerHAL-'.$idFic.'\'><center><span id=\''.$idNomfic.'-'.$idFic.'\'><a target=\'_blank\' href=\''.$lienMAJ.'\' onclick="$.post(\'Zip2HAL_liste_actions.php\', { idNomfic : \''.$idNomfic.'\', action: \'statistiques\', valeur: \''.$idNomfic.'\', idTEI: \''.$idTEI.'\', typDoc: \''.$typDoc.'\', titreNot: \''.$titreNotS.'\', datePub: \''.$datePub.'\'}); majokVu(\''.$idNomfic.'-'.$idFic.'\');"><img alt=\'MAJ\' src=\'./img/MAJ.png\'></a></span></center></span></td>');
+		//echo('<td><span id=\'importerHAL-'.$idFic.'\'><center><span id=\''.$idNomfic.'-'.$idFic.'\'><a target=\'_blank\' href=\''.$lienMAJ.'\' onclick="$.post(\'Zip2HAL_liste_actions.php\', { idNomfic : \''.$idNomfic.'\', action: \'statistiques\', valeur: \''.$idNomfic.'\', idTEI: \''.$idTEI.'\', typDoc: \''.$typDoc.'\', titreNot: \''.$titreNotS.'\', datePub: \''.$datePub.'\'}); majokVu(\''.$idNomfic.'-'.$idFic.'\');"><img alt=\'MAJ\' src=\'./img/MAJ.png\'></a></span></center></span></td>');
+		echo('<td><span id=\'importerHAL-'.$idFic.'\'><center><span id=\''.$idNomfic.'-'.$idFic.'\'><a target=\'_blank\' href=\''.$lienMAJ.'\' onclick="$.post(\'Zip2HAL_liste_actions.php\', { idNomfic : \''.$idNomfic.'\', action: \'statistiques\', valeur: \''.$idNomfic.'\', idTEI: \''.$idTEI.'\', typDoc: \''.$typDoc.'\', titreNot: \''.$titreNotS.'\', datePub: \''.$datePub.'\'});"><img alt=\'MAJ\' src=\'./img/MAJ.png\'></a></span></center></span></td>');
 	}else{
 		echo('<td><span id=\'importerHAL-'.$idFic.'\'><center><img alt=\'MAJ\' src=\'./img/MAJImpossible.png\'></center></span></td>');
 	}

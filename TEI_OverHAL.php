@@ -2,7 +2,7 @@
 <?php
 header('Content-type: text/html; charset=UTF-8');
 
-if (isset($_GET['css']) && ($_GET['css'] != ""))
+if(isset($_GET['css']) &&($_GET['css'] != ""))
 {
   $css = $_GET['css'];
 }else{
@@ -45,25 +45,24 @@ if (isset($_GET['css']) && ($_GET['css'] != ""))
 La première étape consiste à fournir votre extraction TEI d'OverHAL :
 <br><br>
 <?php
-if (isset($_GET["erreur"]))
+if(isset($_GET["erreur"]))
 {
 	$erreur = $_GET["erreur"];
-	if ($erreur == 0) {echo "<script type=\"text/javascript\">afficherPopupAvertissement(\"Erreur inconnue !\")</script>";}
-	if ($erreur == 1) {echo "<script type=\"text/javascript\">afficherPopupAvertissement(\"Le fichier dépasse la limite autorisée par le serveur (fichier php.ini) !\")</script>";}
-	if ($erreur == 2) {echo "<script type=\"text/javascript\">afficherPopupAvertissement(\"Le fichier dépasse la limite autorisée dans le formulaire HTML !\")</script>";}
-	if ($erreur == 3) {echo"<script type=\"text/javascript\">afficherPopupAvertissement(\"L'envoi du fichier a été interrompu pendant le transfert !\")</script>";}
-	//if ($erreur == 4) {echo "<script type=\"text/javascript\">afficherPopupAvertissement(\"Aucun fichier envoyé ou bien il a une taille nulle !\")</script>";}
-	if ($erreur == 5) {echo "<script type=\"text/javascript\">afficherPopupAvertissement(\"Mauvaise extension de fichier !\")</script>";}
-	if ($erreur == 6) {echo "<script type=\"text/javascript\">afficherPopupAvertissement(\"Vous devez au préalable fournir votre extraction TEI d'OverHAL !\")</script>";}
-	if ($erreur == 7) {echo "<script type=\"text/javascript\">afficherPopupAvertissement(\"Le répertoire de dépôt de fichier est automatiquement nettoyé chaque heure et votre fichier ZIP des extractions TEI d'OverHAL n'existe plus : vous devez procéder de nouveau à son chargement !\")</script>";}
-	if ($erreur == 8) {echo "<script type=\"text/javascript\">afficherPopupAvertissement(\"Archive ZIP incorrecte !\")</script>";}
-	if ($erreur == 9) {echo"<script type=\"text/javascript\">afficherPopupAvertissement(\"Au moins un des fichiers de votre archive ZIP n'a pas l'extension XML !\")</script>";}
+	if($erreur == 0) {echo "<script type=\"text/javascript\">afficherPopupAvertissement(\"Erreur inconnue !\")</script>";}
+	if($erreur == 1) {echo "<script type=\"text/javascript\">afficherPopupAvertissement(\"Le fichier dépasse la limite autorisée par le serveur(fichier php.ini) !\")</script>";}
+	if($erreur == 2) {echo "<script type=\"text/javascript\">afficherPopupAvertissement(\"Le fichier dépasse la limite autorisée dans le formulaire HTML !\")</script>";}
+	if($erreur == 3) {echo"<script type=\"text/javascript\">afficherPopupAvertissement(\"L'envoi du fichier a été interrompu pendant le transfert !\")</script>";}
+	if($erreur == 5) {echo "<script type=\"text/javascript\">afficherPopupAvertissement(\"Mauvaise extension de fichier !\")</script>";}
+	if($erreur == 6) {echo "<script type=\"text/javascript\">afficherPopupAvertissement(\"Vous devez au préalable fournir votre extraction TEI d'OverHAL !\")</script>";}
+	if($erreur == 7) {echo "<script type=\"text/javascript\">afficherPopupAvertissement(\"Le répertoire de dépôt de fichier est automatiquement nettoyé chaque heure et votre fichier ZIP des extractions TEI d'OverHAL n'existe plus : vous devez procéder de nouveau à son chargement !\")</script>";}
+	if($erreur == 8) {echo "<script type=\"text/javascript\">afficherPopupAvertissement(\"Archive ZIP incorrecte !\")</script>";}
+	if($erreur == 9) {echo"<script type=\"text/javascript\">afficherPopupAvertissement(\"Au moins un des fichiers de votre archive ZIP n'a pas l'extension XML !\")</script>";}
 }
 ?>
 
 <form enctype="multipart/form-data" action="TEI_OverHAL_upload.php" method="post" accept-charset="UTF-8">
 <p class="form-inline">
-<label for="TEI_OverHAL">Fichier source des extractions TEI OverHAL (zip)</label> : <input class="form-control" id="TEI_OverHAL" style="height: 25px; font-size: 90%; padding: 0px;" name="TEI_OverHAL" type="file" /><br/>
+<label for="TEI_OverHAL">Fichier source des extractions TEI OverHAL(zip)</label> : <input class="form-control" id="TEI_OverHAL" style="height: 25px; font-size: 90%; padding: 0px;" name="TEI_OverHAL" type="file" /><br/>
 <input type="submit" class="form-control btn btn-md btn-primary" value="Envoyer">
 </form>
 

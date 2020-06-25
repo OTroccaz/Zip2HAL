@@ -2,7 +2,7 @@
 <?php
 header('Content-type: text/html; charset=UTF-8');
 
-if (isset($_GET['css']) && ($_GET['css'] != ""))
+if(isset($_GET['css']) &&($_GET['css'] != ""))
 {
   $css = $_GET['css'];
 }else{
@@ -39,17 +39,18 @@ if (isset($_GET['css']) && ($_GET['css'] != ""))
 <hr style="color: #467666; height: 1px; border-width: 1px; border-top-color: #467666; border-style: inset;">
 
 <?php
-$location = "Location: "."TEI_OverHAL.php";
+$loc = "Location: ";
+$locT = $loc."TEI_OverHAL.php";
 $erreur = "";
 $qui = "TEI_OverHAL";
 $xml = "./XML/";
 $hal = "/HAL/";
 
-if (isset($_FILES[$qui]['name']) && $_FILES[$qui]['name'] != "") //File has been submitted
+if(isset($_FILES[$qui]['name']) && $_FILES[$qui]['name'] != "") //File has been submitted
 {
-	if ($_FILES[$qui]['error'])
+	if($_FILES[$qui]['error'])
 	{
-		switch ($_FILES[$qui]['error'])
+		switch($_FILES[$qui]['error'])
 		{
 			 case 1: // UPLOAD_ERR_INI_SIZE
 				 if($erreur == "") {$erreur = "?erreur=1";}
@@ -60,24 +61,20 @@ if (isset($_FILES[$qui]['name']) && $_FILES[$qui]['name'] != "") //File has been
 			 case 3: // UPLOAD_ERR_PARTIAL
 				  if($erreur == "") {$erreur = "?erreur=3";}
 				 break;
-			 //case 4: // UPLOAD_ERR_NO_FILE
-				 //if($erreur == "") {$erreur = "?erreur=4";}
-				 //break;
 			 default:
 				  if($erreur == "") {$erreur = "?erreur=0";}
 				 break;
 		}
 	}
 	$extension = strrchr($_FILES[$qui]['name'], '.');
-	if ($extension != ".zip") {
-		 if($erreur == "") {$erreur = "?erreur=5";}
-	}
+	if($extension != ".zip" && $erreur == "") {$erreur = "?erreur=5";}
+	
 	$temps = time();
 	mkdir($xml.$temps);
 	$nomfic = "./XML/TEI_OverHAL_".$temps.".zip";
 	move_uploaded_file($_FILES[$qui]['tmp_name'], $nomfic);
 	$zip = new ZipArchive;
-	if ($zip->open($nomfic) === TRUE) {
+	if($zip->open($nomfic) === TRUE) {
 		$zip->extractTo('./XML/'.$temps);
 		$zip->close();
 	}else{
@@ -85,30 +82,28 @@ if (isset($_FILES[$qui]['name']) && $_FILES[$qui]['name'] != "") //File has been
 	}
 	
 	//Déplacer les fichier sous HAL
-	if (is_dir($xml.$temps.$hal)) {
-		if ($dh = opendir($xml.$temps.$hal)) {
-			while (($file = readdir($dh)) !== false) {
-				if($file != '.' && $file != '..') {
-					copy($xml.$temps.$hal.$file, $xml.$temps."/".$file );
-					unlink($xml.$temps.$hal.$file);
-				}
+	if(is_dir($xml.$temps.$hal) && $dh = opendir($xml.$temps.$hal)) {
+		while(($file = readdir($dh)) !== false) {
+			if($file != '.' && $file != '..') {
+				copy($xml.$temps.$hal.$file, $xml.$temps."/".$file );
+				unlink($xml.$temps.$hal.$file);
 			}
-			closedir($dh);
-			rmdir($xml.$temps.$hal);
 		}
+		closedir($dh);
+		rmdir($xml.$temps.$hal);
 	}
 	
 	//Vérification que l'archive ne contient bien que des fichiers xml
 	$repertoire = opendir($xml.$temps);
-	while(false !== ($fichier = readdir($repertoire))) {
+	while(false !==($fichier = readdir($repertoire))) {
 		$chemin = $xml.$temps."/".$fichier;
 		$infos = pathinfo($chemin);
-		if ($fichier != "." && $fichier != ".." && !is_dir($fichier) && $infos['extension'] != "xml") {
+		if($fichier != "." && $fichier != ".." && !is_dir($fichier) && $infos['extension'] != "xml") {
 			//Extension non xml > suppression dossier créé et archive zip copiée
 			$repertoire = opendir($xml.$temps);
-			while(false !== ($fichier = readdir($repertoire))) {
+			while(false !==($fichier = readdir($repertoire))) {
 				$chemin = $xml.$temps."/".$fichier;
-				if ($fichier != "." && $fichier != ".." && !is_dir($fichier)) {
+				if($fichier != "." && $fichier != ".." && !is_dir($fichier)) {
 					unlink($chemin);
 				}
 			}
@@ -119,9 +114,9 @@ if (isset($_FILES[$qui]['name']) && $_FILES[$qui]['name'] != "") //File has been
 	}
   closedir($repertoire);
 	if($erreur == "") {
-		Header("Location: "."Zip2HAL.php?nomficZip=".$nomfic);
+		Header($loc."Zip2HAL.php?nomficZip=".$nomfic);
 	}else{
-		Header("Location: "."TEI_Overhal.php".$erreur);
+		Header($loc."TEI_Overhal.php".$erreur);
 	}
 }
 ?>

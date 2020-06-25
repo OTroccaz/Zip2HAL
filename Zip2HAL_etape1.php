@@ -7,14 +7,13 @@ if($numFound == 0) {
 	echo 'Aucune notice trouvée dans HAL, donc, pas de doublon';
 	$typDbl = "";
 }else{
-	//echo('<br><br>');
-	//echo($numFound. " notice(s) trouvée(s)");
-	//echo('<br><br>');
 	$cpt = 1;
 	$dbl = 0;
 	$halId = array();
 	$typDbl = "";
 	$txtDbl = "";
+	$typid = " et les types sont identiques";
+	$nocol = " mais pas dans la collection ";
 	
 	echo $numFound. ' notice(s) examinée(s)<br>';
 	echo '<div id=\'cpt1\'></div>';
@@ -22,6 +21,7 @@ if($numFound == 0) {
 	foreach($results->response->docs as $entry) {
 		progression($cpt, $numFound, 'cpt1', $iPro, 'notice');
 		$hId = $entry->halId_s;
+		$halId[$hId] = $hId;
 		$halId['doublon'][$hId] = "";
 		$doi = "";
 		$titlePlus = "";
@@ -73,12 +73,10 @@ if($numFound == 0) {
 			$dbl++;
 			$halId['doublon'][$hId] .= '&nbsp;<a target="_blank" href="https://hal.archives-ouvertes.fr/'.$halId[$hId].'"><img src=\'./img/doublon.jpg\'></a>&nbsp;';
 			$reqDbl = "https://api.archives-ouvertes.fr/search/".$portail."/?fq=collCode_s:%22".$team."%22%20AND%20title_t:%22".strtolower($tabTit[0])."*%22&rows=10000&fl=halId_s,doiId_s,title_s,subTitle_s,docType_s";
-			//echo $reqDbl.'<br>';
 			$contDbl = file_get_contents($reqDbl);
 			$resDbl = json_decode($contDbl);
 			$numDbl = 0;
 			if(isset($resDbl->response->numFound)) {$numDbl=$resDbl->response->numFound;}
-			//echo $resDbl.'<br>';
 			if($numDbl != 0) {
 				foreach($resDbl->response->docs as $entDbl) {
 					$doublonDbl = "non";
@@ -113,9 +111,6 @@ if($numFound == 0) {
 								$doublonDbl .= " et du DOI";
 							}
 						}
-						//echo($doublonDbl);
-						$typid = " et les types sont identiques";
-						$nocol = " mais pas dans la collection ";
 						if($doublonDbl != "non") {//Doublon trouvé dans la collection > vérification du type
 							$txtDbl = " et dans la collection ".$team;
 							if($typTEI == $docTEIDbl) {//Mêmes types de document
@@ -125,7 +120,6 @@ if($numFound == 0) {
 								$txtDbl .= " mais les types sont différents";
 								$typDbl = "HALCOLL";
 							}
-							//echo $typTEI.' - '.$docTEIDbl.'<br>';
 							break 2;//Doublon HALCOLL trouvé > sortie des 2 boucles foreach
 						}else{
 							if($typTEI == $docTEIDbl) {//Mêmes types de document
@@ -147,6 +141,7 @@ if($numFound == 0) {
 					$typDbl = "HAL";
 				}
 			}
+			break;
 		}
 		$cpt++;
 	}

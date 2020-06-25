@@ -44,7 +44,7 @@ include "./Zip2HAL_codes_langues.php";
 
 include "./Zip2HAL_fonctions.php";
 
-suppression("./XML", 3600);//Suppression des fichiers et dossiers du dossier XML créés il y a plus d'une heure
+suppression("./XML", 86400);//Suppression des fichiers et dossiers du dossier XML créés il y a plus d'une jour
 
 include("./normalize.php");
 include("./URLport_coll.php");
@@ -95,8 +95,9 @@ echo '<div id="haut"><a href="#top"><img style="opacity: 0.8;" src="./img/fleche
 $team = "";//Code collection HAL
 $racine = "";//Portail de dépôt
 $domaine = "";//Domaine disciplinaire
+$soumis = "soumis";
 
-if(isset($_POST["soumis"])) {
+if(isset($_POST[$soumis])) {
 	$team = htmlspecialchars($_POST["team"]);
 	if($team == "Entrez le code de votre collection") {//Code collection non renseigné > on en met un par défaut
 		$team = "ECOBIO";
@@ -147,7 +148,7 @@ if(isset($team) && $team != "") {
 <p class="form-inline"><strong><label for="domaine">Domaine disciplinaire : </label></strong>
 <?php
 if($domaine == "") {
-	if(isset($_POST["soumis"])) {
+	if(isset($_POST[$soumis])) {
 		echo '-';
 	}else{
 		$endSpan = '</span>';
@@ -193,7 +194,7 @@ if($domaine == "") {
 
 <p class="form-inline"><strong><label for="teioverhal">Fichier ZIP TEI OverHAL : </label></strong>
 <?php
-if(file_exists($nomficZip)) {
+if(isset($nomficZip) && file_exists($nomficZip)) {
 	echo $nomficZip;
 }
 
@@ -210,13 +211,13 @@ echo '<p class="form-inline"><a href="./TEI_OverHAL.php">Nouvelle soumission d\'
 
 <?php
 
-if(isset($_POST["soumis"])) {
+if(isset($_POST[$soumis])) {
 	$dir = str_replace(array("TEI_OverHAL_", ".zip"), "", $nomficZip);
 	$tabFic = scandir($dir);
 	$idFic = 1;
 	foreach($tabFic as $nomfic) {
 		if(substr($nomfic, -2, 2) !== '..' && substr($nomfic, -1, 1) !== '.') {		
-			$nomfic = $dir."/".$nomfic; 
+			$nomfic = $dir."/".$nomfic;
 
 			//Chargement du fichier XML
 			$xml = new DOMDocument( "1.0", "UTF-8" );
@@ -242,7 +243,6 @@ if(isset($_POST["soumis"])) {
 				if($typ->hasAttribute("scheme") && $typ->getAttribute("scheme") == 'halTypology') {$typTEI = $typ->getAttribute("n");}
 			}
 			$enctitTEI = normalize(utf8_encode(mb_strtolower(utf8_decode($titTEI))));
-			//echo '<br>'.$doiTEI. ' > '.$titTEI;
 			
 			//Récupération du premier mot du titre pour limiter la recherche API
 			$tabTit = explode(' ', $titTEI);
@@ -278,9 +278,6 @@ if(isset($_POST["soumis"])) {
 				include('./Zip2HAL_etape3b.php');
 				include('./Zip2HAL_etape3c.php');
 				include('./Zip2HAL_etape3d.php');
-
-				//var_dump($halAut);
-				//var_dump($halAff);
 
 				echo $brk.'<span style="display: none;"';
 				echo 'Tableau initial obtenu pour les idHAL des auteurs ($halAutinit) :';
