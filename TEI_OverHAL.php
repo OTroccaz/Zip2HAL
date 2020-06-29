@@ -6,7 +6,7 @@ if(isset($_GET['css']) &&($_GET['css'] != ""))
 {
   $css = $_GET['css'];
 }else{
-  $css = "https://ecobio.univ-rennes1.fr/HAL_SCD.css";
+  $css = "https://halur1.univ-rennes1.fr/HAL_SCD.css";
 }
 ?>
 
@@ -25,7 +25,7 @@ if(isset($_GET['css']) &&($_GET['css'] != ""))
 	<script type="text/javascript" language="Javascript" src="./Zip2HAL.js"></script>
   <link rel="stylesheet" href="./Zip2HAL.css">
 </head>
-<body>
+<body style="font-family: Corbel;">
 
 <noscript>
 <div id='noscript' class='red center'><strong>ATTENTION !!! JavaScript est désactivé ou non pris en charge par votre navigateur : cette procédure ne fonctionnera pas correctement.</strong><br>
@@ -34,8 +34,8 @@ if(isset($_GET['css']) &&($_GET['css'] != ""))
 
 <table class="table100" aria-describedby="Entêtes">
 <tr>
-<th scope="col" style="text-align: left;"><img alt="Zip2HAL" title="Zip2HAL" width="250px" src="./img/logo_Zip2hal.png"></td>
-<th scope="col" style="text-align: right;"><img alt="Université de Rennes 1" title="Université de Rennes 1" width="150px" src="./img/logo_UR1_gris_petit.jpg"></td>
+<th scope="col" style="text-align: left;"><img alt="Zip2HAL" title="Zip2HAL" width="250px" src="./img/logo_Zip2hal.png"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Importez vos publications dans HAL</th>
+<th scope="col" style="text-align: right;"><img alt="Université de Rennes 1" title="Université de Rennes 1" width="150px" src="./img/logo_UR1_gris_petit.jpg"></th>
 </tr>
 </table>
 <hr style="color: #467666; height: 1px; border-width: 1px; border-top-color: #467666; border-style: inset;">
