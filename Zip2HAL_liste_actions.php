@@ -883,11 +883,11 @@ if ($action == "statistiques") {
 	foreach($ACTIONS_LISTE AS $i => $valeur) {
 		$chaine = $i.' => array(';
 		$chaine .= '"quand"=>"'.$ACTIONS_LISTE[$i]["quand"].'", ';
-		$chaine .= $cstVal.'=>"'.$ACTIONS_LISTE[$i][$cstVal].'", ';
+		$chaine .= '"'.$cstVal.'"=>"'.$ACTIONS_LISTE[$i][$cstVal].'", ';
 		$chaine .= '"titre"=>"'.$ACTIONS_LISTE[$i]["titre"].'", ';
 		$chaine .= '"type"=>"'.$ACTIONS_LISTE[$i]["type"].'", ';
 		$chaine .= '"annee"=>"'.$ACTIONS_LISTE[$i]["annee"].'", ';
-		$chaine .= $cstID.'"=>"'.$ACTIONS_LISTE[$i][$cstID].'")';
+		$chaine .= '"'.$cstID.'"=>"'.$ACTIONS_LISTE[$i][$cstID].'")';
 		if ($i != $total-1) {$chaine .= ',';}
 		$chaine .= chr(13);
 		//session 1 day test

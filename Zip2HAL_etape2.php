@@ -12,6 +12,7 @@ $melAut = array();//Emails trouvés
 $halAut = array();
 $tabIdHAL = array();//Si plusieurs idHAL remontés pour un même auteur
 
+//Définir des constantes au lieu de dupliquer des littéraux		
 $cstFN = 'firstName';
 $cstLN = 'lastName';
 $cstAN = 'affilName';
@@ -26,6 +27,10 @@ echo '<div id=\'cpt2\'></div>';
 if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublon de type TYP > inutile d'effectuer les recherches
 	echo 'Recherche inutile car c\'est une notice doublon';
 }else{
+	//Début bloc idHal/docid
+	echo '<span><a style="cursor:pointer;" onclick="afficacherRec(\'2\', '.$idFic.')";>Recherche idHAL/docid</a><br>';
+	echo '<span id="Rrec-2-'.$idFic.'" style="display: none;">';
+	
 	$auts = $xml->getElementsByTagName("author");
 	foreach($auts as $aut) {
 		//Initialisation des variables
@@ -235,6 +240,8 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 
 	//var_dump($halAut);
 	$halAutinit = $halAut;//Sauvegarde des affiliations et idHal initiaux remontées par OverHAL
+	
+	echo '</span></span>';//Fin bloc idHAL/docid
 	echo $cptiHi. ' idHal et '.$cptdoc.' docid trouvé(s)';
 }
 

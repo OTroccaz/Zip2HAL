@@ -10,6 +10,10 @@ echo '<div id=\'cpt3d\'></div>';
 if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublon de type TYP > inutile d'effectuer les recherches
 	echo 'Recherche inutile car c\'est une notice doublon';
 }else{
+	//Début bloc idHAL
+	echo '<span><a style="cursor:pointer;" onclick="afficacherRec(\'3d\', '.$idFic.')";>Recherche des idHAL</a><br>';
+	echo '<span id="Rrec-3d-'.$idFic.'" style="display: none;">';
+	
 	for($i = 0; $i < count($halAut); $i++) {
 		progression($cpt, count($halAut), 'cpt3d', $iPro, 'auteur');
 		if($halAut[$i]['docid'] != "" && $halAut[$i]['idHals'] == "") {//L'auteur a bien un docid mais pas d'idHAL
@@ -31,6 +35,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		$cpt++;
 	}
 
+	echo '</span></span>';//Fin bloc idHAL
 	echo $cptId.' idHAL auteur trouvé(s)';
 }
 

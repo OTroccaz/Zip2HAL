@@ -11,6 +11,10 @@ echo '<div id=\'cpt3c\'></div>';
 if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublon de type TYP > inutile d'effectuer les recherches
 	echo 'Recherche inutile car c\'est une notice doublon';
 }else{
+	//Début bloc docid
+	echo '<span><a style="cursor:pointer;" onclick="afficacherRec(\'3c\', '.$idFic.')";>Recherche des docid</a><br>';
+	echo '<span id="Rrec-3c-'.$idFic.'" style="display: none;">';
+	
 	//Définir des constantes au lieu de dupliquer des littéraux
 	$cstFN = "firstName";
 	$cstLN = "lastName";
@@ -48,6 +52,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		$cpt++;
 	}
 
+	echo '</span></span>';//Fin bloc docid
 	echo $cptId.' docid auteur trouvé(s)';
 }
 	

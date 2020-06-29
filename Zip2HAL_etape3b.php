@@ -10,6 +10,10 @@ echo '<div id=\'cpt3b\'></div>';
 if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublon de type TYP > inutile d'effectuer les recherches
 	echo 'Recherche inutile car c\'est une notice doublon';
 }else{
+	//Début bloc affiliations
+	echo '<span><a style="cursor:pointer;" onclick="afficacherRec(\'3b\', '.$idFic.')";>Calcul des dernières affiliations</a><br>';
+	echo '<span id="Rrec-3b-'.$idFic.'" style="display: none;">';
+	
 	//Définir des constantes au lieu de dupliquer des littéraux
 	$cstAN = "affilName";
 	$cstFN = "firstName";
@@ -156,7 +160,8 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 			$cpt++;
 		}
 	}
-	 
+	
+	echo '</span></span>';//Fin bloc affiliations
 	echo $cptNoaff.' affiliation(s) manquante(s) trouvée(s)';
 }
 

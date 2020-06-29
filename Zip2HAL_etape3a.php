@@ -16,8 +16,8 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	echo 'Recherche inutile car c\'est une notice doublon';
 }else{
 	//Début bloc affiliations
-	echo '<span><a style="cursor:pointer;" onclick="afficacherAff('.$idFic.')";>Calcul des affiliations</a><br>';
-	echo '<span id="Raff-'.$idFic.'" style="display: none;">';
+	echo '<span><a style="cursor:pointer;" onclick="afficacherRec(\'3a\', '.$idFic.')";>Calcul des affiliations</a><br>';
+	echo '<span id="Rrec-3a-'.$idFic.'" style="display: none;">';
 
 	//Définir des constantes au lieu de dupliquer des littéraux		
 	$cstXI = "xml:id";

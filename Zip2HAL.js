@@ -64,11 +64,11 @@ function afficacher(id,idFic) {
 	}
 }
 
-function afficacherAff(idFic) {
-	if (document.getElementById("Raff-"+idFic).style.display == "block") {
-		document.getElementById("Raff-"+idFic).style.display = "none";
+function afficacherRec(qui, idFic) {
+	if (document.getElementById("Rrec-"+qui+"-"+idFic).style.display == "block") {
+		document.getElementById("Rrec-"+qui+"-"+idFic).style.display = "none";
 	}else{
-		document.getElementById("Raff-"+idFic).style.display = "block";
+		document.getElementById("Rrec-"+qui+"-"+idFic).style.display = "block";
 	}
 }
 
