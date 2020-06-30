@@ -27,19 +27,17 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	$titreOK = "non";
 	$elts = $xml->getElementsByTagName($cstTI);
 	foreach($elts as $elt) {
-		if($elt->hasAttribute($cstXL)) {
-			if($titreOK == "non") {//Le titre est parfois présent plusieurs fois
-				deleteNode($xml, "analytic", $cstTI, 0, "", "", "", "", "exact");
-				$xml->save($nomfic);
-				insertNode($xml, $elt->nodeValue, "analytic", $cstAU, 0, $cstTI, $cstXL, $languages[$lang], "", "", "iB", $cstTA, "");
-				$xml->save($nomfic);
-				$titreOK = "oui";
-			}
+		if($elt->hasAttribute($cstXL) && $titreOK == "non") {//Le titre est parfois présent plusieurs fois
+			deleteNode($xml, "analytic", $cstTI, 0, "", "", "", "", "exact");
+			$xml->save($nomfic);
+			insertNode($xml, $elt->nodeValue, "analytic", $cstAU, 0, $cstTI, $cstXL, $languages[$lang], "", "", "iB", $cstTA, "");
+			$xml->save($nomfic);
+			$titreOK = "oui";
 		}
 	}
 
 	//Ajout de la langue aux mots-clés + ajout de 3 mots-clés vides
-	$keys = $xml->getElementsByTagName("keywords");
+	$keys = $xml->getElementsByTagName($cstKE);
 	$ind = 0;
 	$tabKey = array();
 	$domArray = array();
@@ -66,13 +64,13 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		$xml->save($nomfic);
 	}
 	if(empty($tabKey)) {//Il n'y a pas de mots-clés dans le XML initial > il faut préparer le noeud
-		insertNode($xml, $cstNO, "textClass", $cstCC, 0, "keywords", "scheme", $cstAU, "", "", "iB", $cstTA, "");
+		insertNode($xml, $cstNO, "textClass", $cstCC, 0, $cstKE, "scheme", $cstAU, "", "", "iB", $cstTA, "");
 		$xml->save($nomfic);
-		$keys = $xml->getElementsByTagName("keywords");
+		$keys = $xml->getElementsByTagName($cstKE);
 		foreach($keys as $key) {}
 	}				
 	//Ajout de 3 mots-clés vides
-	$keys = $xml->getElementsByTagName("keywords");
+	$keys = $xml->getElementsByTagName($cstKE);
 	for($mc = 0; $mc < 3; $mc++) {
 		$bimoc = $xml->createElement("term");
 		$moc = $xml->createTextNode("");
@@ -129,7 +127,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 			
 			//Ajouts divers
 			for($i = 0; $i < count($halAut); $i++) {
-				if($halAut[$i]['firstName'] == $firstName && $halAut[$i]['lastName'] == $lastName) {
+				if($halAut[$i][$cstFN] == $firstName && $halAut[$i][$cstLN] == $lastName) {
 					$ou = "iB";
 					//Y-a-t-il un mail ?
 					if($halAut[$i]['mail'] != "" && strpos($listmails, $halAut[$i]['mail']) === false) {
@@ -163,7 +161,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 					//Id structures des affiliations
 					//Recherche des affiliations remontées globalement sur la base du nom de l'organisme, quel que soit l'auteur mais sous réserve du rattachement de l'auteur à cette affiliation (ex : U1085)
 					for($j = 0; $j < count($halAff); $j++) {
-						if($halAff[$j]['firstName'] == "" && $halAff[$j]['lastName'] == "" && (strpos($halAut[$i]['affilName'], $halAff[$j][$cstLA]) !== false)) {
+						if($halAff[$j][$cstFN] == "" && $halAff[$j][$cstLN] == "" && (strpos($halAut[$i]['affilName'], $halAff[$j][$cstLA]) !== false)) {
 							$lsAff = $halAff[$j][$cstLA];
 							deleteNode($xml, $cstAU, $cstAF, $i, "ref", $lsAff, "", "", "approx");
 							//Puis on ajoute l'(les) affiliation(s) trouvée(s)
@@ -173,7 +171,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 					}
 					//Recherche des affiliations remontées pour chaque auteur
 					for($j = 0; $j < count($halAff); $j++) {
-						if($halAff[$j]['firstName'] == $firstName && $halAff[$j]['lastName'] == $lastName) {
+						if($halAff[$j][$cstFN] == $firstName && $halAff[$j][$cstLN] == $lastName) {
 							//Au moins une affiliation trouvée > On supprime l'affiliation correspondante du TEI de type '<affiliation ref="#localStruct-Affx"/>' pour cet auteur
 							$lsAff = $halAff[$j][$cstLA];
 							deleteNode($xml, $cstAU, $cstAF, $i, "ref", $lsAff, "", "", "approx");
@@ -189,7 +187,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 			/*
 			//Y-a-t-il un docid ?
 			for($i = 0; $i < count($halAut); $i++) {
-				if($halAut[$i]['firstName'] == $firstName && $halAut[$i]['lastName'] == $lastName) {
+				if($halAut[$i][$cstFN] == $firstName && $halAut[$i][$cstLN] == $lastName) {
 					if($halAut[$i][$cstDI] != "" && strpos($listdocid, $halAut[$i][$cstDI]) === false) {
 						insertNode($xml, $halAut[$i][$cstDI], $cstAU, $cstAF, $i, "idno", "type", "halauthorid", "", "", "iB");
 						$xml->save($nomfic);

@@ -25,7 +25,7 @@ if(isset($_GET['css']) &&($_GET['css'] != ""))
 	<script type="text/javascript" language="Javascript" src="./Zip2HAL.js"></script>
   <link rel="stylesheet" href="./Zip2HAL.css">
 </head>
-<body style="font-family: Corbel;">
+<body style="font-family: Corbel, sans-serif;">
 
 <noscript>
 <div id='noscript' class='red center'><strong>ATTENTION !!! JavaScript est désactivé ou non pris en charge par votre navigateur : cette procédure ne fonctionnera pas correctement.</strong><br>

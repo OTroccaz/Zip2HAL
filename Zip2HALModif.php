@@ -22,13 +22,15 @@ if (isset($_GET['css']) && ($_GET['css'] != ""))
 <body>
 <table class="table100" aria-describedby="Entêtes">
 <tr>
-<th scope="col" style="text-align: left;"><img alt="Zip2HAL" title="Zip2HAL" width="250px" src="./img/logo_Zip2hal.png"></td>
-<th scope="col" style="text-align: right;"><img alt="Université de Rennes 1" title="Université de Rennes 1" width="150px" src="./img/logo_UR1_gris_petit.jpg"></td>
+<th scope="col" style="text-align: left;"><img alt="Zip2HAL" title="Zip2HAL" width="250px" src="./img/logo_Zip2hal.png"></th>
+<th scope="col" style="text-align: right;"><img alt="Université de Rennes 1" title="Université de Rennes 1" width="150px" src="./img/logo_UR1_gris_petit.jpg"></th>
 </tr>
 </table>
 <br><br>
 <div style="width: 60%; margin-left: auto ;margin-right: auto ;">
 <?php
+include "./Zip2HAL_constantes.php";
+
 $passw = 'password';
 $h_passw = 'HAL_PASSWD';
 
@@ -67,9 +69,9 @@ if (isset($_GET['Id']) && ($_GET['Id'] != ""))
   }
 }
 
-if (isset($_GET['portail']) && ($_GET['portail'] != ""))
+if (isset($_GET[$cstPO]) && ($_GET[$cstPO] != ""))
 {
-	$portail = $_GET['portail'];
+	$portail = $_GET[$cstPO];
 }
 //Pour visualiser résultat preprod > https://univ-rennes1.halpreprod.archives-ouvertes.fr/halid
 
@@ -148,10 +150,8 @@ $headers[] = "Content-Type: text/xml";
 //Métadonnées > Notice
 $elts = $xml->getElementsByTagName("ref");
 foreach($elts as $elt) {
-	if($elt->hasAttribute("type") && $elt->getAttribute("type") == "file") {
-		if($elt->hasAttribute("target")) {
-			//$headers[] = "X-Allow-Completion : false";
-		}
+	if($elt->hasAttribute("type") && $elt->getAttribute("type") == "file" && $elt->hasAttribute("target")) {
+		//$headers[] = "X-Allow-Completion : false";
 	}
 }
 //$headers[] = "Authorization: Basic";
