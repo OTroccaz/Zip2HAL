@@ -303,24 +303,27 @@ if(isset($_POST[$soumis])) {
 		}
 		$idFic++;
 	}
+	
 	//Vérification si des métadonnées sont manquantes
-	$tabKey = array_keys($tabMetaMQ);
-	$message = "";
-	$arrayMQ = "non";
-	if(!empty($tabMetaMQ)) {
-		foreach($tabKey as $key) {
-			if(!empty($tabMetaMQ[$key])) {
-				$message .= "Fichier ".str_replace($dir."/", "", $key)." :<br>";
-				foreach($tabMetaMQ[$key] as $elt) {
-					$message .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;La métadonnée concernant ".$elt." est manquante.<br>";
-					$arrayMQ = "oui";
+	if(isset($tabMetaMQ)) {
+		$tabKey = array_keys($tabMetaMQ);
+		$message = "";
+		$arrayMQ = "non";
+		if(!empty($tabMetaMQ)) {
+			foreach($tabKey as $key) {
+				if(!empty($tabMetaMQ[$key])) {
+					$message .= "Fichier ".str_replace($dir."/", "", $key)." :<br>";
+					foreach($tabMetaMQ[$key] as $elt) {
+						$message .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;La métadonnée concernant ".$elt." est manquante.<br>";
+						$arrayMQ = "oui";
+					}
+					$message .= "<br>";
 				}
-				$message .= "<br>";
+				
 			}
-			
 		}
+		if($arrayMQ == "oui") {echo '<script>afficherPopupAvertissement("'.$message.'");</script>';}
 	}
-	if($arrayMQ == "oui") {echo '<script>afficherPopupAvertissement("'.$message.'");</script>';}
 }
 ?>
 

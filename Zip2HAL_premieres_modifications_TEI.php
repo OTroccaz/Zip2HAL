@@ -2,25 +2,7 @@
 if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublon de type TYP > inutile d'effectuer les recherches
 	//Modifications du TEI inutiles
 }else{
-	//Définir des constantes au lieu de dupliquer des littéraux
-	$cstTA = "tagName";
-	$cstTI = "title";
-	$cstXL = "xml:lang";
-	$cstAU = "author";
-	$cstKE = "keywords";
-	$cstCC = "classCode";
-	$cstNO = "nonodevalue";
-	$cstAB = "abstract";
-	$cstAM = "amont";
-	$cstPE = "persName";
-	$cstEM = "email";
-	$cstIS = "idHals";
-	$cstNT = "notation";
-	$cstID = "idhal";
-	$cstAF = "affiliation";
-	$cstDI = "docid";
-	$cstLA = "lsAff";
-	
+	include "./Zip2HAL_constantes.php";
 
 	//Premières modifications du TEI avec les résultats précédemment obtenus
 
@@ -127,8 +109,8 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	$auts = $xml->getElementsByTagName($cstAU);
 	foreach($auts as $aut) {
 		//Initialisation des variables
-		$fname = "";//Prénom
-		$lname = "";//Nom
+		$firstName = "";//Prénom
+		$lastName = "";//Nom
 		$listIdHAL = "~";//Variable pour assurer l'unicité de l'insertion des IdHAL
 		$listdocid = "~";//Variable pour assurer l'unicité de l'insertion des docid
 		$listmails = "~";//Variable pour assurer l'unicité de l'insertion des mails
@@ -137,17 +119,17 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 			if($elt->nodeName == $cstPE) {
 				foreach($elt->childNodes as $per) {
 					if($per->nodeName == "forename") {
-						$fname = $per->nodeValue;
+						$firstName = $per->nodeValue;
 					}
 					if($per->nodeName == "surname") {
-						$lname = $per->nodeValue;
+						$lastName = $per->nodeValue;
 					}
 				}
 			}
 			
 			//Ajouts divers
 			for($i = 0; $i < count($halAut); $i++) {
-				if($halAut[$i]['firstName'] == $fname && $halAut[$i]['lastName'] == $lname) {
+				if($halAut[$i]['firstName'] == $firstName && $halAut[$i]['lastName'] == $lastName) {
 					$ou = "iB";
 					//Y-a-t-il un mail ?
 					if($halAut[$i]['mail'] != "" && strpos($listmails, $halAut[$i]['mail']) === false) {
@@ -181,7 +163,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 					//Id structures des affiliations
 					//Recherche des affiliations remontées globalement sur la base du nom de l'organisme, quel que soit l'auteur mais sous réserve du rattachement de l'auteur à cette affiliation (ex : U1085)
 					for($j = 0; $j < count($halAff); $j++) {
-						if($halAff[$j]['fname'] == "" && $halAff[$j]['lname'] == "" && (strpos($halAut[$i]['affilName'], $halAff[$j][$cstLA]) !== false)) {
+						if($halAff[$j]['firstName'] == "" && $halAff[$j]['lastName'] == "" && (strpos($halAut[$i]['affilName'], $halAff[$j][$cstLA]) !== false)) {
 							$lsAff = $halAff[$j][$cstLA];
 							deleteNode($xml, $cstAU, $cstAF, $i, "ref", $lsAff, "", "", "approx");
 							//Puis on ajoute l'(les) affiliation(s) trouvée(s)
@@ -191,7 +173,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 					}
 					//Recherche des affiliations remontées pour chaque auteur
 					for($j = 0; $j < count($halAff); $j++) {
-						if($halAff[$j]['fname'] == $fname && $halAff[$j]['lname'] == $lname) {
+						if($halAff[$j]['firstName'] == $firstName && $halAff[$j]['lastName'] == $lastName) {
 							//Au moins une affiliation trouvée > On supprime l'affiliation correspondante du TEI de type '<affiliation ref="#localStruct-Affx"/>' pour cet auteur
 							$lsAff = $halAff[$j][$cstLA];
 							deleteNode($xml, $cstAU, $cstAF, $i, "ref", $lsAff, "", "", "approx");
@@ -207,7 +189,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 			/*
 			//Y-a-t-il un docid ?
 			for($i = 0; $i < count($halAut); $i++) {
-				if($halAut[$i]['firstName'] == $fname && $halAut[$i]['lastName'] == $lname) {
+				if($halAut[$i]['firstName'] == $firstName && $halAut[$i]['lastName'] == $lastName) {
 					if($halAut[$i][$cstDI] != "" && strpos($listdocid, $halAut[$i][$cstDI]) === false) {
 						insertNode($xml, $halAut[$i][$cstDI], $cstAU, $cstAF, $i, "idno", "type", "halauthorid", "", "", "iB");
 						$xml->save($nomfic);

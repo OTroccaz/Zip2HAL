@@ -14,11 +14,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	echo '<span><a style="cursor:pointer;" onclick="afficacherRec(\'3b\', '.$idFic.')";>Calcul des dernières affiliations</a><br>';
 	echo '<span id="Rrec-3b-'.$idFic.'" style="display: none;">';
 	
-	//Définir des constantes au lieu de dupliquer des littéraux
-	$cstAN = "affilName";
-	$cstFN = "firstName";
-	$cstLN = "lastName";
-	$cstlSA = "#localStruct-Aff";
+	include "./Zip2HAL_constantes.php";
 
 	//Si un auteur n'a aucune affiliation > rechercher dans le référentiel authorstructure pour remonter la dernière affiliation HAL associée à cet auteur
 	//Combien d'auteur(s) concerné(s) ?
@@ -71,8 +67,8 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 							if(isset($affil->acronym_s)) {$acronym = " [".$affil->acronym_s."], ";}else{$acronym = ", ";}
 							if(isset($affil->country_s)) {$country = ", ".$affil->country_s;}else{$country = "";}
 							$halAff[$iAff]['ncplt'] = $affil->docid." ~ ".$affil->name_s.$acronym.$affil->type_s.$country;
-							$halAff[$iAff]['fname'] = $halAut[$i][$cstFN];
-							$halAff[$iAff]['lname'] = $halAut[$i][$cstLN];
+							$halAff[$iAff]['firstName'] = $halAut[$i][$cstFN];
+							$halAff[$iAff]['lastName'] = $halAut[$i][$cstLN];
 							$halAut[$i][$cstAN] .= $cstlSA.$cptAff."~";
 							$iAff++;
 							$docid = "oui";
@@ -128,8 +124,8 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 									if(isset($affil->acronym_s)) {$acronym = " [".$affil->acronym_s."], ";}else{$acronym = ", ";}
 									if(isset($affil->country_s)) {$country = ", ".$affil->country_s;}else{$country = "";}
 									$halAff[$iAff]['ncplt'] = $affil->docid." ~ ".$affil->name_s.$acronym.$affil->type_s.$country;
-									$halAff[$iAff]['fname'] = $halAut[$i][$cstFN];
-									$halAff[$iAff]['lname'] = $halAut[$i][$cstLN];
+									$halAff[$iAff]['firstName'] = $halAut[$i][$cstFN];
+									$halAff[$iAff]['lastName'] = $halAut[$i][$cstLN];
 									$halAut[$i][$cstAN] .= $cstlSA.$cptAff."~";
 									$iAff++;
 									$docid = "oui";

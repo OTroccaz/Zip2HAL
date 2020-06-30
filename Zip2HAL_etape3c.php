@@ -15,15 +15,13 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	echo '<span><a style="cursor:pointer;" onclick="afficacherRec(\'3c\', '.$idFic.')";>Recherche des docid</a><br>';
 	echo '<span id="Rrec-3c-'.$idFic.'" style="display: none;">';
 	
-	//Définir des constantes au lieu de dupliquer des littéraux
-	$cstFN = "firstName";
-	$cstLN = "lastName";
+	include "./Zip2HAL_constantes.php";
 
 	for($i = 0; $i < count($halAut); $i++) {
 		progression($cpt, count($halAut), 'cpt3c', $iPro, 'auteur');
 		if($halAut[$i]['docid'] == "") {//Pas d'id auteur
 			for($j = 0; $j < count($halAff); $j++) {
-				//if($halAff[$j]['fname'] == $halAut[$i][$cstFN] && $halAff[$j]['lname'] == $halAut[$i][$cstLN]) {
+				//if($halAff[$j]['firstName'] == $halAut[$i][$cstFN] && $halAff[$j]['lastName'] == $halAut[$i][$cstLN]) {
 				if(strpos($halAut[$i]['affilName'], $halAff[$j]['lsAff']) !== false) {
 					$affil = $halAff[$j]['names'];
 					$afill = str_replace("&", "%24", $affil);

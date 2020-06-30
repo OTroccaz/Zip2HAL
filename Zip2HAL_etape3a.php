@@ -19,17 +19,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	echo '<span><a style="cursor:pointer;" onclick="afficacherRec(\'3a\', '.$idFic.')";>Calcul des affiliations</a><br>';
 	echo '<span id="Rrec-3a-'.$idFic.'" style="display: none;">';
 
-	//Définir des constantes au lieu de dupliquer des littéraux		
-	$cstXI = "xml:id";
-	$cstLA = "lsAff";
-	$cstAN = "affilName";
-	$cstHR = '<a target="_blank" href="';
-	$cstDI = "docid";
-	$cstVA = "valid";
-	$cstNA = "names";
-	$cstNC = "ncplt";
-	$cstFN = "fname";
-	$cstLN = "lname";
+	include "./Zip2HAL_constantes.php";
 
 	$cptAff = 0;
 
@@ -152,7 +142,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 						if(isset($resAff->response->docs[0]->country_s)) {$country = ", ".$resAff->response->docs[0]->country_s;}else{$country = "";}
 						$halAff[$iAff][$cstNC] = $resAff->response->docs[0]->docid." ~ ".$resAff->response->docs[0]->name_s.$acronym.$resAff->response->docs[0]->type_s.$country;
 						$halAff[$iAff][$cstFN] = "";
-						$halAff[$iAff]['lname'] = "";
+						$halAff[$iAff][$cstLN] = "";
 						$iAff++;
 						$trouve++;
 						break;
@@ -195,7 +185,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 							if(isset($resAff->response->docs[0]->country_s)) {$country = ", ".$resAff->response->docs[0]->country_s;}else{$country = "";}
 							$halAff[$iAff][$cstNC] = $resAff->response->docs[0]->docid." ~ ".$resAff->response->docs[0]->name_s.$acronym.$resAff->response->docs[0]->type_s.$country;
 							$halAff[$iAff][$cstFN] = "";
-							$halAff[$iAff]['lname'] = "";
+							$halAff[$iAff][$cstLN] = "";
 							$iAff++;
 							$trouve++;
 							break;
@@ -222,7 +212,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 										if(isset($resAff->response->docs[0]->country_s)) {$country = ", ".$resAff->response->docs[0]->country_s;}else{$country = "";}
 										$halAff[$iAff][$cstNC] = $resAff->response->docs[0]->docid." ~ ".$resAff->response->docs[0]->name_s.$acronym.$resAff->response->docs[0]->type_s.$country;
 										$halAff[$iAff][$cstFN] = "";
-										$halAff[$iAff]['lname'] = "";
+										$halAff[$iAff][$cstLN] = "";
 										$iAff++;
 										$trouve++;
 										break;
@@ -266,7 +256,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 							if(isset($resAff->response->docs[0]->country_s)) {$country = ", ".$resAff->response->docs[0]->country_s;}else{$country = "";}
 							$halAff[$iAff][$cstNC] = $resAff->response->docs[0]->docid." ~ ".$resAff->response->docs[0]->name_s.$acronym.$resAff->response->docs[0]->type_s.$country;
 							$halAff[$iAff][$cstFN] = "";
-							$halAff[$iAff]['lname'] = "";
+							$halAff[$iAff][$cstLN] = "";
 							$iAff++;
 							$trouve++;
 							break;
@@ -306,7 +296,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 										$fSepTab = explode('_', $fSep);
 										$ajout = "oui";
 										for($k = 0; $k < count($halAff); $k++) {
-											if(intval($fSepTab[2]) == $halAff[$k][$cstDI] && $firstName == $halAff[$k][$cstFN] && $lastName == $halAff[$k]['lname']) {$ajout = "non";}
+											if(intval($fSepTab[2]) == $halAff[$k][$cstDI] && $firstName == $halAff[$k][$cstFN] && $lastName == $halAff[$k][$cstLN]) {$ajout = "non";}
 										}
 										if($ajout == "oui") {
 											//VALID ou OLD ?
@@ -322,7 +312,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 											if(isset($resVoO->response->docs[0]->country_s)) {$country = ", ".$resVoO->response->docs[0]->country_s;}else{$country = "";}
 											$halAff[$iAff][$cstNC] = $resVoO->response->docs[0]->docid." ~ ".$resVoO->response->docs[0]->name_s.$acronym.$resVoO->response->docs[0]->type_s.$country;
 											$halAff[$iAff][$cstFN] = $firstName;
-											$halAff[$iAff]['lname'] = $lastName;
+											$halAff[$iAff][$cstLN] = $lastName;
 											$iAff++;
 											$trouve++;
 											break 2;

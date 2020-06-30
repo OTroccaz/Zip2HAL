@@ -10,16 +10,10 @@ $xmlIds = array();//IdHALs trouvés
 $xmlIdi = array();//IdHALi trouvés
 $melAut = array();//Emails trouvés
 $halAut = array();
+$halAutinit = array();
 $tabIdHAL = array();//Si plusieurs idHAL remontés pour un même auteur
 
-//Définir des constantes au lieu de dupliquer des littéraux		
-$cstFN = 'firstName';
-$cstLN = 'lastName';
-$cstAN = 'affilName';
-$cstII = 'idHali';
-$cstIS = 'idHals';
-$cstMD = 'mailDom';
-$cstDI = 'docid';
+include "./Zip2HAL_constantes.php";
 
 echo '<b>Etape 2 : recherche des idHAL et docid des auteurs</b><br>';
 echo '<div id=\'cpt2\'></div>';

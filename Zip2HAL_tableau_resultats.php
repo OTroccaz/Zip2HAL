@@ -1,28 +1,5 @@
 <?php
-//Définir des constantes au lieu de dupliquer des littéraux
-$cstSP = "<td>&nbsp;</td>";
-$cstTI = "title";
-$cstXL = "xml:lang";
-$cstEN = "English";
-$cstSE = "selected";
-$cstSU = "subtype";
-$cstLE = "level";
-$cstCH = "checked";
-$cst5sp = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-$cstMO = "monogr";
-$cstFN = "firstName";
-$cstLN = "lastName";
-$cstXI = "xmlIds";
-$cstDI = "docid";
-$cstIS = "idHals";
-$cstAN = "affilName";
-$cstLA = "lsAff";
-$cstNA = "names";
-$cstNF = "fname";
-$cstNL = "lname";
-$cstHA = "-halAff";
-$cstAA = "-ajoutAff";
-
+include "./Zip2HAL_constantes.php";
 
 //Tableau des résultats
 echo '<br><br>';
@@ -583,8 +560,8 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		
 		if($halAut[$i]['mailDom'] != "") {echo ' (@'.$halAut[$i]['mailDom'].')';}
 		echo '<br>';
-		if($halAut[$i][$cstXI] != "") {
-			echo '<span id="Txt'.$halAut[$i][$cstXI].'-'.$idFic.'">Supprimer l\'idHAL '.$halAut[$i][$cstXI].'</span> <span id="Vu'.$halAut[$i][$cstXI].'-'.$idFic.'"><a style="cursor:pointer;" onclick="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'supprimerIdHAL\', pos: '.$i.', valeur: \''.$halAut[$i][$cstXI].'\'}); majokIdHAL(\''.$halAut[$i][$cstXI].'-'.$idFic.'\');"><img width=\'12px\' alt=\'Supprimer l\'idHAL\' src=\'./img/supprimer.jpg\'></a></span><br>';
+		if($halAut[$i][$cstXS] != "") {
+			echo '<span id="Txt'.$halAut[$i][$cstXS].'-'.$idFic.'">Supprimer l\'idHAL '.$halAut[$i][$cstXS].'</span> <span id="Vu'.$halAut[$i][$cstXS].'-'.$idFic.'"><a style="cursor:pointer;" onclick="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'supprimerIdHAL\', pos: '.$i.', valeur: \''.$halAut[$i][$cstXS].'\'}); majokIdHAL(\''.$halAut[$i][$cstXS].'-'.$idFic.'\');"><img width=\'12px\' alt=\'Supprimer l\'idHAL\' src=\'./img/supprimer.jpg\'></a></span><br>';
 		}
 		//Si pas d'idHAL et si id auteur existe, afficher l'id
 		if($halAut[$i][$cstIS] == "" && $halAut[$i][$cstDI] != "") {
@@ -622,7 +599,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		$ajtAff = "~";//Pour éviter d'afficher 2 fois des affiliations > méthode 1 / méthode 2 > avec ou sans prénom/nom
 		$ajtAffDD = "~";//Drag and drop > Pour éviter de prendre en compte 2 fois des affiliations > méthode 1 / méthode 2 > avec ou sans prénom/nom
 		for($j = 0; $j < count($halAff); $j++) {
-			if($halAut[$i][$cstAN] != "" && stripos($halAut[$i][$cstAN], $halAff[$j][$cstLA]) !== false && strpos($ajtAff, $halAff[$j][$cstNA]) === false && (($halAut[$i][$cstFN] == $halAff[$j][$cstNF] && $halAut[$i][$cstLN] == $halAff[$j][$cstNL]) || ($halAff[$j][$cstNF] == "" && $halAff[$j][$cstNL] == ""))) {
+			if($halAut[$i][$cstAN] != "" && stripos($halAut[$i][$cstAN], $halAff[$j][$cstLA]) !== false && strpos($ajtAff, $halAff[$j][$cstNA]) === false && (($halAut[$i][$cstFN] == $halAff[$j][$cstFN] && $halAut[$i][$cstLN] == $halAff[$j][$cstLN]) || ($halAff[$j][$cstFN] == "" && $halAff[$j][$cstLN] == ""))) {
 				if($halAff[$j]['valid'] == "VALID") {$txtcolor = '#339966';}
 				if($halAff[$j]['valid'] == "OLD") {$txtcolor = '#ff6600';}
 				$ajtAff .= $halAff[$j][$cstNA]."~";
@@ -633,7 +610,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		
 		//Drag and drop
 		for($j = 0; $j < count($halAff); $j++) {
-			if($halAut[$i][$cstAN] != "" && stripos($halAut[$i][$cstAN], $halAff[$j][$cstLA]) !== false && strpos($ajtAffDD, $halAff[$j][$cstNA]) === false && (($halAut[$i][$cstFN] == $halAff[$j][$cstNF] && $halAut[$i][$cstLN] == $halAff[$j][$cstNL]) || ($halAff[$j][$cstNF] == "" && $halAff[$j][$cstNL] == ""))) {
+			if($halAut[$i][$cstAN] != "" && stripos($halAut[$i][$cstAN], $halAff[$j][$cstLA]) !== false && strpos($ajtAffDD, $halAff[$j][$cstNA]) === false && (($halAut[$i][$cstFN] == $halAff[$j][$cstFN] && $halAut[$i][$cstLN] == $halAff[$j][$cstLN]) || ($halAff[$j][$cstFN] == "" && $halAff[$j][$cstLN] == ""))) {
 				$ajtAffDD .= $halAff[$j][$cstNA]."~";
 				echo '<script type="text/javascript">';
 				echo '	document.querySelector(\'[id="aut'.$i.$cstHA.$j.'-'.$idFic.'"]\').addEventListener(\'dragstart\', function(e){';

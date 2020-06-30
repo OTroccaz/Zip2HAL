@@ -2,46 +2,7 @@
 include "./Zip2HAL_nodes.php";
 include "./Zip2HAL_codes_pays.php";
 include "./Zip2HAL_codes_langues.php";
-
-//Définir des constantes au lieu de dupliquer des littéraux
-$cstVal = "valeur";
-$cstEX = "exact";
-$cstCC = "classCode";
-$cstAM = "amont";
-$cstXL = "xml:lang";
-$cstAN = "analytic";
-$cstTI = "title";
-$cstAU = "author";
-$cstTN = "tagName";
-$cstLI = "licence";
-$cstNO = "nonodevalue";
-$cstDP = "datePub";
-$cstIM = "imprint";
-$cstDE = "dateEpub";
-$cstKE = "keywords";
-$cstAB = "abstract";
-$cstPD = "profileDesc";
-$cstMO = "monogr";
-$cstLE = "level";
-$cstNS = "notesStmt";
-$cstBS = "biblScope";
-$cstEI = "eissn";
-$cstME = "meeting";
-$cstST = "start";
-$cstED = "editor";
-$cstVO = "volume";
-$cstIS = "issue";
-$cstFU = "funder";
-$cstTS = "titleStmt";
-$cstLO = "listOrg";
-$cstPR = "projects";
-$cstXI = "xml:id";
-$cstNT = "notation";
-$cstID = "idhal";
-$cstSG = "string";
-$cstNU = "numeric";
-$cstPE = "persName";
-$cstAF = "affiliation";
+include "./Zip2HAL_constantes.php";
 
 $halID = "";
 
@@ -79,17 +40,17 @@ if ($action == "domaine") {
 
 //Titre
 if ($action == "titre") {
-	deleteNode($xml, $cstAN, $cstTI, 0, $cstXL, $codeLang, "", "", $cstEX);
+	deleteNode($xml, $cstAY, $cstTI, 0, $cstXL, $codeLang, "", "", $cstEX);
 	$xml->save($nomfic);
-	insertNode($xml, $valeur, $cstAN, $cstAU, 0, $cstTI, $cstXL, $codeLang, "", "", "iB", $cstTN, "");
+	insertNode($xml, $valeur, $cstAY, $cstAU, 0, $cstTI, $cstXL, $codeLang, "", "", "iB", $cstTN, "");
 	$xml->save($nomfic);
 }
 
 //Titre traduit
 if ($action == "titreT") {
-	deleteNode($xml, $cstAN, $cstTI, 0, $cstXL, "en", "", "", $cstEX);
+	deleteNode($xml, $cstAY, $cstTI, 0, $cstXL, "en", "", "", $cstEX);
 	$xml->save($nomfic);
-	insertNode($xml, $valeur, $cstAN, $cstAU, 0, $cstTI, $cstXL, "en", "", "", "iB", $cstTN, "");
+	insertNode($xml, $valeur, $cstAY, $cstAU, 0, $cstTI, $cstXL, "en", "", "", "iB", $cstTN, "");
 	$xml->save($nomfic);
 }
 
@@ -139,9 +100,9 @@ if ($action == "language") {
 	foreach($elts as $elt) {
 		if ($elt->hasAttribute($cstXL)) {
 			if ($titreOK == "non") {//Le titre est parfois présent plusieurs fois
-				deleteNode($xml, $cstAN, $cstTI, 0, "", "", "", "", $cstEX);
+				deleteNode($xml, $cstAY, $cstTI, 0, "", "", "", "", $cstEX);
 				$xml->save($nomfic);
-				insertNode($xml, $elt->nodeValue, $cstAN, $cstAU, 0, $cstTI, $cstXL, $language, "", "", "iB", $cstTN, "");
+				insertNode($xml, $elt->nodeValue, $cstAY, $cstAU, 0, $cstTI, $cstXL, $language, "", "", "iB", $cstTN, "");
 			}
 		}
 	}
@@ -406,10 +367,10 @@ if ($action == $cstVO) {
 }
 
 //Numéro
-if ($action == $cstIS) {
-	deleteNode($xml, $cstIM, $cstBS, 0, "unit", $cstIS, "", "", $cstEX);
+if ($action == $cstISS) {
+	deleteNode($xml, $cstIM, $cstBS, 0, "unit", $cstISS, "", "", $cstEX);
 	$xml->save($nomfic);
-	insertNode($xml, $valeur, $cstIM, "date", 0, $cstBS, "unit", $cstIS, "", "", "iB", $cstTN, "");
+	insertNode($xml, $valeur, $cstIM, "date", 0, $cstBS, "unit", $cstISS, "", "", "iB", $cstTN, "");
 	$xml->save($nomfic);
 }
 
