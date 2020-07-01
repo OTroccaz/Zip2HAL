@@ -817,6 +817,8 @@ if ($action == "statistiques") {
 	$typDoc = $_POST["typDoc"];
 	$titreNot = $_POST["titreNot"];
 	$datePub = $_POST[$cstDP];
+	$login = $_POST["login"];
+	$team = $_POST["team"];
 	$Fnm = "./Zip2HAL_actions.php";
 	include $Fnm;
 	array_multisort($ACTIONS_LISTE);
@@ -826,10 +828,12 @@ if ($action == "statistiques") {
 		if ($act != "") {
 			$ajout = count($ACTIONS_LISTE);
 			$ACTIONS_LISTE[$ajout]["quand"] = time();
+			$ACTIONS_LISTE[$ajout]["team"] = $team;
 			$ACTIONS_LISTE[$ajout][$cstVal] = $valeur.".xml";
 			$ACTIONS_LISTE[$ajout]["titre"] = $titreNot;
 			$ACTIONS_LISTE[$ajout]["type"] = $typDoc;
 			$ACTIONS_LISTE[$ajout]["annee"] = $datePub;
+			$ACTIONS_LISTE[$ajout]["login"] = $login;
 			$ACTIONS_LISTE[$ajout][$cstID] = $idTEI;
 		}
 	}
@@ -851,15 +855,13 @@ if ($action == "statistiques") {
 		$chaine .= '"'.$cstID.'"=>"'.$ACTIONS_LISTE[$i][$cstID].'")';
 		if ($i != $total-1) {$chaine .= ',';}
 		$chaine .= chr(13);
-		//session 1 day test
-		//$hier = time() - 86400;
-		//session 7 days test
-		//$hier = time() - 604800;
-		//if ($ACTIONS_LISTE[$i]["quand"] > $hier) {
+		//session 6 mois test
+		$hier = time() - 15552000;
+		if ($ACTIONS_LISTE[$i]["quand"] > $hier) {
 			fwrite($inF,$chaine);
-		//}else{
-			//$i -= 1;
-		//}
+		}else{
+			$i -= 1;
+		}
 	}
 	$chaine = ');'.chr(13);
 	$chaine .= '?>';

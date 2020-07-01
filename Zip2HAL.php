@@ -7,6 +7,7 @@ if(strpos($_SERVER['HTTP_HOST'], '127.0.0.1') !== false || strpos($_SERVER['HTTP
   $HAL_PASSWD = $pass;
 }else{
   require_once('./CAS_connect.php');
+	$HAL_USER = phpCAS::getUser();
 }
 
 //Avant tout, vérification de l'étape de chargement du fichier zip des TEI xml OverHAL

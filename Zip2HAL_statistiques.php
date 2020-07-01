@@ -52,28 +52,32 @@ Statistiques Zip2HAL
 <br>
 <table class='table table-striped table-bordered table-hover;' aria-describedby='Statistiques Zip2HAL'>
 <tr>
-<th scope='col' style='text-align: center; background-color: #eeeeee; color: #999999;'><strong>Date du dépôt</strong></td>
-<th scope='col' style='text-align: center; background-color: #eeeeee; color: #999999;'><strong>Nom du fichier XML</strong></td>
-<th scope='col' style='text-align: center; background-color: #eeeeee; color: #999999;'><strong>Titre</strong></td>
-<th scope='col' style='text-align: center; background-color: #eeeeee; color: #999999;'><strong>Type</strong></td>
-<th scope='col' style='text-align: center; background-color: #eeeeee; color: #999999;'><strong>Année</strong></td>
-<th scope='col' style='text-align: center; background-color: #eeeeee; color: #999999;'><strong>IdHAL</strong></td>
-<th scope='col' style='text-align: center; background-color: #eeeeee; color: #999999;'><strong>Lien HAL</strong></td>
+<th scope='col' style='text-align: center; background-color: #eeeeee; color: #999999;'><strong>Date du dépôt</strong></th>
+<th scope='col' style='text-align: center; background-color: #eeeeee; color: #999999;'><strong>Code collection</strong></th>
+<th scope='col' style='text-align: center; background-color: #eeeeee; color: #999999;'><strong>Nom du fichier XML</strong></th>
+<th scope='col' style='text-align: center; background-color: #eeeeee; color: #999999;'><strong>Titre</strong></th>
+<th scope='col' style='text-align: center; background-color: #eeeeee; color: #999999;'><strong>Type</strong></th>
+<th scope='col' style='text-align: center; background-color: #eeeeee; color: #999999;'><strong>Année</strong></th>
+<th scope='col' style='text-align: center; background-color: #eeeeee; color: #999999;'><strong>Utilisateur</strong></th>
+<th scope='col' style='text-align: center; background-color: #eeeeee; color: #999999;'><strong>IdHAL</strong></th>
+<th scope='col' style='text-align: center; background-color: #eeeeee; color: #999999;'><strong>Lien HAL</strong></th>
 </tr>
 
 <?php
 foreach($ACTIONS_LISTE as $act) {
 	echo '<tr>';
-	echo '<td>'.date("d/m/Y", $act["quand"]).'</td>';
-	echo '<td>'.$act["valeur"].'</td>';
-	echo '<td>'.$act["titre"].'</td>';
-	echo '<td>'.$act["type"].'</td>';
-	echo '<td>'.$act["annee"].'</td>';
-	echo '<td>'.$act[$cstID].'</td>';
+	echo '<td>'.date("d/m/Y", $act["quand"]).'</th>';
+	echo '<td>'.$act["team"].'</th>';
+	echo '<td>'.$act["valeur"].'</th>';
+	echo '<td>'.$act["titre"].'</th>';
+	echo '<td>'.$act["type"].'</th>';
+	echo '<td>'.$act["annee"].'</th>';
+	echo '<td>'.$act["login"].'</th>';
+	echo '<td>'.$act[$cstID].'</th>';
 	if($act[$cstID] != "") {
-		echo '<td><a target="_blank" href="https://hal.archives-ouvertes.fr/'.$act[$cstID].'">Lien HAL</a></td>';
+		echo '<td><a target="_blank" href="https://hal.archives-ouvertes.fr/'.$act[$cstID].'">Lien HAL</a></th>';
 	}else{
-		echo '<td>&nbsp;</td>';
+		echo '<td>&nbsp;</th>';
 	}
 	echo '</tr>';
 }
