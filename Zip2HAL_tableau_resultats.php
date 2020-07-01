@@ -206,12 +206,10 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 			echo '<p class="form-inline">Audience* : ';
 			echo '<select id="audience-'.$idFic.'" name="audience" class="form-control" style="height: 18px; padding: 0px; width:150px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'audience\', valeur: $(this).val()});">>';
 			$valAud = $elt->getAttribute("n");
-			if($valAud == 1) {$txt = $cstSE; $testMetaA = "ok";}else{$txt = "";}
-			echo '<option '.$txt.' value="1">Internationale</option>';
 			if($valAud == 2) {$txt = $cstSE; $testMetaA = "ok";}else{$txt = "";}
-			echo '<option '.$txt.' value="2">Nationale</option>';
-			if($valAud == 3) {$txt = $cstSE;}else{$txt = "";}
-			echo '<option '.$txt.' value="3">Non renseignée</option>';
+			echo '<option '.$txt.' value="2">Internationale</option>';
+			if($valAud == 3) {$txt = $cstSE; $testMetaA = "ok";}else{$txt = "";}
+			echo '<option '.$txt.' value="3">Nationale</option>';
 			echo '</select></p>';
 		}
 		
@@ -656,6 +654,19 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	$message = "";
 	if(empty($tabMetaMQ[$nomfic])) {
 		$maj = "oui";
+	}
+	
+	//Avant validation du TEI, il faut supprimer toutes les affiliations locales qui peuvent persister (<affiliation ref="#localStruct-Affx"/>
+	$auts = $xml->getElementsByTagName($cstAU);
+	foreach($auts as $aut) {
+		if ($aut->hasChildNodes()) {
+			foreach($aut->childNodes as $item) {
+				if ($item->nodeName == "affiliation" && $item->hasAttribute("ref") && strpos($item->getAttribute("ref"), "#localStruct-Aff") !== false) {//Affiliation locale
+					$item->parentNode->removeChild($item);
+					$xml->save($nomfic);
+				}
+			}
+		}
 	}
 	
 	//Validation du TEI
