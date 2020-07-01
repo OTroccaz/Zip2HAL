@@ -657,17 +657,19 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	}
 	
 	//Avant validation du TEI, il faut supprimer toutes les affiliations locales qui peuvent persister (<affiliation ref="#localStruct-Affx"/>
-	$auts = $xml->getElementsByTagName($cstAU);
-	foreach($auts as $aut) {
-		if ($aut->hasChildNodes()) {
-			foreach($aut->childNodes as $item) {
-				if ($item->nodeName == "affiliation" && $item->hasAttribute("ref") && strpos($item->getAttribute("ref"), "#localStruct-Aff") !== false) {//Affiliation locale
-					$item->parentNode->removeChild($item);
-					$xml->save($nomfic);
-				}
-			}
+	$domArray = array();
+	$affs = $xml->getElementsByTagName($cstAF);
+	foreach($affs as $aff) {
+		if ($aff->hasAttribute("ref") && strpos($aff->getAttribute("ref"), "localStruct") !== false) {//Affiliation locale
+			//Enregistrement de l'affiliation locale
+			$domArray[] = $aff;
 		}
 	}
+	//Suppression des affiliations locales
+	foreach($domArray as $node){ 
+		$node->parentNode->removeChild($node);
+	}
+	$xml->save($nomfic);
 	
 	//Validation du TEI
 	if($maj == "oui") {
