@@ -59,7 +59,7 @@ Statistiques Zip2HAL
 <th scope='col' style='text-align: center; background-color: #eeeeee; color: #999999;'><strong>Type</strong></th>
 <th scope='col' style='text-align: center; background-color: #eeeeee; color: #999999;'><strong>Année</strong></th>
 <th scope='col' style='text-align: center; background-color: #eeeeee; color: #999999;'><strong>Utilisateur</strong></th>
-<th scope='col' style='text-align: center; background-color: #eeeeee; color: #999999;'><strong>IdHAL</strong></th>
+<th scope='col' style='text-align: center; background-color: #eeeeee; color: #999999;'><strong>Halid</strong></th>
 <th scope='col' style='text-align: center; background-color: #eeeeee; color: #999999;'><strong>Lien HAL</strong></th>
 </tr>
 

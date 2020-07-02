@@ -821,7 +821,7 @@ if ($action == "statistiques") {
 	$team = $_POST["team"];
 	$Fnm = "./Zip2HAL_actions.php";
 	include $Fnm;
-	array_multisort($ACTIONS_LISTE);
+	array_multisort($ACTIONS_LISTE, SORT_DESC);
 
 	$tabAct = explode("~", $action);
 	foreach ($tabAct as $act) {
@@ -838,6 +838,8 @@ if ($action == "statistiques") {
 		}
 	}
 	$total = count($ACTIONS_LISTE);
+	
+	array_multisort($ACTIONS_LISTE, SORT_DESC);
 
 	$inF = fopen($Fnm,"w");
 	fseek($inF, 0);
@@ -848,10 +850,12 @@ if ($action == "statistiques") {
 	foreach($ACTIONS_LISTE AS $i => $valeur) {
 		$chaine = $i.' => array(';
 		$chaine .= '"quand"=>"'.$ACTIONS_LISTE[$i]["quand"].'", ';
+		$chaine .= '"team"=>"'.$ACTIONS_LISTE[$i]["team"].'", ';
 		$chaine .= '"'.$cstVal.'"=>"'.$ACTIONS_LISTE[$i][$cstVal].'", ';
 		$chaine .= '"titre"=>"'.$ACTIONS_LISTE[$i]["titre"].'", ';
 		$chaine .= '"type"=>"'.$ACTIONS_LISTE[$i]["type"].'", ';
 		$chaine .= '"annee"=>"'.$ACTIONS_LISTE[$i]["annee"].'", ';
+		$chaine .= '"login"=>"'.$ACTIONS_LISTE[$i]["login"].'", ';
 		$chaine .= '"'.$cstID.'"=>"'.$ACTIONS_LISTE[$i][$cstID].'")';
 		if ($i != $total-1) {$chaine .= ',';}
 		$chaine .= chr(13);
@@ -867,7 +871,7 @@ if ($action == "statistiques") {
 	$chaine .= '?>';
 	fwrite($inF,$chaine);
 	fclose($inF);
-	array_multisort($ACTIONS_LISTE);
+	array_multisort($ACTIONS_LISTE, SORT_DESC);
 }
 
 ?>
