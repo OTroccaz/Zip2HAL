@@ -25,6 +25,29 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	echo '<span><a style="cursor:pointer;" onclick="afficacherRec(\'2\', '.$idFic.')";>Recherche idHAL/docid</a><br>';
 	echo '<span id="Rrec-2-'.$idFic.'" style="display: none;">';
 	
+	//Recherche des noeuds auteur vide pour les supprimer
+	$auts = $xml->getElementsByTagName("author");
+	foreach($auts as $aut) {
+		$prenom = "";
+		$nom = "";
+		foreach($aut->childNodes as $elt) {
+			if($elt->nodeName == "persName") {
+				foreach($elt->childNodes as $per) {
+					if($per->nodeName == "forename") {
+						$prenom = $per->nodeValue;
+					}
+					if($per->nodeName == "surname") {
+						$nom = $per->nodeValue;
+					}
+				}
+			}
+		}
+		if(trim($prenom) == "" && trim($nom) == "") {
+			$aut->parentNode->removeChild($aut);
+			$xml->save($nomfic);
+		}
+	}
+	
 	$auts = $xml->getElementsByTagName("author");
 	foreach($auts as $aut) {
 		//Initialisation des variables
@@ -32,6 +55,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		$xmlIdi[$iAut] = "";
 		$affAut[$iAut] = "";
 		$melAut[$iAut] = "";
+		
 		foreach($aut->childNodes as $elt) {
 			//Prénom/Nom
 			if($elt->nodeName == "persName") {
