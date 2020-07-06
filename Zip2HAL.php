@@ -262,7 +262,13 @@ if(isset($_POST[$soumis])) {
 			}
 			if($datePub != "") {$special = "%20AND%20producedDateY_i:(".$datePub1."%20OR%20".$datePub."%20OR%20".$datePub2.")";}else{$special = "";}
 			
-			$reqAPI = "https://api.archives-ouvertes.fr/search/?fq=title_t:%22".strtolower($tabTit[0])."*%22".$special."&rows=10000&fl=halId_s,doiId_s,title_s,subTitle_s,docType_s";
+			//Quand on a que le titre et pas le DOI, il faut trouver une correspondance exacte sur tout le titre pour considérer qu'il s'agit d'un doublon
+			if($doiTEI != "") {
+				$reqAPI = "https://api.archives-ouvertes.fr/search/?fq=title_t:%22".strtolower($tabTit[0])."*%22".$special."&rows=10000&fl=halId_s,doiId_s,title_s,subTitle_s,docType_s";
+			}else{
+				$reqAPI = "https://api.archives-ouvertes.fr/search/?fq=title_t:%22".$titTEI."*%22".$special."&rows=10000&fl=halId_s,doiId_s,title_s,subTitle_s,docType_s";
+				$reqAPI = str_replace(" ", "%20", $reqAPI);
+			}
 			$contents = file_get_contents($reqAPI);
 			$results = json_decode($contents);
 			$numFound = 0;

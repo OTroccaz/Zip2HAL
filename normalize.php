@@ -4,6 +4,7 @@ function normalize($st) {
     //return preg_replace('/\W+/', '', $st);
     $st = strtr($st,' ()"-!?[]{}:,;./*+$^=\'\\','                       ');
     $st = preg_replace('/\s+/', '', $st);
+		
 		$utf8 = array(
 			/* à répéter pour chaque caractère accentué possible */
 			'/[æǽ]/u' => 'ae',
@@ -15,7 +16,7 @@ function normalize($st) {
 			'/[ḃб]/u' => 'b',
 			'/[ḂБ]/u' => 'B',
 			'/[çćĉċčц]/u' => 'c',
-			'/[ÇĆĈĊČЦ]/' => 'C',
+			'/[ÇĆĈĊČЦ]/u' => 'C',
 			'/[ďḋđдð]/u' => 'd',
 			'/[ĎḊĐД]/u' => 'D',
 			'/[éèêëēĕėęěэ]/u' => 'e',
@@ -37,7 +38,7 @@ function normalize($st) {
 			'/[ṁм]/u' => 'm',
 			'/[Ṁ]/u' => 'M',
 			'/[ñńňņнŉŋ]/u' => 'n',
-			'/[ÑŃŇŅŊ]/' => 'N',
+			'/[ÑŃŇŅŊ]/u' => 'N',
 			'/[óòôõöőøōŏơǿό]/u' => 'o',
 			'/[ÓÒÔÕÖŐØŌŎƠǾΌ]/u' => 'O',
 			'/[ṗп]/u' => 'p',
