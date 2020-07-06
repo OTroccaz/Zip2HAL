@@ -243,7 +243,7 @@ if(isset($_POST[$soumis])) {
 			foreach($typs as $typ) {
 				if($typ->hasAttribute("scheme") && $typ->getAttribute("scheme") == 'halTypology') {$typTEI = $typ->getAttribute("n");}
 			}
-			$enctitTEI = normalize(utf8_encode(mb_strtolower(utf8_decode($titTEI))));
+			$enctitTEI = mb_strtolower(normalize($titTEI));
 			
 			//Récupération du premier mot du titre pour limiter la recherche API
 			$tabTit = explode(' ', $titTEI);

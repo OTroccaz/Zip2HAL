@@ -35,7 +35,7 @@ if($numFound == 0) {
 			$posi = strpos($entry->title_s[0], "[")+1;
 			$posf = strpos($entry->title_s[0], "]");
 			$tradTitle = substr($entry->title_s[0], $posi, $posf-$posi);
-			$encodedTitle = normalize(utf8_encode(mb_strtolower($tradTitle)));
+			$encodedTitle = mb_strtolower(normalize($tradTitle));
 		}else{
 			//Y-a-t-il un sous-titre ?
 			$titlePlus = $entry->title_s[0];
@@ -43,7 +43,7 @@ if($numFound == 0) {
 				$titreInit = $titlePlus;
 				$titlePlus .= " : ".$entry->subTitle_s[0];
 			}
-			$encodedTitle = normalize(utf8_encode(mb_strtolower(utf8_decode($titlePlus))));
+			$encodedTitle = mb_strtolower(normalize($titlePlus));
 		}
 		
 		//On compare les titres normalisés
@@ -84,7 +84,7 @@ if($numFound == 0) {
 						$posi = strpos($entDbl->title_s[0], "[")+1;
 						$posf = strpos($entDbl->title_s[0], "]");
 						$tradTitleDbl = substr($entDbl->title_s[0], $posi, $posf-$posi);
-						$encodedTitleDbl = normalize(utf8_encode(mb_strtolower($tradTitleDbl)));
+						$encodedTitleDbl = mb_strtolower(normalize($tradTitleDbl));
 					}else{
 						//Y-a-t-il un sous-titre ?
 						$titlePlusDbl = $entDbl->title_s[0];
@@ -92,7 +92,7 @@ if($numFound == 0) {
 							$titreInitDbl = $titlePlusDbl;
 							$titlePlusDbl .= " : ".$entDbl->subTitle_s[0];
 						}
-						$encodedTitleDbl = normalize(utf8_encode(mb_strtolower(utf8_decode($titlePlusDbl))));
+						$encodedTitleDbl = mb_strtolower(normalize($titlePlusDbl));
 						
 						//On récupère le type de document
 						$docTEIDbl = $entDbl->docType_s;
