@@ -6,6 +6,7 @@ echo '<a target="_blank" href="'.$reqAPI.'">URL requête API HAL</a><br>';
 if($numFound == 0) {			
 	echo 'Aucune notice trouvée dans HAL, donc, pas de doublon';
 	$typDbl = "";
+	$idTEI = "";
 }else{
 	$cpt = 1;
 	$dbl = 0;

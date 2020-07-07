@@ -274,18 +274,11 @@ if ($action == $cstEI) {
 		$pays = strtoupper($countries[$valeur]);
 		deleteNode($xml, $cstME, "country", 0, "", "", "", "", $cstEX);
 		$xml->save($nomfic);
-		//insertNode($xml, $cstNO, $cstME, "", 0, "country", "key", $pays, "", "", "aC", $cstTN, "");
-		insertNode($xml, $cstNO, $cstME, "", 0, "country", "key", "UK", "", "", "aC", $cstTN, "");
+		$elts = $xml->getElementsByTagName("meeting");
+		$elt = $xml->createElement("country");
+		$elt->setAttribute("key", $pays);
+		$elts->item(0)->appendChild($elt);
 		$xml->save($nomfic);
-		$elts = $xml->getElementsByTagName("country");
-		foreach($elts as $elt) {
-			if ($elt->hasAttribute("key") && $elt->getAttribute("key") == "UK") {
-				$elt->removeAttribute("key");
-				$xml->save($nomfic);
-				$elt->setAttribute("key", $pays);
-				$xml->save($nomfic);
-			}
-		}
 	}
 
 	//COMM ou POSTER > ISBN de la conférence
