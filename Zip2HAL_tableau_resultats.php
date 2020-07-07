@@ -335,7 +335,10 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		foreach($elts as $elt) {
 			//ISBN
 			if($elt->hasAttribute("type") && $elt->getAttribute("type") == "isbn") {$isbnConf = $elt->nodeValue;}
-			//Proceedings
+			//Proceedings O/N
+			//Par défaut, les proceedings sont renseignés comme présents
+			$txtPO = $cstCH;
+			$txtPN = "";
 			if($elt->hasAttribute("type") && $elt->getAttribute("type") == "proceedings") {
 				if($elt->nodeValue == "Yes") {$txtPO = $cstCH; $txtPN = "";}
 				if($elt->nodeValue == "No") {$txtPO = ""; $txtPN = $cstCH;}
@@ -353,6 +356,8 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		$elts = $xml->getElementsByTagName("note");
 		foreach($elts as $elt) {
 			//Conférence invitée O/N
+			//Par défaut, la conférence est considérée comme conférence non invitée
+			$inviConf = "No";
 			if($elt->hasAttribute("type") && $elt->getAttribute("type") == "invited") {
 				if($elt->nodeValue == 0) {$inviConf = "No";}
 				if($elt->nodeValue == 1) {$inviConf = "Yes";}
@@ -705,9 +710,10 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	}else{
 		$titreNotS = str_replace("'", "\'", $titreNot);
 		$titreNotS = str_replace('"', '\"', $titreNotS);
+		$titreNotS = str_replace(" ", "%20", $titreNotS);
 		$idNomfic = str_replace(array(".xml", "./XML/"), "", $nomfic);
 		$lienMAJ = "./Zip2HALModif.php?action=MAJ&Id=".$idNomfic."&portail=".$racine;
-		echo '<td><center><span id=\'validerTEI-'.$idFic.'\'>Après avoir complété les champs manquants, cliquez sur l\'icône ci-dessous afin de vérifier la validité du TEI pour pouvoir ensuite l\'importer dans HAL.<br><a style="cursor:pointer;" onclick="schemaVal('.$idFic.'); afficherPopupAttente(); goto(\'Zip2HAL_schema_validate.php?idFic='.$idFic.'&nomfic='.$nomfic.'&idNomfic='.$idNomfic.'&idTEI='.$idTEI.'&typDoc='.$typDoc.'&titreNot='.$titreNotS.'&datePub='.$datePub.'&portail='.$racine.'&login='.$HAL_USER.'&team='.$team.'\');"><img alt=\'Vérifier la validité du TEI\' src=\'./img/question.jpg\'></a></span></center></td>';
+		echo '<td><center><span id=\'validerTEI-'.$idFic.'\'>Après avoir complété les champs manquants, cliquez sur l\'icône ci-dessous afin de vérifier la validité du TEI pour pouvoir ensuite l\'importer dans HAL.<br><a style="cursor:pointer;" onclick="schemaVal('.$idFic.'); afficherPopupAttente(); goto(\'Zip2HAL_schema_validate.php?idFic='.$idFic.'&nomfic='.$nomfic.'&idNomfic='.$idNomfic.'&idTEI='.$idTEI.'&typDoc='.$typDoc.'&datePub='.$datePub.'&portail='.$racine.'&login='.$HAL_USER.'&team='.$team.'&titreNot='.$titreNotS.'\');"><img alt=\'Vérifier la validité du TEI\' src=\'./img/question.jpg\'></a></span></center></td>';
 	}
 	
 	//Importer dans HAL
