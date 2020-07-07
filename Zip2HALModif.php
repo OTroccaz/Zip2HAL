@@ -206,6 +206,47 @@ try {
     }
     //exit ("<b>OK, modification effectuée :</b> id=>$id,passwd=>$pss,link=> $link ou $linkpreprod \n");
     //exit ("<b>OK, modification effectuée :</b> id=>$id,passwd=>$pss,link=> $link \n");
+		
+		//Récupération du halid pour stockage dans le fichier de statistiques
+		$halId = str_replace(array("https://hal.archives-ouvertes.fr/", "v1"), "", $linkAttribute['href']);
+		$Fnm = "./Zip2HAL_actions.php";
+		include $Fnm;
+		$inF = fopen($Fnm,"w");
+		fseek($inF, 0);
+		$chaine = "";
+		$chaine .= '<?php'.chr(13);
+		$chaine .= '$ACTIONS_LISTE = array('.chr(13);
+		fwrite($inF,$chaine);
+		foreach($ACTIONS_LISTE AS $i => $valeur) {
+			$chaine = $i.' => array(';
+			$chaine .= '"quand"=>"'.$ACTIONS_LISTE[$i]["quand"].'", ';
+			$chaine .= '"team"=>"'.$ACTIONS_LISTE[$i]["team"].'", ';
+			$chaine .= '"'.$cstVal.'"=>"'.$ACTIONS_LISTE[$i][$cstVal].'", ';
+			$chaine .= '"titre"=>"'.$ACTIONS_LISTE[$i]["titre"].'", ';
+			$chaine .= '"type"=>"'.$ACTIONS_LISTE[$i]["type"].'", ';
+			$chaine .= '"annee"=>"'.$ACTIONS_LISTE[$i]["annee"].'", ';
+			$chaine .= '"login"=>"'.$ACTIONS_LISTE[$i]["login"].'", ';
+			if ($ACTIONS_LISTE[$i][$cstVal] == $idNomfic.".xml") {
+				$chaine .= '"'.$cstID.'"=>"'.$halId.'")';
+			}else{
+				$chaine .= '"'.$cstID.'"=>"'.$ACTIONS_LISTE[$i][$cstID].'")';
+			}
+			if ($i != $total-1) {$chaine .= ',';}
+			$chaine .= chr(13);
+			//session 6 mois test
+			$hier = time() - 15552000;
+			if ($ACTIONS_LISTE[$i]["quand"] > $hier) {
+				fwrite($inF,$chaine);
+			}else{
+				$i -= 1;
+			}
+		}
+		$chaine = ');'.chr(13);
+		$chaine .= '?>';
+		fwrite($inF,$chaine);
+		fclose($inF);
+		array_multisort($ACTIONS_LISTE, SORT_DESC);
+		
 		header("Location: ".$linkAttribute['href']);
   } else {
     //var_dump($return);
