@@ -11,6 +11,22 @@ $login = htmlspecialchars($_GET["login"]);
 $team = htmlspecialchars($_GET["team"]);
 $lienMAJ = "./Zip2HALModif.php?action=MAJ&Id=".$idNomfic;
 
+//Correction/bug Ukraine/UA
+$xml = new DOMDocument( "1.0", "UTF-8" );
+$xml->formatOutput = true;
+$xml->preserveWhiteSpace = false;
+$xml->load($nomfic);
+$xml->save($nomfic);
+$elts = $xml->getElementsByTagName("country");
+foreach($elts as $elt) {
+	if($elt->hasAttribute("key") && $elt->getAttribute("key") == "UK") {
+		$elt->removeAttribute("key");
+		$xml->save($nomfic);
+		$elt->setAttribute("key", "UA");
+		$xml->save($nomfic);
+	}
+}
+
 $tst = new DOMDocument();
 $tst->load($nomfic);
 if(!$tst->schemaValidate('./aofr.xsd')) {
