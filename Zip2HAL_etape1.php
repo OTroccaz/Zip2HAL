@@ -30,22 +30,13 @@ if($numFound == 0) {
 		$doublon = "non";
 		
 		//Le titre du fichier HAL sera la clé principale pour rechercher l'article dans HAL, on le simplifie maintenant (minuscules, pas de ponctuation ni d'espaces, etc.)
-		//Le titre intègre-t-il une traduction avec [] ?
-		if(strpos($entry->title_s[0], "[") !== false && strpos($entry->title_s[0], "]") !== false)
-		{
-			$posi = strpos($entry->title_s[0], "[")+1;
-			$posf = strpos($entry->title_s[0], "]");
-			$tradTitle = substr($entry->title_s[0], $posi, $posf-$posi);
-			$encodedTitle = mb_strtolower(normalize($tradTitle));
-		}else{
-			//Y-a-t-il un sous-titre ?
-			$titlePlus = $entry->title_s[0];
-			if(isset($entry->subTitle_s[0])) {
-				$titreInit = $titlePlus;
-				$titlePlus .= " : ".$entry->subTitle_s[0];
-			}
-			$encodedTitle = mb_strtolower(normalize($titlePlus));
+		$titlePlus = $entry->title_s[0];
+		//Y-a-t-il un sous-titre ?
+		if(isset($entry->subTitle_s[0])) {
+			$titreInit = $titlePlus;
+			$titlePlus .= " : ".$entry->subTitle_s[0];
 		}
+		$encodedTitle = mb_strtolower(normalize($titlePlus));
 		
 		//On compare les titres normalisés
 		$idTEI = "";

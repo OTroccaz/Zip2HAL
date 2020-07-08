@@ -541,7 +541,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 }
 
 //DOI
-if(isset($doiTEI)) {echo '<td><a target=\'_blank\' href=\'https://doi.org/'.$doiTEI.'\'><img alt=\'DOI\' src=\'./img/doi.jpg\'></a>';}else{echo $cstSP;}
+if(isset($doiTEI) && $doiTEI != "") {echo '<td><a target=\'_blank\' href=\'https://doi.org/'.$doiTEI.'\'><img alt=\'DOI\' src=\'./img/doi.jpg\'></a>';}else{echo $cstSP;}
 
 if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublon de type TYP > inutile d'afficher les affiliations, la validation du TEI et la possibilité d'import dans HAL
 	echo $cstSP;
