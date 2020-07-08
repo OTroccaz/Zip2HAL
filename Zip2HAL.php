@@ -264,7 +264,8 @@ if(isset($_POST[$soumis])) {
 			
 			//Quand on a que le titre et pas le DOI, il faut trouver une correspondance exacte sur tout le titre pour considérer qu'il s'agit d'un doublon
 			if($doiTEI != "") {
-				$reqAPI = "https://api.archives-ouvertes.fr/search/?fq=title_t:%22".strtolower($tabTit[0])."*%22".$special."&rows=10000&fl=halId_s,doiId_s,title_s,subTitle_s,docType_s";
+				$critere = strtolower($tabTit[0]."%20".$tabTit[1]."%20".$tabTit[2]);
+				$reqAPI = "https://api.archives-ouvertes.fr/search/?fq=title_t:%22".$critere."*%22".$special."&rows=10000&fl=halId_s,doiId_s,title_s,subTitle_s,docType_s";
 			}else{
 				$reqAPI = "https://api.archives-ouvertes.fr/search/?fq=title_t:%22".$titTEI."*%22".$special."&rows=10000&fl=halId_s,doiId_s,title_s,subTitle_s,docType_s";
 				$reqAPI = str_replace(" ", "%20", $reqAPI);
