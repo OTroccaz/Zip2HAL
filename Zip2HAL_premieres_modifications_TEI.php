@@ -102,6 +102,20 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		insertNode($xml, $tabDom[0], "textClass", $cstCC, 0, $cstCC, "scheme", "halDomain", "n", $tabDom[1], "aC", $cstAM, "");
 		$xml->save($nomfic);
 	}
+	
+	//Si présence d'un ISSN, vérification qu'il comporte bien un tiret et ajout éventuel
+	$idns = $xml->getElementsByTagName("idno");
+	foreach($idns as $idn) {
+		if($idn->hasAttribute("type") && $idn->getAttribute("type") == "issn") {
+			if(strpos($idn->nodeValue, "-") === false) {//Pas de tiret
+				$nodVal = substr($idn->nodeValue, 0, 4)."-".substr($idn->nodeValue, 4, 4);
+				deleteNode($xml, $cstMO, "idno", 0, "type", "issn", "", "", $cstEX);
+				$xml->save($nomfic);
+				insertNode($xml, $nodVal, $cstMO, $cstTI, 0, "idno", "type", "issn", "", "", "iB", $cstTN, "");
+				$xml->save($nomfic);
+			}
+		}
+	}
 
 	//Ajout des IdHAL et/ou docid et/ou mail
 	$auts = $xml->getElementsByTagName($cstAU);
