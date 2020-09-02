@@ -107,7 +107,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	$idns = $xml->getElementsByTagName("idno");
 	foreach($idns as $idn) {
 		if($idn->hasAttribute("type") && $idn->getAttribute("type") == "issn") {
-			if(strpos($idn->nodeValue, "-") === false) {//Pas de tiret
+			if(strpos($idn->nodeValue, "-") === false && $idn->nodeValue != "") {//Pas de tiret et ISSN non nul
 				$nodVal = substr($idn->nodeValue, 0, 4)."-".substr($idn->nodeValue, 4, 4);
 				deleteNode($xml, $cstMO, "idno", 0, "type", "issn", "", "", $cstEX);
 				$xml->save($nomfic);
