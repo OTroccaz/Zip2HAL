@@ -425,7 +425,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		if($titrOuv == "") {$tabMetaMQ[$nomfic][] = "le tite de l\'ouvrage";}
 		
 		//Titre de l'ouvrage
-		echo '<p class="form-inline">Titre de l\'ouvrage* : <input type="text" id="titrOuv-'.$idFic.'" name="titrOuv-'.$idFic.'" value="'.$titrOuv.'" class="form-control" style="height: 18px; width:280px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'titrOuv\', valeur: $(this).val()});"></p>';
+		echo '<p class="form-inline">Titre de l\'ouvrage* :<br><input type="text" id="titrOuv-'.$idFic.'" name="titrOuv-'.$idFic.'" value="'.$titrOuv.'" class="form-control" style="height: 18px; width:500px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'titrOuv\', valeur: $(this).val()});"></p>';
 		//Editeur(s) scientifique(s)
 		$ed = 0;
 		foreach($editOuv as $edit) {
