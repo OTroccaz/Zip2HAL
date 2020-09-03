@@ -833,7 +833,7 @@ if ($action == "statistiques") {
 			$ACTIONS_LISTE[$ajout]["quand"] = time();
 			$ACTIONS_LISTE[$ajout]["team"] = $team;
 			$ACTIONS_LISTE[$ajout][$cstVal] = $valeur.".xml";
-			$ACTIONS_LISTE[$ajout]["titre"] = $titreNot;
+			$ACTIONS_LISTE[$ajout]["titre"] = str_replace(array('&quot', '"'), '\'', $titreNot);
 			$ACTIONS_LISTE[$ajout]["type"] = $typDoc;
 			$ACTIONS_LISTE[$ajout]["annee"] = $datePub;
 			$ACTIONS_LISTE[$ajout]["login"] = $login;
