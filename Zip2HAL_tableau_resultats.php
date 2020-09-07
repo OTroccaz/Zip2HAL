@@ -108,7 +108,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	$elts = $xml->getElementsByTagName($cstTI);
 	foreach($elts as $elt) {
 		if($elt->hasAttribute($cstXL) && ($elt->getAttribute($cstXL) == $languages[$lang] || $elt->getAttribute($cstXL) == "")) {
-			$titreNot = str_replace(array("<i>", "</i>"), "", $elt->nodeValue);
+			$titreNot = str_replace(array("<i>", "</i>", "[", "]"), "", $elt->nodeValue);
 			$testMeta = "ok";
 		}
 	}
