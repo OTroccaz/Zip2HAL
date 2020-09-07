@@ -138,10 +138,10 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		}
 	}
 	if($target != "") {//N'afficher les métadonnées de la notice uniquement s'il y en a une
-		echo '<p class="form-inline">Texte intégral : <input type="text" id="notice-'.$idFic.'" name="notice-'.$idFic.'" value="'.$target.'" class="form-control" style="height: 18px; width:350px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'notice\', valeur: $(this).val(), valeur2: $(\'#subtype\').val()});">';
+		echo '<p class="form-inline">Texte intégral : <input type="text" id="notice-'.$idFic.'" name="notice-'.$idFic.'" value="'.$target.'" class="form-control" style="height: 18px; width:350px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'notice\', valeur: $(this).val(), valeur2: $(\'#subtype-'.$idFic.'\').val()});">';
 		if($target != "") {echo ' - <a target="_blank" href="'.$target.'">Lien</a></p>';}
 		//Subtype
-		echo '<p class="form-inline">Type de dépôt : <select id="subtype-'.$idFic.'" name="subtype-'.$idFic.'" class="form-control" style="height: 18px; padding: 0px; width:150px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'notice\', valeur: $(\'#notice\').val(), valeur2: $(this).val()});">';
+		echo '<p class="form-inline">Type de dépôt : <select id="subtype-'.$idFic.'" name="subtype-'.$idFic.'" class="form-control" style="height: 18px; padding: 0px; width:150px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', nomfic : \''.$nomfic.'\', action: \'notice\', valeur: $(\'#notice-'.$idFic.'\').val(), valeur2: $(this).val()});">';
 		if($elt->getAttribute($cstSU) == "author") {$txt = $cstSE;}else{$txt = "";}
 		echo '<option '.$txt.' value="author">author</option>';
 		if($elt->getAttribute($cstSU) == "greenPublisher") {$txt = $cstSE;}else{$txt = "";}
