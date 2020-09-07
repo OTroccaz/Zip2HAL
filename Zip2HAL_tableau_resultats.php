@@ -13,7 +13,7 @@ echo '<td style=\'text-align: center; background-color: #eeeeee; color: #999999;
 echo '<td style=\'text-align: center; background-color: #eeeeee; color: #999999;\'><b>Supprimer</b></td>';
 echo '<td style=\'text-align: center; background-color: #eeeeee; color: #999999;\'><b>Type de document</b></td>';
 echo '<td style=\'text-align: center; background-color: #eeeeee; color: #999999;\'><b>Métadonnées</b></td>';
-echo '<td style=\'text-align: center; background-color: #eeeeee; color: #999999;\'><b>DOI</b></td>';
+echo '<td style=\'text-align: center; background-color: #eeeeee; color: #999999;\'><b>Liens</b></td>';
 echo '<td style=\'text-align: center; background-color: #eeeeee; color: #999999;\'><b>Auteurs* / affiliations</b></td>';
 echo '<td style=\'text-align: center; background-color: #eeeeee; color: #999999;\'><b>Validation du TEI modifié</td>';
 echo '<td style=\'text-align: center; background-color: #eeeeee; color: #999999;\'><b>Importer dans HAL</b></td>';
@@ -100,12 +100,15 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	}
 	echo '</span><br>';
 	
+	//Métadonnées > DOI
+	echo '<p class="form-inline">DOI : <input type="text" id="doi-'.$idFic.'" name="doi-'.$idFic.'" value="'.$doiTEI.'" class="form-control" style="height: 18px; width:300px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'doi\', valeur: $(this).val()});"></p>';
+	
 	//Métadonnées > Titre
 	$titreNot = "";
 	$elts = $xml->getElementsByTagName($cstTI);
 	foreach($elts as $elt) {
 		if($elt->hasAttribute($cstXL) && ($elt->getAttribute($cstXL) == $languages[$lang] || $elt->getAttribute($cstXL) == "")) {
-			$titreNot = $elt->nodeValue;
+			$titreNot = str_replace(array("<i>", "</i>"), "", $elt->nodeValue);
 			$testMeta = "ok";
 		}
 	}
@@ -522,7 +525,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	$resume = "";
 	$elts = $xml->getElementsByTagName("abstract");
 	foreach($elts as $elt) {
-		if($elt->hasAttribute($cstXL)) {$resume = $elt->nodeValue;}
+		if($elt->hasAttribute($cstXL)) {$resume = str_replace(array("<i>", "</i>"), "", $elt->nodeValue);}
 	}
 	echo 'Résumé : <textarea id="abstract-'.$idFic.'" name="abstract-'.$idFic.'" class="textarea form-control" style="width: 500px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'abstract\', valeur: $(this).val(), langue: \''.$lang.'\'});">'.$resume.'</textarea><br>';
 	
@@ -540,8 +543,14 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	//Fin des métadonnées
 }
 
-//DOI
-if(isset($doiTEI) && $doiTEI != "") {echo '<td><a target=\'_blank\' href=\'https://doi.org/'.$doiTEI.'\'><img alt=\'DOI\' src=\'./img/doi.jpg\'></a>';}else{echo $cstSP;}
+//Liens
+echo '<td>';
+	//DOI
+	if(isset($doiTEI) && $doiTEI != "") {echo '<a target=\'_blank\' rel=\'noopener noreferrer\' href=\'https://doi.org/'.$doiTEI.'\'><img alt=\'DOI\' src=\'./img/doi.jpg\'></a>';}
+
+	//PMID
+	if(isset($pmiTEI) && $pmiTEI != "") {echo '<br><a target=\'_blank\' rel=\'noopener noreferrer\' href=\'https://pubmed.ncbi.nlm.nih.gov/'.$pmiTEI.'\'><img alt=\'PMID\' src=\'./img/PubMed.png\'></a>';}
+echo '</td>';
 
 if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublon de type TYP > inutile d'afficher les affiliations, la validation du TEI et la possibilité d'import dans HAL
 	echo $cstSP;

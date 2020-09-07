@@ -38,6 +38,14 @@ if ($action == "domaine") {
 	$xml->save($nomfic);
 }
 
+//DOI
+if ($action == "doi") {
+	deleteNode($xml, "biblStruct", "idno", 0, "type", "doi", "", "", $cstEX);
+	$xml->save($nomfic);
+	insertNode($xml, $valeur, "biblStruct", "monogr", 0, "idno", "type", "doi", "", "", "aC", $cstTN, "");
+	$xml->save($nomfic);
+}
+
 //Titre
 if ($action == "titre") {
 	deleteNode($xml, $cstAY, $cstTI, 0, $cstXL, $codeLang, "", "", $cstEX);
