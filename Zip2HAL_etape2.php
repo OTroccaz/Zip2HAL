@@ -109,6 +109,8 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		$halAut[$iAut][$cstMD] = $melAut[$i];
 		$halAut[$iAut]['mail'] = "";
 		$halAut[$iAut][$cstDI] = "";
+		//Si prénom avec juste une ou plusieurs initiales, les requêtes ne doivent pas être approchantes, i.e. avec *
+		if (strpos($firstName, ".") !== false || strlen($firstName) == 1) {$aster = "";}else{$aster = "";}
 		$firstNameT = strtolower(wd_remove_accents($firstName));
 		$lastNameT = strtolower(wd_remove_accents($lastName));
 		//Si prénom composé, on ne garde que les initiales et on ajuste le test pour qu'il porte aussi uniquement sur l'initiale du premier prénom (J.-B. Le Cam > (j-b* OR j*))
@@ -121,7 +123,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 			$testPre = str_replace(".", "", $firstNameT);
 		}
 		if(strlen(str_replace(".", "", $firstNameT)) == 1 || $testPre != "") {//Juste l'initiale du prénom ou prénom composé dont on a gardé que les initiales
-			$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=firstName_t:".$testPre."*%20AND%20lastName_t:%22".$lastNameT."%22%20AND%20valid_s:%22VALID%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s&sort=valid_s%20desc,docid%20asc";
+			$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=firstName_t:".$testPre.$aster."%20AND%20lastName_t:%22".$lastNameT."%22%20AND%20valid_s:%22VALID%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s&sort=valid_s%20desc,docid%20asc";
 		}else{
 			$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=firstName_t:(%22".$firstNameT."%22%20OR%20%22".substr($firstNameT, 0, 1)."%22)%20AND%20lastName_t:%22".$lastNameT."%22%20AND%20valid_s:%22VALID%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s";
 		}
@@ -189,7 +191,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		
 		if($trouve == 0) {
 			if(strlen(str_replace(".", "", $firstNameT))) {//Juste l'initiale du prénom
-				$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=firstName_t:".str_replace(".", "", $firstNameT)."* AND lastName_t:%22".$lastNameT."%22%20AND%20valid_s:(%22OLD%22%20OR%20%22INCOMING%22)&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s&sort=valid_s desc,docid asc";
+				$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=firstName_t:".str_replace(".", "", $firstNameT).$aster." AND lastName_t:%22".$lastNameT."%22%20AND%20valid_s:(%22OLD%22%20OR%20%22INCOMING%22)&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s&sort=valid_s desc,docid asc";
 			}else{
 				$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=firstName_t:(%22".$firstNameT."%22%20OR%20%22".substr($firstNameT, 0, 1)."%22)%20AND%20lastName_t:%22".$lastNameT."%22%20AND%20valid_s:(%22OLD%22%20OR%20%22INCOMING%22)&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s&sort=valid_s desc,docid asc";
 			}
