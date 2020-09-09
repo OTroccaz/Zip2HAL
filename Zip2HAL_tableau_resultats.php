@@ -549,7 +549,7 @@ echo '<td>';
 	if(isset($doiTEI) && $doiTEI != "") {echo '<a target=\'_blank\' rel=\'noopener noreferrer\' href=\'https://doi.org/'.$doiTEI.'\'><img alt=\'DOI\' src=\'./img/doi.jpg\'></a>';}
 
 	//PMID
-	if(isset($pmiTEI) && $pmiTEI != "") {echo '<br><a target=\'_blank\' rel=\'noopener noreferrer\' href=\'https://pubmed.ncbi.nlm.nih.gov/'.$pmiTEI.'\'><img alt=\'PMID\' src=\'./img/PubMed.png\'></a>';}
+	if(isset($pmiTEI) && $pmiTEI != "") {echo '<br><a target=\'_blank\' rel=\'noopener noreferrer\' href=\'https://pubmed.ncbi.nlm.nih.gov/'.$pmiTEI.'\'><img alt=\'PMID\' src=\'./img/pubmed.png\'></a>';}
 echo '</td>';
 
 if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublon de type TYP > inutile d'afficher les affiliations, la validation du TEI et la possibilité d'import dans HAL
@@ -615,8 +615,10 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 				if($halAff[$j]['valid'] == "VALID") {$txtcolor = '#339966';}
 				if($halAff[$j]['valid'] == "OLD") {$txtcolor = '#ff6600';}
 				$ajtAff .= $halAff[$j][$cstNA]."~";
-				echo '<span id="aut'.$i.$cstHA.$j.'-'.$idFic.'" draggable="true"><font style=\'color: '.$txtcolor.';\'>'.$halAff[$j]['ncplt'].'</font></span>';
-				echo '&nbsp;<span id="Vu-aut'.$i.$cstHA.$j.'-'.$idFic.'"><a style="cursor:pointer;" onclick="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'supprimerAffil\', pos: '.$i.', valeur: \''.$halAff[$j][$cstDI].'\'}); majokAffil(\'aut'.$i.$cstHA.$j.'-'.$idFic.'\', \''.str_replace("'", "\'", $halAff[$j]['ncplt']).'\');"><img width=\'12px\' alt=\'Supprimer l\'affiliation\' src=\'./img/supprimer.jpg\'></a></span><br>';						
+				$halAffVal = str_replace('"', '', $halAff[$j]['ncplt']);
+				$halAffVal = str_replace("'", "\'", $halAffVal);
+				echo '<span id="aut'.$i.$cstHA.$j.'-'.$idFic.'" draggable="true"><font style=\'color: '.$txtcolor.';\'>'.$halAffVal.'</font></span>';
+				echo '&nbsp;<span id="Vu-aut'.$i.$cstHA.$j.'-'.$idFic.'"><a style="cursor:pointer;" onclick="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'supprimerAffil\', pos: '.$i.', valeur: \''.$halAff[$j][$cstDI].'\'}); majokAffil(\'aut'.$i.$cstHA.$j.'-'.$idFic.'\', \''.$halAffVal.'\');"><img width=\'12px\' alt=\'Supprimer l\'affiliation\' src=\'./img/supprimer.jpg\'></a></span><br>';						
 			}
 		}
 		
