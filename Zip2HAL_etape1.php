@@ -64,7 +64,7 @@ if($numFound == 0) {
 			//Doublon trouvé dans HAL > Est-il aussi présent dans la collection et de quel type ?
 			$dbl++;
 			$halId['doublon'][$hId] .= '&nbsp;<a target="_blank" href="https://hal.archives-ouvertes.fr/'.$halId[$hId].'"><img src=\'./img/doublon.jpg\'></a>&nbsp;';
-			$reqDbl = "https://api.archives-ouvertes.fr/search/".$portail."/?fq=collCode_s:%22".$team."%22%20AND%20title_t:%22".strtolower($tabTit[0])."*%22&rows=10000&fl=halId_s,doiId_s,title_s,subTitle_s,docType_s";
+			$reqDbl = "https://api.archives-ouvertes.fr/search/".$portail."/?fq=collCode_s:%22".$team."%22%20AND%20title_t:%22".$critere."*%22&rows=10000&fl=halId_s,doiId_s,title_s,subTitle_s,docType_s";
 			$contDbl = file_get_contents($reqDbl);
 			$resDbl = json_decode($contDbl);
 			$numDbl = 0;
