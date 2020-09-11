@@ -719,7 +719,7 @@ if ($action == "supprimerAuteur") {
 						if ($nompre->nodeName == "surname") {$nom = $nompre->nodeValue;}
 					}
 					if ($prenom == $firstName && $nom == $lastName) {
-						$qui = $xml->getElementsByTagName($cstAU)[$cpt];
+						$qui = $xml->getElementsByTagName($cstAU)->item($cpt);
 						$qui->parentNode->removeChild($qui);
 						break 2;
 					}
