@@ -269,6 +269,7 @@ if(isset($_POST[$soumis])) {
 				$critere = strtolower($tabTit[0]."%20".$tabTit[1]."%20".$tabTit[2]);
 				$reqAPI = "https://api.archives-ouvertes.fr/search/?fq=title_t:%22".$critere."*%22".$special."&rows=10000&fl=halId_s,doiId_s,title_s,subTitle_s,docType_s";
 			}else{
+				$critere = $titTEI;
 				$reqAPI = "https://api.archives-ouvertes.fr/search/?fq=title_t:%22".$titTEI."*%22".$special."&rows=10000&fl=halId_s,doiId_s,title_s,subTitle_s,docType_s";
 				$reqAPI = str_replace(" ", "%20", $reqAPI);
 			}

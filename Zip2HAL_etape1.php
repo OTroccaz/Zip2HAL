@@ -26,25 +26,29 @@ if($numFound == 0) {
 		$halId['doublon'][$hId] = "";
 		$doi = "";
 		$titlePlus = "";
-		$titreInit = $entry->title_s[0];
 		$doublon = "non";
 		
-		//Le titre du fichier HAL sera la clé principale pour rechercher l'article dans HAL, on le simplifie maintenant (minuscules, pas de ponctuation ni d'espaces, etc.)
-		$titlePlus = $entry->title_s[0];
-		//Y-a-t-il un sous-titre ?
-		if(isset($entry->subTitle_s[0])) {
-			$titreInit = $titlePlus;
-			$titlePlus .= " : ".$entry->subTitle_s[0];
-		}
-		$encodedTitle = mb_strtolower(normalize($titlePlus));
-		
-		//On compare les titres normalisés
-		$idTEI = "";
-		if($enctitTEI == $encodedTitle) {
-			$idTEI = $entry->halId_s;
-			$docTEI = $entry->docType_s;
-			$halId[$encodedTitle] = $hId;
-			$doublon = "titre";
+		//Il peut y avoir des titres principaux alternatifs (français/anglais, par exemple)
+		for($tit = 0; $tit < count($entry->title_s); $tit++) {
+			$titreInit = $entry->title_s[$tit];
+			
+			//Le titre du fichier HAL sera la clé principale pour rechercher l'article dans HAL, on le simplifie maintenant (minuscules, pas de ponctuation ni d'espaces, etc.)
+			$titlePlus = $entry->title_s[$tit];
+			//Y-a-t-il un sous-titre ?
+			if(isset($entry->subTitle_s[$tit])) {
+				$titreInit = $titlePlus;
+				$titlePlus .= " : ".$entry->subTitle_s[$tit];
+			}
+			$encodedTitle = mb_strtolower(normalize($titlePlus));
+			
+			//On compare les titres normalisés
+			$idTEI = "";
+			if($enctitTEI == $encodedTitle) {
+				$idTEI = $entry->halId_s;
+				$docTEI = $entry->docType_s;
+				$halId[$encodedTitle] = $hId;
+				$doublon = "titre";
+			}
 		}
 
 		//On compare également les DOI s'ils sont présents
@@ -65,6 +69,7 @@ if($numFound == 0) {
 			$dbl++;
 			$halId['doublon'][$hId] .= '&nbsp;<a target="_blank" href="https://hal.archives-ouvertes.fr/'.$halId[$hId].'"><img src=\'./img/doublon.jpg\'></a>&nbsp;';
 			$reqDbl = "https://api.archives-ouvertes.fr/search/".$portail."/?fq=collCode_s:%22".$team."%22%20AND%20title_t:%22".$critere."*%22&rows=10000&fl=halId_s,doiId_s,title_s,subTitle_s,docType_s";
+			$reqDbl = str_replace(" ", "%20", $reqDbl);
 			$contDbl = file_get_contents($reqDbl);
 			$resDbl = json_decode($contDbl);
 			$numDbl = 0;
