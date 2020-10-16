@@ -201,6 +201,9 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	}
 	
 	//Métadonnées > Audience, vulgarisation et comité de lecture
+	$testMetaA = "";
+	$testMetaV = "";
+	$testMetaC = "";
 	$elts = $xml->getElementsByTagName("note");
 	foreach($elts as $elt) {
 		//Audience
