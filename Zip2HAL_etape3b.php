@@ -1,17 +1,25 @@
 <?php
 //Etape 3b - Recherche la dernière affiliation associée aux auteurs sans affiliation
-echo '<br><br>';
+
+//echo '<div class="row">';
+echo '    <div class="col-md-6">';
+echo '        <div class="card ribbon-box">';
+echo '            <div class="card-body">';
+echo '                <div class="ribbon ribbon-success float-right">Étape 3b</div>';
+echo '                <h5 class="text-success mt-0">Recherche de la dernière affiliation associée avec HAL aux auteurs sans affiliation</h5>';
+echo '                <div class="ribbon-content">';
+
 $cpt = 1;
 $year = date('Y', time());
 
-echo '<b>Etape 3b : recherche de la dernière affiliation associée avec HAL aux auteurs sans affiliation</b><br>';
+//echo '<b>Etape 3b : recherche de la dernière affiliation associée avec HAL aux auteurs sans affiliation</b><br>';
 echo '<div id=\'cpt3b\'></div>';
 
 if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublon de type TYP > inutile d'effectuer les recherches
 	echo 'Recherche inutile car c\'est une notice doublon';
 }else{
 	//Début bloc affiliations
-	echo '<span><a style="cursor:pointer;" onclick="afficacherRec(\'3b\', '.$idFic.')";>Calcul des dernières affiliations</a><br>';
+	echo '<span><a style="cursor:pointer;" class="text-primary" onclick="afficacherRec(\'3b\', '.$idFic.')";>Calcul des dernières affiliations</a><br>';
 	echo '<span id="Rrec-3b-'.$idFic.'" style="display: none;">';
 	
 	include "./Zip2HAL_constantes.php";
@@ -164,5 +172,11 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 echo '<script>';
 echo 'document.getElementById(\'cpt3b\').style.display = \'none\';';
 echo '</script>';
+
+echo '								</div>';
+echo '						</div> <!-- end card-body -->';
+echo '				</div>';
+echo '		</div>';
+echo '</div> <!-- .row -->';
 //Fin étape 3b
 ?>

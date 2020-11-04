@@ -1,5 +1,5 @@
 function majokIdHAL(halID) {
-  document.getElementById("Vu"+halID).innerHTML = "<img width='12px' src='./img/supprimer_ok.jpg'>";
+  document.getElementById("Vu"+halID).innerHTML = "<i class='mdi mdi-delete-outline mdi-18px text-grey'></i>";
 	document.getElementById("Txt"+halID).innerHTML = "<s>Supprimer l'idHAL "+halID+"</s>";
 }
 
@@ -9,7 +9,7 @@ function majokIdHALSuppr(halID) {
 
 
 function majokAffil(affilPos, affilName) {
-  document.getElementById("Vu-"+affilPos).innerHTML = "<img width='12px' src='./img/supprimer_ok.jpg'>";
+  document.getElementById("Vu-"+affilPos).innerHTML = "<i class='mdi mdi-delete-outline mdi-18px text-grey'></i>";
 	document.getElementById(affilPos).innerHTML = "<s>"+affilName+"</s>";
 }
 
@@ -31,7 +31,7 @@ function majokSuppr(suppression) {
 }
 
 function majokAuteur(auteurPos, auteurName) {
-  document.getElementById("Vu-"+auteurPos).innerHTML = "<img width='12px' src='./img/supprimer_ok.jpg'><br><br>";
+  document.getElementById("Vu-"+auteurPos).innerHTML = "<i class='mdi mdi-delete-outline mdi-18px text-grey'></i><br><br>";
 	document.getElementById("Sup-"+auteurPos).style.display = "none";
 	document.getElementById("PN-"+auteurPos).innerHTML = "<s>"+auteurName+"</s>";
 }
@@ -81,14 +81,13 @@ function choixdom(dom, code) {
 	}
 	document.getElementById("domaine").style.width = "900px";
 	document.getElementById("domaine").style.marginLeft = "30px";
-	document.getElementById("domaine").style.display = "block";
-	document.getElementById("choixdom").style.display = "none";
+	document.getElementById("domaine").className = "d-block";
+	document.getElementById("choixdom").className = "d-none";
 }
 
 function schemaVal(idFic) {
 	document.getElementById("validerTEI-"+idFic).innerHTML = "Validation en cours ...";
 }
-
 
 //Popup JQuery d'avertissement
 function afficherPopupAvertissement(message) {
@@ -103,12 +102,14 @@ function afficherPopupAvertissement(message) {
 				open: function(event, ui) {
 						$(".ui-dialog-titlebar-close", $(this).parent()).hide();
 				},
+				modal: true,
         width: 600,
         dialogClass: 'dialogstyleperso',
+				hide: "fade",
         buttons: [
             {
-                text: "OK",
-                "class": 'ui-state-warning',
+								text: "OK",
+                class: 'ui-state-warning',
                 click: function () {
                     $(this).dialog("close");
                     $('#popupavertissement').remove();
@@ -120,7 +121,6 @@ function afficherPopupAvertissement(message) {
     return popup;
 }
 
-
 //Popup travail en cours
 function afficherPopupAttente(titre='Veuillez patienter', message='Validation du TEI en cours ...') {
     // crée la division qui sera convertie en popup
@@ -129,10 +129,12 @@ function afficherPopupAttente(titre='Veuillez patienter', message='Validation du
 
     // transforme la division en popup
     var popup = $("#popupattente").dialog({
-        autoOpen: true,closeOnEscape: false,
+        autoOpen: true,
+				closeOnEscape: false,
 				open: function(event, ui) {
 						$(".ui-dialog-titlebar-close", $(this).parent()).hide();
-				},	
+				},
+				modal: true,				
         width: 400,
         dialogClass: 'dialogstyleperso',
         hide: "fade"
@@ -190,15 +192,26 @@ function afficherPopupConfirmation(question, Cnomfic, Cpos, Cprenomnom, Cauteur)
 }
 
 function goto(Page) {
-	$('#content').load(Page);           
+	$("#majcont").load(Page);
 }
+
+//Autocomplete domaine
+$(function() {
+		
+	//autocomplete
+	$(".autoDO").autocomplete({
+			source: "Zip2HAL_AC_DO.php",
+			minLength: 1
+	});                
+
+});
 
 //Autocomplete idHAL
 $(function() {
-    
+		
 	//autocomplete
 	$(".autoID").autocomplete({
-			source: "AC_ID.php",
+			source: "Zip2HAL_AC_ID.php",
 			minLength: 1
 	});                
 
@@ -206,10 +219,10 @@ $(function() {
 
 //Autocomplete affiliations
 $(function() {
-    
+		
 	//autocomplete
 	$(".autoAF").autocomplete({
-			source: "AC_AF.php",
+			source: "Zip2HAL_AC_AF.php",
 			minLength: 1,
 			open: function (event, ui) {
 				$('.ui-autocomplete > li').css("background-color", function() {
@@ -223,70 +236,47 @@ $(function() {
 
 });
 
-//Autocomplete domaine
-$(function() {
-    
-	//autocomplete
-	$(".autoDO").autocomplete({
-			source: "AC_DO.php",
-			minLength: 1
-	});                
-
-});
-
 //Autocomplete financements ANR
 $(function() {
-    
-    //autocomplete
-    $(".autoANR").autocomplete({
-        source: "AC_ANR.php",
-        minLength: 1
-    });                
+		
+		//autocomplete
+		$(".autoANR").autocomplete({
+				source: "Zip2HAL_AC_ANR.php",
+				minLength: 1
+		});                
 
 });
 
 //Autocomplete financements EUR
 $(function() {
-    
-    //autocomplete
-    $(".autoEUR").autocomplete({
-        source: "AC_EUR.php",
-        minLength: 1
-    });                
+		
+		//autocomplete
+		$(".autoEUR").autocomplete({
+				source: "Zip2HAL_AC_EUR.php",
+				minLength: 1
+		});                
 
 });
 
 //Autocomplete pays
 $(function() {
-    
-    //autocomplete
-    $(".autoPays").autocomplete({
-        source: "AC_Pays.php",
-        minLength: 1
-    });                
+		
+		//autocomplete
+		$(".autoPays").autocomplete({
+				source: "Zip2HAL_AC_Pays.php",
+				minLength: 1
+		});                
 
 });
 
 //Autocomplete langues
 $(function() {
-    
-    //autocomplete
-    $(".autoLang").autocomplete({
-        source: "AC_Langues.php",
-        minLength: 1
-    });                
+		
+		//autocomplete
+		$(".autoLang").autocomplete({
+				source: "Zip2HAL_AC_Langues.php",
+				minLength: 1
+		});                
 
 });
-
-//Haut de page
-$(function(){
-	$(window).scroll(function() {
-		if ($(this).scrollTop() >= 200) {
-			$('#haut').css({'display': 'block'});
-		}else{
-			$('#haut').css({'display': 'none'});
-		}
-	});
-});
-
 

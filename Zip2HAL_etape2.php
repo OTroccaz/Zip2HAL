@@ -1,6 +1,14 @@
 <?php
 //Etape 2 - Recherche des idHAL des auteurs				
-echo '<br><br>';
+
+//echo '<div class="row">';
+echo '    <div class="col-md-6">';
+echo '        <div class="card ribbon-box">';
+echo '            <div class="card-body">';
+echo '                <div class="ribbon ribbon-success float-right">Étape 2</div>';
+echo '                <h5 class="text-success mt-0">Recherche des idHAL et docid des auteurs</h5>';
+echo '                <div class="ribbon-content">';
+
 $cpt = 1;
 $iAut = 0;
 $preAut = array();//Prénoms des auteurs
@@ -15,14 +23,13 @@ $tabIdHAL = array();//Si plusieurs idHAL remontés pour un même auteur
 
 include "./Zip2HAL_constantes.php";
 
-echo '<b>Etape 2 : recherche des idHAL et docid des auteurs</b><br>';
 echo '<div id=\'cpt2\'></div>';
 
 if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublon de type TYP > inutile d'effectuer les recherches
 	echo 'Recherche inutile car c\'est une notice doublon';
 }else{
 	//Début bloc idHal/docid
-	echo '<span><a style="cursor:pointer;" onclick="afficacherRec(\'2\', '.$idFic.')";>Recherche idHAL/docid</a><br>';
+	echo '<span><a style="cursor:pointer;" class="text-primary" onclick="afficacherRec(\'2\', '.$idFic.')";>Recherche idHAL/docid</a><br>';
 	echo '<span id="Rrec-2-'.$idFic.'" style="display: none;">';
 	
 	//Recherche des noeuds auteur vide pour les supprimer
@@ -358,5 +365,10 @@ echo '<script>';
 echo 'document.getElementById(\'cpt2\').style.display = \'none\';';
 echo '</script>';
 
+echo '								</div>';
+echo '						</div> <!-- end card-body -->';
+echo '				</div>';
+echo '		</div>';
+echo '</div> <!-- .row -->';
 //Fin étape 2
 ?>

@@ -1,6 +1,14 @@
 <?php
 //Etape 3a - Recherche des id structure des affiliations
-echo '<br><br>';
+
+echo '<div class="row">';
+echo '    <div class="col-md-6">';
+echo '        <div class="card ribbon-box">';
+echo '            <div class="card-body">';
+echo '                <div class="ribbon ribbon-success float-right">Étape 3a</div>';
+echo '                <h5 class="text-success mt-0">Recherche des id structures des affiliations</h5>';
+echo '                <div class="ribbon-content">';
+
 $cpt = 1;
 $iAff = 0;
 $nomAff = array();//Code initial des affiliations (à parir du XML)
@@ -9,14 +17,14 @@ $anepasTester = array('UMR', 'UMS', 'UPR', 'ERL', 'IFR', 'UR', 'USR', 'USC', 'CI
 //$affdejaTestee = array();//Tableau des affiliations déjà testées et résultat obtenu pour éviter de refaire des tests
 
 
-echo '<b>Etape 3a : recherche des id structures des affiliations</b><br>';
+//echo '<b>Etape 3a : recherche des id structures des affiliations</b><br>';
 echo '<div id=\'cpt3a\'></div>';
 
 if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublon de type TYP > inutile d'effectuer les recherches
 	echo 'Recherche inutile car c\'est une notice doublon';
 }else{
 	//Début bloc affiliations
-	echo '<span><a style="cursor:pointer;" onclick="afficacherRec(\'3a\', '.$idFic.')";>Calcul des affiliations</a><br>';
+	echo '<span><a style="cursor:pointer;" class="text-primary" onclick="afficacherRec(\'3a\', '.$idFic.')";>Calcul des affiliations</a><br>';
 	echo '<span id="Rrec-3a-'.$idFic.'" style="display: none;">';
 
 	include "./Zip2HAL_constantes.php";
@@ -344,5 +352,11 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 echo '<script>';
 echo 'document.getElementById(\'cpt3a\').style.display = \'none\';';
 echo '</script>';
+
+echo '								</div>';
+echo '						</div> <!-- end card-body -->';
+echo '				</div>';
+echo '		</div>';
+//echo '</div> <!-- .row -->';
 //Fin étape 3a
 ?>

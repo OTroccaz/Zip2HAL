@@ -1,33 +1,9 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "https://www.w3.org/TR/html4/loose.dtd">
 <?php
 header('Content-type: text/html; charset=UTF-8');
-
-if (isset($_GET['css']) && ($_GET['css'] != ""))
-{
-  $css = $_GET['css'];
-}else{
-  $css = "https://ecobio.univ-rennes1.fr/HAL_SCD.css";
-}
 ?>
 <html lang="fr">
-<head>
-  <title>Zip2HAL</title>
-  <meta name="Description" content="Zip2HAL">
-  <link rel="stylesheet" href="<?php echo $css;?>" type="text/css">
-  <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <link rel="icon" type="type/ico" href="HAL_favicon.ico">
-  <link rel="stylesheet" href="./Zip2HAL.css">
-</head>
 <body>
-<table class="table100" aria-describedby="Entêtes">
-<tr>
-<th scope="col" style="text-align: left;"><img alt="Zip2HAL" title="Zip2HAL" width="250px" src="./img/logo_Zip2hal.png"></th>
-<th scope="col" style="text-align: right;"><img alt="Université de Rennes 1" title="Université de Rennes 1" width="150px" src="./img/logo_UR1_gris_petit.jpg"></th>
-</tr>
-</table>
-<br><br>
-<div style="width: 60%; margin-left: auto ;margin-right: auto ;">
 <?php
 include "./Zip2HAL_constantes.php";
 
@@ -51,7 +27,7 @@ if (strpos($_SERVER['HTTP_HOST'], '127.0.0.1') !== false || strpos($_SERVER['HTT
   if (isset($_SESSION[$h_passw]) && $_SESSION[$h_passw] != "") {
     $HAL_PASSWD = $_SESSION[$h_passw];
   }else{
-    include('./Zip2HALForm.php');
+    include('./Zip2HAL_Form.php');
     die();
   }
 }
@@ -262,6 +238,5 @@ try {
 curl_close($ch);
 
 ?>
-</div>
 </body>
 </html>

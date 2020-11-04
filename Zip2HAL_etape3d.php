@@ -1,17 +1,25 @@
 <?php
 //Etape 3d - Recherche idHAL auteur grâce aux docid auteur trouvés précédemment
-echo '<br><br>';
+
+//echo '<div class="row">';
+echo '    <div class="col-md-6">';
+echo '        <div class="card ribbon-box">';
+echo '            <div class="card-body">';
+echo '                <div class="ribbon ribbon-success float-right">Étape 3d</div>';
+echo '                <h5 class="text-success mt-0">Recherche des idHAL auteur grâce aux docid auteur trouvés précédemment</h5>';
+echo '                <div class="ribbon-content">';
+
 $cpt = 1;
 $cptId = 0;
 
-echo '<b>Etape 3d : recherche des idHAL auteur grâce aux docid auteur trouvés précédemment</b><br>';
+//echo '<b>Etape 3d : recherche des idHAL auteur grâce aux docid auteur trouvés précédemment</b><br>';
 echo '<div id=\'cpt3d\'></div>';
 
 if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublon de type TYP > inutile d'effectuer les recherches
 	echo 'Recherche inutile car c\'est une notice doublon';
 }else{
 	//Début bloc idHAL
-	echo '<span><a style="cursor:pointer;" onclick="afficacherRec(\'3d\', '.$idFic.')";>Recherche des idHAL</a><br>';
+	echo '<span><a style="cursor:pointer;" class="text-primary" onclick="afficacherRec(\'3d\', '.$idFic.')";>Recherche des idHAL</a><br>';
 	echo '<span id="Rrec-3d-'.$idFic.'" style="display: none;">';
 	
 	for($i = 0; $i < count($halAut); $i++) {
@@ -43,4 +51,10 @@ echo '<script>';
 echo 'document.getElementById(\'cpt3d\').style.display = \'none\';';
 echo '</script>';
 //Fin étape 3d
+
+echo '								</div>';
+echo '						</div> <!-- end card-body -->';
+echo '				</div>';
+echo '		</div>';
+echo '</div> <!-- .row -->';
 ?>

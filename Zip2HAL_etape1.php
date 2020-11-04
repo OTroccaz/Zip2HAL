@@ -1,8 +1,16 @@
 <?php
-echo '<b>Etape 1 : recherche des doublons potentiels</b><br>';
+//Etape 1 - Parcours des notices à la recherche de doublons potentiels (DOI ou titre exact)		
+echo '<div class="row">';
+echo '    <div class="col-md-6">';
+echo '        <div class="card ribbon-box">';
+echo '            <div class="card-body">';
+echo '                <div class="ribbon ribbon-success float-right">Étape 1</div>';
+echo '                <h5 class="text-success mt-0">Recherche des doublons potentiels</h5>';
+echo '                <div class="ribbon-content">';
+								
+//echo '<b>Etape 1 : recherche des doublons potentiels</b><br>';
 echo '<a target="_blank" href="'.$reqAPI.'">URL requête API HAL</a><br>';
 
-//Etape 1 - Parcours des notices à la recherche de doublons potentiels (DOI ou titre exact)		
 if($numFound == 0) {			
 	echo 'Aucune notice trouvée dans HAL, donc, pas de doublon';
 	$typDbl = "";
@@ -149,5 +157,10 @@ if($numFound == 0) {
 	echo 'document.getElementById(\'cpt1\').style.display = \'none\';';
 	echo '</script>';
 }
+echo '								</div>';
+echo '						</div> <!-- end card-body -->';
+echo '				</div>';
+echo '		</div>';
+//echo '</div> <!-- .row -->';
 //Fin étape 1
 ?>

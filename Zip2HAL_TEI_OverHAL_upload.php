@@ -1,46 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "https://www.w3.org/TR/html4/loose.dtd">
 <?php
-header('Content-type: text/html; charset=UTF-8');
-
-if(isset($_GET['css']) &&($_GET['css'] != ""))
-{
-  $css = $_GET['css'];
-}else{
-  $css = "https://ecobio.univ-rennes1.fr/HAL_SCD.css";
-}
-?>
-
-<html lang="fr">
-<head>
-  <title>Zip2HAL</title>
-  <meta name="Description" content="Zip2HAL">
-  <link href="bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="<?php echo $css;?>" type="text/css">
-  <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <script type="text/javascript" language="Javascript" src="./Zip2HAL.js"></script>
-  <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
-  <link rel="icon" type="type/ico" href="favicon.ico">
-  <link rel="stylesheet" href="./Zip2HAL.css">
-</head>
-<body>
-
-<noscript>
-<div class=' red center' id='noscript'><strong>ATTENTION !!! JavaScript est désactivé ou non pris en charge par votre navigateur : cette procédure ne fonctionnera pas correctement.</strong><br>
-<strong>Pour modifier cette option, voir <a target='_blank' rel='noopener noreferrer' href='https://www.libellules.ch/browser_javascript_activ.php'>ce lien</a>.</strong></div><br>
-</noscript>
-
-<table class="table100" aria-describedby="Entêtes">
-<tr>
-<th scope="col" style="text-align: left;"><img alt="Zip2HAL" title="Zip2HAL" width="250px" src="./img/logo_Zip2hal.png"></th>
-<th scope="col" style="text-align: right;"><img alt="Université de Rennes 1" title="Université de Rennes 1" width="150px" src="./img/logo_UR1_gris_petit.jpg"></th>
-</tr>
-</table>
-<hr style="color: #467666; height: 1px; border-width: 1px; border-top-color: #467666; border-style: inset;">
-
-<?php
 $loc = "Location: ";
-$locT = $loc."TEI_OverHAL.php";
+$locT = $loc."Zip2HAL_TEI_OverHAL.php";
 $erreur = "";
 $qui = "TEI_OverHAL";
 $xml = "./XML/";
@@ -71,7 +32,7 @@ if(isset($_FILES[$qui]['name']) && $_FILES[$qui]['name'] != "") //File has been 
 	
 	$temps = time();
 	mkdir($xml.$temps);
-	$nomfic = "./XML/TEI_OverHAL_".$temps.".zip";
+	$nomfic = "./XML/Zip2HAL_TEI_OverHAL_".$temps.".zip";
 	move_uploaded_file($_FILES[$qui]['tmp_name'], $nomfic);
 	$zip = new ZipArchive;
 	if($zip->open($nomfic) === TRUE) {
@@ -113,16 +74,11 @@ if(isset($_FILES[$qui]['name']) && $_FILES[$qui]['name'] != "") //File has been 
 		}
 	}
   closedir($repertoire);
+	
 	if($erreur == "") {
 		Header($loc."Zip2HAL.php?nomficZip=".$nomfic);
 	}else{
-		Header($loc."TEI_Overhal.php".$erreur);
+		Header($loc."Zip2HAL_TEI_Overhal.php".$erreur);
 	}
 }
 ?>
-
-<?php
-include('./bas.php');
-?>
-</body>
-</html>

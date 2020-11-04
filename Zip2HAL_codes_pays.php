@@ -251,5 +251,6 @@ $countries = array(
 'Yemen'=>'ye',
 'Zambia'=>'zm',
 'Zimbabwe'=>'zw',
+''=>''
 );
 ?>

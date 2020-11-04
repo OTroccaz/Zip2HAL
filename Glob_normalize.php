@@ -1,10 +1,9 @@
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- <meta http-equiv="Content-Type" content="text/html; charset=utf-8"> -->
 <?php
 function normalize($st) {
     //return preg_replace('/\W+/', '', $st);
     $st = strtr($st,' ()"-!?[]{}:,;./*+$^=\'\\','                       ');
     $st = preg_replace('/\s+/', '', $st);
-		
 		$utf8 = array(
 			/* à répéter pour chaque caractère accentué possible */
 			'/[æǽ]/u' => 'ae',

@@ -1,18 +1,26 @@
 <?php
 //Etape 3c - Recherche id auteur grâce à l'affiliation éventuellement trouvée
-echo '<br><br>';
+
+echo '<div class="row">';
+echo '    <div class="col-md-6">';
+echo '        <div class="card ribbon-box">';
+echo '            <div class="card-body">';
+echo '                <div class="ribbon ribbon-success float-right">Étape 3c</div>';
+echo '                <h5 class="text-success mt-0">Recherche des docid auteur grâce aux affiliations éventuellement trouvées</h5>';
+echo '                <div class="ribbon-content">';
+
 $cpt = 1;
 $cptId = 0;
 $year = date('Y', time());
 
-echo '<b>Etape 3c : recherche des docid auteur grâce aux affiliations éventuellement trouvées</b><br>';
+//echo '<b>Etape 3c : recherche des docid auteur grâce aux affiliations éventuellement trouvées</b><br>';
 echo '<div id=\'cpt3c\'></div>';
 
 if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublon de type TYP > inutile d'effectuer les recherches
 	echo 'Recherche inutile car c\'est une notice doublon';
 }else{
 	//Début bloc docid
-	echo '<span><a style="cursor:pointer;" onclick="afficacherRec(\'3c\', '.$idFic.')";>Recherche des docid</a><br>';
+	echo '<span><a style="cursor:pointer;" class="text-primary" onclick="afficacherRec(\'3c\', '.$idFic.')";>Recherche des docid</a><br>';
 	echo '<span id="Rrec-3c-'.$idFic.'" style="display: none;">';
 	
 	include "./Zip2HAL_constantes.php";
@@ -57,5 +65,11 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 echo '<script>';
 echo 'document.getElementById(\'cpt3c\').style.display = \'none\';';
 echo '</script>';
+
+echo '								</div>';
+echo '						</div> <!-- end card-body -->';
+echo '				</div>';
+echo '		</div>';
+//echo '</div> <!-- .row -->';
 //Fin étape 3c
 ?>
