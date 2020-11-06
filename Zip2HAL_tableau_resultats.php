@@ -633,7 +633,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 				if($halAff[$j]['valid'] == "OLD") {$txtcolor = '#ff6600';}
 				$ajtAff .= $halAff[$j][$cstNA]."~";
 				$halAffVal = str_replace('"', '', $halAff[$j]['ncplt']);
-				$halAffVal = str_replace("'", "&apos;", $halAffVal);
+				$halAffVal = str_replace("'", "’", $halAffVal);
 				echo '<span id="aut'.$i.$cstHA.$j.'-'.$idFic.'" draggable="true"><strong><font style=\'color:&nbsp;'.$txtcolor.';\'>'.$halAffVal.'</font></strong></span>';
 				echo '&nbsp;<span id="Vu-aut'.$i.$cstHA.$j.'-'.$idFic.'"><a style="cursor:pointer;" onclick="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'supprimerAffil\', pos: '.$i.', valeur: \''.$halAff[$j][$cstDI].'\'}); majokAffil(\'aut'.$i.$cstHA.$j.'-'.$idFic.'\', \''.$halAffVal.'\');"><i class=\'mdi mdi-delete-outline mdi-18px text-primary\'></i></a></span><br>';						
 			}

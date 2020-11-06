@@ -141,12 +141,12 @@
 																					if($erreur == 0) {echo '                    <p class="mt-3">Erreur inconnue !</p></script>';}
 																					if($erreur == 1) {echo '                    <p class="mt-3">Le fichier dépasse la limite autorisée par le serveur(fichier php.ini) !</p></script>';}
 																					if($erreur == 2) {echo '                    <p class="mt-3">Le fichier dépasse la limite autorisée dans le formulaire HTML !</p></script>';}
-																					if($erreur == 3) {echo '                    <p class="mt-3">L&apos;envoi du fichier a été interrompu pendant le transfert !</p></script>';}
+																					if($erreur == 3) {echo '                    <p class="mt-3">L\'envoi du fichier a été interrompu pendant le transfert !</p></script>';}
 																					if($erreur == 5) {echo '                    <p class="mt-3">Mauvaise extension de fichier !</p></script>';}
-																					if($erreur == 6) {echo '                    <p class="mt-3">Vous devez au préalable fournir votre extraction TEI d&apos;OverHAL !</p></script>';}
+																					if($erreur == 6) {echo '                    <p class="mt-3">Vous devez au préalable fournir votre extraction TEI d\'OverHAL !</p></script>';}
 																					if($erreur == 7) {echo '                    <p class="mt-3">Le répertoire de dépôt de fichier est automatiquement nettoyé chaque jour et votre fichier ZIP des extractions TEI d\'OverHAL n\'existe plus : vous devez procéder de nouveau à son chargement !  </p>';}
 																					if($erreur == 8) {echo '                    <p class="mt-3">Archive ZIP incorrecte !</p></script>';}
-																					if($erreur == 9) {echo '                    <p class="mt-3">Au moins un des fichiers de votre archive ZIP n&apos;a pas l&apos;extension XML !</p></script>';}
+																					if($erreur == 9) {echo '                    <p class="mt-3">Au moins un des fichiers de votre archive ZIP n\'a pas l\'extension XML !</p></script>';}
 																					
 																					echo '                    <button type="button" class="btn btn-warning my-2" data-dismiss="modal">Continuer</button>';
 																					echo '                </div>';

@@ -470,7 +470,7 @@ if($racine == "") {$racine = "https://hal-univ-rennes1.archives-ouvertes.fr/";}
 																	/*
 																	echo '<script src="https://code.jquery.com/jquery-3.5.1.js"></script>';
 																	echo '<script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>';
-																	$message = str_replace("\'", "&apos;", $message);
+																	$message = str_replace("\'", "\'", $message);
 																	echo '<script>afficherPopupAvertissement("'.$message.'");</script>';
 																	*/
 
@@ -481,7 +481,7 @@ if($racine == "") {$racine = "https://hal-univ-rennes1.archives-ouvertes.fr/";}
 																	echo '                <div class="text-center">';
 																	echo '                    <i class="dripicons-warning h1 text-warning"></i>';
 																	echo '                    <h4 class="mt-2">Avertissement</h4>';
-																	echo '										<p class="mt-3">'.str_replace("\'", "&apos;", $message).'</p>';
+																	echo '										<p class="mt-3">'.str_replace("\'", "'", $message).'</p>';
 																	echo '                    <button type="button" class="btn btn-warning my-2" data-dismiss="modal">Continuer</button>';
 																	echo '                </div>';
 																	echo '            </div>';
