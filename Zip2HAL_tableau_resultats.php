@@ -737,7 +737,8 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		ob_flush();
 		flush();
 		ob_flush();
-		flush(); 
+		flush();
+		sleep(1);
 		$maj = "non";
 		$tst = new DOMDocument();
 		$tst->load($nomfic);

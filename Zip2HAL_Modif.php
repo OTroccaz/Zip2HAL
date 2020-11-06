@@ -2,8 +2,7 @@
 <?php
 header('Content-type: text/html; charset=UTF-8');
 ?>
-<html lang="fr">
-<body>
+
 <?php
 include "./Zip2HAL_constantes.php";
 
@@ -31,7 +30,10 @@ if (strpos($_SERVER['HTTP_HOST'], '127.0.0.1') !== false || strpos($_SERVER['HTT
     die();
   }
 }
-
+?>
+<html lang="fr">
+<body>
+<?php
 if (isset($_GET['Id']) && ($_GET['Id'] != ""))
 {
   $idNomfic = $_GET['Id'];
