@@ -355,14 +355,6 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		foreach($elts as $elt) {
 			//ISBN
 			if($elt->hasAttribute("type") && $elt->getAttribute("type") == "isbn") {$isbnConf = $elt->nodeValue;}
-			//Proceedings O/N
-			//Par défaut, les proceedings sont renseignés comme présents
-			$txtPO = $cstCH;
-			$txtPN = "";
-			if($elt->hasAttribute("type") && $elt->getAttribute("type") == "proceedings") {
-				if($elt->nodeValue == "Yes") {$txtPO = $cstCH; $txtPN = "";}
-				if($elt->nodeValue == "No") {$txtPO = ""; $txtPN = $cstCH;}
-			}
 		}
 		$elts = $xml->getElementsByTagName($cstMO);
 		foreach($elts as $elt) {
@@ -381,6 +373,14 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 			if($elt->hasAttribute("type") && $elt->getAttribute("type") == "invited") {
 				if($elt->nodeValue == 0) {$inviConf = "No";}
 				if($elt->nodeValue == 1) {$inviConf = "Yes";}
+			}
+			//Proceedings O/N
+			//Par défaut, les proceedings sont renseignés comme présents
+			$txtPO = $cstCH;
+			$txtPN = "";
+			if($elt->hasAttribute("type") && $elt->getAttribute("type") == "proceedings") {
+				if($elt->nodeValue == "Yes") {$txtPO = $cstCH; $txtPN = "";}
+				if($elt->nodeValue == "No") {$txtPO = ""; $txtPN = $cstCH;}
 			}
 		}
 		

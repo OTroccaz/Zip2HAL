@@ -5,6 +5,13 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	include "./Zip2HAL_constantes.php";
 
 	//Premières modifications du TEI avec les résultats précédemment obtenus
+	
+	//Type de document
+	$typDoc = "";
+	$elts = $xml->getElementsByTagName("classCode");
+	foreach($elts as $elt) {
+		if($elt->hasAttribute("scheme") && $elt->getAttribute("scheme") == "halTypology") {$typDoc = $elt->getAttribute("n");}
+	}
 
 	//Métadonnées > Langue > A récupérer dès le début pour pouvoir l'insérer aux titre, résumé et mots-clés
 	$tabLang = array_keys($languages);
@@ -101,6 +108,35 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		$tabDom = explode(" ~ ", str_replace("’", "'", $domaine));
 		insertNode($xml, $tabDom[0], "textClass", $cstCC, 0, $cstCC, "scheme", "halDomain", "n", $tabDom[1], "aC", $cstAM, "");
 		$xml->save($nomfic);
+	}
+	
+	//Si typedoc COMM ou POSTER
+	if($typDoc == "COMM" || $typDoc == "POSTER") {
+		//Renseigner les proceedings à oui par défaut s'ils ne sont pas renseignés
+		$presProc = "non";
+		$elts = $xml->getElementsByTagName("note");
+		foreach($elts as $elt) {
+			if($elt->hasAttribute("type") && $elt->getAttribute("type") == "proceedings") {
+				$presProc = "oui";
+			}
+		}
+		if($presProc == "non") {
+			insertNode($xml, "Yes", $cstNS, "", 0, "note", "type", "proceedings", "n", "1", "iB", $cstTN, "");
+			$xml->save($nomfic);
+		}
+		
+		//Par défaut, la conférence est considérée comme conférence non invitée
+		$presCinv = "non";
+		$elts = $xml->getElementsByTagName("note");
+		foreach($elts as $elt) {
+			if($elt->hasAttribute("type") && $elt->getAttribute("type") == "invited") {
+				$presCinv = "oui";
+			}
+		}
+		if($presCinv == "non") {
+			insertNode($xml, "No", $cstNS, "", 0, "note", "type", "invited", "n", "0", "iB", $cstTN, "");
+			$xml->save($nomfic);
+		}
 	}
 	
 	//Si présence d'un ISSN, vérification qu'il comporte bien un tiret et ajout éventuel
