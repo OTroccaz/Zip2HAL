@@ -392,7 +392,7 @@ if($racine == "") {$racine = "https://hal-univ-rennes1.archives-ouvertes.fr/";}
 															$datePub = "";
 															foreach($anns as $ann) {
 																if($ann->hasAttribute("type") && $ann->getAttribute("type") == "datePub") {
-																	$datePub = $ann->nodeValue;
+																	$datePub = substr($ann->nodeValue, 0, 4);
 																	$datePub1 = $datePub - 1;
 																	$datePub2 = $datePub + 1;
 																}
