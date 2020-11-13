@@ -168,10 +168,12 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 						$iHi = "oui";
 						$cptiHi++;
 						$trouve++;
-						$nbCel = count($tabIdHAL);
-						$tabIdHAL[$nbCel][$cstFN] = $firstName;
-						$tabIdHAL[$nbCel][$cstLN] = $lastName;
-						$tabIdHAL[$nbCel]['reqAut'] = $reqAut;
+						if($numFound > 1) {
+							$nbCel = count($tabIdHAL);
+							$tabIdHAL[$nbCel][$cstFN] = $firstName;
+							$tabIdHAL[$nbCel][$cstLN] = $lastName;
+							$tabIdHAL[$nbCel]['reqAut'] = $reqAut;
+						}
 						break;
 					}
 				}else{//Pas d'idHal
@@ -231,10 +233,12 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 							$iHi = "oui";
 							$cptiHi++;
 							$trouve++;
-							$nbCel = count($tabIdHAL);
-							$tabIdHAL[$nbCel][$cstFN] = $firstName;
-							$tabIdHAL[$nbCel][$cstLN] = $lastName;
-							$tabIdHAL[$nbCel]['reqAut'] = $reqAut;
+							if($numFound > 1) {
+								$nbCel = count($tabIdHAL);
+								$tabIdHAL[$nbCel][$cstFN] = $firstName;
+								$tabIdHAL[$nbCel][$cstLN] = $lastName;
+								$tabIdHAL[$nbCel]['reqAut'] = $reqAut;
+							}
 							break;
 						}
 					}else{//Pas d'idHal

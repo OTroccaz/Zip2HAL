@@ -607,11 +607,11 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		echo '&nbsp;<span id="Vu'.$halAut[$i][$cstIS].'-'.$idFic.'"><a style="cursor:pointer;" onclick="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'supprimerIdHAL\', pos: '.$i.', valeur: \'\'}); majokIdHALSuppr(\'ajoutIdh'.$i.'-'.$idFic.'\');"><i class=\'mdi mdi-delete-outline mdi-18px text-primary\'></i></a></span></span><br>';
 		echo '<a target="_blank" href="https://aurehal.archives-ouvertes.fr/author/browse?critere='.$halAut[$i][$cstFN].'+'.$halAut[$i][$cstLN].'">Consulter le référentiel auteur</a><br>';
 		
-		//Lors de l'étape 2 (2ème méthode), d'autres idHAL ont-ils été trouvés via la requête ?
+		//Lors de l'étape 2 (méthodes 1, 1-2 et 2), d'autres idHAL ont-ils été trouvés via la requête ?
 		for($id = 0; $id < count($tabIdHAL); $id++) {
 			if(isset($tabIdHAL[$id][$cstFN]) && $tabIdHAL[$id][$cstFN] == $halAut[$i][$cstFN] && isset($tabIdHAL[$id][$cstLN]) && $tabIdHAL[$id][$cstLN] == $halAut[$i][$cstLN]) {
 				$reqAut = $tabIdHAL[$id]['reqAut'];
-				echo '<a target="_blank" href="'.$reqAut.'"><font color=\'red\'>D\'autres idHAL ont été trouvés</font></a><br>';
+				echo '<a target="_blank" href="'.$reqAut.'">D\'autres idHAL ont été trouvés</a><br>';
 			}
 		}
 		
