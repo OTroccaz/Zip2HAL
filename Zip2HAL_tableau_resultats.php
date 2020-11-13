@@ -590,7 +590,9 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		if($halAut[$i]['mailDom'] != "") {echo ' (@'.$halAut[$i]['mailDom'].')';}
 		echo '<br>';
 		if($halAut[$i][$cstXS] != "") {
-			echo '<span id="Txt'.$halAut[$i][$cstXS].'-'.$idFic.'">Supprimer l\'idHAL '.$halAut[$i][$cstXS].'</span> <span id="Vu'.$halAut[$i][$cstXS].'-'.$idFic.'"><a style="cursor:pointer;" onclick="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'supprimerIdHAL\', pos: '.$i.', valeur: \''.$halAut[$i][$cstXS].'\'}); majokIdHAL(\''.$halAut[$i][$cstXS].'-'.$idFic.'\');"><i class=\'mdi mdi-delete-outline mdi-18px text-primary\'></i></a></span><br>';
+			echo '<span id="Txt'.$halAut[$i][$cstXS].'-'.$idFic.'">Supprimer l\'idHAL '.$halAut[$i][$cstXS].'</span> <span id="Vu'.$halAut[$i][$cstXS].'-'.$idFic.'"><a style="cursor:pointer;" onclick="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'supprimerIdHAL\', pos: '.$i.', valeur: \''.$halAut[$i][$cstXS].'\'}); majokIdHAL(\''.$halAut[$i][$cstXS].'-'.$idFic.'\');"><i class=\'mdi mdi-delete-outline mdi-18px text-primary\'></i></a>';
+			echo '<i class="mdi mdi-account-question text-info mdi-18px" title="Est-ce le bon idHAL ? Merci de vérifier."></i>';
+			echo '</span><br>';
 		}
 		//Si pas d'idHAL et si id auteur existe, afficher l'id
 		if($halAut[$i][$cstIS] == "" && $halAut[$i][$cstDI] != "") {
@@ -611,7 +613,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		for($id = 0; $id < count($tabIdHAL); $id++) {
 			if(isset($tabIdHAL[$id][$cstFN]) && $tabIdHAL[$id][$cstFN] == $halAut[$i][$cstFN] && isset($tabIdHAL[$id][$cstLN]) && $tabIdHAL[$id][$cstLN] == $halAut[$i][$cstLN]) {
 				$reqAut = $tabIdHAL[$id]['reqAut'];
-				echo '<a target="_blank" href="'.$reqAut.'">D\'autres idHAL ont été trouvés</a><br>';
+				echo '<a target="_blank" href="'.$reqAut.'"><span class="text-info">D\'autres idHAL ont été trouvés</span></a><br>';
 			}
 		}
 		
