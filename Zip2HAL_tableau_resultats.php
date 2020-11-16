@@ -583,7 +583,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		echo '<span id="PN-aut'.$i.'-'.$idFic.'"><b>'.$halAut[$i][$cstFN].' '.$halAut[$i][$cstLN].'</b></span>';
 		
 		//Possibilité de supprimer l'auteur
-		echo '&nbsp;<span id="Vu-aut'.$i.'-'.$idFic.'"><a style="cursor:pointer;" onclick="event.preventDefault(); afficherPopupConfirmation(\'Êtes-vous sûr de vouloir supprimer cet auteur ?\', \''.$nomfic.'\', '.$i.', \''.$halAut[$i][$cstFN].' ~ '.$halAut[$i][$cstLN].'\', \'aut'.$i.'-'.$idFic.'\');"><i class="mdi mdi-delete-outline mdi-18px text-primary" title="Supprimer l\'auteur ?"></i></a></span>';
+		echo '&nbsp;<span id="Vu-aut'.$i.'-'.$idFic.'"><a style="cursor:pointer;" data-toggle="tooltip" data-html="true" title="Supprimer l\'auteur ?" data-original-title="" onclick="event.preventDefault(); afficherPopupConfirmation(\'Êtes-vous sûr de vouloir supprimer cet auteur ?\', \''.$nomfic.'\', '.$i.', \''.$halAut[$i][$cstFN].' ~ '.$halAut[$i][$cstLN].'\', \'aut'.$i.'-'.$idFic.'\');"><i class="mdi mdi-delete-outline mdi-18px text-primary"></i></a></span>';
 		
 		//Début span suppression auteur
 		echo '&nbsp;<span id="Sup-aut'.$i.'-'.$idFic.'">';
@@ -606,7 +606,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		
 		echo 'Ajouter un idHAL :&nbsp;<span class="form-inline"><input type="text" id="ajoutIdh'.$i.'-'.$idFic.'" name="ajoutIdh'.$i.'-'.$idFic.'" value="'.$idHAL.'" class="autoID form-control" style="height: 18px; width:250px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'ajouterIdHAL\', pos: '.$i.', valeur: $(this).val()});">';
 		echo '&nbsp;<span id="Vu'.$halAut[$i][$cstIS].'-'.$idFic.'"><a style="cursor:pointer;" onclick="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'supprimerIdHAL\', pos: '.$i.', valeur: \'\'}); majokIdHALSuppr(\'ajoutIdh'.$i.'-'.$idFic.'\');"><i class=\'mdi mdi-delete-outline mdi-18px text-primary\'></i></a>';
-		echo '<i class="mdi mdi-account-question text-info mdi-18px" title="Est-ce le bon idHAL ? Merci de vérifier."></i>';
+		echo '<a href="#" data-toggle="tooltip" data-html="true" title="<strong>Est-ce le bon idHAL ?</strong><br>Merci de vérifier." data-original-title=""><i class="mdi mdi-account-question text-info mdi-18px"></i></a>';
 		echo '</span></span><br>';
 
 		echo '<a target="_blank" href="https://aurehal.archives-ouvertes.fr/author/browse?critere='.$halAut[$i][$cstFN].'+'.$halAut[$i][$cstLN].'">Consulter le référentiel auteur</a><br>';
