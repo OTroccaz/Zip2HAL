@@ -101,16 +101,13 @@
                                 <div class="card shadow-lg w-100">
                                     <div class="card-body">
                                         <h5 class="badge badge-primary badge-pill">Mode d'emploi</h5>
-                                        <!-- <p class=" mb-2">
-                                            <ul class="list-group">
-                                                <li class="list-group-item">
-                                                    <a href="https://halur1.univ-rennes1.fr/ExtrHAL_manuel_v2.pdf"><i class="mdi mdi-file-pdf-box-outline mr-1"></i> Télécharger le manuel</a>
-                                                </li>
-                                                <li class="list-group-item">
-                                                    <a href="https://halur1.univ-rennes1.fr/ExtrHAL_criteres_types_publis.pdf"><i class="mdi mdi-file-pdf-box-outline mr-1"></i> Quels champs compléter dans HAL ?</a>
-                                                </li>
+                                        <div class=" mb-2">
+																						<ul class="list-group">
+																								<li class="list-group-item">
+																										En préparation
+																								</li>
                                             </ul> 
-                                        </p> -->
+                                        </div>
                                     </div>
                                 </div>
                                 <!-- end card-->

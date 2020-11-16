@@ -8,6 +8,8 @@ if(strpos($_SERVER['HTTP_HOST'], '127.0.0.1') !== false || strpos($_SERVER['HTTP
 }else{
   require_once('./CAS_connect.php');
 	$HAL_USER = phpCAS::getUser();
+	$HAL_QUOI = "Zip2HAL";
+	include('./Stats_listes_HALUR1.php');
 }
 
 //Avant tout, vérification de l'étape de chargement du fichier zip des TEI xml OverHAL
