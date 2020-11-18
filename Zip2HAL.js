@@ -1,3 +1,7 @@
+function majokCRP(crpAut) {
+  document.getElementById("Crp-aut"+crpAut).innerHTML = "<a href=\"#\" data-toggle=\"tooltip\" data-html=\"true\" title=\"Auteur correspondant\" data-original-title=\"\"><i class=\"mdi mdi-email-outline text-info mdi-18px\"></i></a>";
+}
+
 function majokIdHAL(halID) {
   document.getElementById("Vu"+halID).innerHTML = "<i class='mdi mdi-delete-outline mdi-18px text-grey'></i>";
 	document.getElementById("Txt"+halID).innerHTML = "<s>Supprimer l'idHAL "+halID+"</s>";

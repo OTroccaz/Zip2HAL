@@ -731,6 +731,22 @@ if ($action == "supprimerAuteur") {
 	$xml->save($nomfic);
 }
 
+//Désigner un auteur correspondant
+if ($action == "designerCRP") {
+	$i = $_POST["pos"];
+	$cpt = 0;
+
+	$auts = $xml->getElementsByTagName($cstAU);
+	foreach($auts as $aut) {
+		if ($i == $cpt) {
+			$aut->setAttribute("role", "crp");
+			$xml->save($nomfic);
+			break;
+		}
+		$cpt++;
+	}
+}
+
 //Ajouter un idHAL
 if ($action == "ajouterIdHAL") {
 	$i = $_POST["pos"];

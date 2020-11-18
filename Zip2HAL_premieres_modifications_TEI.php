@@ -181,6 +181,8 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 					$ou = "iB";
 					//Y-a-t-il un mail ?
 					if($halAut[$i]['mail'] != "" && strpos($listmails, $halAut[$i]['mail']) === false) {
+						//Suppression du noeud mail pour éviter un doublon
+						deleteNode($xml, $cstAU, $cstEM, $i, "", "", "", "", "exact");
 						$auts = $xml->getElementsByTagName('author')->item($i);
 						$bimoc = $xml->createElement($cstEM);
 						$moc = $xml->createTextNode($halAut[$i]['mail']);

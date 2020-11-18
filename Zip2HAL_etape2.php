@@ -16,7 +16,8 @@ $nomAut = array();//Noms des auteurs
 $affAut = array();//Affiliation des auteurs
 $xmlIds = array();//IdHALs trouvés
 $xmlIdi = array();//IdHALi trouvés
-$melAut = array();//Emails trouvés
+$melAut = array();//Emails trouvés (domaine)
+$adrAut = array();//Emails trouvés (adresse)
 $halAut = array();
 $iOrcid = array();//ORCID
 $halAutinit = array();
@@ -63,7 +64,12 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		$xmlIdi[$iAut] = "";
 		$affAut[$iAut] = "";
 		$melAut[$iAut] = "";
+		$adrAut[$iAut] = "";
 		$iOrcid[$iAut] = "";
+		$rolAut[$iAut] = "";
+		
+		//Rôle auteur
+		$rolAut[$iAut] = $aut->getAttribute("role");
 		
 		foreach($aut->childNodes as $elt) {
 			//Prénom/Nom
@@ -86,6 +92,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 			//Email
 			if($elt->nodeName == "email") {
 				$melAut[$iAut] = str_replace('@', '', strstr($elt->nodeValue, '@'));
+				$adrAut[$iAut] = $elt->nodeValue;
 			}
 			//ORCID
 			if($elt->nodeName == "idno" && $elt->hasAttribute("type") && $elt->getAttribute("type") == "https://orcid.org/") {
@@ -120,9 +127,10 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		$halAut[$iAut][$cstII] = "";
 		$halAut[$iAut][$cstIS] = "";
 		$halAut[$iAut][$cstMD] = $melAut[$i];
-		$halAut[$iAut]['mail'] = "";
+		$halAut[$iAut]['mail'] = $adrAut[$i];
 		$halAut[$iAut][$cstDI] = "";
 		$halAut[$iAut]['orcid'] = "";
+		$halAut[$iAut]['rolaut'] = $rolAut[$i];
 		
 		$firstNameT = strtolower(wd_remove_accents($firstName));
 		$lastNameT = strtolower(wd_remove_accents($lastName));

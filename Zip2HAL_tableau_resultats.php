@@ -588,6 +588,16 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		//Début span suppression auteur
 		echo '&nbsp;<span id="Sup-aut'.$i.'-'.$idFic.'">';
 		
+		//Afficher icône mail
+		if($halAut[$i]['rolaut'] == "crp") {//Si auteur correspondant
+			echo '&nbsp;<span id="Crp-aut'.$i.'-'.$idFic.'"><a href="#" data-toggle="tooltip" data-html="true" title="<strong>Auteur correspondant</strong>" data-original-title=""><i class="mdi mdi-email-outline text-info mdi-18px"></i></a></span>';
+		}else{
+			if($halAut[$i]['mail'] != "") {//Si email remonté
+				echo '&nbsp;<span id="Crp-aut'.$i.'-'.$idFic.'"><a style="cursor:pointer;" onclick="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'designerCRP\', pos: '.$i.', valeur: \'crp\'}); majokCRP(\''.$i.'-'.$idFic.'\');"><i class="mdi mdi-email-outline text-gray-700 mdi-18px"></i></a></span>';
+			}
+		}
+		
+		
 		if($halAut[$i]['mailDom'] != "") {echo ' (@'.$halAut[$i]['mailDom'].')';}
 		echo '<br>';
 		if($halAut[$i][$cstXS] != "") {
