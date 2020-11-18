@@ -583,7 +583,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		echo '<span id="PN-aut'.$i.'-'.$idFic.'"><b>'.$halAut[$i][$cstFN].' '.$halAut[$i][$cstLN].'</b></span>';
 		
 		//Possibilité de supprimer l'auteur
-		echo '&nbsp;<span id="Vu-aut'.$i.'-'.$idFic.'"><a style="cursor:pointer;" data-toggle="tooltip" data-html="true" title="Supprimer l\'auteur ?" data-original-title="" onclick="event.preventDefault(); afficherPopupConfirmation(\'Êtes-vous sûr de vouloir supprimer cet auteur ?\', \''.$nomfic.'\', '.$i.', \''.$halAut[$i][$cstFN].' ~ '.$halAut[$i][$cstLN].'\', \'aut'.$i.'-'.$idFic.'\');"><i class="mdi mdi-delete-outline mdi-18px text-primary"></i></a></span>';
+		echo '&nbsp;<span id="Vu-aut'.$i.'-'.$idFic.'"><a style="cursor:pointer;" data-toggle="tooltip" data-html="true" title="<strong>Supprimer l\'auteur ?</strong>" data-original-title="" onclick="event.preventDefault(); afficherPopupConfirmation(\'Êtes-vous sûr de vouloir supprimer cet auteur ?\', \''.$nomfic.'\', '.$i.', \''.$halAut[$i][$cstFN].' ~ '.$halAut[$i][$cstLN].'\', \'aut'.$i.'-'.$idFic.'\');"><i class="mdi mdi-trash-can-outline mdi-18px text-primary"></i></a></span>';
 		
 		//Début span suppression auteur
 		echo '&nbsp;<span id="Sup-aut'.$i.'-'.$idFic.'">';
@@ -591,7 +591,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		if($halAut[$i]['mailDom'] != "") {echo ' (@'.$halAut[$i]['mailDom'].')';}
 		echo '<br>';
 		if($halAut[$i][$cstXS] != "") {
-			echo '<span id="Txt'.$halAut[$i][$cstXS].'-'.$idFic.'">Supprimer l\'idHAL '.$halAut[$i][$cstXS].'</span> <span id="Vu'.$halAut[$i][$cstXS].'-'.$idFic.'"><a style="cursor:pointer;" onclick="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'supprimerIdHAL\', pos: '.$i.', valeur: \''.$halAut[$i][$cstXS].'\'}); majokIdHAL(\''.$halAut[$i][$cstXS].'-'.$idFic.'\');"><i class=\'mdi mdi-delete-outline mdi-18px text-primary\'></i></a></span><br>';
+			echo '<span id="Txt'.$halAut[$i][$cstXS].'-'.$idFic.'">Supprimer l\'idHAL '.$halAut[$i][$cstXS].'</span> <span id="Vu'.$halAut[$i][$cstXS].'-'.$idFic.'"><a style="cursor:pointer;" onclick="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'supprimerIdHAL\', pos: '.$i.', valeur: \''.$halAut[$i][$cstXS].'\'}); majokIdHAL(\''.$halAut[$i][$cstXS].'-'.$idFic.'\');"><i class=\'mdi mdi-trash-can-outline mdi-18px text-primary\'></i></a></span><br>';
 		}
 		//Si pas d'idHAL et si id auteur existe, afficher l'id
 		if($halAut[$i][$cstIS] == "" && $halAut[$i][$cstDI] != "") {
@@ -605,8 +605,14 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		}
 		
 		echo 'Ajouter un idHAL :&nbsp;<span class="form-inline"><input type="text" id="ajoutIdh'.$i.'-'.$idFic.'" name="ajoutIdh'.$i.'-'.$idFic.'" value="'.$idHAL.'" class="autoID form-control" style="height: 18px; width:250px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'ajouterIdHAL\', pos: '.$i.', valeur: $(this).val()});">';
-		echo '&nbsp;<span id="Vu'.$halAut[$i][$cstIS].'-'.$idFic.'"><a style="cursor:pointer;" onclick="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'supprimerIdHAL\', pos: '.$i.', valeur: \'\'}); majokIdHALSuppr(\'ajoutIdh'.$i.'-'.$idFic.'\');"><i class=\'mdi mdi-delete-outline mdi-18px text-primary\'></i></a>';
-		echo '<a href="#" data-toggle="tooltip" data-html="true" title="<strong>Est-ce le bon idHAL ?</strong><br>Merci de vérifier." data-original-title=""><i class="mdi mdi-account-question text-info mdi-18px"></i></a>';
+		echo '&nbsp;<span id="Vu'.$halAut[$i][$cstIS].'-'.$idFic.'"><a style="cursor:pointer;" onclick="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'supprimerIdHAL\', pos: '.$i.', valeur: \'\'}); majokIdHALSuppr(\'ajoutIdh'.$i.'-'.$idFic.'\');"><i class=\'mdi mdi-trash-can-outline mdi-18px text-primary\'></i></a>';
+		if ($halAut[$i]['orcid'] == "oui") {
+			echo '<a href="#" data-toggle="tooltip" data-html="true" title="<strong>IdHAL vérifié par ORCID</strong>" data-original-title=""><i class="mdi mdi-check-bold text-success mdi-18px"></i></a>';
+		}else{
+			if ($idHAL != "") {
+				echo '<a href="#" data-toggle="tooltip" data-html="true" title="<strong>Est-ce le bon idHAL ?</strong><br>Merci de vérifier." data-original-title=""><i class="mdi mdi-exclamation-thick text-info mdi-18px"></i></a>';
+			}
+		}
 		echo '</span></span><br>';
 
 		echo '<a target="_blank" href="https://aurehal.archives-ouvertes.fr/author/browse?critere='.$halAut[$i][$cstFN].'+'.$halAut[$i][$cstLN].'">Consulter le référentiel auteur</a><br>';
@@ -624,7 +630,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		for($j = 0; $j < count($nomAff); $j++) {
 			if($halAutinit[$i][$cstAN] != "" && stripos($halAutinit[$i][$cstAN], $nomAff[$j][$cstLA]) !== false) {
 				echo '<span id="aut'.$i.'-nomAff'.$j.'">'.$nomAff[$j]['org'];
-				//echo '&nbsp;<i class=\'mdi mdi-delete-outline mdi-18px text-primary\'></i></span><br>';
+				//echo '&nbsp;<i class=\'mdi mdi-trash-can-outline mdi-18px text-primary\'></i></span><br>';
 				echo '</span><br>';
 			}
 		}
@@ -668,7 +674,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 					echo '</script>';
 				}
 				echo '<span id="aut'.$i.$cstHA.$j.'-'.$idFic.'" draggable="true"><strong><font style=\'color:&nbsp;'.$txtcolor.';\'>'.$halAffVal.'</font></strong></span>';
-				echo '&nbsp;<span id="Vu-aut'.$i.$cstHA.$j.'-'.$idFic.'"><a style="cursor:pointer;" onclick="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'supprimerAffil\', pos: '.$i.', valeur: \''.$halAff[$j][$cstDI].'\'}); majokAffil(\'aut'.$i.$cstHA.$j.'-'.$idFic.'\', \''.$halAffVal.'\');"><i class=\'mdi mdi-delete-outline mdi-18px text-primary\'></i></a></span><br>';						
+				echo '&nbsp;<span id="Vu-aut'.$i.$cstHA.$j.'-'.$idFic.'"><a style="cursor:pointer;" onclick="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'supprimerAffil\', pos: '.$i.', valeur: \''.$halAff[$j][$cstDI].'\'}); majokAffil(\'aut'.$i.$cstHA.$j.'-'.$idFic.'\', \''.$halAffVal.'\');"><i class=\'mdi mdi-trash-can-outline mdi-18px text-primary\'></i></a></span><br>';						
 			}
 		}
 		
@@ -688,7 +694,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		
 		for($dni = $j; $dni < $j + 5; $dni++) {						
 			echo '<span class="form-inline"><input type="text" draggable="true" id="aut'.$i.$cstAA.$dni.'-'.$idFic.'" name="aut'.$i.$cstAA.$dni.'-'.$idFic.'" value="" class="autoAF form-control" style="height: 18px; width: 250px;" onclick="this.setSelectionRange(0, this.value.length);" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'ajouterAffil\', pos: '.$i.', valeur: $(this).val()});">';
-			echo '&nbsp;<span id="Vu-aut'.$i.$cstAA.$dni.'-'.$idFic.'"><a style="cursor:pointer;" onclick="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'supprimerAffil\', pos: '.$i.', valeur: $(\'#aut'.$i.$cstAA.$dni.'-'.$idFic.'\').val().split(\'~\')[0].trim()}); majokAffilAjout(\'aut'.$i.$cstAA.$dni.'-'.$idFic.'\');"><i class=\'mdi mdi-delete-outline mdi-18px text-primary\'></i></a></span></span>';
+			echo '&nbsp;<span id="Vu-aut'.$i.$cstAA.$dni.'-'.$idFic.'"><a style="cursor:pointer;" onclick="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'supprimerAffil\', pos: '.$i.', valeur: $(\'#aut'.$i.$cstAA.$dni.'-'.$idFic.'\').val().split(\'~\')[0].trim()}); majokAffilAjout(\'aut'.$i.$cstAA.$dni.'-'.$idFic.'\');"><i class=\'mdi mdi-trash-can-outline mdi-18px text-primary\'></i></a></span></span>';
 			
 			//Drag and drop
 			echo '<script type="text/javascript">';
@@ -791,7 +797,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 			//echo 'document.getElementById(\'cpt4-'.$idFic.'\').style.display = \'none\';';
 			echo '</script>';
 
-			echo '<a target=\'_blank\' href=\'https://www.freeformatter.com/xml-validator-xsd.html#\'><i class=\'mdi mdi-delete-outline mdi-18px text-primary\'></i></a><br>';
+			echo '<a target=\'_blank\' href=\'https://www.freeformatter.com/xml-validator-xsd.html#\'><i class=\'mdi mdi-trash-can-outline mdi-18px text-primary\'></i></a><br>';
 			echo '<a target=\'_blank\' href=\''.$nomfic.'\'>Lien TEI</a><br>';
 			print '<b>TEI invalide !</b>';
 			libxml_display_errors();
@@ -811,7 +817,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 			//echo 'document.getElementById(\'cpt4-'.$idFic.'\').style.display = \'none\';';
 			echo '</script>';
 
-			echo '<a target=\'_blank\' href=\'https://www.freeformatter.com/xml-validator-xsd.html#\'><i class="mdi mdi-check-outline"></i></a><br>';
+			echo '<a target=\'_blank\' href=\'https://www.freeformatter.com/xml-validator-xsd.html#\'><i class="mdi mdi-check-bold text-success mdi-18px"></i></a><br>';
 			echo '<a target=\'_blank\' href=\''.$nomfic.'\'>Lien TEI</a><br>';			
 			$maj = "oui";
 		}

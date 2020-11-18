@@ -122,6 +122,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		$halAut[$iAut][$cstMD] = $melAut[$i];
 		$halAut[$iAut]['mail'] = "";
 		$halAut[$iAut][$cstDI] = "";
+		$halAut[$iAut]['orcid'] = "";
 		
 		$firstNameT = strtolower(wd_remove_accents($firstName));
 		$lastNameT = strtolower(wd_remove_accents($lastName));
@@ -174,6 +175,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 						$iHi = "oui";
 						$cptiHi++;
 						$trouve++;
+						$halAut[$iAut]['orcid'] = "oui";
 					}
 				}else{//Pas d'idHal
 					if($testMel == "oui") {
