@@ -164,7 +164,7 @@ if($racine == "") {$racine = "https://hal-univ-rennes1.archives-ouvertes.fr/";}
                                         </h2>
                                         <h5 class="badge badge-primary badge-pill">Présentation</h5>
 																				
-																				<img src="./img/nasa-galaxy.png" alt="Accueil Zip2HAL" class="img-fluid"><br>
+																				<img src="./img/nasa-galaxy.jpg" alt="Accueil Zip2HAL" class="img-fluid"><br>
 																				<p class="font-italic">Photo : Galaxy by Nasa on Unsplash (détail)</p>
 
                                         <p class=" mb-2 text-justify">
