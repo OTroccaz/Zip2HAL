@@ -99,8 +99,9 @@ $soumis = "soumis";
 
 if(isset($_POST[$soumis])) {
 	$team = htmlspecialchars($_POST["team"]);
-	if($team == "Entrez le code de votre collection") {//Code collection non renseigné > on en met un par défaut
-		$team = "ECOBIO";
+	if($team == "Entrez le code de votre collection") {//Code collection non renseigné > on en met un par défaut > pas obligatoire apparemment
+		//$team = "ECOBIO";
+		$team = "";
 	}
 	$racine = htmlspecialchars($_POST["racine"]);
 	if(isset($_POST["domaine"])) {$domaine = htmlspecialchars($_POST["domaine"]);}

@@ -593,7 +593,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 			echo '&nbsp;<span id="Crp-aut'.$i.'-'.$idFic.'"><a href="#" data-toggle="tooltip" data-html="true" title="<strong>Auteur correspondant</strong>" data-original-title=""><i class="mdi mdi-email-outline text-info mdi-18px"></i></a></span>';
 		}else{
 			if($halAut[$i]['mail'] != "") {//Si email remonté
-				echo '&nbsp;<span id="Crp-aut'.$i.'-'.$idFic.'"><a style="cursor:pointer;" onclick="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'designerCRP\', pos: '.$i.', valeur: \'crp\'}); majokCRP(\''.$i.'-'.$idFic.'\');"><i class="mdi mdi-email-outline text-gray-700 mdi-18px"></i></a></span>';
+				echo '&nbsp;<span id="Crp-aut'.$i.'-'.$idFic.'"><a style="cursor:pointer;" onclick="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'designerCRP\', pos: '.$i.', valeur: \'crp\'}); majokCRP(\''.$i.'-'.$idFic.'\');"><i class="mdi mdi-email-outline text-gray-700 mdi-18px" title="Désigner comme auteur correspondant ?"></i></a></span>';
 			}
 		}
 		

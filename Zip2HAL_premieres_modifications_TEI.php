@@ -99,9 +99,11 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	}
 
 
-	//Ajout du code collection
-	insertNode($xml, "", "seriesStmt", "", 0, "idno", "type", "stamp", "n", $team, "aC", $cstAM, "");
-	$xml->save($nomfic);
+	//Ajout du code collection s'il a été renseigné
+	if($team != "") {
+		insertNode($xml, "", "seriesStmt", "", 0, "idno", "type", "stamp", "n", $team, "aC", $cstAM, "");
+		$xml->save($nomfic);
+	}
 
 	//Ajout du domaine
 	if($domaine != "") {
