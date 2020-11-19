@@ -210,12 +210,22 @@ if($racine == "") {$racine = "https://hal-univ-rennes1.archives-ouvertes.fr/";}
 																						<label class="col-12 col-md-2 col-form-label font-weight-bold" for="racine">Portail de dépôt :</label>
 
 																						<div class="col-12 col-md-4">
-																								<select id="racine" class="form-control" size="1" name="racine">
 																								<?php
-																								$tabcoll = array_keys($collport);
-																								for ($i=0; $i < count($tabcoll); $i++) {
-																									if($racine == $tabcoll[$i]) {$txt = "selected";}else{$txt = "";}
-																									echo '<option '.$txt.' value="'.$tabcoll[$i].'">'.$tabcoll[$i].'</option>';
+																								$colPort = array();
+																								$urlPort = "https://api.archives-ouvertes.fr/ref/instance";
+																								$contents = file_get_contents($urlPort);
+																								$results = json_decode($contents);
+																								foreach($results->response->docs as $entry) {
+																									//$colPort[$entry->url."/"] = $entry->name;
+																									$colPort[] = $entry->url."/";
+																								}
+																								array_multisort($colPort, SORT_ASC);
+																								?>
+																								<select id="racine" class="custom-select" name="racine">
+																								<?php
+																								for ($i=0; $i < count($colPort); $i++) {
+																									if($racine == $colPort[$i]) {$txt = "selected";}else{$txt = "";}
+																									echo '<option '.$txt.' value="'.$colPort[$i].'">'.$colPort[$i].'</option>';
 																								}
 																								?>
 																								</select>
