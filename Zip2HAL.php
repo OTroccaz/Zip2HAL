@@ -24,6 +24,24 @@ if(!isset($nomficZip) || !file_exists($nomficZip)) {
 	header('Location: '.'Zip2HAL_TEI_OverHAL.php?erreur=7');
 }
 
+//Si le dossier lié à l'archive a plus d'un jour, on supprime tout et on relance
+if(isset($nomficZip)) {
+	$dosarc = str_replace(array("Zip2HAL_TEI_OverHAL_", ".zip"), "", $nomficZip)."/";
+	$ageElem = time() - filemtime($dosarc);
+	if($ageElem > 86400) {//Si dossier de plus d'un jour
+		$handle = opendir($dosarc);//Suppression des fichiers du dossier
+		while($elem = readdir($handle)) {
+			if(is_dir($dosarc.$elem) || substr($elem, -2, 2) === '..' || substr($elem, -1, 1) === '.') {
+			}else{
+				unlink($dosarc.$elem);
+			}
+		}
+		rmdir($dosarc);//Suppression du dossier
+		unlink($nomficZip);//Suppression de l'archive
+		header('Location: '.'Zip2HAL_TEI_OverHAL.php?erreur=7');
+	}
+}
+
 register_shutdown_function(function() {
     $error = error_get_last();
 
