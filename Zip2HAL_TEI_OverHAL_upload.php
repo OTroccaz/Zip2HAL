@@ -80,5 +80,7 @@ if(isset($_FILES[$qui]['name']) && $_FILES[$qui]['name'] != "") //File has been 
 	}else{
 		Header($loc."Zip2HAL_TEI_Overhal.php".$erreur);
 	}
+}else{
+	Header($loc."Zip2HAL_TEI_Overhal.php?erreur=4");
 }
 ?>
