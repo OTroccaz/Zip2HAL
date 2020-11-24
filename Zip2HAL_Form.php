@@ -11,8 +11,8 @@ $form = "Zip2HAL_Modif.php?action=".$action."&amp;Id=".$id;
 	<meta charset="utf-8" />
 	<title>Zip2HAL - HAL - UR1</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta content="" name="description" />
-	<meta content="Coderthemes + Lizuka" name="author" />
+	<meta content="Zip2HAL permet de déposer dans HAL un lot de publications au format TEI HAL (fichier généré par OverHAL)" name="description" />
+	<meta content="Coderthemes + Lizuka + OTroccaz + LJonchere" name="author" />
 	<!-- App favicon -->
 	<link rel="shortcut icon" href="favicon.ico">
 
