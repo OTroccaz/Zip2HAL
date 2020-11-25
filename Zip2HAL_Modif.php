@@ -58,7 +58,7 @@ if (isset($_GET[$partDep]) && ($_GET[$partDep] != ""))
 	$partDep = $_GET[$partDep];
 	$tabDep = explode(';', $partDep);
 	//On-Behalf-Of: login|jonchere;login|otroccaz
-	foreach($taDep as $elt) {
+	foreach($tabDep as $elt) {
 		$obo .= "Login|".$elt.";";
 	}
 	$obo = substr($obo, 0, -1);
