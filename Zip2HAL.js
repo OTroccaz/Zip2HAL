@@ -1,3 +1,11 @@
+function majpartDep(nomfic, idFic, partage) {
+	var source = document.getElementById(nomfic + "-" + idFic).innerHTML;
+	var tab1 = source.split('partDep=');
+	var tab2 = tab1[1].split('" onclick');
+	var target = tab1[0] + 'partDep=' + partage + '" onclick' + tab2[1];
+	document.getElementById(nomfic + "-" + idFic).innerHTML = target;
+}
+
 function majokCRP(crpAut) {
   document.getElementById("Crp-aut"+crpAut).innerHTML = "<a href=\"#\" data-toggle=\"tooltip\" data-html=\"true\" title=\"Auteur correspondant\" data-original-title=\"\"><i class=\"mdi mdi-email-outline text-info mdi-18px\"></i></a>";
 }

@@ -116,6 +116,10 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	//Métadonnées > DOI
 	echo '<p class="form-inline">DOI :&nbsp;<input type="text" id="doi-'.$idFic.'" name="doi-'.$idFic.'" value="'.$doiTEI.'" class="form-control" style="height: 18px; width:300px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'doi\', valeur: $(this).val()});"></p>';
 	
+	//Métadonnées > Partage de dépôt
+	$nomfic2 = str_replace(array('./XML/', '.xml'), '', $nomfic);
+	echo '<p class="form-inline">Partager ce dépôt avec :&nbsp;<a href="#" data-toggle="tooltip" data-html="true" title="" data-original-title="<strong>Renseignez le login</strong><br>Plusieurs valeurs possibles, séparées par un point-virgule : login1;login2;etc."><i class="mdi mdi-account-question text-info mdi-18px"></i></a>&nbsp;<input type="text" id="partDep-'.$idFic.'" name="partDep-'.$idFic.'" value="'.$partDep.'" class="form-control" style="height: 18px; width:300px;" onkeyup="majpartDep(\''.$nomfic2.'\', \''.$idFic.'\', $(this).val());"></p>';
+	
 	//Métadonnées > Titre
 	$titreNot = "";
 	$elts = $xml->getElementsByTagName($cstTI);
@@ -837,15 +841,15 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		$titreNotS = str_replace('"', '\"', $titreNotS);
 		$titreNotS = str_replace(" ", "%20", $titreNotS);
 		$idNomfic = str_replace(array(".xml", "./XML/"), "", $nomfic);
-		$lienMAJ = "./Zip2HAL_Modif.php?action=MAJ&Id=".$idNomfic."&portail=".$racine;
+		$lienMAJ = "./Zip2HAL_Modif.php?action=MAJ&Id=".$idNomfic."&portail=".$racine."&partDep=".$partDep;
 
-		echo '<td><center><span id=\'majcont\'></span><span id=\'validerTEI-'.$idFic.'\'>Après avoir complété les champs manquants, cliquez sur l\'icône ci-dessous afin de vérifier la validité du TEI pour pouvoir ensuite l\'importer dans HAL.<br><a style="cursor:pointer;" onclick="schemaVal('.$idFic.'); afficherPopupAttente(); goto(\'Zip2HAL_schema_validate.php?idFic='.$idFic.'&nomfic='.$nomfic.'&idNomfic='.$idNomfic.'&idTEI='.$idTEI.'&typDoc='.$typDoc.'&datePub='.$datePub.'&portail='.$racine.'&login='.$HAL_USER.'&team='.$team.'&titreNot='.$titreNotS.'\');"><i class="mdi-progress-upload mdi mdi-24px text-primary"></i></a></span></center></td>';
+		echo '<td><center><span id=\'majcont\'></span><span id=\'validerTEI-'.$idFic.'\'>Après avoir complété les champs manquants, cliquez sur l\'icône ci-dessous afin de vérifier la validité du TEI pour pouvoir ensuite l\'importer dans HAL.<br><a style="cursor:pointer;" onclick="schemaVal('.$idFic.'); afficherPopupAttente(); goto(\'Zip2HAL_schema_validate.php?idFic='.$idFic.'&nomfic='.$nomfic.'&idNomfic='.$idNomfic.'&idTEI='.$idTEI.'&typDoc='.$typDoc.'&datePub='.$datePub.'&portail='.$racine.'&login='.$HAL_USER.'&team='.$team.'&titreNot='.$titreNotS.'&partDep='.$partDep.'\');"><i class="mdi-progress-upload mdi mdi-24px text-primary"></i></a></span></center></td>';
 	}
 	
 	//Importer dans HAL
 	if($maj == "oui") {
 		$idNomfic = str_replace(array(".xml", "./XML/"), "", $nomfic);
-		$lienMAJ = "./Zip2HAL_Modif.php?action=MAJ&Id=".$idNomfic."&portail=".$racine;
+		$lienMAJ = "./Zip2HAL_Modif.php?action=MAJ&Id=".$idNomfic."&portail=".$racine."&partDep=".$partDep;
 		//$lienMAJ = "https://ecobio.univ-rennes1.fr";//Pour test
 		include "./Zip2HAL_actions.php";
 		$titreNotS = str_replace("'", "\'", $titreNot);

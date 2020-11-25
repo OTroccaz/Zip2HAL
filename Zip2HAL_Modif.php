@@ -51,6 +51,19 @@ if (isset($_GET[$cstPO]) && ($_GET[$cstPO] != ""))
 {
 	$portail = $_GET[$cstPO];
 }
+
+$obo = "";
+if (isset($_GET[$partDep]) && ($_GET[$partDep] != ""))
+{
+	$partDep = $_GET[$partDep];
+	$tabDep = explode(';', $partDep);
+	//On-Behalf-Of: login|jonchere;login|otroccaz
+	foreach($taDep as $elt) {
+		$obo .= "Login|".$elt.";";
+	}
+	$obo = substr($obo, 0, -1);
+}
+
 //Pour visualiser résultat preprod > https://univ-rennes1.halpreprod.archives-ouvertes.fr/halid
 
 /*
@@ -138,6 +151,11 @@ foreach($elts as $elt) {
 if (isset($doi)) {
   $headers[] = "X-Allow-Completion[".$doi."]";
 }
+//Si partage du dépôt
+if ($obo != "") {
+		$headers[] = "On-Behalf-Of: ".$obo;
+}
+
 curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 curl_setopt($ch, CURLOPT_USERPWD, ''.$HAL_USER.':'.$HAL_PASSWD.'');
 curl_setopt($ch, CURLOPT_POSTFIELDS, $xmlContenu);

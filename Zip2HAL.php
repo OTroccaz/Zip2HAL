@@ -112,6 +112,7 @@ $brk = '<br><br>';
 <?php
 $team = "";//Code collection HAL
 $racine = "";//Portail de dépôt
+$partDep = "";//Partage de dépôt = Déposer pour un autre compte
 $domaine = "";//Domaine disciplinaire
 $soumis = "soumis";
 
@@ -122,6 +123,7 @@ if(isset($_POST[$soumis])) {
 		$team = "";
 	}
 	$racine = htmlspecialchars($_POST["racine"]);
+	$partDep = htmlspecialchars($_POST["partDep"]);
 	if(isset($_POST["domaine"])) {$domaine = htmlspecialchars($_POST["domaine"]);}
 }
 
@@ -248,6 +250,25 @@ if($racine == "") {$racine = "https://hal-univ-rennes1.archives-ouvertes.fr/";}
 																								?>
 																								</select>
 																						</div>
+																				</div> <!-- .form-group -->
+																				
+																				<div class="form-group row mb-2">
+																				
+																						<label for="partDep" class="col-12 col-md-2 col-form-label font-weight-bold">
+																						Partager ce dépôt avec :
+																						</label>
+																						
+																						<div class="col-12 col-md-5">
+																								<div class="input-group">
+																										<div class="input-group-prepend">
+																												<button type="button" tabindex="0" class="btn btn-info" data-html="true" data-toggle="popover" data-trigger="focus" title="" data-content='Renseignez le login - Plusieurs valeurs possibles, séparées par un point-virgule : login1;login2;etc.' data-original-title="">
+																												<i class="mdi mdi-comment-question text-white"></i>
+																												</button>
+																										</div>
+																										<input type="text" id="partDep" name="partDep" class="form-control"  value="<?php echo $partDep;?>">
+																								</div>
+																						</div>
+																				
 																				</div> <!-- .form-group -->
 																				
 																				<div class="form-group row mb-2">
