@@ -53,13 +53,13 @@ if (isset($_GET[$cstPO]) && ($_GET[$cstPO] != ""))
 }
 
 $obo = "";
-if (isset($_GET[$partDep]) && ($_GET[$partDep] != ""))
+if (isset($_GET['partDep']) && ($_GET['partDep'] != ""))
 {
-	$partDep = $_GET[$partDep];
+	$partDep = $_GET['partDep'];
 	$tabDep = explode(';', $partDep);
 	//On-Behalf-Of: login|jonchere;login|otroccaz
 	foreach($tabDep as $elt) {
-		$obo .= "Login|".$elt.";";
+		$obo .= "login|".$elt.";";
 	}
 	$obo = substr($obo, 0, -1);
 }
