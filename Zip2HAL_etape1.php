@@ -12,7 +12,7 @@ echo '                <div class="ribbon-content">';
 echo '<a target="_blank" href="'.$reqAPI.'">URL requête API HAL</a><br>';
 
 if($numFound == 0) {			
-	echo 'Aucune notice trouvée dans HAL, donc, pas de doublon';
+	echo 'Aucune notice trouvée dans HAL, <strong>donc, pas de doublon</strong>';
 	$typDbl = "";
 	$idTEI = "";
 }else{
@@ -21,8 +21,8 @@ if($numFound == 0) {
 	$halId = array();
 	$typDbl = "";
 	$txtDbl = "";
-	$typid = " et les types sont identiques";
-	$nocol = " mais pas dans la collection ";
+	$typid = " <strong>et les types sont identiques</strong>";
+	$nocol = " mais <strong>pas dans la collection</strong> ";
 	
 	echo $numFound. ' notice(s) examinée(s)<br>';
 	echo '<div id=\'cpt1\'></div>';
@@ -117,12 +117,12 @@ if($numFound == 0) {
 							}
 						}
 						if($doublonDbl != "non") {//Doublon trouvé dans la collection > vérification du type
-							$txtDbl = " et dans la collection ".$team;
+							$txtDbl = " <strong>et dans la collection ".$team."</strong>";
 							if($typTEI == $docTEIDbl) {//Mêmes types de document
 								$txtDbl .= $typid;
 								$typDbl = "HALCOLLTYP";
 							}else{
-								$txtDbl .= " mais les types sont différents";
+								$txtDbl .= " <strong>mais les types sont différents</strong>";
 								$typDbl = "HALCOLL";
 							}
 							break 2;//Doublon HALCOLL trouvé > sortie des 2 boucles foreach
@@ -131,7 +131,7 @@ if($numFound == 0) {
 								$txtDbl = " mais pas dans la collection ".$team.$typid;
 								$typDbl = "HALTYP";
 							}else{
-								$txtDbl = $nocol.$team. " et les types sont différents";
+								$txtDbl = $nocol."<strong>".$team. " et les types sont différents</strong>";
 								$typDbl = "HAL";
 							}
 						}
@@ -139,10 +139,10 @@ if($numFound == 0) {
 				}
 			}else{
 				if($typTEI == $docTEI) {//Mêmes types de document
-					$txtDbl = $nocol.$team.$typid;
+					$txtDbl = $nocol."<strong>".$team.$typid."</strong>";
 					$typDbl = "HALTYP";
 				}else{
-					$txtDbl = $nocol.$team. " et les types sont différents";
+					$txtDbl = $nocol."<strong>".$team. " et les types sont différents</strong>";
 					$typDbl = "HAL";
 				}
 			}

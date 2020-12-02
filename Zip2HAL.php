@@ -449,7 +449,7 @@ if($racine == "") {$racine = "https://hal-univ-rennes1.archives-ouvertes.fr/";}
 																	$datePub2 = $datePub + 1;
 																}
 															}
-															if($datePub != "") {$special = "%20AND%20producedDateY_i:(".$datePub1."%20OR%20".$datePub."%20OR%20".$datePub2.")";}else{$special = "";}
+															if($datePub != "") {$special = "%20AND%20(producedDateY_i:(".$datePub1."%20OR%20".$datePub."%20OR%20".$datePub2.")%20OR%20inPress_bool:true)";}else{$special = "";}
 															
 															//Quand on a que le titre et pas le DOI, il faut trouver une correspondance exacte sur tout le titre pour considérer qu'il s'agit d'un doublon
 															if($doiTEI != "") {
