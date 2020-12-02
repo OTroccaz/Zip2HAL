@@ -2,6 +2,16 @@
 <?php
 header('Content-type: text/html; charset=UTF-8');
 
+
+//Restriction IP
+include("./Glob_IP_list.php");
+if (!in_array($ip, $IP_aut)) {
+  echo "<br><br><center><font face='Corbel'><strong>";
+  echo "Votre poste n'est pas autorisé à accéder à cette application.";
+  echo "</strong></font></center>";
+  die;
+}
+
 if (isset($_GET['css']) && ($_GET['css'] != ""))
 {
   $css = $_GET['css'];
