@@ -122,7 +122,7 @@ $form = "Zip2HAL_Modif.php?action=".$action."&amp;Id=".$id;
 																				<p class=" mb-2">
 																						<ul class="list-group">
 																								<li class="list-group-item">
-																										En préparation
+																										<a target="_blank" rel="noopener noreferrer" href="https://halur1.univ-rennes1.fr/Zip2HAL_Tutoriel.pdf"><i class="mdi mdi-file-pdf-box-outline mr-1"></i> Tutoriel</a>
 																								</li>
                                             </ul> 
                                         </p>
