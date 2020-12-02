@@ -188,7 +188,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 			$testMeta = "ok";
 		}
 	}
-	echo '<p class="form-inline">Date de publication* :&nbsp;<input type="text" id="datePub-'.$idFic.'" name="datePub-'.$idFic.'" value="'.$datePub.'" class="form-control" style="height: 18px; width:100px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'datePub\', valeur: $(this).val()});"></p>';
+	echo '<p class="form-inline">Date de publication* :&nbsp;<input type="text" id="datePub-'.$idFic.'" name="datePub-'.$idFic.'" value="'.$datePub.'" class="form-control" style="height: 18px; width:200px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'datePub\', valeur: $(this).val()});"></p>';
 	
 	if($datePub == "") {$tabMetaMQ[$nomfic][] = "l\'année de publication";}
 	
@@ -200,7 +200,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 			$dateEpub = $elt->nodeValue;
 		}
 	}
-	echo '<p class="form-inline">Date d\'édition :&nbsp;<input type="text" id="dateEpub-'.$idFic.'" name="dateEpub-'.$idFic.'" value="'.$dateEpub.'" class="form-control" style="height: 18px; width:100px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'dateEpub\', valeur: $(this).val()});"></p>';
+	echo '<p class="form-inline">Date de mise en ligne :&nbsp;<input type="text" id="dateEpub-'.$idFic.'" name="dateEpub-'.$idFic.'" value="'.$dateEpub.'" class="form-control" style="height: 18px; width:200px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'dateEpub\', valeur: $(this).val()});"></p>';
 
 	//Métadonnées > Revue
 	if($typDoc == "ART") {

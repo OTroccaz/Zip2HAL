@@ -159,7 +159,7 @@ if ($obo != "") {
 curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 curl_setopt($ch, CURLOPT_USERPWD, ''.$HAL_USER.':'.$HAL_PASSWD.'');
 curl_setopt($ch, CURLOPT_POSTFIELDS, $xmlContenu);
-
+//var_dump($headers);
 $return = curl_exec($ch);
 //print_r($return);
 
