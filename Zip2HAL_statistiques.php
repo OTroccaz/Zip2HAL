@@ -2,6 +2,14 @@
 <?php
 header('Content-type: text/html; charset=UTF-8');
 
+// récupération de l'adresse IP du client (on cherche d'abord à savoir s'il est derrière un proxy)
+if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+  $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+}elseif (isset($_SERVER['HTTP_CLIENT_IP'])) {
+  $ip = $_SERVER['HTTP_CLIENT_IP'];
+}else {
+  $ip = $_SERVER['REMOTE_ADDR'];
+}
 
 //Restriction IP
 include("./Glob_IP_list.php");
