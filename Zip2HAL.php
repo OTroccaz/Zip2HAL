@@ -466,6 +466,21 @@ if($racine == "") {$racine = "https://hal-univ-rennes1.archives-ouvertes.fr/";}
 															$numFound = 0;
 															if(isset($results->response->numFound)) {$numFound=$results->response->numFound;}
 															
+															$reqAPIC = "";
+															//Si aucune notice trouvée dans HAL "classique", interrogation du référentiel CRAC
+															if($numFound == 0) {
+																//Quand on a que le titre et pas le DOI, il faut trouver une correspondance exacte sur tout le titre pour considérer qu'il s'agit d'un doublon
+																if($doiTEI != "") {
+																	$reqAPIC = "https://api.archives-ouvertes.fr/crac/hal/?fq=title_t:%22".$critere."*%22".$special."&rows=10000&fl=halId_s,doiId_s,title_s,subTitle_s,docType_s";
+																}else{
+																	$reqAPIC = "https://api.archives-ouvertes.fr/crac/hal/?fq=title_t:%22".$titTEI."*%22".$special."&rows=10000&fl=halId_s,doiId_s,title_s,subTitle_s,docType_s";
+																	$reqAPIC = str_replace(" ", "%20", $reqAPIC);
+																}
+																$contents = file_get_contents($reqAPIC);
+																$results = json_decode($contents);
+																if(isset($results->response->numFound)) {$numFound=$results->response->numFound;}
+															}
+															
 															echo '<div class="alert alert-secondary mt-3" role="alert">';
 															echo '	<strong>Traitement du fichier</strong> '.str_replace($dir."/", "", $nomfic).'</strong><br>';
 															echo '</div>';

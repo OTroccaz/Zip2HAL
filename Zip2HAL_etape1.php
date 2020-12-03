@@ -9,10 +9,15 @@ echo '                <h5 class="text-success mt-0">Recherche des doublons poten
 echo '                <div class="ribbon-content">';
 								
 //echo '<b>Etape 1 : recherche des doublons potentiels</b><br>';
-echo '<a target="_blank" href="'.$reqAPI.'">URL requête API HAL</a><br>';
+echo '<a target="_blank" href="'.$reqAPI.'">URL requête API HAL</a>';
+if ($reqAPIC != "") {
+	echo ' - ';
+	echo '<a target="_blank" href="'.$reqAPIC.'">URL requête API HAL CRAC</a>';
+}
+echo '<br>';
 
 if($numFound == 0) {			
-	echo 'Aucune notice trouvée dans HAL, <strong>donc, pas de doublon</strong>';
+	echo 'Aucune notice trouvée dans HAL ni HAL CRAC, <strong>donc, pas de doublon</strong>';
 	$typDbl = "";
 	$idTEI = "";
 }else{
@@ -151,7 +156,13 @@ if($numFound == 0) {
 		$cpt++;
 	}
 	if($dbl == 0) {echo 'Aucune notice trouvée dans HAL, donc, pas de doublon';}//Notice non trouvée > pas de doublon
-	if($dbl >= 1) {echo 'La notice est déjà présente dans HAL'.$txtDbl;}//Présence de doublon(s)
+	if($dbl >= 1) {
+		if ($reqAPIC != "") {
+			echo 'La notice est absente dans HAL et présente dans HAL CRAC'.$txtDbl;//Présence de doublon(s)
+		}else{
+			echo 'La notice est déjà présente dans HAL'.$txtDbl;
+		}
+	}
 
 	echo '<script>';
 	echo 'document.getElementById(\'cpt1\').style.display = \'none\';';
