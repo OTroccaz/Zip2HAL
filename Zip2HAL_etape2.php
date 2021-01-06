@@ -302,6 +302,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 							$halAut[$iAut][$cstIS] = $elt["idHAL"];
 							$halAut[$iAut][$cstMD] = $elt["Domaine"];
 							$halAut[$iAut][$cstDI] = "";
+							$cptiHi++;
 							$trouve++;
 							echo 'idHAL '.$elt["idHAL"].' ('.$elt["idHALnum"].') trouvé avec le CSV OCDHAL<br>';
 							break;
