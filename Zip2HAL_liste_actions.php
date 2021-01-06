@@ -762,9 +762,30 @@ if ($action == "ajouterIdHAL") {
 		$xml->save($nomfic);
 		//insertNode($xml, trim($tabVal[0]), $cstAU, $cstAF, $i, "idno", "type", $cstID, $cstNT, $cstSG, "iB", $cstAM , "");
 		//insertNode($xml, trim(str_replace(')', '', $tabVal[1])), $cstAU, $cstAF, $i, "idno", "type", $cstID, $cstNT, $cstNU, "iB", $cstAM , "");
-		insertNode($xml, trim(str_replace(')', '', $tabVal[1])), $cstAU, $cstPE, $i, "idno", "type", $cstID, $cstNT, $cstNU, "iA", $cstAM , "");
-		insertNode($xml, trim($tabVal[0]), $cstAU, $cstPE, $i, "idno", "type", $cstID, $cstNT, $cstSG, "iA", $cstAM , "");
-		$xml->save($nomfic);
+		//Existe-t-il un noeud email pour cet auteur ? Si oui, les idHAL iront juste après <email>, si non, ils iront juste après <persName>
+		$rech = 0;
+		$trv = "non";
+		$lists = $xml->getElementsByTagName("author");
+		foreach ($lists as $list) {
+			if ($rech == $i) {//Recherche de l'auteur concerné
+				foreach($list->childNodes as $item) {
+					if ($item->nodeName == "email") {//Noeud email trouvé
+						$trv = "oui";
+						break 2;
+					}
+				}
+			}
+			$rech++;
+		}
+		if ($trv == "oui") {
+			insertNode($xml, trim(str_replace(')', '', $tabVal[1])), $cstAU, $cstEM, $i, "idno", "type", $cstID, $cstNT, $cstNU, "iA", $cstAM , "");
+			insertNode($xml, trim($tabVal[0]), $cstAU, $cstEM, $i, "idno", "type", $cstID, $cstNT, $cstSG, "iA", $cstAM , "");
+			$xml->save($nomfic);
+		}else{
+			insertNode($xml, trim(str_replace(')', '', $tabVal[1])), $cstAU, $cstPE, $i, "idno", "type", $cstID, $cstNT, $cstNU, "iA", $cstAM , "");
+			insertNode($xml, trim($tabVal[0]), $cstAU, $cstPE, $i, "idno", "type", $cstID, $cstNT, $cstSG, "iA", $cstAM , "");
+			$xml->save($nomfic);
+		}		
 	}
 }
 
