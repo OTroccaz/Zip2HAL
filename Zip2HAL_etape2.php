@@ -219,7 +219,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 				if($elt["UniqK"] == $testUniqK1 || $elt["UniqK"] == $testUniqK2) {
 					//Tester l'existence d'un idORCID
 					if(isset($elt["idORCID"]) && $elt["idORCID"] != "") {
-						$reqOrc = "https://api.archives-ouvertes.fr/ref/author/?q=orcid_id:".$elt["idORCID"]."%20AND%20valid_s:%22VALID%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s,fullName_s&sort=valid_s%20desc,docid%20asc";
+						$reqOrc = "https://api.archives-ouvertes.fr/ref/author/?q=orcid_id:".$elt["idORCID"]."%20AND%20firstName_t:%22".$firstName."%22%20AND%20valid_s:%22VALID%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s,fullName_s&sort=valid_s%20desc,docid%20asc";
 						$reqOrc = str_replace(" ", "%20", $reqOrc);
 						echo '<a target="_blank" href="'.$reqOrc.'">URL requête auteurs HAL (méthode ORCID à partir du CSV OCDHAL)</a><br>';
 						$contAut = file_get_contents($reqOrc);
