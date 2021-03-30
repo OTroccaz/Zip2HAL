@@ -731,7 +731,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	}
 	
 	echo '<br>';
-	echo '<b>Ajouter un auteur <i>(Prénom Nom)</i> :&nbsp;</b><input type="text" id="ajoutAuteur-'.$idFic.'" name="ajoutAuteur" class="form-control" style="height: 18px; width:280px;" onfocusout="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'ajouterAuteur\', pos: '.$i.', valeur: $(this).val()});">';
+	echo '<b>Ajouter un auteur <i>(Prénom Nom)</i> :&nbsp;</b><input type="text" id="ajoutAuteur-'.$idFic.'" name="ajoutAuteur" class="autoAuteurs form-control" style="height: 18px; width:280px;" onfocusout="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'ajouterAuteur\', pos: '.$i.', valeur: $(this).val()});">';
 	echo '</span></td>';
 	
 	//Vérification si des métadonnées sont manquantes

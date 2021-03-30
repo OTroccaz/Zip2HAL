@@ -292,3 +292,14 @@ $(function() {
 
 });
 
+//Autocomplete auteurs
+$(function() {
+    
+    //autocomplete
+    $(".autoAuteurs").autocomplete({
+        source: "Zip2HAL_AC_Auteurs.php",
+        minLength: 1
+    });                
+
+});
+
