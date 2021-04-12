@@ -238,10 +238,10 @@ $(function() {
 			minLength: 1,
 			open: function (event, ui) {
 				$('.ui-autocomplete > li').css("background-color", function() {
-						return $(this).text().indexOf('VALID') > -1 ? '#dff0d8' : ($(this).text().indexOf('INCOMING') > -1 ? '#fcf8e3' : '#f2dede');
+						return $(this).text().indexOf('VALID') > -1 ? '#dff0d8' : ($(this).text().indexOf('OLD') > -1 ? '#fcf8e3' : '#f2dede');
 				});
 				$('.ui-menu-item > div').css("color", function() {
-						return $(this).text().indexOf('VALID') > -1 ? '#698d53' : ($(this).text().indexOf('INCOMING') > -1 ? '#cfac72' : '#b96f7b');
+						return $(this).text().indexOf('VALID') > -1 ? '#698d53' : ($(this).text().indexOf('OLD') > -1 ? '#cfac72' : '#b96f7b');
 				});
 			}	
 	})
