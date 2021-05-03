@@ -11,6 +11,8 @@ echo '                <div class="ribbon-content">';
 //echo '<b>Etape 1 : recherche des doublons potentiels</b><br>';
 echo '<a target="_blank" href="'.$reqAPI.'">URL requête API HAL</a>';
 
+$dbl = 0;
+
 if($numFound == 0 && $numFoundC == 0) {
 	echo ' - ';
 	echo '<a target="_blank" href="'.$reqAPIC.'">URL requête API HAL CRAC</a><br>';
@@ -229,7 +231,7 @@ if($numFound == 0 && $numFoundC == 0) {
 				$halIdC['doublon'][$hId] .= '&nbsp;<a target="_blank" href="https://hal.archives-ouvertes.fr/'.$halIdC[$hId].'"><img src=\'./img/doublon.jpg\'></a>&nbsp;';
 				$reqDblC = "https://api.archives-ouvertes.fr/search/".$portail."/?fq=collCode_s:%22".$team."%22%20AND%20title_t:%22".$critere."*%22&rows=10000&fl=halId_s,doiId_s,title_s,subTitle_s,docType_s";
 				$reqDblC = str_replace(" ", "%20", $reqDblC);
-				$contDblC = file_get_contents($reqDbl);
+				$contDblC = file_get_contents($reqDblC);
 				$resDblC = json_decode($contDblC);
 				$numDblC = 0;
 				if(isset($resDblC->response->numFound)) {$numDblC=$resDblC->response->numFound;}
