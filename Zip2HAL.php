@@ -82,6 +82,7 @@ $brk = '<br><br>';
 	<!-- third party js -->
 	<script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
 	<script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
 	<script src="./Zip2HAL.js"></script>
 	<!-- third party js end -->
 	
