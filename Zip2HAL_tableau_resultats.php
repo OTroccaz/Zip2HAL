@@ -626,8 +626,12 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		if ($halAut[$i]['orcid'] == "oui") {
 			echo '<a href="#" data-toggle="tooltip" data-html="true" title="<strong>IdHAL vérifié par ORCID</strong>" data-original-title=""><i class="mdi mdi-check-bold text-success mdi-18px"></i></a>';
 		}else{
-			if ($idHAL != "") {
-				echo '<a href="#" data-toggle="tooltip" data-html="true" title="<strong>Est-ce le bon idHAL ?</strong><br>Merci de vérifier." data-original-title=""><i class="mdi mdi-exclamation-thick text-info mdi-18px"></i></a>';
+			if ($halAut[$i]['resid'] == "oui") {
+				echo '<a href="#" data-toggle="tooltip" data-html="true" title="<strong>IdHAL vérifié par ResearcherID</strong>" data-original-title=""><i class="mdi mdi-check-bold text-success mdi-18px"></i></a>';
+			}else{
+				if ($idHAL != "") {
+					echo '<a href="#" data-toggle="tooltip" data-html="true" title="<strong>Est-ce le bon idHAL ?</strong><br>Merci de vérifier." data-original-title=""><i class="mdi mdi-exclamation-thick text-info mdi-18px"></i></a>';
+				}
 			}
 		}
 		echo '</span></span><br>';
