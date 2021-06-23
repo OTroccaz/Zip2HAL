@@ -44,7 +44,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 					if($numFound != 0) {
 						$tests = $resId->response->docs[0]->authIdLastNameFirstName_fs;
 						foreach($tests as $test) {
-							if((strpos($test, ($halAut[$i][$cstFN])) !== false || strpos($test, (substr($halAut[$i][$cstFN], 0, 1))) !== false) && strpos($test, $halAut[$i][$cstLN]) !== false) {
+							if((strpos($test, ($halAut[$i][$cstFN])) !== false || strpos($test, (" ".substr($halAut[$i][$cstFN], 0, 1))) !== false) && strpos($test, $halAut[$i][$cstLN]) !== false) {
 								$testTab = explode('_FacetSep_', $test);
 								$halAut[$i]['docid'] = $testTab[0];
 								$cptId++;
