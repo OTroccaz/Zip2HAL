@@ -264,7 +264,7 @@ if($racine == "") {$racine = "https://hal-univ-rennes1.archives-ouvertes.fr/";}
 																								<div class="input-group">
 																										<div class="input-group-prepend">
 																												<button type="button" tabindex="0" class="btn btn-info" data-html="true" data-toggle="popover" data-trigger="focus" title="" data-content='Renseignez le login - Plusieurs valeurs possibles, séparées par un point-virgule : login1;login2;etc.' data-original-title="">
-																												<i class="mdi mdi-comment-question text-white"></i>
+																												<i class="mdi mdi-help text-white"></i>
 																												</button>
 																										</div>
 																										<input type="text" id="partDep" name="partDep" class="form-control"  value="<?php echo $partDep;?>">
@@ -294,7 +294,7 @@ if($racine == "") {$racine = "https://hal-univ-rennes1.archives-ouvertes.fr/";}
 																										<div class="input-group-prepend">
 																												<button type="button" tabindex="0" class="btn btn-info" data-html="true" data-toggle="popover" data-trigger="focus" title="" data-content='Code visible dans l’URL d’une collection.
 																						Exemple : IPR-MOL est le code de la collection http://hal.archives-ouvertes.fr/ <span class="font-weight-bold">IPR-PMOL</span> de l’équipe Physique moléculaire de l’unité IPR UMR CNRS 6251' data-original-title="">
-																												<i class="mdi mdi-comment-question text-white"></i>
+																												<i class="mdi mdi-help text-white"></i>
 																												</button>
 																										</div>
 																										<input type="text" id="team" name="team" class="form-control"  value="<?php echo $team1;?>" onClick="this.value='<?php echo $team2;?>';">
