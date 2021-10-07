@@ -43,12 +43,25 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 					if(isset($resId->response->numFound)) {$numFound = $resId->response->numFound;}
 					if($numFound != 0) {
 						$tests = $resId->response->docs[0]->authIdLastNameFirstName_fs;
+						$correxct = "non";
+						//On recherche d'abord la correspondance exacte avec nom + prénom
 						foreach($tests as $test) {
-							if((strpos($test, ($halAut[$i][$cstFN])) !== false || strpos($test, (" ".substr($halAut[$i][$cstFN], 0, 1))) !== false) && strpos($test, $halAut[$i][$cstLN]) !== false) {
+							if (strpos($test, ($halAut[$i][$cstLN]." ".$halAut[$i][$cstFN])) !== false) {
 								$testTab = explode('_FacetSep_', $test);
 								$halAut[$i]['docid'] = $testTab[0];
 								$cptId++;
+								$correxct = "oui";
 								break 2;
+							}
+						}
+						if ($correxct == "non") {//Pas de correspondance exacte  nom + prénom
+							foreach($tests as $test) {
+								if((strpos($test, ($halAut[$i][$cstFN])) !== false || strpos($test, (" ".substr($halAut[$i][$cstFN], 0, 1))) !== false) && strpos($test, $halAut[$i][$cstLN]) !== false) {
+									$testTab = explode('_FacetSep_', $test);
+									$halAut[$i]['docid'] = $testTab[0];
+									$cptId++;
+									break 2;
+								}
 							}
 						}
 					}
