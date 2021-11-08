@@ -770,6 +770,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		//echo '<div id=\'cpt4-'.$idFic.'\'>Validation en cours ...</div>';
 		//echo '<script>afficherPopupAttente();</script>';
 		
+		/*
 		echo '<div id="info-alert-modal-'.$idFic.'" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">';
 		echo '    <div class="modal-dialog modal-md modal-center">';
 		echo '        <div class="modal-content">';
@@ -799,6 +800,8 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		ob_flush();
 		flush();
 		sleep(1);
+		*/
+		
 		$maj = "non";
 		$tst = new DOMDocument();
 		$tst->load($nomfic);
@@ -810,6 +813,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 			echo '</script>';
 			*/
 
+			/*
 			echo '<script type="text/javascript">';
 			echo '	(function($) {';
 			echo '			"use strict";';
@@ -817,6 +821,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 			echo '	})(window.jQuery)';
 			//echo 'document.getElementById(\'cpt4-'.$idFic.'\').style.display = \'none\';';
 			echo '</script>';
+			*/
 
 			echo '<a target=\'_blank\' href=\'https://www.freeformatter.com/xml-validator-xsd.html#\'><i class=\'mdi mdi-trash-can-outline mdi-18px text-primary\'></i></a><br>';
 			echo '<a target=\'_blank\' href=\''.$nomfic.'\'>Lien TEI</a><br>';
@@ -830,6 +835,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 			echo '</script>';
 			*/
 
+			/*
 			echo '<script type="text/javascript">';
 			echo '	(function($) {';
 			echo '			"use strict";';
@@ -837,6 +843,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 			echo '	})(window.jQuery)';
 			//echo 'document.getElementById(\'cpt4-'.$idFic.'\').style.display = \'none\';';
 			echo '</script>';
+			*/
 
 			echo '<a target=\'_blank\' href=\'https://www.freeformatter.com/xml-validator-xsd.html#\'><i class="mdi mdi-check-bold text-success mdi-18px"></i></a><br>';
 			echo '<a target=\'_blank\' href=\''.$nomfic.'\'>Lien TEI</a><br>';			
