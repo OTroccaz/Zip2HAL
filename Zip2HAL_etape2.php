@@ -155,7 +155,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		
 		//Tester l'existence d'un ORCID
 		if(isset($iOrcid[$iAut]) && $iOrcid[$iAut] != "") {
-			$reqOrc = "https://api.archives-ouvertes.fr/ref/author/?q=orcid_id:".$iOrcid[$iAut]."%20AND%20valid_s:%22VALID%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s,fullName_s&sort=valid_s%20desc,docid%20asc";
+			$reqOrc = "https://api.archives-ouvertes.fr/ref/author/?q=orcidId_s:".$iOrcid[$iAut]."%20AND%20valid_s:%22VALID%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s,fullName_s&sort=valid_s%20desc,docid%20asc";
 			$reqOrc = str_replace(" ", "%20", $reqOrc);
 			echo '<a target="_blank" href="'.$reqOrc.'">URL requête auteurs HAL (méthode ORCID)</a><br>';
 			$contAut = file_get_contents($reqOrc);
@@ -172,7 +172,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 					$melXML = $halAut[$iAut][$cstMD];
 					$tabMelXML = explode(".", $melXML);
 					$testXML = $tabMelXML[count($tabMelXML) - 1];
-					if(isset($resAut->response->docs[0]->emailDomain_s)) {$melHAL = $resAut->response->docs[0]->emailDomain_s;}else{$melHAL = "";}
+					if(isset($resAut->response->docs[0]->emailDomain_s[0])) {$melHAL = $resAut->response->docs[0]->emailDomain_s[0];}else{$melHAL = "";}
 					$tabMelHAL = explode(".", $melHAL);
 					$testHAL = $tabMelHAL[count($tabMelHAL) - 1];
 					if($testXML != $testHAL) {$testMel = "non";}//Les domaines/pays des mails sont différents > ne pas remonter l'idHAL, ni le docid si pas d'idHAL
@@ -185,7 +185,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 						$halAut[$iAut][$cstAN] = $affilName;
 						if(isset($resAut->response->docs[0]->idHal_i)) {$halAut[$iAut][$cstII] = $resAut->response->docs[0]->idHal_i;}else{$halAut[$iAut][$cstII] = "";}
 						if(isset($resAut->response->docs[0]->idHal_s)) {$halAut[$iAut][$cstIS] = $resAut->response->docs[0]->idHal_s;}else{$halAut[$iAut][$cstIS] = "";}
-						if(isset($resAut->response->docs[0]->emailDomain_s)) {$halAut[$iAut][$cstMD] = str_replace('@', '', strstr($resAut->response->docs[0]->emailDomain_s, '@'));}else{$halAut[$iAut][$cstMD] = "";}
+						if(isset($resAut->response->docs[0]->emailDomain_s[0])) {$halAut[$iAut][$cstMD] = str_replace('@', '', strstr($resAut->response->docs[0]->emailDomain_s[0], '@'));}else{$halAut[$iAut][$cstMD] = "";}
 						if(isset($resAut->response->docs[0]->docid)) {$halAut[$iAut][$cstDI] = $resAut->response->docs[0]->docid;}
 						$iHi = "oui";
 						$cptiHi++;
@@ -232,7 +232,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 					$melXML = $halAut[$iAut][$cstMD];
 					$tabMelXML = explode(".", $melXML);
 					$testXML = $tabMelXML[count($tabMelXML) - 1];
-					if(isset($resAut->response->docs[0]->emailDomain_s)) {$melHAL = $resAut->response->docs[0]->emailDomain_s;}else{$melHAL = "";}
+					if(isset($resAut->response->docs[0]->emailDomain_s[0])) {$melHAL = $resAut->response->docs[0]->emailDomain_s[0];}else{$melHAL = "";}
 					$tabMelHAL = explode(".", $melHAL);
 					$testHAL = $tabMelHAL[count($tabMelHAL) - 1];
 					if($testXML != $testHAL) {$testMel = "non";}//Les domaines/pays des mails sont différents > ne pas remonter l'idHAL, ni le docid si pas d'idHAL
@@ -245,7 +245,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 						$halAut[$iAut][$cstAN] = $affilName;
 						if(isset($resAut->response->docs[0]->idHal_i)) {$halAut[$iAut][$cstII] = $resAut->response->docs[0]->idHal_i;}else{$halAut[$iAut][$cstII] = "";}
 						if(isset($resAut->response->docs[0]->idHal_s)) {$halAut[$iAut][$cstIS] = $resAut->response->docs[0]->idHal_s;}else{$halAut[$iAut][$cstIS] = "";}
-						if(isset($resAut->response->docs[0]->emailDomain_s)) {$halAut[$iAut][$cstMD] = str_replace('@', '', strstr($resAut->response->docs[0]->emailDomain_s, '@'));}else{$halAut[$iAut][$cstMD] = "";}
+						if(isset($resAut->response->docs[0]->emailDomain_s[0])) {$halAut[$iAut][$cstMD] = str_replace('@', '', strstr($resAut->response->docs[0]->emailDomain_s[0], '@'));}else{$halAut[$iAut][$cstMD] = "";}
 						if(isset($resAut->response->docs[0]->docid)) {$halAut[$iAut][$cstDI] = $resAut->response->docs[0]->docid;}
 						$iHi = "oui";
 						$cptiHi++;
@@ -286,7 +286,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 				if($elt["UniqK"] == $testUniqK1 || $elt["UniqK"] == $testUniqK2) {
 					//Tester l'existence d'un idORCID
 					if(isset($elt["idORCID"]) && $elt["idORCID"] != "") {
-						$reqOrc = "https://api.archives-ouvertes.fr/ref/author/?q=orcid_id:".$elt["idORCID"]."%20AND%20firstName_t:%22".$firstName."%22%20AND%20valid_s:%22VALID%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s,fullName_s&sort=valid_s%20desc,docid%20asc";
+						$reqOrc = "https://api.archives-ouvertes.fr/ref/author/?q=orcidId_s:".$elt["idORCID"]."%20AND%20firstName_t:%22".$firstName."%22%20AND%20valid_s:%22VALID%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s,fullName_s&sort=valid_s%20desc,docid%20asc";
 						$reqOrc = str_replace(" ", "%20", $reqOrc);
 						echo '<a target="_blank" href="'.$reqOrc.'">URL requête auteurs HAL (méthode ORCID à partir du CSV OCDHAL)</a><br>';
 						$contAut = file_get_contents($reqOrc);
@@ -303,8 +303,8 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 								$melXML = $halAut[$iAut][$cstMD];
 								$tabMelXML = explode(".", $melXML);
 								$testXML = $tabMelXML[count($tabMelXML) - 1];
-								if(isset($resAut->response->docs[0]->emailDomain_s)) {
-									$melHAL = $resAut->response->docs[0]->emailDomain_s;
+								if(isset($resAut->response->docs[0]->emailDomain_s[0])) {
+									$melHAL = $resAut->response->docs[0]->emailDomain_s[0];
 								}else{
 									if(isset($elt["Domaine"]) && $elt["Domaine"] != "") {
 										$melHAL = $elt["Domaine"];
@@ -324,8 +324,8 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 									$halAut[$iAut][$cstAN] = $affilName;
 									if(isset($resAut->response->docs[0]->idHal_i)) {$halAut[$iAut][$cstII] = $resAut->response->docs[0]->idHal_i;}else{$halAut[$iAut][$cstII] = "";}
 									if(isset($resAut->response->docs[0]->idHal_s)) {$halAut[$iAut][$cstIS] = $resAut->response->docs[0]->idHal_s;}else{$halAut[$iAut][$cstIS] = "";}
-									if(isset($resAut->response->docs[0]->emailDomain_s)) {
-										$halAut[$iAut][$cstMD] = str_replace('@', '', strstr($resAut->response->docs[0]->emailDomain_s, '@'));
+									if(isset($resAut->response->docs[0]->emailDomain_s[0])) {
+										$halAut[$iAut][$cstMD] = str_replace('@', '', strstr($resAut->response->docs[0]->emailDomain_s[0], '@'));
 									}else{
 										if(isset($elt["Domaine"]) && $elt["Domaine"] != "") {
 											$halAut[$iAut][$cstMD] = $elt["Domaine"];
@@ -380,8 +380,8 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 									$melXML = $halAut[$iAut][$cstMD];
 									$tabMelXML = explode(".", $melXML);
 									$testXML = $tabMelXML[count($tabMelXML) - 1];
-									if(isset($resAut->response->docs[0]->emailDomain_s)) {
-										$melHAL = $resAut->response->docs[0]->emailDomain_s;
+									if(isset($resAut->response->docs[0]->emailDomain_s[0])) {
+										$melHAL = $resAut->response->docs[0]->emailDomain_s[0];
 									}else{
 										if(isset($elt["Domaine"]) && $elt["Domaine"] != "") {
 											$melHAL = $elt["Domaine"];
@@ -401,8 +401,8 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 										$halAut[$iAut][$cstAN] = $affilName;
 										if(isset($resAut->response->docs[0]->idHal_i)) {$halAut[$iAut][$cstII] = $resAut->response->docs[0]->idHal_i;}else{$halAut[$iAut][$cstII] = "";}
 										if(isset($resAut->response->docs[0]->idHal_s)) {$halAut[$iAut][$cstIS] = $resAut->response->docs[0]->idHal_s;}else{$halAut[$iAut][$cstIS] = "";}
-										if(isset($resAut->response->docs[0]->emailDomain_s)) {
-											$halAut[$iAut][$cstMD] = str_replace('@', '', strstr($resAut->response->docs[0]->emailDomain_s, '@'));
+										if(isset($resAut->response->docs[0]->emailDomain_s[0])) {
+											$halAut[$iAut][$cstMD] = str_replace('@', '', strstr($resAut->response->docs[0]->emailDomain_s[0], '@'));
 										}else{
 											if(isset($elt["Domaine"]) && $elt["Domaine"] != "") {
 												$halAut[$iAut][$cstMD] = $elt["Domaine"];
@@ -472,7 +472,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 												$melXML = $halAut[$iAut][$cstMD];
 												$tabMelXML = explode(".", $melXML);
 												$testXML = $tabMelXML[count($tabMelXML) - 1];
-												if(isset($idh->emailDomain_s)) {$melHAL = $idh->emailDomain_s;}else{$melHAL = "";}
+												if(isset($idh->emailDomain_s[0])) {$melHAL = $idh->emailDomain_s[0];}else{$melHAL = "";}
 												$tabMelHAL = explode(".", $melHAL);
 												$testHAL = $tabMelHAL[count($tabMelHAL) - 1];
 												if($testXML != $testHAL) {$testMel = "non";}//Les domaines/pays des mails sont différents > ne pas remonter l'idHAL, ni le docid si pas d'idHAL
@@ -486,7 +486,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 													$halAut[$iAut][$cstAN] = $affilName;
 													if(isset($idh->idHal_i)) {$halAut[$iAut][$cstII] = $idh->idHal_i;}else{$halAut[$iAut][$cstII] = "";}
 													if(isset($idh->idHal_s)) {$halAut[$iAut][$cstIS] = $idh->idHal_s;}else{$halAut[$iAut][$cstIS] = "";}
-													if(isset($idh->emailDomain_s)) {$halAut[$iAut][$cstMD] = str_replace('@', '', strstr($idh->emailDomain_s, '@'));}else{$halAut[$iAut][$cstMD] = "";}
+													if(isset($idh->emailDomain_s[0])) {$halAut[$iAut][$cstMD] = str_replace('@', '', strstr($idh->emailDomain_s[0], '@'));}else{$halAut[$iAut][$cstMD] = "";}
 													if(isset($idh->docid)) {$halAut[$iAut][$cstDI] = $idh->docid;}
 													$iHi = "oui";
 													$cptiHi++;
@@ -528,6 +528,55 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 			}
 		}
 		
+		if($trouve == 0 && !empty($melAut[$i])) {
+			$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=emailDomain_s:%22".$melAut[$i]."%22%20AND%20fullName_sci:(%22".$firstName."%20".$lastName."%22%20OR%20%22".substr($firstName, 0, 1)."%20".$lastName."%22)&rows=1000&fl=emailId_s,idHal_i,idHal_s,docid,valid_s,emailDomain_s,fullName_s&sort=valid_s%20desc,docid%20asc";
+			$reqAut = str_replace(" ", "%20", $reqAut);
+			echo '<a target="_blank" href="'.$reqAut.'">URL requête auteurs HAL (méthode intermédiaire)</a><br>';
+			//echo $reqAut.'<br>';
+			$contAut = file_get_contents($reqAut);
+			$resAut = json_decode($contAut);
+			$numFound = 0;
+			if(isset($resAut->response->numFound)) {$numFound=$resAut->response->numFound;}
+			if($numFound != 0) {
+				foreach($resAut->response->docs as $author) {
+					//Test sur le domaine des adresses mail s'il y en déjà une dans le XML
+					$testMel = "oui";//Ok par défaut
+					if($halAut[$iAut][$cstMD] != "") {
+						$melXML = $halAut[$iAut][$cstMD];
+						$tabMelXML = explode(".", $melXML);
+						$testXML = $tabMelXML[count($tabMelXML) - 1];
+						if(isset($author->emailDomain_s[0])) {$melHAL = $author->emailDomain_s[0];}else{$melHAL = "";}
+						$tabMelHAL = explode(".", $melHAL);
+						$testHAL = $tabMelHAL[count($tabMelHAL) - 1];
+						if($testXML != $testHAL) {$testMel = "non";}//Les domaines/pays des mails sont différents > ne pas remonter l'idHAL, ni le docid si pas d'idHAL
+						//echo $testXML.' - '.$testHAL.' > '.$testMel.'<br>';
+					}
+					if(isset($author->idHal_i) && $author->idHal_i != 0 && $author->valid_s == "VALID" && strpos($author->fullName_s, ",") === false) {
+						if($testMel == "oui") {
+							//echo $firstName.' '.$lastName.' : '.$author->idHal_i.' -> '.$author->idHal_s.' - ';
+							$halAut[$iAut][$cstFN] = $firstName;
+							$halAut[$iAut][$cstLN] = $lastName;
+							$halAut[$iAut][$cstAN] = $affilName;
+							if(isset($author->idHal_i)) {$halAut[$iAut][$cstII] = $author->idHal_i;}else{$halAut[$iAut][$cstII] = "";}
+							if(isset($author->idHal_s)) {$halAut[$iAut][$cstIS] = $author->idHal_s;}else{$halAut[$iAut][$cstIS] = "";}
+							if(isset($author->emailDomain_s[0])) {$halAut[$iAut][$cstMD] = str_replace('@', '', strstr($author->emailDomain_s[0], '@'));}else{$halAut[$iAut][$cstMD] = "";}
+							if(isset($author->docid)) {$halAut[$iAut][$cstDI] = $author->docid;}
+							$iHi = "oui";
+							$cptiHi++;
+							$trouve++;
+							break;
+						}
+					}else{//Pas d'idHAL trouvé > on recherche avec la même méthode mais sans le critère VALID
+						if($testMel == "oui") {
+							$docid .= $author->docid;
+							$cptdoc++;
+							$nbdocid++;
+						}
+					}
+				}
+			}
+		}
+		
 		if($trouve == 0 && strlen($prenom) > 2) {
 			$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=fullName_t:%22".$firstName."%20".$lastName."%22%20AND%20valid_s:%22VALID%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s,fullName_s&sort=valid_s%20desc,docid%20asc,fullName_s%20asc";
 			$reqAut = str_replace(" ", "%20", $reqAut);
@@ -545,7 +594,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 						$melXML = $halAut[$iAut][$cstMD];
 						$tabMelXML = explode(".", $melXML);
 						$testXML = $tabMelXML[count($tabMelXML) - 1];
-						if(isset($author->emailDomain_s)) {$melHAL = $author->emailDomain_s;}else{$melHAL = "";}
+						if(isset($author->emailDomain_s[0])) {$melHAL = $author->emailDomain_s[0];}else{$melHAL = "";}
 						$tabMelHAL = explode(".", $melHAL);
 						$testHAL = $tabMelHAL[count($tabMelHAL) - 1];
 						if($testXML != $testHAL) {$testMel = "non";}//Les domaines/pays des mails sont différents > ne pas remonter l'idHAL, ni le docid si pas d'idHAL
@@ -559,7 +608,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 							$halAut[$iAut][$cstAN] = $affilName;
 							if(isset($author->idHal_i)) {$halAut[$iAut][$cstII] = $author->idHal_i;}else{$halAut[$iAut][$cstII] = "";}
 							if(isset($author->idHal_s)) {$halAut[$iAut][$cstIS] = $author->idHal_s;}else{$halAut[$iAut][$cstIS] = "";}
-							if(isset($author->emailDomain_s)) {$halAut[$iAut][$cstMD] = str_replace('@', '', strstr($author->emailDomain_s, '@'));}else{$halAut[$iAut][$cstMD] = "";}
+							if(isset($author->emailDomain_s[0])) {$halAut[$iAut][$cstMD] = str_replace('@', '', strstr($author->emailDomain_s[0], '@'));}else{$halAut[$iAut][$cstMD] = "";}
 							if(isset($author->docid)) {$halAut[$iAut][$cstDI] = $author->docid;}
 							$iHi = "oui";
 							$cptiHi++;
@@ -578,7 +627,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		}
 		
 		if($trouve == 0) {
-			$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=fullName_sci:(%22".$firstNameT."%20".$lastNameT."%22%20OR%20%22".substr($firstNameT, 0, 1)."%20".$lastNameT."%22)%20AND%20valid_s:%22VALID%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s,fullName_s&sort=valid_s%20desc,docid%20asc,fullName_s%20asc";
+			$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=fullName_sci:(%22".$firstNameT."%20".$lastNameT."%22%20OR%20%22".substr($firstNameT, 0, 1)."%20".$lastNameT."%22)%20AND%20valid_s:%22PREFERRED%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s,fullName_s&sort=valid_s%20desc,docid%20asc,fullName_s%20asc";
 			$reqAut = str_replace(" ", "%20", $reqAut);
 			echo '<a target="_blank" href="'.$reqAut.'">URL requête auteurs HAL (2ème méthode)</a><br>';
 			//echo $reqAut.'<br>';
@@ -598,13 +647,13 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 						$melXML = $halAut[$iAut][$cstMD];
 						$tabMelXML = explode(".", $melXML);
 						$testXML = $tabMelXML[count($tabMelXML) - 1];
-						if(isset($author->emailDomain_s)) {$melHAL = $author->emailDomain_s;}else{$melHAL = "";}
+						if(isset($author->emailDomain_s[0])) {$melHAL = $author->emailDomain_s[0];}else{$melHAL = "";}
 						$tabMelHAL = explode(".", $melHAL);
 						$testHAL = $tabMelHAL[count($tabMelHAL) - 1];
 						if($testXML != $testHAL) {$testMel = "non";}//Les domaines/pays des mails sont différents > ne pas remonter l'idHAL, ni le docid si pas d'idHAL
 						//echo $testXML.' - '.$testHAL.' > '.$testMel.'<br>';
 					}
-					if(isset($author->idHal_i) && $author->idHal_i != 0 && $author->valid_s == "VALID" && strpos($author->fullName_s, ",") === false) {
+					if(isset($author->idHal_i) && $author->idHal_i != 0 && $author->valid_s == "PREFERRED" && strpos($author->fullName_s, ",") === false) {
 						if($testMel == "oui") {
 							//echo $firstName.' '.$lastName.' : '.$author->idHal_i.' -> '.$author->idHal_s.' - ';
 							$halAut[$iAut][$cstFN] = $firstName;
@@ -612,7 +661,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 							$halAut[$iAut][$cstAN] = $affilName;
 							if(isset($author->idHal_i)) {$halAut[$iAut][$cstII] = $author->idHal_i;}else{$halAut[$iAut][$cstII] = "";}
 							if(isset($author->idHal_s)) {$halAut[$iAut][$cstIS] = $author->idHal_s;}else{$halAut[$iAut][$cstIS] = "";}
-							if(isset($author->emailDomain_s)) {$halAut[$iAut][$cstMD] = str_replace('@', '', strstr($author->emailDomain_s, '@'));}else{$halAut[$iAut][$cstMD] = "";}
+							if(isset($author->emailDomain_s[0])) {$halAut[$iAut][$cstMD] = str_replace('@', '', strstr($author->emailDomain_s[0], '@'));}else{$halAut[$iAut][$cstMD] = "";}
 							if(isset($author->docid)) {$halAut[$iAut][$cstDI] = $author->docid;}
 							$iHi = "oui";
 							$cptiHi++;
@@ -625,12 +674,14 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 							}
 							break;
 						}
+					/*
 					}else{//Pas d'idHal
 						if($testMel == "oui") {
 							$docid .= $author->docid;
 							$nbdocid++;
 							$cptdoc++;
 						}
+					*/
 					}
 				}
 			}
@@ -649,7 +700,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		}
 		
 		if($trouve == 0 && strlen(str_replace(array("-", "."), "", $prenom)) <= 2) {
-			$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=fullName_t:%22".$lastName."%22%20AND%20valid_s:%22VALID%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s,fullName_s&sort=valid_s%20desc,docid%20asc,fullName_s%20asc";
+			$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=fullName_t:%22".$lastName."%22%20AND%20valid_s:%22PREFERRED%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s,fullName_s&sort=valid_s%20desc,docid%20asc,fullName_s%20asc";
 			$reqAut = str_replace(" ", "%20", $reqAut);
 			echo '<a target="_blank" href="'.$reqAut.'">URL requête auteurs HAL (Méthode intermédiaire 2-3)</a><br>';
 			//echo $reqAut.'<br>';
@@ -665,13 +716,13 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 						$melXML = $halAut[$iAut][$cstMD];
 						$tabMelXML = explode(".", $melXML);
 						$testXML = $tabMelXML[count($tabMelXML) - 1];
-						if(isset($author->emailDomain_s)) {$melHAL = $author->emailDomain_s;}else{$melHAL = "";}
+						if(isset($author->emailDomain_s[0])) {$melHAL = $author->emailDomain_s[0];}else{$melHAL = "";}
 						$tabMelHAL = explode(".", $melHAL);
 						$testHAL = $tabMelHAL[count($tabMelHAL) - 1];
 						if($testXML != $testHAL) {$testMel = "non";}//Les domaines/pays des mails sont différents > ne pas remonter l'idHAL, ni le docid si pas d'idHAL
 						//echo $testXML.' - '.$testHAL.' > '.$testMel.'<br>';
 					}
-					if(isset($author->idHal_i) && $author->idHal_i != 0 && $author->valid_s == "VALID" && strpos($author->fullName_s, ",") === false) {
+					if(isset($author->idHal_i) && $author->idHal_i != 0 && $author->valid_s == "PREFERRED" && strpos($author->fullName_s, ",") === false) {
 						if($testMel == "oui") {
 							//echo $firstName.' '.$lastName.' : '.$author->idHal_i.' -> '.$author->idHal_s.' - ';
 							$halAut[$iAut][$cstFN] = $firstName;
@@ -679,7 +730,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 							$halAut[$iAut][$cstAN] = $affilName;
 							if(isset($author->idHal_i)) {$halAut[$iAut][$cstII] = $author->idHal_i;}else{$halAut[$iAut][$cstII] = "";}
 							if(isset($author->idHal_s)) {$halAut[$iAut][$cstIS] = $author->idHal_s;}else{$halAut[$iAut][$cstIS] = "";}
-							if(isset($author->emailDomain_s)) {$halAut[$iAut][$cstMD] = str_replace('@', '', strstr($author->emailDomain_s, '@'));}else{$halAut[$iAut][$cstMD] = "";}
+							if(isset($author->emailDomain_s[0])) {$halAut[$iAut][$cstMD] = str_replace('@', '', strstr($author->emailDomain_s[0], '@'));}else{$halAut[$iAut][$cstMD] = "";}
 							if(isset($author->docid)) {$halAut[$iAut][$cstDI] = $author->docid;}
 							$iHi = "oui";
 							$cptiHi++;
@@ -692,12 +743,14 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 							}
 							break;
 						}
+					/*
 					}else{//Pas d'idHal
 						if($testMel == "oui") {
 							$docid .= $author->docid;
 							$nbdocid++;
 							$cptdoc++;
 						}
+					*/
 					}
 				}
 			}
@@ -722,7 +775,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 						$melXML = $halAut[$iAut][$cstMD];
 						$tabMelXML = explode(".", $melXML);
 						$testXML = $tabMelXML[count($tabMelXML) - 1];
-						if(isset($author->emailDomain_s)) {$melHAL = $author->emailDomain_s;}else{$melHAL = "";}
+						if(isset($author->emailDomain_s[0])) {$melHAL = $author->emailDomain_s[0];}else{$melHAL = "";}
 						$tabMelHAL = explode(".", $melHAL);
 						$testHAL = $tabMelHAL[count($tabMelHAL) - 1];
 						if($testXML != $testHAL) {$testMel = "non";}//Les domaines/pays des mails sont différents > ne pas remonter l'idHAL, ni le docid si pas d'idHAL
@@ -738,7 +791,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 									$halAut[$iAut][$cstAN] = $affilName;
 									if(isset($author->idHal_i) && $author->idHal_i != 0) {$halAut[$iAut][$cstII] = $author->idHal_i;}else{$halAut[$iAut][$cstII] = "";}
 									if(isset($author->idHal_s)) {$halAut[$iAut][$cstIS] = $author->idHal_s;}else{$halAut[$iAut][$cstIS] = "";}
-									if(isset($author->emailDomain_s)) {$halAut[$iAut][$cstMD] = str_replace('@', '', strstr($author->emailDomain_s, '@'));}else{$halAut[$iAut][$cstMD] = "";}
+									if(isset($author->emailDomain_s[0])) {$halAut[$iAut][$cstMD] = str_replace('@', '', strstr($author->emailDomain_s[0], '@'));}else{$halAut[$iAut][$cstMD] = "";}
 									if(isset($author->docid)) {$halAut[$iAut][$cstDI] = $author->docid;}
 									$cptiHi++;
 									$trouve++;
@@ -757,7 +810,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 									$halAut[$iAut][$cstAN] = $affilName;
 									if(isset($author->idHal_i) && $author->idHal_i != 0) {$halAut[$iAut][$cstII] = $author->idHal_i;}else{$halAut[$iAut][$cstII] = "";}
 									if(isset($author->idHal_s)) {$halAut[$iAut][$cstIS] = $author->idHal_s;}else{$halAut[$iAut][$cstIS] = "";}
-									if(isset($author->emailDomain_s)) {$halAut[$iAut][$cstMD] = str_replace('@', '', strstr($author->emailDomain_s, '@'));}else{$halAut[$iAut][$cstMD] = "";}
+									if(isset($author->emailDomain_s[0])) {$halAut[$iAut][$cstMD] = str_replace('@', '', strstr($author->emailDomain_s[0], '@'));}else{$halAut[$iAut][$cstMD] = "";}
 									if(isset($author->docid)) {$halAut[$iAut][$cstDI] = $author->docid;}
 									$cptiHi++;
 									$trouve++;
@@ -796,7 +849,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 						$melXML = $halAut[$iAut][$cstMD];
 						$tabMelXML = explode(".", $melXML);
 						$testXML = $tabMelXML[count($tabMelXML) - 1];
-						if(isset($author->emailDomain_s)) {$melHAL = $author->emailDomain_s;}else{$melHAL = "";}
+						if(isset($author->emailDomain_s[0])) {$melHAL = $author->emailDomain_s[0];}else{$melHAL = "";}
 						$tabMelHAL = explode(".", $melHAL);
 						$testHAL = $tabMelHAL[count($tabMelHAL) - 1];
 						if($testXML != $testHAL) {$testMel = "non";}//Les domaines/pays des mails sont différents > ne pas remonter l'idHAL, ni le docid si pas d'idHAL
@@ -812,7 +865,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 									$halAut[$iAut][$cstAN] = $affilName;
 									if(isset($author->idHal_i) && $author->idHal_i != 0) {$halAut[$iAut][$cstII] = $author->idHal_i;}else{$halAut[$iAut][$cstII] = "";}
 									if(isset($author->idHal_s)) {$halAut[$iAut][$cstIS] = $author->idHal_s;}else{$halAut[$iAut][$cstIS] = "";}
-									if(isset($author->emailDomain_s)) {$halAut[$iAut][$cstMD] = str_replace('@', '', strstr($author->emailDomain_s, '@'));}else{$halAut[$iAut][$cstMD] = "";}
+									if(isset($author->emailDomain_s[0])) {$halAut[$iAut][$cstMD] = str_replace('@', '', strstr($author->emailDomain_s[0], '@'));}else{$halAut[$iAut][$cstMD] = "";}
 									if(isset($author->docid)) {$halAut[$iAut][$cstDI] = $author->docid;}
 									$cptiHi++;
 									$trouve++;
@@ -831,7 +884,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 									$halAut[$iAut][$cstAN] = $affilName;
 									if(isset($author->idHal_i) && $author->idHal_i != 0) {$halAut[$iAut][$cstII] = $author->idHal_i;}else{$halAut[$iAut][$cstII] = "";}
 									if(isset($author->idHal_s)) {$halAut[$iAut][$cstIS] = $author->idHal_s;}else{$halAut[$iAut][$cstIS] = "";}
-									if(isset($author->emailDomain_s)) {$halAut[$iAut][$cstMD] = str_replace('@', '', strstr($author->emailDomain_s, '@'));}else{$halAut[$iAut][$cstMD] = "";}
+									if(isset($author->emailDomain_s[0])) {$halAut[$iAut][$cstMD] = str_replace('@', '', strstr($author->emailDomain_s[0], '@'));}else{$halAut[$iAut][$cstMD] = "";}
 									if(isset($author->docid)) {$halAut[$iAut][$cstDI] = $author->docid;}
 									$cptiHi++;
 									$trouve++;

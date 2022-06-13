@@ -19,6 +19,10 @@ function majokIdHALSuppr(halID) {
   document.getElementById(halID).value = "";
 }
 
+function majokDocidSuppr(Docid) {
+  document.getElementById(Docid).value = "";
+}
+
 
 function majokAffil(affilPos, affilName) {
   document.getElementById("Vu-"+affilPos).innerHTML = "<i class='mdi mdi-delete-outline mdi-18px text-grey'></i>";

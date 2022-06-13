@@ -70,7 +70,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 				}else{
 					//Si présence de plus de 3 termes séparés par des virgules, le dernier est très certainement le pays
 					$tabOrg = explode(",", $orgAff);
-					if(count($tabOrg > 3)) {
+					if(count($tabOrg) > 3) {
 						$payAff = trim($tabOrg[count($tabOrg) - 1]);
 						//Si le dernier caractère du pays est un point, le retirer
 						if(substr($payAff, -1) == ".") {$payAff = substr($payAff, 0, (strlen($payAff) - 1));}

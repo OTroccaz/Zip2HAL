@@ -44,10 +44,11 @@ if(isset($nomficZip)) {
 
 register_shutdown_function(function() {
     $error = error_get_last();
-
-    if($error['type'] === E_ERROR && strpos($error['message'], 'Maximum execution time of') === 0) {
-        echo "<br><strong><font color='red'>Le script a été arrêté car son temps d'exécution dépasse la limite maximale autorisée.</font></strong><br>";
-    }
+		if (isset($error)) {
+			if($error['type'] === E_ERROR && strpos($error['message'], 'Maximum execution time of') === 0) {
+					echo "<br><strong><font color='red'>Le script a été arrêté car son temps d'exécution dépasse la limite maximale autorisée.</font></strong><br>";
+			}
+		}
 });
 include "./Zip2HAL_nodes.php";
 include "./Zip2HAL_codes_pays.php";

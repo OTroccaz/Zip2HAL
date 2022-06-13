@@ -789,11 +789,59 @@ if ($action == "ajouterIdHAL") {
 	}
 }
 
+//Ajouter un docid
+if ($action == "ajouterDocid") {
+	$i = $_POST["pos"];
+	if ($valeur == "") {//C'est en fait une suppression
+		//deleteNode($xml, $cstAU, "idno", $i, "type", $cstID, $cstNT, $cstSG, $cstEX);
+		//deleteNode($xml, $cstAU, "idno", $i, "type", $cstID, $cstNT, $cstNU, $cstEX);
+		deleteNode($xml, $cstAU, "idno", $i, "type", "halauthorid", "", "", $cstEX);
+		$xml->save($nomfic);
+	}else{
+		deleteNode($xml, $cstAU, "idno", $i, "type", $cstID, $cstNT, $cstSG, $cstEX);
+		deleteNode($xml, $cstAU, "idno", $i, "type", $cstID, $cstNT, $cstNU, $cstEX);
+		$xml->save($nomfic);
+		//insertNode($xml, trim($tabVal[0]), $cstAU, $cstAF, $i, "idno", "type", $cstID, $cstNT, $cstSG, "iB", $cstAM , "");
+		//insertNode($xml, trim(str_replace(')', '', $tabVal[1])), $cstAU, $cstAF, $i, "idno", "type", $cstID, $cstNT, $cstNU, "iB", $cstAM , "");
+		//Existe-t-il un noeud email pour cet auteur ? Si oui, les idHAL iront juste après <email>, si non, ils iront juste après <persName>
+		$rech = 0;
+		$trv = "non";
+		$lists = $xml->getElementsByTagName("author");
+		foreach ($lists as $list) {
+			if ($rech == $i) {//Recherche de l'auteur concerné
+				foreach($list->childNodes as $item) {
+					if ($item->nodeName == "email") {//Noeud email trouvé
+						$trv = "oui";
+						break 2;
+					}
+				}
+			}
+			$rech++;
+		}
+		if ($trv == "oui") {
+			insertNode($xml, $valeur, $cstAU, $cstEM, $i, "idno", "type", "halauthorid", "", "", "iA", $cstAM , "");
+			$xml->save($nomfic);
+		}else{
+			insertNode($xml, $valeur, $cstAU, $cstPE, $i, "idno", "type", "halauthorid", "", "", "iA", $cstAM , "");
+			$xml->save($nomfic);
+		}		
+	}
+}
+
 //Supprimer un idHAL
 if ($action == "supprimerIdHAL") {
 	$i = $_POST["pos"];
 	deleteNode($xml, $cstAU, "idno", $i, "type", $cstID, $cstNT, $cstSG, $cstEX);
 	deleteNode($xml, $cstAU, "idno", $i, "type", $cstID, $cstNT, $cstNU, $cstEX);
+	deleteNode($xml, $cstAU, "idno", $i, "type", "halauthorid", "", "", $cstEX);
+	$xml->save($nomfic);
+}
+
+//Supprimer un docid
+if ($action == "supprimerDocid") {
+	$i = $_POST["pos"];
+	//deleteNode($xml, $cstAU, "idno", $i, "type", $cstID, $cstNT, $cstSG, $cstEX);
+	//deleteNode($xml, $cstAU, "idno", $i, "type", $cstID, $cstNT, $cstNU, $cstEX);
 	deleteNode($xml, $cstAU, "idno", $i, "type", "halauthorid", "", "", $cstEX);
 	$xml->save($nomfic);
 }

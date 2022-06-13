@@ -601,16 +601,19 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 			}
 		}
 		
-		
-		if($halAut[$i]['mailDom'] != "") {echo ' (@'.$halAut[$i]['mailDom'].')';}
 		echo '<br>';
+		
+		//Docid
+		echo 'Ajouter un docid :&nbsp;<span class="form-inline"><input type="text" id="ajoutDocid'.$i.'-'.$idFic.'" name="ajoutDocid'.$i.'-'.$idFic.'" value="'.$halAut[$i][$cstDI].'" class="form-control" style="height: 18px; width:200px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'ajouterDocid\', pos: '.$i.', valeur: $(this).val()}); majokIdHALSuppr(\'ajoutIdh'.$i.'-'.$idFic.'\');">';
+		echo '&nbsp;<span id="Vu'.$halAut[$i][$cstDI].'-'.$idFic.'"><a style="cursor:pointer;" onclick="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'supprimerDocid\', pos: '.$i.', valeur: \'\'}); majokDocidSuppr(\'ajoutDocid'.$i.'-'.$idFic.'\');"><i class=\'mdi mdi-trash-can-outline mdi-18px text-primary\'></i></a>';
+		echo '</span></span>';
+		
+		if($halAut[$i]['mailDom'] != "") {echo ' (@'.$halAut[$i]['mailDom'].')<br>';}
+		//echo '<br>';
 		if($halAut[$i][$cstXS] != "") {
 			echo '<span id="Txt'.$halAut[$i][$cstXS].'-'.$idFic.'">Supprimer l\'idHAL '.$halAut[$i][$cstXS].'</span> <span id="Vu'.$halAut[$i][$cstXS].'-'.$idFic.'"><a style="cursor:pointer;" onclick="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'supprimerIdHAL\', pos: '.$i.', valeur: \''.$halAut[$i][$cstXS].'\'}); majokIdHAL(\''.$halAut[$i][$cstXS].'-'.$idFic.'\');"><i class=\'mdi mdi-trash-can-outline mdi-18px text-primary\'></i></a></span><br>';
 		}
-		//Si pas d'idHAL et si id auteur existe, afficher l'id
-		if($halAut[$i][$cstIS] == "" && $halAut[$i][$cstDI] != "") {
-			echo 'id '.$halAut[$i][$cstDI].'<br>';
-		}
+		
 		if($halAut[$i][$cstIS] != "") {
 			//echo 'Remonter le bon auteur du référentiel auteurs <a class=info><img src=\'./img/pdi.jpg\'><span>L\'idHAL n\'est pas ajouté automatiquement car c\'est juste une suggestion que vous devrez valider en l\'ajoutant dans le champ ci-dessous prévu à cet effet.</span></a> :<br><input type="text" id="ajoutidHAL'.$i.'" value="'.$halAutinit[$i][$cstIS].'" name="ajoutidHAL'.$i.'" class="form-control" style="height: 18px; width:200px;">';
 			$idHAL = $halAut[$i][$cstIS].' ('.$halAut[$i]['idHali'].')';
