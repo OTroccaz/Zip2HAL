@@ -33,8 +33,8 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 			$numFound = 0;
 			if(isset($resId->response->numFound)) {$numFound = $resId->response->numFound;}
 			if($numFound != 0) {
-				$halAut[$i]['idHali'] = $resId->response->docs[0]->idHal_i;
-				$halAut[$i]['idHals'] = $resId->response->docs[0]->idHal_s;
+				if(isset($resId->response->docs[0]->idHal_i)) {$halAut[$i]['idHali'] = $resId->response->docs[0]->idHal_i;}
+				if(isset($resId->response->docs[0]->idHal_s)) {$halAut[$i]['idHals'] = $resId->response->docs[0]->idHal_s;}
 				if(isset($resId->response->docs[0]->emailDomain_s[0])) {$halAut[$i]['mailDom'] = str_replace('@', '', strstr($resId->response->docs[0]->emailDomain_s[0], '@'));}
 				$cptId++;
 				break;
