@@ -569,6 +569,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 					}else{//Pas d'idHAL trouvé > on recherche avec la même méthode mais sans le critère VALID
 						if($testMel == "oui") {
 							$docid .= $author->docid;
+							$halAut[$iAut][$cstDI] = $author->docid;
 							$cptdoc++;
 							$nbdocid++;
 						}
@@ -618,6 +619,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 					}else{//Pas d'idHAL trouvé > on recherche avec la même méthode mais sans le critère VALID
 						if($testMel == "oui") {
 							$docid .= $author->docid;
+							$halAut[$iAut][$cstDI] = $author->docid;
 							$cptdoc++;
 							$nbdocid++;
 						}
@@ -678,6 +680,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 					}else{//Pas d'idHal
 						if($testMel == "oui") {
 							$docid .= $author->docid;
+							$halAut[$iAut][$cstDI] = $author->docid;
 							$nbdocid++;
 							$cptdoc++;
 						}
@@ -747,6 +750,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 					}else{//Pas d'idHal
 						if($testMel == "oui") {
 							$docid .= $author->docid;
+							$halAut[$iAut][$cstDI] = $author->docid;
 							$nbdocid++;
 							$cptdoc++;
 						}
@@ -821,6 +825,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 					}else{//Pas d'idHal
 						if($testMel == "oui") {
 							$docid .= $author->docid;
+							$halAut[$iAut][$cstDI] = $author->docid;
 							$nbdocid++;
 							$cptdoc++;
 							$trvDoc = "oui";
@@ -895,6 +900,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 					}else{//Pas d'idHal
 						if($testMel == "oui") {
 							$docid .= $author->docid;
+							$halAut[$iAut][$cstDI] = $author->docid;
 							$nbdocid++;
 							$cptdoc++;
 							$trvDoc = "oui";
@@ -916,7 +922,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	echo '</span></span>';//Fin bloc idHAL/docid
 	echo $cptiHi. ' idHal et '.$cptdoc.' docid trouvé(s)';
 }
-
+//var_dump($halAut);
 echo '<script>';
 echo 'document.getElementById(\'cpt2\').style.display = \'none\';';
 echo '</script>';
