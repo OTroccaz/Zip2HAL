@@ -118,6 +118,8 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	$iAut = 0;
 	$cptiHi = 0;//Compteur d'idHal_i trouvé(s)
 	$cptdoc = 0;//Compteur de docid trouvé(s)
+	$docid = "";
+	$nbdocid = 0;
 
 	for($i = 0; $i < count($preAut); $i++) {
 		progression($cpt, $nbAut, 'cpt2', $iPro, 'auteur');

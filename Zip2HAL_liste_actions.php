@@ -798,6 +798,7 @@ if ($action == "ajouterDocid") {
 		deleteNode($xml, $cstAU, "idno", $i, "type", "halauthorid", "", "", $cstEX);
 		$xml->save($nomfic);
 	}else{
+		$tabVal = explode('(', $valeur);
 		deleteNode($xml, $cstAU, "idno", $i, "type", $cstID, $cstNT, $cstSG, $cstEX);
 		deleteNode($xml, $cstAU, "idno", $i, "type", $cstID, $cstNT, $cstNU, $cstEX);
 		$xml->save($nomfic);
@@ -819,10 +820,10 @@ if ($action == "ajouterDocid") {
 			$rech++;
 		}
 		if ($trv == "oui") {
-			insertNode($xml, $valeur, $cstAU, $cstEM, $i, "idno", "type", "halauthorid", "", "", "iA", $cstAM , "");
+			insertNode($xml, trim($tabVal[0]), $cstAU, $cstEM, $i, "idno", "type", "halauthorid", "", "", "iA", $cstAM , "");
 			$xml->save($nomfic);
 		}else{
-			insertNode($xml, $valeur, $cstAU, $cstPE, $i, "idno", "type", "halauthorid", "", "", "iA", $cstAM , "");
+			insertNode($xml, trim($tabVal[0]), $cstAU, $cstPE, $i, "idno", "type", "halauthorid", "", "", "iA", $cstAM , "");
 			$xml->save($nomfic);
 		}		
 	}
