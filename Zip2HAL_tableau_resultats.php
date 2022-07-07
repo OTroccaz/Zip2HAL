@@ -604,7 +604,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		echo '<br>';
 		
 		//Docid
-		if (!empty($halAut[$i][$cstFN]) && !empty($halAut[$i][$cstLN])) {$qui = "&nbsp;(".$halAut[$i][$cstFN]." ".$halAut[$i][$cstLN].")";}else{$qui = "";}
+		if (!empty($halAut[$i]['fullName'])) {$qui = "&nbsp;(".$halAut[$i]['fullName'].")";}else{$qui = "";}
 		echo 'Ajouter un docid :&nbsp;<span class="form-inline"><input type="text" id="ajoutDocid'.$i.'-'.$idFic.'" name="ajoutDocid'.$i.'-'.$idFic.'" value="'.$halAut[$i][$cstDI].$qui.'" class="form-control" style="height: 18px; width:250px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'ajouterDocid\', pos: '.$i.', valeur: $(this).val()}); majokIdHALSuppr(\'ajoutIdh'.$i.'-'.$idFic.'\');">';
 		echo '&nbsp;<span id="Vu'.$halAut[$i][$cstDI].'-'.$idFic.'"><a style="cursor:pointer;" onclick="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'supprimerDocid\', pos: '.$i.', valeur: \'\'}); majokDocidSuppr(\'ajoutDocid'.$i.'-'.$idFic.'\');"><i class=\'mdi mdi-trash-can-outline mdi-18px text-primary\'></i></a>';
 		echo '</span></span>';

@@ -140,6 +140,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		$halAut[$iAut]['orcid'] = "";
 		$halAut[$iAut]['resid'] = "";
 		$halAut[$iAut]['rolaut'] = $rolAut[$i];
+		$halAut[$iAut]['fullName'] = "";
 		
 		$firstNameT = strtolower(wd_remove_accents($firstName));
 		$lastNameT = strtolower(wd_remove_accents($lastName));
@@ -198,6 +199,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 				}else{//Pas d'idHal
 					if($testMel == "oui") {
 						$docid .= $resAut->response->docs[0]->docid;
+						if (isset($resAut->response->docs[0]->fullName_s) && !empty($resAut->response->docs[0]->fullName_s)) {$halAut[$iAut]['fullName'] = $resAut->response->docs[0]->fullName_s;}
 						$nbdocid++;
 					}
 				}
@@ -258,6 +260,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 				}else{//Pas d'idHal
 					if($testMel == "oui") {
 						$docid .= $resAut->response->docs[0]->docid;
+						if (isset($resAut->response->docs[0]->fullName_s) && !empty($resAut->response->docs[0]->fullName_s)) {$halAut[$iAut]['fullName'] = $resAut->response->docs[0]->fullName_s;}
 						$nbdocid++;
 					}
 				}
@@ -346,6 +349,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 							}else{//Pas d'idHal
 								if($testMel == "oui") {
 									$docid .= $resAut->response->docs[0]->docid;
+									if (isset($resAut->response->docs[0]->fullName_s) && !empty($resAut->response->docs[0]->fullName_s)) {$halAut[$iAut]['fullName'] = $resAut->response->docs[0]->fullName_s;}
 									$nbdocid++;
 								}
 							}
@@ -424,6 +428,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 								}else{//Pas d'idHal
 									if($testMel == "oui") {
 										$docid .= $resAut->response->docs[0]->docid;
+										if (isset($resAut->response->docs[0]->fullName_s) && !empty($resAut->response->docs[0]->fullName_s)) {$halAut[$iAut]['fullName'] = $resAut->response->docs[0]->fullName_s;}
 										$nbdocid++;
 									}
 								}
@@ -508,6 +513,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 											}else{//Pas d'idHal
 												if($testMel == "oui") {
 													$docid .= $idh->docid;
+													if (isset($idh->fullName_s) && !empty($idh->fullName_s)) {$halAut[$iAut]['fullName'] = $idh->fullName_s;}
 													$nbdocid++;
 												}
 											}
@@ -577,6 +583,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 						if($testMel == "oui" && $trvDoc == "non") {
 							$docid .= $author->docid;
 							$halAut[$iAut][$cstDI] = $author->docid;
+							if (isset($author->fullName_s) && !empty($author->fullName_s)) {$halAut[$iAut]['fullName'] = $author->fullName_s;}
 							$cptdoc++;
 							$nbdocid++;
 							$trvDoc = "oui";
@@ -628,6 +635,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 						if($testMel == "oui" && $trvDoc == "non") {
 							$docid .= $author->docid;
 							$halAut[$iAut][$cstDI] = $author->docid;
+							if (isset($author->fullName_s) && !empty($author->fullName_s)) {$halAut[$iAut]['fullName'] = $author->fullName_s;}
 							$cptdoc++;
 							$nbdocid++;
 							$trvDoc = "oui";
@@ -690,6 +698,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 						if($testMel == "oui" && $trvDoc == "non") {
 							$docid .= $author->docid;
 							$halAut[$iAut][$cstDI] = $author->docid;
+							if (isset($author->fullName_s) && !empty($author->fullName_s)) {$halAut[$iAut]['fullName'] = $author->fullName_s;}
 							$nbdocid++;
 							$cptdoc++;
 							$trvDoc = "oui";
@@ -761,6 +770,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 						if($testMel == "oui" && $trvDoc == "non") {
 							$docid .= $author->docid;
 							$halAut[$iAut][$cstDI] = $author->docid;
+							if (isset($author->fullName_s) && !empty($author->fullName_s)) {$halAut[$iAut]['fullName'] = $author->fullName_s;}
 							$nbdocid++;
 							$cptdoc++;
 							$trvDoc = "oui";
@@ -837,6 +847,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 						if($testMel == "oui" && $trvDoc == "non") {
 							$docid .= $author->docid;
 							$halAut[$iAut][$cstDI] = $author->docid;
+							if (isset($author->fullName_s) && !empty($author->fullName_s)) {$halAut[$iAut]['fullName'] = $author->fullName_s;}
 							$nbdocid++;
 							$cptdoc++;
 							$trvDoc = "oui";
@@ -912,6 +923,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 						if($testMel == "oui" && $trvDoc == "non") {
 							$docid .= $author->docid;
 							$halAut[$iAut][$cstDI] = $author->docid;
+							if (isset($author->fullName_s) && !empty($author->fullName_s)) {$halAut[$iAut]['fullName'] = $author->fullName_s;}
 							$nbdocid++;
 							$cptdoc++;
 							$trvDoc = "oui";
