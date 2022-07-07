@@ -624,13 +624,14 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 							$trouve++;
 							break;
 						}
-					}else{//Pas d'idHAL trouvé > on recherche avec la même méthode mais sans le critère PREFERRED
+					}else{//Pas d'idHAL trouvé
 						if($testMel == "oui" && $trvDoc == "non") {
 							$docid .= $author->docid;
 							$halAut[$iAut][$cstDI] = $author->docid;
 							$cptdoc++;
 							$nbdocid++;
 							$trvDoc = "oui";
+							if ($author->valid_s == "PREFERRED" && $numFound == 1) {$trouve++;}//Une forme idHAL est forcément associée à une forme "PREFERRED" et il n'est donc pas possible de trouver d'idHAL avec les autres méthodes
 						}
 					}
 				}
@@ -685,7 +686,6 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 							}
 							break;
 						}
-					/*
 					}else{//Pas d'idHal
 						if($testMel == "oui" && $trvDoc == "non") {
 							$docid .= $author->docid;
@@ -693,8 +693,8 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 							$nbdocid++;
 							$cptdoc++;
 							$trvDoc = "oui";
+							if ($author->valid_s == "PREFERRED" && $numFound == 1) {$trouve++;}//Une forme idHAL est forcément associée à une forme "PREFERRED" et il n'est donc pas possible de trouver d'idHAL avec les autres méthodes
 						}
-					*/
 					}
 				}
 			}
@@ -757,7 +757,6 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 							}
 							break;
 						}
-					/*
 					}else{//Pas d'idHal
 						if($testMel == "oui" && $trvDoc == "non") {
 							$docid .= $author->docid;
@@ -765,8 +764,8 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 							$nbdocid++;
 							$cptdoc++;
 							$trvDoc = "oui";
+							if ($author->valid_s == "PREFERRED" && $numFound == 1) {$trouve++;}//Une forme idHAL est forcément associée à une forme "PREFERRED" et il n'est donc pas possible de trouver d'idHAL avec les autres méthodes
 						}
-					*/
 					}
 				}
 			}
