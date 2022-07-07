@@ -461,11 +461,11 @@ if($racine == "") {$racine = "https://hal-univ-rennes1.archives-ouvertes.fr/";}
 																if (isset($tabTit[1])) {$critere .= strtolower($tabTit[1]."%20");}
 																if (isset($tabTit[2])) {$critere .= strtolower($tabTit[2]."%20");}
 																//$critere = strtolower($tabTit[0]."%20".$tabTit[1]."%20".$tabTit[2]);
-																$critere = str_replace('%20:', '', $critere);
-																$reqAPI = "https://api.archives-ouvertes.fr/search/?fq=title_t:%22".$critere."*%22".$special."&rows=10000&fl=halId_s,doiId_s,title_s,subTitle_s,docType_s";
+																$critere = str_replace('%20:', '', substr($critere, 0, -3));
+																$reqAPI = "https://api.archives-ouvertes.fr/search/?fq=title_t:%22".trim($critere)."*%22".$special."&rows=10000&fl=halId_s,doiId_s,title_s,subTitle_s,docType_s";
 															}else{
 																$critere = $titTEI;
-																$reqAPI = "https://api.archives-ouvertes.fr/search/?fq=title_t:%22".$titTEI."*%22".$special."&rows=10000&fl=halId_s,doiId_s,title_s,subTitle_s,docType_s";
+																$reqAPI = "https://api.archives-ouvertes.fr/search/?fq=title_t:%22".trim($titTEI)."*%22".$special."&rows=10000&fl=halId_s,doiId_s,title_s,subTitle_s,docType_s";
 																$reqAPI = str_replace(" ", "%20", $reqAPI);
 															}
 															$contents = file_get_contents($reqAPI);
@@ -476,9 +476,9 @@ if($racine == "") {$racine = "https://hal-univ-rennes1.archives-ouvertes.fr/";}
 															//Interrogation du référentiel CRAC
 															//Quand on a que le titre et pas le DOI, il faut trouver une correspondance exacte sur tout le titre pour considérer qu'il s'agit d'un doublon
 															if($doiTEI != "") {
-																$reqAPIC = "https://api.archives-ouvertes.fr/crac/hal/?fq=title_t:%22".$critere."*%22".$special."&rows=10000&fl=halId_s,doiId_s,title_s,subTitle_s,docType_s";
+																$reqAPIC = "https://api.archives-ouvertes.fr/crac/hal/?fq=title_t:%22".trim($critere)."*%22".$special."&rows=10000&fl=halId_s,doiId_s,title_s,subTitle_s,docType_s";
 															}else{
-																$reqAPIC = "https://api.archives-ouvertes.fr/crac/hal/?fq=title_t:%22".$titTEI."*%22".$special."&rows=10000&fl=halId_s,doiId_s,title_s,subTitle_s,docType_s";
+																$reqAPIC = "https://api.archives-ouvertes.fr/crac/hal/?fq=title_t:%22".trim($titTEI)."*%22".$special."&rows=10000&fl=halId_s,doiId_s,title_s,subTitle_s,docType_s";
 																$reqAPIC = str_replace(" ", "%20", $reqAPIC);
 															}
 															$contentsC = file_get_contents($reqAPIC);
@@ -489,7 +489,7 @@ if($racine == "") {$racine = "https://hal-univ-rennes1.archives-ouvertes.fr/";}
 															echo '<div class="alert alert-secondary mt-3" role="alert">';
 															echo '	<strong>Traitement du fichier</strong> '.str_replace($dir."/", "", $nomfic).'</strong><br>';
 															echo '</div>';
-															
+
 															include('./Zip2HAL_etape1.php');
 															
 															if(isset($typDbl) && $typDbl != "HALCOLLTYP") {//Pas un doublon de type HAL et COLL
