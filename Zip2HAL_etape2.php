@@ -141,6 +141,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		$halAut[$iAut]['resid'] = "";
 		$halAut[$iAut]['rolaut'] = $rolAut[$i];
 		$halAut[$iAut]['fullName'] = "";
+		$halAut[$iAut]['domMail'] = "";
 		
 		$firstNameT = strtolower(wd_remove_accents($firstName));
 		$lastNameT = strtolower(wd_remove_accents($lastName));
@@ -200,6 +201,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 					if($testMel == "oui") {
 						$docid .= $resAut->response->docs[0]->docid;
 						if (isset($resAut->response->docs[0]->fullName_s) && !empty($resAut->response->docs[0]->fullName_s)) {$halAut[$iAut]['fullName'] = $resAut->response->docs[0]->fullName_s;}
+						if (isset($resAut->response->docs[0]->emailDomain_s[0]) && !empty($resAut->response->docs[0]->emailDomain_s[0])) {$halAut[$iAut]['domMail'] = $resAut->response->docs[0]->emailDomain_s[0];}
 						$nbdocid++;
 					}
 				}
@@ -261,6 +263,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 					if($testMel == "oui") {
 						$docid .= $resAut->response->docs[0]->docid;
 						if (isset($resAut->response->docs[0]->fullName_s) && !empty($resAut->response->docs[0]->fullName_s)) {$halAut[$iAut]['fullName'] = $resAut->response->docs[0]->fullName_s;}
+						if (isset($resAut->response->docs[0]->emailDomain_s[0]) && !empty($resAut->response->docs[0]->emailDomain_s[0])) {$halAut[$iAut]['domMail'] = $resAut->response->docs[0]->emailDomain_s[0];}
 						$nbdocid++;
 					}
 				}
@@ -350,6 +353,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 								if($testMel == "oui") {
 									$docid .= $resAut->response->docs[0]->docid;
 									if (isset($resAut->response->docs[0]->fullName_s) && !empty($resAut->response->docs[0]->fullName_s)) {$halAut[$iAut]['fullName'] = $resAut->response->docs[0]->fullName_s;}
+									if (isset($resAut->response->docs[0]->emailDomain_s[0]) && !empty($resAut->response->docs[0]->emailDomain_s[0])) {$halAut[$iAut]['domMail'] = $resAut->response->docs[0]->emailDomain_s[0];}
 									$nbdocid++;
 								}
 							}
@@ -429,6 +433,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 									if($testMel == "oui") {
 										$docid .= $resAut->response->docs[0]->docid;
 										if (isset($resAut->response->docs[0]->fullName_s) && !empty($resAut->response->docs[0]->fullName_s)) {$halAut[$iAut]['fullName'] = $resAut->response->docs[0]->fullName_s;}
+										if (isset($resAut->response->docs[0]->emailDomain_s[0]) && !empty($resAut->response->docs[0]->emailDomain_s[0])) {$halAut[$iAut]['domMail'] = $resAut->response->docs[0]->emailDomain_s[0];}
 										$nbdocid++;
 									}
 								}
@@ -514,6 +519,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 												if($testMel == "oui") {
 													$docid .= $idh->docid;
 													if (isset($idh->fullName_s) && !empty($idh->fullName_s)) {$halAut[$iAut]['fullName'] = $idh->fullName_s;}
+													if (isset($idh->response->docs[0]->emailDomain_s[0]) && !empty($idh->response->docs[0]->emailDomain_s[0])) {$halAut[$iAut]['domMail'] = $idh->response->docs[0]->emailDomain_s[0];}
 													$nbdocid++;
 												}
 											}
@@ -584,6 +590,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 							$docid .= $author->docid;
 							$halAut[$iAut][$cstDI] = $author->docid;
 							if (isset($author->fullName_s) && !empty($author->fullName_s)) {$halAut[$iAut]['fullName'] = $author->fullName_s;}
+							if (isset($author->emailDomain_s[0]) && !empty($author->emailDomain_s[0])) {$halAut[$iAut]['domMail'] = $author->emailDomain_s[0];}
 							$cptdoc++;
 							$nbdocid++;
 							$trvDoc = "oui";
@@ -636,6 +643,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 							$docid .= $author->docid;
 							$halAut[$iAut][$cstDI] = $author->docid;
 							if (isset($author->fullName_s) && !empty($author->fullName_s)) {$halAut[$iAut]['fullName'] = $author->fullName_s;}
+							if (isset($author->emailDomain_s[0]) && !empty($author->emailDomain_s[0])) {$halAut[$iAut]['domMail'] = $author->emailDomain_s[0];}
 							$cptdoc++;
 							$nbdocid++;
 							$trvDoc = "oui";
@@ -699,6 +707,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 							$docid .= $author->docid;
 							$halAut[$iAut][$cstDI] = $author->docid;
 							if (isset($author->fullName_s) && !empty($author->fullName_s)) {$halAut[$iAut]['fullName'] = $author->fullName_s;}
+							if (isset($author->emailDomain_s[0]) && !empty($author->emailDomain_s[0])) {$halAut[$iAut]['domMail'] = $author->emailDomain_s[0];}
 							$nbdocid++;
 							$cptdoc++;
 							$trvDoc = "oui";
@@ -771,6 +780,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 							$docid .= $author->docid;
 							$halAut[$iAut][$cstDI] = $author->docid;
 							if (isset($author->fullName_s) && !empty($author->fullName_s)) {$halAut[$iAut]['fullName'] = $author->fullName_s;}
+							if (isset($author->emailDomain_s[0]) && !empty($author->emailDomain_s[0])) {$halAut[$iAut]['domMail'] = $author->emailDomain_s[0];}
 							$nbdocid++;
 							$cptdoc++;
 							$trvDoc = "oui";
@@ -848,6 +858,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 							$docid .= $author->docid;
 							$halAut[$iAut][$cstDI] = $author->docid;
 							if (isset($author->fullName_s) && !empty($author->fullName_s)) {$halAut[$iAut]['fullName'] = $author->fullName_s;}
+							if (isset($author->emailDomain_s[0]) && !empty($author->emailDomain_s[0])) {$halAut[$iAut]['domMail'] = $author->emailDomain_s[0];}
 							$nbdocid++;
 							$cptdoc++;
 							$trvDoc = "oui";
@@ -924,6 +935,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 							$docid .= $author->docid;
 							$halAut[$iAut][$cstDI] = $author->docid;
 							if (isset($author->fullName_s) && !empty($author->fullName_s)) {$halAut[$iAut]['fullName'] = $author->fullName_s;}
+							if (isset($author->emailDomain_s[0]) && !empty($author->emailDomain_s[0])) {$halAut[$iAut]['domMail'] = $author->emailDomain_s[0];}
 							$nbdocid++;
 							$cptdoc++;
 							$trvDoc = "oui";

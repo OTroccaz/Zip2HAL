@@ -608,6 +608,8 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		echo 'Ajouter un docid :&nbsp;<span class="form-inline"><input type="text" id="ajoutDocid'.$i.'-'.$idFic.'" name="ajoutDocid'.$i.'-'.$idFic.'" value="'.$halAut[$i][$cstDI].$qui.'" class="form-control" style="height: 18px; width:250px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'ajouterDocid\', pos: '.$i.', valeur: $(this).val()}); majokIdHALSuppr(\'ajoutIdh'.$i.'-'.$idFic.'\');">';
 		echo '&nbsp;<span id="Vu'.$halAut[$i][$cstDI].'-'.$idFic.'"><a style="cursor:pointer;" onclick="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'supprimerDocid\', pos: '.$i.', valeur: \'\'}); majokDocidSuppr(\'ajoutDocid'.$i.'-'.$idFic.'\');"><i class=\'mdi mdi-trash-can-outline mdi-18px text-primary\'></i></a>';
 		echo '</span></span>';
+		//Domaine du mail remonté par la requête
+		echo '<span class="form-inline"><input type="text" id="domMail'.$i.'-'.$idFic.'" name="domMail'.$i.'-'.$idFic.'" value="'.$halAut[$i]['domMail'].'" class="form-control" style="height: 18px; width:250px;"></span>';
 		
 		if($halAut[$i]['mailDom'] != "") {echo ' (@'.$halAut[$i]['mailDom'].')<br>';}
 		//echo '<br>';
