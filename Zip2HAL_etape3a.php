@@ -175,7 +175,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 					if($special != "") {//Dans HAL, on signale le plus souvent des institutions étrangères, pas des labos
 						if(strpos($special, "fr") === false) {$typeSpe = "%20AND%20type_s:(institution%20OR%20regroupinstitution%20OR%20regrouplaboratory)";}else{$typeSpe = "%20AND%20type_s:".$type;}
 					}
-					$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:".$test."%20OR%20code_s:".$test."%20OR%20acronym_t:".$test.")".$typeSpe."%20AND%20valid_s:(VALID%20OR%20OLD)".$special."&fl=docid,valid_s,name_s,type_s,country_s,acronym_s&sort=valid_s desc,docid asc";
+					$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:".$test."%20OR%20code_t:".$test."%20OR%20acronym_t:".$test.")".$typeSpe."%20AND%20valid_s:(VALID%20OR%20OLD)".$special."&fl=docid,valid_s,name_s,type_s,country_s,acronym_s&sort=valid_s desc,docid asc";
 					$reqAff = str_replace(" ", "%20", $reqAff);
 					echo $cstHR.$reqAff.'">URL requête affiliations (2ème méthode) HAL</a><br>';
 					//echo $reqAff.'<br>';
@@ -202,7 +202,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 						//3ème méthode > avec le référentiel HAL des structures sans le type d'institution uniquement si country_s = 'fr'
 						if($special != "") {//Dans HAL, on signale le plus souvent des institutions étrangères, pas des labos
 							if(strpos($special, "fr") !== false) {
-								$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:".$test."%20OR%20code_s:".$test."%20OR%20acronym_t:".$test.")%20AND%20valid_s:(VALID%20OR%20OLD)".$special."&fl=docid,valid_s,name_s,type_s,country_s,acronym_s&sort=valid_s desc,docid asc";
+								$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:".$test."%20OR%20code_t:".$test."%20OR%20acronym_t:".$test.")%20AND%20valid_s:(VALID%20OR%20OLD)".$special."&fl=docid,valid_s,name_s,type_s,country_s,acronym_s&sort=valid_s desc,docid asc";
 								$reqAff = str_replace(" ", "%20", $reqAff);
 								echo $cstHR.$reqAff.'">URL requête affiliations (3ème méthode) HAL</a><br>';
 								//echo $reqAff.'<br>';
@@ -245,8 +245,8 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 				$test = str_replace(" ", "+", trim($test));
 				if(count($tabCode) > 2) {$max = count($tabCode) - 2;}else{$max = count($tabCode);}
 				if($cptCode <= $max && !in_array($test, $anepasTester)) {
-					//$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:%22".$test."%22%20OR%20name_t:(".$test.")%20OR%20code_s:%22".$test."%22%20OR%20acronym_t:%22".$test."%22%20OR%20acronym_sci:%22".$test."%22)%20AND%20type_s:".$type."%20AND%20valid_s:(VALID%20OR%20OLD)&fl=docid,valid_s,name_s,type_s&sort=valid_s%20desc,docid%20asc";
-					$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:%22".$test."%22%20OR%20name_t:(".$test.")%20OR%20code_s:%22".$test."%22%20OR%20acronym_t:%22".$test."%22%20OR%20acronym_sci:%22".$test."%22)%20AND%20valid_s:(VALID%20OR%20OLD)".$special."&fl=docid,valid_s,name_s,type_s,country_s,acronym_s&sort=valid_s%20desc,docid%20asc";
+					//$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:%22".$test."%22%20OR%20name_t:(".$test.")%20OR%20code_t:%22".$test."%22%20OR%20acronym_t:%22".$test."%22%20OR%20acronym_sci:%22".$test."%22)%20AND%20type_s:".$type."%20AND%20valid_s:(VALID%20OR%20OLD)&fl=docid,valid_s,name_s,type_s&sort=valid_s%20desc,docid%20asc";
+					$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:%22".$test."%22%20OR%20name_t:(".$test.")%20OR%20code_t:%22".$test."%22%20OR%20acronym_t:%22".$test."%22%20OR%20acronym_sci:%22".$test."%22)%20AND%20valid_s:(VALID%20OR%20OLD)".$special."&fl=docid,valid_s,name_s,type_s,country_s,acronym_s&sort=valid_s%20desc,docid%20asc";
 					$reqAff = str_replace(" ", "%20", $reqAff);
 					echo $cstHR.$reqAff.'">URL requête affiliations (3ème méthode) HAL</a><br>';
 					//echo $reqAff.'<br>';
