@@ -104,7 +104,7 @@ foreach($ACTIONS_LISTE as $act) {
 </table>
 
 <?php
-include('./bas.php');
+include('./Glob_bas.php');
 ?>
 </body>
 </html>
