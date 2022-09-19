@@ -17,7 +17,7 @@ function affil($reqAff, &$return_arr) {
 
 //Autocomplete affiliations
 if (isset($_GET['term'])){
-	$basReq = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:%22".$_GET['term']."%22%20OR%20name_t:(".$_GET['term'].")%20OR%20code_s:%22".$_GET['term']."%22%20OR%20acronym_t:%22".$_GET['term']."%22%20OR%20acronym_sci:%22".$_GET['term']."%22%20OR%20code_t:%22".$_GET['term']."%22)&sort=docid%20asc";
+	$basReq = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:%22".$_GET['term']."%22%20OR%20name_t:(".$_GET['term'].")%20OR%20code_s:%22".$_GET['term']."%22%20OR%20acronym_t:%22".$_GET['term']."%22%20OR%20acronym_sci:%22".$_GET['term']."%22%20OR%20code_t:%22".$_GET['term']."%22)";
 	$return_arr = array();
 	
 	//VALID
