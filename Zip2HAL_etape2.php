@@ -600,7 +600,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 			}
 		}
 		
-		if($trouve == 0 && strlen($prenom) > 2) {
+		if($trouve == 0 && strlen($firstName) > 2) {
 			$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=fullName_t:%22".$firstName."%20".$lastName."%22%20AND%20valid_s:%22PREFERRED%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s,fullName_s&sort=valid_s%20desc,docid%20asc,fullName_s%20asc";
 			$reqAut = str_replace(" ", "%20", $reqAut);
 			echo '<a target="_blank" href="'.$reqAut.'">URL requête auteurs HAL (1ère méthode)</a><br>';
@@ -731,7 +731,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 			}
 		}
 		
-		if($trouve == 0 && strlen(str_replace(array("-", "."), "", $prenom)) <= 2) {
+		if($trouve == 0 && strlen(str_replace(array("-", "."), "", $firstName)) <= 2) {
 			$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=fullName_t:(%22".$firstName."%20".$lastName."%22%20OR%20%22".substr($firstName, 0, 1)."%20".$lastName."%22)%20AND%20valid_s:%22PREFERRED%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s,fullName_s&sort=valid_s%20desc,docid%20asc,fullName_s%20asc";
 			$reqAut = str_replace(" ", "%20", $reqAut);
 			echo '<a target="_blank" href="'.$reqAut.'">URL requête auteurs HAL (Méthode intermédiaire 2-3)</a><br>';
@@ -792,7 +792,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		}
 		
 		//$trvDoc = "non";//Test pour savoir si docid trouvé avec méthode 3 > lui donner la priorité car prénom + com complets plus fiables qu'une initiale seule > donc, ignorer méthode 4
-		if($trouve == 0 && strlen($prenom) > 2) {
+		if($trouve == 0 && strlen($firstName) > 2) {
 			$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=fullName_t:%22".$firstName."%20".$lastName."%22%20AND%20valid_s:(%22OLD%22%20OR%20%22INCOMING%22)&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s,fullName_s&sort=valid_s%20desc,docid%20asc,fullName_s%20asc";
 			$reqAut = str_replace(" ", "%20", $reqAut);
 			echo '<a target="_blank" href="'.$reqAut.'">URL requête auteurs HAL (3ème méthode)</a><br>';
