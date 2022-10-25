@@ -93,7 +93,8 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 			}
 			//Email
 			if($elt->nodeName == "email") {
-				$melAut[$iAut] = str_replace('@', '', strstr($elt->nodeValue, '@'));
+				//Mail réel ou juste le domaine ?
+				$melAut[$iAut] = (strpos($elt->nodeValue, '@') !== false) ? str_replace('@', '', strstr($elt->nodeValue, '@')) : $elt->nodeValue;
 				$adrAut[$iAut] = $elt->nodeValue;
 			}
 			//ORCID
