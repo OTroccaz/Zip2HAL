@@ -1,6 +1,17 @@
 <?php
+//Suppresion des accents
+function wd_remove_accents($str, $charset='utf-8') {
+	$str = htmlentities($str, ENT_NOQUOTES, $charset);
+
+	$str = preg_replace('#&([A-za-z])(?:acute|cedil|circ|grave|orn|ring|slash|th|tilde|uml);#', '\1', $str);
+	$str = preg_replace('#&([A-za-z]{2})(?:lig);#', '\1', $str); // pour les ligatures e.g. '&oelig;'
+	$str = preg_replace('#&[^;]+;#', '', $str); // supprime les autres caractères
+
+	return $str;
+}
+
 function affil($reqAff, &$return_arr) {
-  $reqAff = str_replace(' ', '%20', $reqAff);
+	$reqAff = str_replace(' ', '%20', $reqAff);
 	$contents = file_get_contents($reqAff);
 	$results = json_decode($contents);
 	$numFound = 0;
@@ -17,7 +28,8 @@ function affil($reqAff, &$return_arr) {
 
 //Autocomplete affiliations
 if (isset($_GET['term'])){
-	$basReq = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:%22".$_GET['term']."%22%20OR%20name_t:(".$_GET['term'].")%20OR%20code_s:%22".$_GET['term']."%22%20OR%20acronym_t:%22".$_GET['term']."%22%20OR%20acronym_sci:%22".$_GET['term']."%22%20OR%20code_t:%22".$_GET['term']."%22)";
+	$term = wd_remove_accents(str_replace(' ', '%20', $_GET['term']));
+	$basReq = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:%22".$term."%22%20OR%20name_t:(".$term.")%20OR%20code_s:%22".$term."%22%20OR%20acronym_t:%22".$term."%22%20OR%20acronym_sci:%22".$term."%22%20OR%20code_t:%22".$term."%22)";
 	$return_arr = array();
 	
 	//VALID
