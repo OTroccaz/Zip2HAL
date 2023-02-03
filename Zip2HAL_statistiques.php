@@ -93,7 +93,7 @@ foreach($ACTIONS_LISTE as $act) {
 	echo '<td>'.$act["login"].'</th>';
 	echo '<td>'.$act[$cstID].'</th>';
 	if($act[$cstID] != "") {
-		echo '<td><a target="_blank" href="https://hal.archives-ouvertes.fr/'.$act[$cstID].'">Lien HAL</a></th>';
+		echo '<td><a target="_blank" href="'.$act[$cstID].'">Lien HAL</a></th>';
 	}else{
 		echo '<td>&nbsp;</th>';
 	}
