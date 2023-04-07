@@ -87,7 +87,7 @@
 																				<p class="font-italic">Photo : Galaxy by Nasa on Unsplash (détail)</p>
 
                                         <p class=" mb-2 text-justify">
-                                           Zip2HAL permet de déposer dans HAL un lot de publications au format TEI HAL (fichier généré par OverHAL). Ce script a été créé par Olivier Troccaz (conception-développement) et Laurent Jonchère (conception).
+                                           Zip2HAL permet de déposer dans HAL un lot de publications au format TEI HAL (fichier généré par OverHAL). Ce script a été créé par Olivier Troccaz (conception-développement) et Laurent Jonchère (conception). Son code est disponible <a target='_blank' rel='noopener noreferrer' href="https://github.com/OTroccaz/Zip2HAL">sur GitHub</a> sous licence <a target='_blank' rel='noopener noreferrer' href="https://www.gnu.org/licenses/gpl-3.0.fr.html">GPLv3</a>.
                                         </p>
 																				
 																				<p class="mb-4">
