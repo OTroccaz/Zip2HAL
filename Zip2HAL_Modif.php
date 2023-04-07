@@ -106,7 +106,7 @@ foreach($elts as $elt) {
     if ($quoi == "stamp") {
       $coll = $elt->getAttribute("n");
       $contents = file_get_contents($urlStamp.'search/?q=collCode_s:"'.$coll.'"');
-      $contents = utf8_encode($contents);
+      $contents = mb_convert_encoding($contents, 'UTF-8', 'ISO-8859-1');
       $results = json_decode($contents);
       $numFound = $results->response->numFound;
       //echo $coll." - ".$numFound.'<br>';
