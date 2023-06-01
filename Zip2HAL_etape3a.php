@@ -1,4 +1,13 @@
 <?php
+/*
+ * Zip2HAL - Importez vos publications dans HAL - Import your publications into HAL
+ *
+ * Copyright (C) 2023 Olivier Troccaz (olivier.troccaz@cnrs.fr) and Laurent Jonchère (laurent.jonchere@univ-rennes.fr)
+ * Released under the terms and conditions of the GNU General Public License (https://www.gnu.org/licenses/gpl-3.0.txt)
+ *
+ * Etape 3a - Stage 3a
+ */
+ 
 //Etape 3a - Recherche des id structure des affiliations
 
 echo '<div class="row">';

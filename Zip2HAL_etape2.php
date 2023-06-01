@@ -1,4 +1,13 @@
 <?php
+/*
+ * Zip2HAL - Importez vos publications dans HAL - Import your publications into HAL
+ *
+ * Copyright (C) 2023 Olivier Troccaz (olivier.troccaz@cnrs.fr) and Laurent Jonchère (laurent.jonchere@univ-rennes.fr)
+ * Released under the terms and conditions of the GNU General Public License (https://www.gnu.org/licenses/gpl-3.0.txt)
+ *
+ * Etape 2 - Stage 2
+ */
+ 
 //Etape 2 - Recherche des idHAL des auteurs				
 
 //echo '<div class="row">';
@@ -286,7 +295,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		
 		//Méthode CSV OCDHAL
 		if($trouve == 0) {
-			if(strpos($_SERVER['HTTP_HOST'], '127.0.0.1') !== false || strpos($_SERVER['HTTP_HOST'], 'ecobio') !== false) {
+			if(strpos($_SERVER['HTTP_HOST'], '127.0.0.1') !== false) {
 				include('../CrosHAL/CrossIDHAL.php');
 			}else{
 				include("./CrossIDHAL.php");

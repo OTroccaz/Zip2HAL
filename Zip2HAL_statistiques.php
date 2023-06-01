@@ -1,5 +1,14 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "https://www.w3.org/TR/html4/loose.dtd">
 <?php
+/*
+ * Zip2HAL - Importez vos publications dans HAL - Import your publications into HAL
+ *
+ * Copyright (C) 2023 Olivier Troccaz (olivier.troccaz@cnrs.fr) and Laurent Jonchère (laurent.jonchere@univ-rennes.fr)
+ * Released under the terms and conditions of the GNU General Public License (https://www.gnu.org/licenses/gpl-3.0.txt)
+ *
+ * Statistiques - Statistics
+ */
+ 
 header('Content-type: text/html; charset=UTF-8');
 
 // récupération de l'adresse IP du client (on cherche d'abord à savoir s'il est derrière un proxy)
@@ -24,7 +33,7 @@ if (isset($_GET['css']) && ($_GET['css'] != ""))
 {
   $css = $_GET['css'];
 }else{
-  $css = "https://ecobio.univ-rennes1.fr/HAL_SCD.css";
+  $css = "https://halur1.univ-rennes1.fr/HAL_SCD.css";
 }
 
 include("./Zip2HAL_actions.php");
@@ -60,7 +69,7 @@ $cstID = "idhal";
 <table class="table100" aria-describedby="Entêtes">
 <tr>
 <th scope="col" style="text-align: left;"><img alt="Zip2HAL" title="Zip2HAL" width="250px" src="./img/logo_Zip2hal.png"></th>
-<th scope="col" style="text-align: right;"><img alt="Université de Rennes 1" title="Université de Rennes 1" width="150px" src="./img/logo_UR1_gris_petit.jpg"></th>
+<th scope="col" style="text-align: right;"><img alt="Université de Rennes 1" title="Université de Rennes 1" width="150px" src="./img/logo_UR_gris_petit.png"></th>
 </tr>
 </table>
 <hr style="color: #467666; height: 1px; border-width: 1px; border-top-color: #467666; border-style: inset;">

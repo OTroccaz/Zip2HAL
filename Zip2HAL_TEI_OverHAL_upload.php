@@ -1,5 +1,14 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "https://www.w3.org/TR/html4/loose.dtd">
 <?php
+/*
+ * Zip2HAL - Importez vos publications dans HAL - Import your publications into HAL
+ *
+ * Copyright (C) 2023 Olivier Troccaz (olivier.troccaz@cnrs.fr) and Laurent Jonchère (laurent.jonchere@univ-rennes.fr)
+ * Released under the terms and conditions of the GNU General Public License (https://www.gnu.org/licenses/gpl-3.0.txt)
+ *
+ * Procédure de chargement du TEI OverHAL - TEI OverHAL loading procedure
+ */
+ 
 $loc = "Location: ";
 $locT = $loc."Zip2HAL_TEI_OverHAL.php";
 $erreur = "";

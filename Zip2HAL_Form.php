@@ -1,5 +1,14 @@
 <!DOCTYPE html>
 <?php
+/*
+ * Zip2HAL - Importez vos publications dans HAL - Import your publications into HAL
+ *
+ * Copyright (C) 2023 Olivier Troccaz (olivier.troccaz@cnrs.fr) and Laurent Jonchère (laurent.jonchere@univ-rennes.fr)
+ * Released under the terms and conditions of the GNU General Public License (https://www.gnu.org/licenses/gpl-3.0.txt)
+ *
+ * Formulaire de la page d'accueil - Home page form
+ */
+ 
 header('Content-type: text/html; charset=UTF-8');
 require_once('./CAS_connect.php');
 $action = $_GET['action'];
@@ -9,7 +18,7 @@ $form = "Zip2HAL_Modif.php?action=".$action."&amp;Id=".$id;
 <html lang="fr">
 <head>
 	<meta charset="utf-8" />
-	<title>Zip2HAL - HAL - UR1</title>
+	<title>Zip2HAL - HAL - UR</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta content="Zip2HAL permet de déposer dans HAL un lot de publications au format TEI HAL (fichier généré par OverHAL)" name="description" />
 	<meta content="Coderthemes + Lizuka + OTroccaz + LJonchere" name="author" />
@@ -76,7 +85,7 @@ $form = "Zip2HAL_Modif.php?action=".$action."&amp;Id=".$id;
                                     <div class="page-title-right">
                                         <nav aria-label="breadcrumb">
                                             <ol class="breadcrumb bg-light-lighten p-2">
-                                                <li class="breadcrumb-item"><a href="index.php"><i class="uil-home-alt"></i> Accueil HALUR1</a></li>
+                                                <li class="breadcrumb-item"><a href="index.php"><i class="uil-home-alt"></i> Accueil HALUR</a></li>
                                                 <li class="breadcrumb-item active" aria-current="page">Zip2<span class="font-weight-bold">HAL</span></li>
                                             </ol>
                                         </nav>
@@ -108,7 +117,7 @@ $form = "Zip2HAL_Modif.php?action=".$action."&amp;Id=".$id;
                                         </p>
 																				
 																				<p class="mb-4">
-                                            Contacts : <a target='_blank' rel='noopener noreferrer' href="https://openaccess.univ-rennes1.fr/interlocuteurs/laurent-jonchere">Laurent Jonchère</a> (Université de Rennes 1) / <a target='_blank' rel='noopener noreferrer' href="https://ecobio.univ-rennes1.fr/personnel.php?qui=Olivier_Troccaz">Olivier Troccaz</a> (CNRS CReAAH/OSUR).
+                                            Contacts : <a target='_blank' rel='noopener noreferrer' href="https://openaccess.univ-rennes1.fr/interlocuteurs/laurent-jonchere">Laurent Jonchère</a> (Université de Rennes 1) / <a target='_blank' rel='noopener noreferrer' href="https://creaah.cnrs.fr/team/troccaz-olivier/">Olivier Troccaz</a> (CNRS CReAAH/OSUR).
                                         </p>
 
                                     </div> <!-- end card-body-->

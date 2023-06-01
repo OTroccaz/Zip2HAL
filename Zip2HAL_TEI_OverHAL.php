@@ -1,9 +1,19 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "https://www.w3.org/TR/html4/loose.dtd">
+<?php
+/*
+ * Zip2HAL - Importez vos publications dans HAL - Import your publications into HAL
+ *
+ * Copyright (C) 2023 Olivier Troccaz (olivier.troccaz@cnrs.fr) and Laurent Jonchère (laurent.jonchere@univ-rennes.fr)
+ * Released under the terms and conditions of the GNU General Public License (https://www.gnu.org/licenses/gpl-3.0.txt)
+ *
+ * Procédure de chargement du TEI OverHAL - TEI OverHAL loading procedure
+ */
+ ?>
 
 <html lang="fr">
 <head>
 	<meta charset="utf-8" />
-	<title>Zip2HAL - HAL - UR1</title>
+	<title>Zip2HAL - HAL - UR</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta content="Zip2HAL permet de déposer dans HAL un lot de publications au format TEI HAL (fichier généré par OverHAL)" name="description" />
 	<meta content="Coderthemes + Lizuka + OTroccaz + LJonchere" name="author" />
@@ -59,7 +69,7 @@
                                         <nav aria-label="breadcrumb">
                                             <ol class="breadcrumb bg-light-lighten p-2">
 																								<li><a href="https://halur1.univ-rennes1.fr/Zip2HAL.php?logout="><i class="uil-power"></i> Déconnexion CAS CCSD</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
-                                                <li class="breadcrumb-item"><a href="index.php"><i class="uil-home-alt"></i> Accueil HALUR1</a></li>
+                                                <li class="breadcrumb-item"><a href="index.php"><i class="uil-home-alt"></i> Accueil HALUR</a></li>
                                                 <li class="breadcrumb-item active" aria-current="page">Zip2<span class="font-weight-bold">HAL</span></li>
                                             </ol>
                                         </nav>

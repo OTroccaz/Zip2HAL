@@ -1,7 +1,16 @@
 <!DOCTYPE html>
 <?php
+/*
+ * Zip2HAL - Importez vos publications dans HAL - Import your publications into HAL
+ *
+ * Copyright (C) 2023 Olivier Troccaz (olivier.troccaz@cnrs.fr) and Laurent Jonchère (laurent.jonchere@univ-rennes.fr)
+ * Released under the terms and conditions of the GNU General Public License (https://www.gnu.org/licenses/gpl-3.0.txt)
+ *
+ * Page d'accueil - Home page
+ */
+ 
 //authentification CAS ou autre ?
-if(strpos($_SERVER['HTTP_HOST'], '127.0.0.1') !== false || strpos($_SERVER['HTTP_HOST'], 'ecobio') !== false) {
+if(strpos($_SERVER['HTTP_HOST'], '127.0.0.1') !== false) {
   include('./_connexion.php');
   $HAL_USER = $user;
   $HAL_PASSWD = $pass;
@@ -68,7 +77,7 @@ $brk = '<br><br>';
 <html lang="fr">
 <head>
 	<meta charset="utf-8" />
-	<title>Zip2HAL - HAL - UR1</title>
+	<title>Zip2HAL - HAL - UR</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta content="Zip2HAL permet de déposer dans HAL un lot de publications au format TEI HAL (fichier généré par OverHAL)" name="description" />
 	<meta content="Coderthemes + Lizuka + OTroccaz + LJonchere" name="author" />

@@ -1,5 +1,14 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "https://www.w3.org/TR/html4/loose.dtd">
 <?php
+/*
+ * Zip2HAL - Importez vos publications dans HAL - Import your publications into HAL
+ *
+ * Copyright (C) 2023 Olivier Troccaz (olivier.troccaz@cnrs.fr) and Laurent Jonchère (laurent.jonchere@univ-rennes.fr)
+ * Released under the terms and conditions of the GNU General Public License (https://www.gnu.org/licenses/gpl-3.0.txt)
+ *
+ * Modification du TEI - Modification of the TEI
+ */
+ 
 header('Content-type: text/html; charset=UTF-8');
 ?>
 
@@ -10,7 +19,7 @@ $passw = 'password';
 $h_passw = 'HAL_PASSWD';
 
 //require_once('./CAS_connect.php')//authentification CAS ou autre ?
-if (strpos($_SERVER['HTTP_HOST'], '127.0.0.1') !== false || strpos($_SERVER['HTTP_HOST'], 'ecobio') !== false) {
+if (strpos($_SERVER['HTTP_HOST'], '127.0.0.1') !== false) {
   include('./_connexion.php');
   $HAL_USER = $user;
   $HAL_PASSWD = $pass;
