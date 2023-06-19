@@ -306,7 +306,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 				if($elt["UniqK"] == $testUniqK1 || $elt["UniqK"] == $testUniqK2) {
 					//Tester l'existence d'un idORCID
 					if(isset($elt["idORCID"]) && $elt["idORCID"] != "") {
-						$reqOrc = "https://api.archives-ouvertes.fr/ref/author/?q=orcidId_s:".$elt["idORCID"]."%20AND%20firstName_t:%22".$firstName."%22%20AND%20valid_s:%22PREFERRED%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s,fullName_s&sort=valid_s%20desc,docid%20asc";
+						$reqOrc = "https://api.archives-ouvertes.fr/ref/author/?q=orcidId_s:".$elt["idORCID"]."%20AND%20firstName_t:%22".urlencode($firstName)."%22%20AND%20valid_s:%22PREFERRED%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s,fullName_s&sort=valid_s%20desc,docid%20asc";
 						$reqOrc = str_replace(" ", "%20", $reqOrc);
 						echo '<a target="_blank" href="'.$reqOrc.'">URL requête auteurs HAL (méthode ORCID à partir du CSV OCDHAL)</a><br>';
 						$contAut = file_get_contents($reqOrc);
@@ -386,7 +386,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 					}else{//Pas d'idORCID > Test idResearcherID
 						//Tester l'existence d'un idResearcherID
 						if(isset($elt["idResearcherID"]) && $elt["idResearcherID"] != "") {
-							$reqOrc = "https://api.archives-ouvertes.fr/ref/author/?q=researcherid_id:".$elt["idResearcherID"]."%20AND%20firstName_t:%22".$firstName."%22%20AND%20valid_s:%22PREFERRED%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s,fullName_s&sort=valid_s%20desc,docid%20asc";
+							$reqOrc = "https://api.archives-ouvertes.fr/ref/author/?q=researcherid_id:".$elt["idResearcherID"]."%20AND%20firstName_t:%22".urlencode($firstName)."%22%20AND%20valid_s:%22PREFERRED%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s,fullName_s&sort=valid_s%20desc,docid%20asc";
 							$reqRes = str_replace(" ", "%20", $reqRes);
 							echo '<a target="_blank" href="'.$reqRes.'">URL requête auteurs HAL (méthode ResearcherID à partir du CSV OCDHAL)</a><br>';
 							$contAut = file_get_contents($reqRes);
@@ -558,7 +558,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		}
 		
 		if($trouve == 0 && !empty($melAut[$i])) {
-			$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=emailDomain_s:%22".$melAut[$i]."%22%20AND%20fullName_sci:(%22".$firstName."%20".$lastName."%22%20OR%20%22".substr($firstName, 0, 1)."%20".$lastName."%22)&rows=1000&fl=emailId_s,idHal_i,idHal_s,docid,valid_s,emailDomain_s,fullName_s&sort=valid_s%20desc,docid%20asc";
+			$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=emailDomain_s:%22".$melAut[$i]."%22%20AND%20fullName_sci:(%22".urlencode($firstName)."%20".urlencode($lastName)."%22%20OR%20%22".urlencode(substr($firstName, 0, 1))."%20".urlencode($lastName)."%22)&rows=1000&fl=emailId_s,idHal_i,idHal_s,docid,valid_s,emailDomain_s,fullName_s&sort=valid_s%20desc,docid%20asc";
 			$reqAut = str_replace(" ", "%20", $reqAut);
 			echo '<a target="_blank" href="'.$reqAut.'">URL requête auteurs HAL (méthode intermédiaire)</a><br>';
 			//echo $reqAut.'<br>';
@@ -611,7 +611,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		}
 		
 		if($trouve == 0 && strlen($firstName) > 2) {
-			$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=fullName_t:%22".$firstName."%20".$lastName."%22%20AND%20valid_s:%22PREFERRED%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s,fullName_s&sort=valid_s%20desc,docid%20asc,fullName_s%20asc";
+			$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=fullName_t:%22".urlencode($firstName)."%20".urlencode($lastName)."%22%20AND%20valid_s:%22PREFERRED%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s,fullName_s&sort=valid_s%20desc,docid%20asc,fullName_s%20asc";
 			$reqAut = str_replace(" ", "%20", $reqAut);
 			echo '<a target="_blank" href="'.$reqAut.'">URL requête auteurs HAL (1ère méthode)</a><br>';
 			//echo $reqAut.'<br>';
@@ -665,7 +665,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		}
 		
 		if($trouve == 0) {
-			$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=fullName_sci:(%22".$firstNameT."%20".$lastNameT."%22%20OR%20%22".substr($firstNameT, 0, 1)."%20".$lastNameT."%22)%20AND%20valid_s:%22PREFERRED%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s,fullName_s&sort=valid_s%20desc,docid%20asc,fullName_s%20asc";
+			$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=fullName_sci:(%22".urlencode($firstNameT)."%20".urlencode($lastNameT)."%22%20OR%20%22".urlencode(substr($firstNameT, 0, 1))."%20".urlencode($lastNameT)."%22)%20AND%20valid_s:%22PREFERRED%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s,fullName_s&sort=valid_s%20desc,docid%20asc,fullName_s%20asc";
 			$reqAut = str_replace(" ", "%20", $reqAut);
 			echo '<a target="_blank" href="'.$reqAut.'">URL requête auteurs HAL (2ème méthode)</a><br>';
 			//echo $reqAut.'<br>';
@@ -742,7 +742,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		}
 		
 		if($trouve == 0 && strlen(str_replace(array("-", "."), "", $firstName)) <= 2) {
-			$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=fullName_t:(%22".$firstName."%20".$lastName."%22%20OR%20%22".substr($firstName, 0, 1)."%20".$lastName."%22)%20AND%20valid_s:%22PREFERRED%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s,fullName_s&sort=valid_s%20desc,docid%20asc,fullName_s%20asc";
+			$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=fullName_t:(%22".urlencode($firstName)."%20".urlencode($lastName)."%22%20OR%20%22".urlencode(substr($firstName, 0, 1))."%20".urlencode($lastName)."%22)%20AND%20valid_s:%22PREFERRED%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s,fullName_s&sort=valid_s%20desc,docid%20asc,fullName_s%20asc";
 			$reqAut = str_replace(" ", "%20", $reqAut);
 			echo '<a target="_blank" href="'.$reqAut.'">URL requête auteurs HAL (Méthode intermédiaire 2-3)</a><br>';
 			//echo $reqAut.'<br>';
@@ -803,7 +803,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		
 		//$trvDoc = "non";//Test pour savoir si docid trouvé avec méthode 3 > lui donner la priorité car prénom + com complets plus fiables qu'une initiale seule > donc, ignorer méthode 4
 		if($trouve == 0 && strlen($firstName) > 2) {
-			$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=fullName_t:%22".$firstName."%20".$lastName."%22%20AND%20valid_s:(%22OLD%22%20OR%20%22INCOMING%22)&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s,fullName_s&sort=valid_s%20desc,docid%20asc,fullName_s%20asc";
+			$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=fullName_t:%22".urlencode($firstName)."%20".urlencode($lastName)."%22%20AND%20valid_s:(%22OLD%22%20OR%20%22INCOMING%22)&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s,fullName_s&sort=valid_s%20desc,docid%20asc,fullName_s%20asc";
 			$reqAut = str_replace(" ", "%20", $reqAut);
 			echo '<a target="_blank" href="'.$reqAut.'">URL requête auteurs HAL (3ème méthode)</a><br>';
 			//echo $reqAut.'<br>';
@@ -880,7 +880,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		}
 		
 		if($trouve == 0 && $trvDoc == "non") {
-			$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=fullName_sci:(%22".$firstNameT."%20".$lastNameT."%22%20OR%20%22".substr($firstNameT, 0, 1)."%20".$lastNameT."%22)%20AND%20valid_s:(%22OLD%22%20OR%20%22INCOMING%22)&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s,fullName_s&sort=valid_s%20desc,docid%20asc,fullName_s%20asc";
+			$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=fullName_sci:(%22".urlencode($firstNameT)."%20".urlencode($lastNameT)."%22%20OR%20%22".urlencode(substr($firstNameT, 0, 1))."%20".urlencode($lastNameT)."%22)%20AND%20valid_s:(%22OLD%22%20OR%20%22INCOMING%22)&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s,fullName_s&sort=valid_s%20desc,docid%20asc,fullName_s%20asc";
 			$reqAut = str_replace(" ", "%20", $reqAut);
 			echo '<a target="_blank" href="'.$reqAut.'">URL requête auteurs HAL (4ème méthode)</a><br>';
 			//echo $reqAut.'<br>';

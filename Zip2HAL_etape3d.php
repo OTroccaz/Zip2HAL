@@ -34,7 +34,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	for($i = 0; $i < count($halAut); $i++) {
 		progression($cpt, count($halAut), 'cpt3d', $iPro, 'auteur');
 		if($halAut[$i]['docid'] != "" && $halAut[$i]['idHals'] == "") {//L'auteur a bien un docid mais pas d'idHAL
-			$reqId = "https://api.archives-ouvertes.fr/ref/author/?q=docid:".$halAut[$i]['docid']."%20AND%20valid_s:(PREFERRED%20OR%20OLD)&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s";
+			$reqId = "https://api.archives-ouvertes.fr/ref/author/?q=docid:".urlencode($halAut[$i]['docid'])."%20AND%20valid_s:(PREFERRED%20OR%20OLD)&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s";
 			$reqId = str_replace(" ", "%20", $reqId);
 			echo '<a target="_blank" href="'.$reqId.'">URL requête idHAL auteur</a><br>';
 			$contId = file_get_contents($reqId);

@@ -47,7 +47,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 			$firstNameT = strtolower(wd_remove_accents($halAut[$i][$cstFN]));
 			$lastNameT = strtolower(wd_remove_accents($halAut[$i][$cstLN]));
 			
-			$reqAut = "https://api.archives-ouvertes.fr/search/authorstructure/?firstName_t=".$firstNameT."&lastName_t=".$lastNameT."&producedDateY_i=".$year;
+			$reqAut = "https://api.archives-ouvertes.fr/search/authorstructure/?firstName_t=".urlencode($firstNameT)."&lastName_t=".urlencode($lastNameT)."&producedDateY_i=".$year;
 			$reqAut = str_replace(" ", "%20", $reqAut);
 			echo '<a target="_blank" href="'.$reqAut.'">URL requête auteur structure HAL</a><br>';
 			//echo $reqAut.'<br>';
@@ -64,7 +64,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 				$orgName = str_replace(array("[", "]", "&", "="), array("%5B", "%5D", "%26", "%3D"), $orgName);
 				//Est-ce une affiliation 'longue' (avec beaucoup de virgules) ou 'courte' ?
 				//if(substr_count($orgName, ',') > 2) {$loncou = "longue";}else{$loncou = "courte";}								
-				$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=%22".$orgName."%22%20AND%20valid_s:(VALID%20OR%20OLD)&fl=docid,valid_s,name_s,type_s,country_s,acronym_s&sort=valid_s desc,docid asc";
+				$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=%22".urlencode($orgName)."%22%20AND%20valid_s:(VALID%20OR%20OLD)&fl=docid,valid_s,name_s,type_s,country_s,acronym_s&sort=valid_s desc,docid asc";
 				$reqAff = str_replace(" ", "%20", $reqAff);
 				echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a target="_blank" href="'.$reqAff.'">URL requête test validité affiliation trouvée</a><br>';
 				//echo $reqAff.'<br>';
@@ -121,7 +121,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 						$orgName = str_replace(array("[", "]", "&", "="), array("%5B", "%5D", "%26", "%3D"), $orgName);
 						//Est-ce une affiliation 'longue' (avec beaucoup de virgules) ou 'courte' ?
 						//if(substr_count($orgName, ',') > 2) {$loncou = "longue";}else{$loncou = "courte";}				
-						$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=%22".$orgName."%22%20AND%20valid_s:(VALID%20OR%20OLD)&fl=docid,valid_s,name_s,type_s&sort=valid_s desc,docid asc";
+						$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=%22".urlencode($orgName)."%22%20AND%20valid_s:(VALID%20OR%20OLD)&fl=docid,valid_s,name_s,type_s&sort=valid_s desc,docid asc";
 						$reqAff = str_replace(" ", "%20", $reqAff);
 						echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a target="_blank" href="'.$reqAff.'">URL requête test validité affiliation trouvée</a><br>';
 						//echo $reqAff.'<br>';
