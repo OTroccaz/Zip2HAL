@@ -58,6 +58,26 @@ function prenomCompInit($prenom) {
   return $prenom;
 }
 
+function rrmdir($dir)
+{
+ if (is_dir($dir))
+ {
+  $objects = scandir($dir);
+
+  foreach ($objects as $object)
+  {
+   if ($object != '.' && $object != '..')
+   {
+    if (filetype($dir.'/'.$object) == 'dir') {rrmdir($dir.'/'.$object);}
+    else {unlink($dir.'/'.$object);}
+   }
+  }
+
+  reset($objects);
+  rmdir($dir);
+ }
+}
+
 //Suppresion des accents
 function wd_remove_accents($str, $charset='utf-8')
 {
@@ -91,9 +111,9 @@ function suppression($dir, $age) {
 	while($elem = readdir($handle)) {//ce while efface tous les dossiers
 		$ageElem = time() - filemtime($dir.'/'.$elem);
 		if($ageElem > $age) {
-			if(is_dir($dir.'/'.$elem) && substr($elem, -2, 2) !== '..' && substr($elem, -1, 1) !== '.') {//si c'est un repertoire
+			if(is_dir($dir.'/'.$elem) && substr($elem, -2, 2) !== '..' && substr($elem, -1, 1) !== '.') {//si c'est un répertoire
 				suppression($dir.'/'.$elem, $age);
-				rmdir($dir.'/'.$elem);
+				rrmdir($dir.'/'.$elem);
 			}    
 		}
 	}
