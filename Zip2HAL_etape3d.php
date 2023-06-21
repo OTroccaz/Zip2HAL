@@ -22,7 +22,7 @@ $cpt = 1;
 $cptId = 0;
 
 //echo '<b>Etape 3d : recherche des idHAL auteur grâce aux docid auteur trouvés précédemment</b><br>';
-echo '<div id=\'cpt3d\'></div>';
+echo '<div id=\'cpt3d-'.$idFic.'\'></div>';
 
 if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublon de type TYP > inutile d'effectuer les recherches
 	echo 'Recherche inutile car c\'est une notice doublon';
@@ -32,7 +32,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	echo '<span id="Rrec-3d-'.$idFic.'" style="display: none;">';
 	
 	for($i = 0; $i < count($halAut); $i++) {
-		progression($cpt, count($halAut), 'cpt3d', $iPro, 'auteur');
+		progression($cpt, count($halAut), 'cpt3d-'.$idFic, $iPro, 'auteur');
 		if($halAut[$i]['docid'] != "" && $halAut[$i]['idHals'] == "") {//L'auteur a bien un docid mais pas d'idHAL
 			$reqId = "https://api.archives-ouvertes.fr/ref/author/?q=docid:".urlencode($halAut[$i]['docid'])."%20AND%20valid_s:(PREFERRED%20OR%20OLD)&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s";
 			$reqId = str_replace(" ", "%20", $reqId);
@@ -57,7 +57,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 }
 
 echo '<script>';
-echo 'document.getElementById(\'cpt3d\').style.display = \'none\';';
+echo 'document.getElementById(\'cpt3d-'.$idFic.'\').style.display = \'none\';';
 echo '</script>';
 //Fin étape 3d
 

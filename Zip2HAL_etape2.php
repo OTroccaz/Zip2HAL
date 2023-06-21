@@ -35,7 +35,7 @@ $tabIdHAL = array();//Si plusieurs idHAL remontés pour un même auteur
 
 include "./Zip2HAL_constantes.php";
 
-echo '<div id=\'cpt2\'></div>';
+echo '<div id=\'cpt2-'.$idFic.'\'></div>';
 
 if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublon de type TYP > inutile d'effectuer les recherches
 	echo 'Recherche inutile car c\'est une notice doublon';
@@ -132,7 +132,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	$nbdocid = 0;
 
 	for($i = 0; $i < count($preAut); $i++) {
-		progression($cpt, $nbAut, 'cpt2', $iPro, 'auteur');
+		progression($cpt, $nbAut, 'cpt2-'.$idFic, $iPro, 'auteur');
 		$firstName = $preAut[$i];
 		$lastName = $nomAut[$i];
 		$affilName = $affAut[$i];
@@ -969,7 +969,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 }
 //var_dump($halAut);
 echo '<script>';
-echo 'document.getElementById(\'cpt2\').style.display = \'none\';';
+echo 'document.getElementById(\'cpt2-'.$idFic.'\').style.display = \'none\';';
 echo '</script>';
 
 echo '								</div>';

@@ -8,7 +8,7 @@
  *
  * Page d'accueil - Home page
  */
- 
+ header('Content-Encoding: none;');
 //authentification CAS ou autre ?
 if(strpos($_SERVER['HTTP_HOST'], '127.0.0.1') !== false) {
   include('./_connexion.php');
@@ -77,7 +77,7 @@ $brk = '<br><br>';
 <html lang="fr">
 <head>
 	<meta charset="utf-8" />
-	<title>Zip2HAL - HAL - UR</title>
+	<title>Zip2HAL - HALUR</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta content="Zip2HAL permet de déposer dans HAL un lot de publications au format TEI HAL (fichier généré par OverHAL)" name="description" />
 	<meta content="Coderthemes + Lizuka + OTroccaz + LJonchere" name="author" />
@@ -494,7 +494,6 @@ if($racine == "") {$racine = "https://hal-univ-rennes1.archives-ouvertes.fr/";}
 															$resultsC = json_decode($contentsC);
 															$numFoundC = 0;
 															if(isset($resultsC->response->numFound)) {$numFoundC = $resultsC->response->numFound;}
-															
 															echo '<div class="alert alert-secondary mt-3" role="alert">';
 															echo '	<strong>Traitement du fichier</strong> '.str_replace($dir."/", "", $nomfic).'</strong><br>';
 															echo '</div>';

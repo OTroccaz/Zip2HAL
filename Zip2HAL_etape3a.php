@@ -27,7 +27,7 @@ $anepasTester = array('UMR', 'UMS', 'UPR', 'ERL', 'IFR', 'UR', 'USR', 'USC', 'CI
 
 
 //echo '<b>Etape 3a : recherche des id structures des affiliations</b><br>';
-echo '<div id=\'cpt3a\'></div>';
+echo '<div id=\'cpt3a-'.$idFic.'\'></div>';
 
 if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublon de type TYP > inutile d'effectuer les recherches
 	echo 'Recherche inutile car c\'est une notice doublon';
@@ -111,7 +111,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	$iAff = 0;//Servira aussi comme compteur d'id structures des affiliations trouvé(s)
 
 	for($i = 0; $i < count($nomAff); $i++) {
-		progression($cpt, $nbAff, 'cpt3a', $iPro, 'affiliation');
+		progression($cpt, $nbAff, 'cpt3a-'.$idFic, $iPro, 'affiliation');
 		$code = $nomAff[$i]['org'];
 		$type = $nomAff[$i]['type'];
 		$pays = $nomAff[$i]['pays'];
@@ -359,7 +359,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 }
 
 echo '<script>';
-echo 'document.getElementById(\'cpt3a\').style.display = \'none\';';
+echo 'document.getElementById(\'cpt3a-'.$idFic.'\').style.display = \'none\';';
 echo '</script>';
 
 echo '								</div>';

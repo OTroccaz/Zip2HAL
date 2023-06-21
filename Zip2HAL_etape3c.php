@@ -23,7 +23,7 @@ $cptId = 0;
 $year = date('Y', time());
 
 //echo '<b>Etape 3c : recherche des docid auteur grâce aux affiliations éventuellement trouvées</b><br>';
-echo '<div id=\'cpt3c\'></div>';
+echo '<div id=\'cpt3c-'.$idFic.'\'></div>';
 
 if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublon de type TYP > inutile d'effectuer les recherches
 	echo 'Recherche inutile car c\'est une notice doublon';
@@ -35,7 +35,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	include "./Zip2HAL_constantes.php";
 
 	for($i = 0; $i < count($halAut); $i++) {
-		progression($cpt, count($halAut), 'cpt3c', $iPro, 'auteur');
+		progression($cpt, count($halAut), 'cpt3c-'.$idFic, $iPro, 'auteur');
 		if($halAut[$i]['docid'] == "") {//Pas d'id auteur
 			for($j = 0; $j < count($halAff); $j++) {
 				//if($halAff[$j]['firstName'] == $halAut[$i][$cstFN] && $halAff[$j]['lastName'] == $halAut[$i][$cstLN]) {
@@ -85,7 +85,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 }
 	
 echo '<script>';
-echo 'document.getElementById(\'cpt3c\').style.display = \'none\';';
+echo 'document.getElementById(\'cpt3c-'.$idFic.'\').style.display = \'none\';';
 echo '</script>';
 
 echo '								</div>';

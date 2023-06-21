@@ -22,7 +22,7 @@ $cpt = 1;
 $year = date('Y', time());
 
 //echo '<b>Etape 3b : recherche de la dernière affiliation associée avec HAL aux auteurs sans affiliation</b><br>';
-echo '<div id=\'cpt3b\'></div>';
+echo '<div id=\'cpt3b-'.$idFic.'\'></div>';
 
 if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublon de type TYP > inutile d'effectuer les recherches
 	echo 'Recherche inutile car c\'est une notice doublon';
@@ -43,7 +43,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 
 	for($i = 0; $i < count($halAut); $i++) {
 		if($halAut[$i][$cstAN] == "") {
-			progression($cpt, $nbAutnoaff, 'cpt3b', $iPro, 'auteur');
+			progression($cpt, $nbAutnoaff, 'cpt3b-'.$idFic, $iPro, 'auteur');
 			$firstNameT = strtolower(wd_remove_accents($halAut[$i][$cstFN]));
 			$lastNameT = strtolower(wd_remove_accents($halAut[$i][$cstLN]));
 			
@@ -179,7 +179,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 }
 
 echo '<script>';
-echo 'document.getElementById(\'cpt3b\').style.display = \'none\';';
+echo 'document.getElementById(\'cpt3b-'.$idFic.'\').style.display = \'none\';';
 echo '</script>';
 
 echo '								</div>';
