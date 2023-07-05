@@ -26,7 +26,7 @@ if (strpos($_SERVER['HTTP_HOST'], '127.0.0.1') !== false) {
 }else{
   require_once('./CAS_connect.php');
   
-  session_start();
+  if (session_status() !== PHP_SESSION_ACTIVE) {session_start();}
   $HAL_USER = phpCAS::getUser();
   $_SESSION['HAL_USER'] = $HAL_USER;
   $HAL_PASSWD = "";
@@ -238,7 +238,7 @@ try {
 			}else{
 				$chaine .= '"'.$cstID.'"=>"'.$ACTIONS_LISTE[$i][$cstID].'")';
 			}
-			if ($i != $total-1) {$chaine .= ',';}
+			//if ($i != $total-1) {$chaine .= ',';}
 			$chaine .= chr(13);
 			//session 6 mois test
 			$hier = time() - 15552000;
