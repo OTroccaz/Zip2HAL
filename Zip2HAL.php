@@ -433,7 +433,7 @@ if($racine == "") {$racine = "https://hal-univ-rennes1.archives-ouvertes.fr/";}
 															$typTEI = "";
 															$tits = $xml->getElementsByTagName("title");
 															foreach($tits as $tit) {
-																if($tit->hasAttribute("xml:lang")) {$titTEI = $tit->nodeValue;}
+																if($tit->hasAttribute("xml:lang")) {$titTEI = str_replace('-', ' ', $tit->nodeValue);}
 															}
 															$idns = $xml->getElementsByTagName("idno");
 															foreach($idns as $idn) {
