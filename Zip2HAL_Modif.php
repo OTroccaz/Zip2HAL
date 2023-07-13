@@ -239,6 +239,7 @@ try {
 				$chaine .= '"'.$cstID.'"=>"'.$ACTIONS_LISTE[$i][$cstID].'")';
 			}
 			//if ($i != $total-1) {$chaine .= ',';}
+			$chaine .= ',';
 			$chaine .= chr(13);
 			//session 6 mois test
 			$hier = time() - 15552000;
