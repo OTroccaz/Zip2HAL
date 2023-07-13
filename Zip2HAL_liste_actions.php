@@ -963,7 +963,8 @@ if ($action == "statistiques") {
 		$chaine .= '"annee"=>"'.$ACTIONS_LISTE[$i]["annee"].'", ';
 		$chaine .= '"login"=>"'.$ACTIONS_LISTE[$i]["login"].'", ';
 		$chaine .= '"'.$cstID.'"=>"'.$ACTIONS_LISTE[$i][$cstID].'")';
-		if ($i != $total-1) {$chaine .= ',';}
+		//if ($i != $total-1) {$chaine .= ',';}
+		$chaine .= ',';
 		$chaine .= chr(13);
 		//session 6 mois test
 		$hier = time() - 15552000;
