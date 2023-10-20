@@ -101,13 +101,23 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 				if($elt->hasAttribute($notation) && $elt->getAttribute($notation) == "numeric") {$xmlIdi[$iAut] = $elt->nodeValue;}
 			}
 			//Email
+			/*
 			if($elt->nodeName == "email") {
 				//Mail réel ou juste le domaine ?
 				$melAut[$iAut] = (strpos($elt->nodeValue, '@') !== false) ? str_replace('@', '', strstr($elt->nodeValue, '@')) : $elt->nodeValue;
 				$adrAut[$iAut] = $elt->nodeValue;
 			}
+			*/
+			//Domain mail
+			if($elt->nodeName == "email" && $elt->hasAttribute("type") && $elt->getAttribute("type") == "domain") {
+				$melAut[$iAut] = $elt->nodeValue;
+			}
+			//Mail auteur = md5
+			if($elt->nodeName == "email" && $elt->hasAttribute("type") && $elt->getAttribute("type") == "md5") {
+				$adrAut[$iAut] = $elt->nodeValue;
+			}
 			//ORCID
-			if($elt->nodeName == "idno" && $elt->hasAttribute("type") && $elt->getAttribute("type") == "https://orcid.org/") {
+			if($elt->nodeName == "idno" && $elt->hasAttribute("type") && $elt->getAttribute("type") == "ORCID") {
 				$iOrcid[$iAut] = $elt->nodeValue;
 			}
 			//ResearcherID
@@ -116,6 +126,25 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 			}
 			//Affiliations
 			if($elt->nodeName == "affiliation" && $elt->hasAttribute("ref")) {$affAut[$iAut] .= $elt->getAttribute("ref").'~';}
+
+			//Si auteur correspondant avec ORCID mais pas de domaine mail ou pas de mail auteur > cas OpenAlex
+			if ($rolAut[$iAut] == 'crp' && !empty($iOrcid[$iAut])) {
+				if (empty($melAut[$iAut]) || empty($adrAut[$iAut])) {
+					$reqM = "https://api.archives-ouvertes.fr/ref/author/search?q=fullName_t:".urlencode($preAut[$iAut])."%20".urlencode($nomAut[$iAut])."&fl=*&sort=valid_s%20desc";
+					$contM = file_get_contents($reqM);
+					$resM = json_decode($contM);
+					$numFound = 0;
+					if (isset($resM->response->numFound)) {$numFound=$resM->response->numFound;}
+					if($numFound != 0) {
+						for ($m = 0; $m < $numFound; $m++) {
+							if (isset($resM->response->docs[$m]->orcidId_s[0]) && $resM->response->docs[$m]->orcidId_s[0] == $iOrcid[$iAut]) {
+								if (isset($resM->response->docs[$m]->emailDomain_s[0])) {$melAut[$iAut] = $resM->response->docs[$m]->emailDomain_s[0];}
+								if (isset($resM->response->docs[$m]->emailId_s[0])) {$adrAut[$iAut] = $resM->response->docs[$m]->emailId_s[0];}
+							}
+						}
+					}
+				}
+			}
 		}
 		$iAut++;
 	}
@@ -123,6 +152,11 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	//var_dump($nomAut);
 	//var_dump($melAut);
 	//var_dump($affAut);
+	/*
+	var_dump($adrAut);
+	echo '<br>';
+	var_dump($melAut);
+	*/
 	
 	$nbAut = $iAut;
 	$iAut = 0;
@@ -144,10 +178,11 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		$halAut[$iAut]['xmlIds'] = $xmlIds[$i];
 		$halAut[$iAut][$cstII] = "";
 		$halAut[$iAut][$cstIS] = "";
-		$halAut[$iAut][$cstMD] = $melAut[$i];
-		$halAut[$iAut]['mail'] = $adrAut[$i];
+		$halAut[$iAut][$cstMD] = $melAut[$i];//Mail domain
+		$halAut[$iAut]['mail'] = $adrAut[$i];//md5
 		$halAut[$iAut][$cstDI] = "";
 		$halAut[$iAut]['orcid'] = "";
+		$halAut[$iAut]['valOrcid'] = "";
 		$halAut[$iAut]['resid'] = "";
 		$halAut[$iAut]['rolaut'] = $rolAut[$i];
 		$halAut[$iAut]['fullName'] = "";
@@ -170,7 +205,8 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		
 		//Tester l'existence d'un ORCID
 		if(isset($iOrcid[$iAut]) && $iOrcid[$iAut] != "") {
-			$reqOrc = "https://api.archives-ouvertes.fr/ref/author/?q=orcidId_s:".$iOrcid[$iAut]."%20AND%20valid_s:%22PREFERRED%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s,fullName_s&sort=valid_s%20desc,docid%20asc";
+			$halAut[$iAut]['valOrcid'] = $iOrcid[$iAut];
+			$reqOrc = "https://api.archives-ouvertes.fr/ref/author/?q=orcidId_s:%22".$iOrcid[$iAut]."%22%20AND%20valid_s:%22PREFERRED%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s,fullName_s&sort=valid_s%20desc,docid%20asc";
 			$reqOrc = str_replace(" ", "%20", $reqOrc);
 			echo '<a target="_blank" href="'.$reqOrc.'">URL requête auteurs HAL (méthode ORCID)</a><br>';
 			$contAut = file_get_contents($reqOrc);
@@ -978,16 +1014,18 @@ echo '				</div>';
 echo '		</div>';
 echo '</div> <!-- .row -->';
 
-//Suppression noeuds ORCID pour ne pas les diffuser ensuite via le TEI
+//Suppression noeuds ORCID pour ne pas les diffuser ensuite via le TEI > Est-ce normal ? Désactivation au 18/10/23
+/*
 $auts = $xml->getElementsByTagName("author");
 foreach($auts as $aut) {
 	foreach($aut->childNodes as $elt) {
-		if($elt->nodeName == "idno" && $elt->hasAttribute("type") && $elt->getAttribute("type") == "https://orcid.org/") {
+		if($elt->nodeName == "idno" && $elt->hasAttribute("type") && $elt->getAttribute("type") == "ORCID") {
 			$elt->parentNode->removeChild($elt);
 			$xml->save($nomfic);
 		}
 	}
 }
+*/
 
 //Suppression noeuds ResearcherID pour ne pas les diffuser ensuite via le TEI
 $auts = $xml->getElementsByTagName("author");

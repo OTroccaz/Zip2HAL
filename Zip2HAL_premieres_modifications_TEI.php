@@ -192,15 +192,31 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 					$ou = "iB";
 					//Y-a-t-il un mail ?
 					if($halAut[$i]['mail'] != "" && strpos($listmails, $halAut[$i]['mail']) === false) {
+						//Sauvegarde et suppression des noeuds 'idno' et affiliation'
+						$auts = $xml->getElementsByTagName('author')->item($i);
+						$domArray = array();
+						foreach($auts->childNodes as $elt) {
+							if ($elt->nodeName == 'idno' || $elt->nodeName == 'affiliation') {
+								$domArray[] = $elt;
+								$elt->parentNode->removeChild($elt);
+							}
+						}
+						$xml->save($nomfic);
 						//Suppression du noeud mail pour éviter un doublon
 						deleteNode($xml, $cstAU, $cstEM, $i, "", "", "", "", "exact");
 						$auts = $xml->getElementsByTagName('author')->item($i);
 						$bimoc = $xml->createElement($cstEM);
+						$bimoc->setAttribute('type', 'md5');
 						$moc = $xml->createTextNode($halAut[$i]['mail']);
 						$bimoc->appendChild($moc);
 						$auts->appendChild($bimoc);
 						$listmails .= $halAut[$i]['mail'].'~';
 						$ou = "iA";//Le noeud mail doit être juste après persName pour que le TEI soit valide
+						//Rajout des noeuds 'idno' et affiliation' présents initialement
+						foreach($domArray as $node){ 
+							$auts->appendChild($node);
+						}
+						$xml->save($nomfic);
 					}
 					//Y-a-t-il un IdHAL ?
 					if($halAut[$i][$cstIS] != "" && strpos($listIdHAL, $halAut[$i][$cstIS]) === false) {
@@ -230,6 +246,10 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 							//Puis on ajoute l'(les) affiliation(s) trouvée(s)
 							$affil = "#struct-".$halAff[$j][$cstDI];
 							insertNode($xml, $cstNO, $cstAU, $cstPE, $i, $cstAF, "ref", $affil, "", "", "aC", $cstAM, "");
+							//Enfin, on modifie pour les noeuds enfants de 'listOrg type="structures"'
+							$org = $xml->getElementsByTagName('org')->item($j);
+							$org->setAttribute('xml:id', str_replace('#', '', $affil));
+							$org->setAttribute('status', $halAff[$j]['valid']);
 						}
 					}
 					//Recherche des affiliations remontées pour chaque auteur
@@ -241,6 +261,10 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 							//Puis on ajoute l'(les) affiliation(s) trouvée(s)
 							$affil = "#struct-".$halAff[$j][$cstDI];
 							insertNode($xml, $cstNO, $cstAU, $cstPE, $i, $cstAF, "ref", $affil, "", "", "aC", $cstAM, "");
+							//Enfin, on modifie pour les noeuds enfants de 'listOrg type="structures"'
+							$org = $xml->getElementsByTagName('org')->item($j);
+							$org->setAttribute('xml:id', str_replace('#', '', $affil));
+							$org->setAttribute('status', $halAff[$j]['valid']);
 						}
 					}
 					
