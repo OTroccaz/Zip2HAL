@@ -14,7 +14,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	include "./Zip2HAL_constantes.php";
 
 	//Premières modifications du TEI avec les résultats précédemment obtenus
-	
+	//var_dump_pre($halAff);
 	//Type de document
 	$typDoc = "";
 	$elts = $xml->getElementsByTagName("classCode");
@@ -247,9 +247,13 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 							$affil = "#struct-".$halAff[$j][$cstDI];
 							insertNode($xml, $cstNO, $cstAU, $cstPE, $i, $cstAF, "ref", $affil, "", "", "aC", $cstAM, "");
 							//Enfin, on modifie pour les noeuds enfants de 'listOrg type="structures"'
-							$org = $xml->getElementsByTagName('org')->item($j);
-							$org->setAttribute('xml:id', str_replace('#', '', $affil));
-							$org->setAttribute('status', $halAff[$j]['valid']);
+							$orgs = $xml->getElementsByTagName('org');
+							foreach ($orgs as $org) {
+								if (strpos($halAff[$j][$cstLA], $org->getAttribute('xml:id')) !== false) {
+									$org->setAttribute('xml:id', str_replace('#', '', $affil));
+									$org->setAttribute('status', $halAff[$j]['valid']);
+								}
+							}
 						}
 					}
 					//Recherche des affiliations remontées pour chaque auteur
@@ -262,9 +266,13 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 							$affil = "#struct-".$halAff[$j][$cstDI];
 							insertNode($xml, $cstNO, $cstAU, $cstPE, $i, $cstAF, "ref", $affil, "", "", "aC", $cstAM, "");
 							//Enfin, on modifie pour les noeuds enfants de 'listOrg type="structures"'
-							$org = $xml->getElementsByTagName('org')->item($j);
-							$org->setAttribute('xml:id', str_replace('#', '', $affil));
-							$org->setAttribute('status', $halAff[$j]['valid']);
+							$orgs = $xml->getElementsByTagName('org');
+							foreach ($orgs as $org) {
+								if (strpos($halAff[$j][$cstLA], $org->getAttribute('xml:id')) !== false) {
+									$org->setAttribute('xml:id', str_replace('#', '', $affil));
+									$org->setAttribute('status', $halAff[$j]['valid']);
+								}
+							}
 						}
 					}
 					

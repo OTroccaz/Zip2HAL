@@ -252,6 +252,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 			$tabCode = explode(",", $code);
 			foreach($tabCode as $test) {
 				$test = str_replace(" ", "+", trim($test));
+				$test = urlencode($test);
 				if(count($tabCode) > 2) {$max = count($tabCode) - 2;}else{$max = count($tabCode);}
 				if($cptCode <= $max && !in_array($test, $anepasTester)) {
 					//$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:%22".$test."%22%20OR%20name_t:(".$test.")%20OR%20code_t:%22".$test."%22%20OR%20acronym_t:%22".$test."%22%20OR%20acronym_sci:%22".$test."%22)%20AND%20type_s:".$type."%20AND%20valid_s:(VALID%20OR%20OLD)&fl=docid,valid_s,name_s,type_s&sort=valid_s%20desc,docid%20asc";
