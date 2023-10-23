@@ -710,7 +710,11 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 					echo '</script>';
 				}
 				echo '<span id="aut'.$i.$cstHA.$j.'-'.$idFic.'" draggable="true"><strong><font style=\'color:&nbsp;'.$txtcolor.';\'>'.$halAffVal.'</font></strong></span>';
-				echo '&nbsp;<span id="Vu-aut'.$i.$cstHA.$j.'-'.$idFic.'"><a style="cursor:pointer;" onclick="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'supprimerAffil\', pos: '.$i.', valeur: \''.$halAff[$j][$cstDI].'\'}); majokAffil(\'aut'.$i.$cstHA.$j.'-'.$idFic.'\', \''.$halAffVal.'\');"><i class=\'mdi mdi-trash-can-outline mdi-18px text-primary\'></i></a></span><br>';						
+				echo '&nbsp;<span id="Vu-aut'.$i.$cstHA.$j.'-'.$idFic.'"><a style="cursor:pointer;" onclick="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'supprimerAffil\', pos: '.$i.', valeur: \''.$halAff[$j][$cstDI].'\'}); majokAffil(\'aut'.$i.$cstHA.$j.'-'.$idFic.'\', \''.$halAffVal.'\');"><i class=\'mdi mdi-trash-can-outline mdi-18px text-primary\'></i></a></span>';
+				if (isset($halAff[$j]['ror']) && $halAff[$j]['ror'] == "oui") {
+					echo '<a href="#" data-toggle="tooltip" data-html="true" title="<strong>Affiliation vérifiée par ROR</strong>" data-original-title=""><i class="mdi mdi-check-bold text-success mdi-18px"></i></a>';
+				}
+				echo '<br>';
 			}
 		}
 		

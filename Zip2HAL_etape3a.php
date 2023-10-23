@@ -50,6 +50,10 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 			$cptAff++;
 		}
 		foreach($aff->childNodes as $elt) {
+			//ROR
+			if($elt->nodeName == "idno" && $elt->hasAttribute("type") && $elt->getAttribute("type") == "ROR") {
+				$nomAff[$iAff]['ror'] = $elt->nodeValue;
+			}
 			if($elt->nodeName == "orgName") {
 				$orgAff = str_replace("Electronic address", "", $elt->nodeValue);
 				//Si présence d'un @, il y a alors possibilité de remonter le domaine mail pour l'auteur
@@ -130,43 +134,71 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		//Suppression du terme 'Univ'
 		$code = str_ireplace(array("Univ ", "Univ. ", "Univ, ", "Univ., "), array("", "", ",", ","), $code);
 		
-		//1ère méthode, sur le référentiel des structures et uniquement sur l'acronyme
-
-		//Si présence d'au moins 3 virgules > test sur chacun des éléments sauf les 2 derniers qui correspondent souvent à la ville et au pays
-		//Mais, si pas de virgule ou nombre de virgules < 3, il faut naturellement conserver le dernier élément
-		$cptCode = 0;
-		$tabCode = explode(",", $code);
-		if($crochet != "") {array_unshift($tabCode, $crochet);}
-		foreach($tabCode as $test) {
-			$test = urlencode(str_replace(" ", "+", trim($test)));
-			if(count($tabCode) > 2) {$max = count($tabCode) - 2;}else{$max = count($tabCode);}
-			if($cptCode <= $max && !in_array($test, $anepasTester)) {						
-				$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=acronym_t:".$test."%20OR%20acronym_sci:".$test."%20AND%20valid_s:(VALID%20OR%20OLD)".$special."&fl=docid,valid_s,name_s,type_s,country_s,acronym_s&sort=valid_s%20desc,docid%20asc";
-				$reqAff = str_replace(" ", "%20", $reqAff);
-				echo $cstHR.$reqAff.'">URL requête affiliations (1ère méthode) HAL</a><br>';
-				//echo $reqAff.'<br>';
-				$contAff = file_get_contents($reqAff);
-				$resAff = json_decode($contAff);
-				$numFound = 0;
-				if(isset($resAff->response->numFound)) {$numFound=$resAff->response->numFound;}
-				if($numFound != 0) {			
-					//foreach($resAff->response->docs as $affil) { > Non, on ne prend que la première affiliation trouvée
-						$halAff[$iAff][$cstDI] = $resAff->response->docs[0]->docid;
-						$halAff[$iAff][$cstLA] = $nomAff[$i][$cstLA];
-						$halAff[$iAff][$cstVA] = $resAff->response->docs[0]->valid_s;
-						$halAff[$iAff][$cstNA] = $resAff->response->docs[0]->name_s;
-						if(isset($resAff->response->docs[0]->acronym_s)) {$acronym = " [".$resAff->response->docs[0]->acronym_s."], ";}else{$acronym = ", ";}
-						if(isset($resAff->response->docs[0]->country_s)) {$country = ", ".$resAff->response->docs[0]->country_s;}else{$country = "";}
-						$halAff[$iAff][$cstNC] = $resAff->response->docs[0]->docid." ~ ".$resAff->response->docs[0]->name_s.$acronym.$resAff->response->docs[0]->type_s.$country;
-						$halAff[$iAff][$cstFN] = "";
-						$halAff[$iAff][$cstLN] = "";
-						$iAff++;
-						$trouve++;
-						break;
-					//}
-				}
+		//Méthode via le ROR
+		if (!empty($nomAff[$i]['ror'])) {
+			$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=ror_s:%22".$nomAff[$i]['ror']."%22&fl=docid,valid_s,name_s,type_s,country_s,acronym_s";
+			$reqAff = str_replace(" ", "%20", $reqAff);
+			echo $cstHR.$reqAff.'">URL requête affiliations (méthode ROR) HAL</a><br>';
+			$contAff = file_get_contents($reqAff);
+			$resAff = json_decode($contAff);
+			$numFound = 0;
+			if(isset($resAff->response->numFound)) {$numFound=$resAff->response->numFound;}
+			if($numFound != 0) {
+				$halAff[$iAff][$cstDI] = $resAff->response->docs[0]->docid;
+				$halAff[$iAff][$cstLA] = $nomAff[$i][$cstLA];
+				$halAff[$iAff][$cstVA] = $resAff->response->docs[0]->valid_s;
+				$halAff[$iAff][$cstNA] = $resAff->response->docs[0]->name_s;
+				if(isset($resAff->response->docs[0]->acronym_s)) {$acronym = " [".$resAff->response->docs[0]->acronym_s."], ";}else{$acronym = ", ";}
+				if(isset($resAff->response->docs[0]->country_s)) {$country = ", ".$resAff->response->docs[0]->country_s;}else{$country = "";}
+				$halAff[$iAff][$cstNC] = $resAff->response->docs[0]->docid." ~ ".$resAff->response->docs[0]->name_s.$acronym.$resAff->response->docs[0]->type_s.$country;
+				$halAff[$iAff][$cstFN] = "";
+				$halAff[$iAff][$cstLN] = "";
+				$halAff[$iAff]['ror'] = "oui";
+				$iAff++;
+				$trouve++;
 			}
-			$cptCode++;
+		}
+		
+		if($trouve == 0) {
+			//1ère méthode, sur le référentiel des structures et uniquement sur l'acronyme
+
+			//Si présence d'au moins 3 virgules > test sur chacun des éléments sauf les 2 derniers qui correspondent souvent à la ville et au pays
+			//Mais, si pas de virgule ou nombre de virgules < 3, il faut naturellement conserver le dernier élément
+			$cptCode = 0;
+			$tabCode = explode(",", $code);
+			if($crochet != "") {array_unshift($tabCode, $crochet);}
+			foreach($tabCode as $test) {
+				$test = urlencode(str_replace(" ", "+", trim($test)));
+				if(count($tabCode) > 2) {$max = count($tabCode) - 2;}else{$max = count($tabCode);}
+				if($cptCode <= $max && !in_array($test, $anepasTester)) {						
+					$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=acronym_t:".$test."%20OR%20acronym_sci:".$test."%20AND%20valid_s:(VALID%20OR%20OLD)".$special."&fl=docid,valid_s,name_s,type_s,country_s,acronym_s&sort=valid_s%20desc,docid%20asc";
+					$reqAff = str_replace(" ", "%20", $reqAff);
+					echo $cstHR.$reqAff.'">URL requête affiliations (1ère méthode) HAL</a><br>';
+					//echo $reqAff.'<br>';
+					$contAff = file_get_contents($reqAff);
+					$resAff = json_decode($contAff);
+					$numFound = 0;
+					if(isset($resAff->response->numFound)) {$numFound=$resAff->response->numFound;}
+					if($numFound != 0) {			
+						//foreach($resAff->response->docs as $affil) { > Non, on ne prend que la première affiliation trouvée
+							$halAff[$iAff][$cstDI] = $resAff->response->docs[0]->docid;
+							$halAff[$iAff][$cstLA] = $nomAff[$i][$cstLA];
+							$halAff[$iAff][$cstVA] = $resAff->response->docs[0]->valid_s;
+							$halAff[$iAff][$cstNA] = $resAff->response->docs[0]->name_s;
+							if(isset($resAff->response->docs[0]->acronym_s)) {$acronym = " [".$resAff->response->docs[0]->acronym_s."], ";}else{$acronym = ", ";}
+							if(isset($resAff->response->docs[0]->country_s)) {$country = ", ".$resAff->response->docs[0]->country_s;}else{$country = "";}
+							$halAff[$iAff][$cstNC] = $resAff->response->docs[0]->docid." ~ ".$resAff->response->docs[0]->name_s.$acronym.$resAff->response->docs[0]->type_s.$country;
+							$halAff[$iAff][$cstFN] = "";
+							$halAff[$iAff][$cstLN] = "";
+							$halAff[$iAff]['ror'] = "non";
+							$iAff++;
+							$trouve++;
+							break;
+						//}
+					}
+				}
+				$cptCode++;
+			}
 		}
 		
 		if($trouve == 0) {
@@ -203,6 +235,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 							$halAff[$iAff][$cstNC] = $resAff->response->docs[0]->docid." ~ ".$resAff->response->docs[0]->name_s.$acronym.$resAff->response->docs[0]->type_s.$country;
 							$halAff[$iAff][$cstFN] = "";
 							$halAff[$iAff][$cstLN] = "";
+							$halAff[$iAff]['ror'] = "non";
 							$iAff++;
 							$trouve++;
 							break;
@@ -230,6 +263,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 										$halAff[$iAff][$cstNC] = $resAff->response->docs[0]->docid." ~ ".$resAff->response->docs[0]->name_s.$acronym.$resAff->response->docs[0]->type_s.$country;
 										$halAff[$iAff][$cstFN] = "";
 										$halAff[$iAff][$cstLN] = "";
+										$halAff[$iAff]['ror'] = "non";
 										$iAff++;
 										$trouve++;
 										break;
@@ -275,6 +309,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 							$halAff[$iAff][$cstNC] = $resAff->response->docs[0]->docid." ~ ".$resAff->response->docs[0]->name_s.$acronym.$resAff->response->docs[0]->type_s.$country;
 							$halAff[$iAff][$cstFN] = "";
 							$halAff[$iAff][$cstLN] = "";
+							$halAff[$iAff]['ror'] = "non";
 							$iAff++;
 							$trouve++;
 							break;
@@ -331,6 +366,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 											$halAff[$iAff][$cstNC] = $resVoO->response->docs[0]->docid." ~ ".$resVoO->response->docs[0]->name_s.$acronym.$resVoO->response->docs[0]->type_s.$country;
 											$halAff[$iAff][$cstFN] = $firstName;
 											$halAff[$iAff][$cstLN] = $lastName;
+											$halAff[$iAff]['ror'] = "non";
 											$iAff++;
 											$trouve++;
 											break 2;
@@ -358,7 +394,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	echo '</span></span>';//Fin bloc affiliations
 	echo $iAff.' id structures des affiliations trouvé(s)';
 }
-
+//var_dump_pre($halAff);
 echo '<script>';
 echo 'document.getElementById(\'cpt3a-'.$idFic.'\').style.display = \'none\';';
 echo '</script>';
