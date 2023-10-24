@@ -311,6 +311,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		$startDate = "";
 		$endDate = "";
 		$titreConf = "";
+		$affPays = "";
 		$paysConf = "";
 		$isbnConf = "";
 		$procConf = "";
@@ -359,9 +360,38 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 			}
 		}
 		
+		//Pour des communications, lorsque des informations sont manquantes, on va essayer de les récupérer via CrossRef, par exemple https://api.crossref.org/v1/works/http:/dx.doi.org/10.1117/12.2656666
+		
+		if(empty($settlement) || empty($startDate) || empty($paysConf) || empty($titreConf)) {
+			$reqCR= "https://api.crossref.org/v1/works/https:/dx.doi.org/".$doiTEI;
+			$contCR = file_get_contents($reqCR);
+			$resCR = json_decode($contCR);
+			if(isset($resCR->status) && $resCR->status == 'ok') {
+				//Titre de la conférence
+				if (isset($resCR->message->event->name)) {$titreConf = $resCR->message->event->name;}
+				//Ville et pays de la conférence
+				if (isset($resCR->message->event->location)) {
+					$ou = explode(', ', $resCR->message->event->location);
+					$settlement = $ou[0];
+					$paysConf = $ou[1];
+					$affPays = $ou[1];
+				}
+				//Début et fin de la conférence au format aaaa-mm-dd
+				$startDate = '';
+				if (isset($resCR->message->event->start->{"date-parts"}[0][0])) {$startDate .= $resCR->message->event->start->{"date-parts"}[0][0];}
+				if (isset($resCR->message->event->start->{"date-parts"}[0][1])) {$startDate .= '-'.$resCR->message->event->start->{"date-parts"}[0][1];}
+				if (isset($resCR->message->event->start->{"date-parts"}[0][2])) {$startDate .= '-'.$resCR->message->event->start->{"date-parts"}[0][2];}
+				$endDate = '';
+				if (isset($resCR->message->event->end->{"date-parts"}[0][0])) {$endDate .= $resCR->message->event->end->{"date-parts"}[0][0];}
+				if (isset($resCR->message->event->end->{"date-parts"}[0][1])) {$endDate .= '-'.$resCR->message->event->end->{"date-parts"}[0][1];}
+				if (isset($resCR->message->event->end->{"date-parts"}[0][2])) {$endDate .= '-'.$resCR->message->event->end->{"date-parts"}[0][2];}
+			}
+		}
+		
 		if($settlement == "") {$tabMetaMQ[$nomfic][] = "la ville de la conférence";}
-		if($paysConf == "") {$tabMetaMQ[$nomfic][] = "le pays de la conférence";}
 		if($startDate == "") {$tabMetaMQ[$nomfic][] = "la date de début de la conférence";}
+		if($paysConf == "") {$tabMetaMQ[$nomfic][] = "le pays de la conférence";}
+		if($titreConf == "") {$tabMetaMQ[$nomfic][] = "le titre de la conférence";}
 		
 		$txtPO = "";
 		$txtPN = "";
@@ -581,6 +611,9 @@ echo '<td>';
 
 	//PMID
 	if(isset($pmiTEI) && $pmiTEI != "") {echo '<br><a target=\'_blank\' rel=\'noopener noreferrer\' href=\'https://pubmed.ncbi.nlm.nih.gov/'.$pmiTEI.'\'><img alt=\'PMID\' src=\'./img/pubmed.png\'></a>';}
+	
+	//CrossRef
+	if(isset($doiTEI) && $doiTEI != "") {echo '<br><a target=\'_blank\' rel=\'noopener noreferrer\' href=\'https://api.crossref.org/v1/works/http:/dx.doi.org/'.$doiTEI.'\'><img alt=\'CrossRef\' src=\'./img/CR.jpg\'></a>';}
 echo '</td>';
 
 if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublon de type TYP > inutile d'afficher les affiliations, la validation du TEI et la possibilité d'import dans HAL

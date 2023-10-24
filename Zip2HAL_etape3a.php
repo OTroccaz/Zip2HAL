@@ -136,7 +136,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		
 		//Méthode via le ROR
 		if (!empty($nomAff[$i]['ror'])) {
-			$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=ror_s:%22".$nomAff[$i]['ror']."%22&fl=docid,valid_s,name_s,type_s,country_s,acronym_s";
+			$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=ror_s:%22".$nomAff[$i]['ror']."%22&fl=docid,valid_s,name_s,type_s,country_s,acronym_s&sort=valid_s%20desc";
 			$reqAff = str_replace(" ", "%20", $reqAff);
 			echo $cstHR.$reqAff.'">URL requête affiliations (méthode ROR) HAL</a><br>';
 			$contAff = file_get_contents($reqAff);
