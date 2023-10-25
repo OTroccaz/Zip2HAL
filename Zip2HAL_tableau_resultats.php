@@ -376,7 +376,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 					$paysConf = $ou[1];
 					$affPays = $ou[1];
 				}
-				//Début et fin de la conférence au format aaaa-mm-dd
+				//Début et fin de la conférence au format aaaa-mm-jj
 				$startDate = '';
 				if (isset($resCR->message->event->start->{"date-parts"}[0][0])) {$startDate .= $resCR->message->event->start->{"date-parts"}[0][0];}
 				if (isset($resCR->message->event->start->{"date-parts"}[0][1])) {$startDate .= '-'.$resCR->message->event->start->{"date-parts"}[0][1];}

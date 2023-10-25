@@ -555,6 +555,7 @@ if($racine == "") {$racine = "https://hal-univ-rennes1.archives-ouvertes.fr/";}
 																	echo '<script>afficherPopupAvertissement("'.$message.'");</script>';
 																	*/
 
+																	/*
 																	echo '<div id="warning-alert-modal-'.$idFic.'" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">';
 																	echo '    <div class="modal-dialog modal-md modal-center">';
 																	echo '        <div class="modal-content">';
@@ -578,6 +579,7 @@ if($racine == "") {$racine = "https://hal-univ-rennes1.archives-ouvertes.fr/";}
 																	echo '							)';
 																	echo '	})(window.jQuery)';
 																	echo '</script>';
+																	*/
 																}
 															}
 															
