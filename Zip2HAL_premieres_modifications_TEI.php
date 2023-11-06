@@ -148,6 +148,141 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 			insertNode($xml, "No", $cstNS, "", 0, "note", "type", "invited", "n", "0", "iB", $cstTN, "");
 			$xml->save($nomfic);
 		}
+		
+		//Lorsque des informations sont manquantes (titre, ville, pays et/ou dates), on va essayer de les récupérer via CrossRef, par exemple https://api.crossref.org/v1/works/http:/dx.doi.org/10.1117/12.2656666
+		if (isset($doiTEI) && !empty($doiTEI)) {
+			$reqCR= "https://api.crossref.org/v1/works/https:/dx.doi.org/".$doiTEI;
+			$contCR = file_get_contents($reqCR);
+			$resCR = json_decode($contCR);
+			if(isset($resCR->status) && $resCR->status == 'ok') {
+				//Titre de la conférence
+				if (isset($resCR->message->event->name)) {$titreConf = $resCR->message->event->name;}
+				//Ville et pays de la conférence
+				if (isset($resCR->message->event->location)) {
+					$ou = explode(', ', $resCR->message->event->location);
+					$settlement = $ou[0];
+					$paysConf = (isset($countries[$ou[1]])) ? $countries[$ou[1]] : '';
+					$affPays = $ou[1];
+				}
+				//Début et fin de la conférence au format aaaa-mm-jj
+				$startDate = '';
+				if (isset($resCR->message->event->start->{"date-parts"}[0][0])) {$startDate .= $resCR->message->event->start->{"date-parts"}[0][0];}
+				if (isset($resCR->message->event->start->{"date-parts"}[0][1])) {$startDate .= '-'.substr('0'.$resCR->message->event->start->{"date-parts"}[0][1], -2);}
+				if (isset($resCR->message->event->start->{"date-parts"}[0][2])) {$startDate .= '-'.substr('0'.$resCR->message->event->start->{"date-parts"}[0][2], -2);}
+				$endDate = '';
+				if (isset($resCR->message->event->end->{"date-parts"}[0][0])) {$endDate .= $resCR->message->event->end->{"date-parts"}[0][0];}
+				if (isset($resCR->message->event->end->{"date-parts"}[0][1])) {$endDate .= '-'.substr('0'.$resCR->message->event->end->{"date-parts"}[0][1], -2);}
+				if (isset($resCR->message->event->end->{"date-parts"}[0][2])) {$endDate .= '-'.substr('0'.$resCR->message->event->end->{"date-parts"}[0][2], -2);}
+			}
+			
+			//Parmi monogr, le noeud meeting est-t-il présent ?
+			$meeting = '';
+			$elts = $xml->getElementsByTagName("monogr");
+			foreach($elts as $elt) {
+				if ($elt->childNodes->length) {
+					foreach ($elt->childNodes as $child) {
+						if ($child->nodeName == "meeting") {
+							$meeting = 'oui';
+							break 2;
+						}
+					}
+				}
+			}
+			if (empty($meeting)) {//Noeud meeting absent > on l'insère
+				insertNode($xml, "nonodevalue", "monogr", "imprint", 0, "meeting", "", "", "", "", "iB", $cstTN, "");
+				$xml->save($nomfic);
+			}
+			
+			//Parmi meeting, le noeud title est-t-il présent ?
+			$title = '';
+			$elts = $xml->getElementsByTagName("meeting");
+			foreach($elts as $elt) {
+				if ($elt->childNodes->length) {
+					foreach ($elt->childNodes as $child) {
+						if ($child->nodeName == "title") {
+							$title = 'oui';
+							break 2;
+						}
+					}
+				}
+			}
+			if (empty($title)) {//Noeud title absent > on l'insère
+				insertNode($xml, $titreConf, "meeting", "", 0, "title", "", "", "", "", "iB", $cstTN, "");
+				$xml->save($nomfic);
+			}
+			
+			//Parmi meeting, le noeud date start est-t-il présent ?
+			$dateStart = '';
+			$elts = $xml->getElementsByTagName("meeting");
+			foreach($elts as $elt) {
+				if ($elt->childNodes->length) {
+					foreach ($elt->childNodes as $child) {
+						if ($child->nodeName == "date" && $child->hasAttribute("type") && $child->getAttribute("type") == "start") {
+							$dateStart = 'oui';
+							break 2;
+						}
+					}
+				}
+			}
+			if (empty($dateStart)) {//Noeud date start absent > on l'insère
+				insertNode($xml, $startDate, "meeting", "", 0, "date", "type", "start", "", "", "aC", $cstTN, "");
+				$xml->save($nomfic);
+			}
+			
+			//Parmi meeting, le noeud date end est-t-il présent ?
+			$dateEnd = '';
+			$elts = $xml->getElementsByTagName("meeting");
+			foreach($elts as $elt) {
+				if ($elt->childNodes->length) {
+					foreach ($elt->childNodes as $child) {
+						if ($child->nodeName == "date" && $child->hasAttribute("type") && $child->getAttribute("type") == "end") {
+							$dateEnd = 'oui';
+							break 2;
+						}
+					}
+				}
+			}
+			if (empty($dateEnd)) {//Noeud date end absent > on l'insère
+				insertNode($xml, $endDate, "meeting", "", 0, "date", "type", "end", "", "", "aC", $cstTN, "");
+				$xml->save($nomfic);
+			}
+			
+			//Parmi meeting, le noeud settlement end est-t-il présent ?
+			$ville = '';
+			$elts = $xml->getElementsByTagName("meeting");
+			foreach($elts as $elt) {
+				if ($elt->childNodes->length) {
+					foreach ($elt->childNodes as $child) {
+						if ($child->nodeName == "settlement") {
+							$ville = 'oui';
+							break 2;
+						}
+					}
+				}
+			}
+			if (empty($ville)) {//Noeud ville absent > on l'insère
+				insertNode($xml, $settlement, "meeting", "", 0, "settlement", "", "", "", "", "aC", $cstTN, "");
+				$xml->save($nomfic);
+			}
+			
+			//Parmi meeting, le noeud country est-t-il présent ?
+			$pays = '';
+			$elts = $xml->getElementsByTagName("meeting");
+			foreach($elts as $elt) {
+				if ($elt->childNodes->length) {
+					foreach ($elt->childNodes as $child) {
+						if ($child->nodeName == "country") {
+							$pays = 'oui';
+							break 2;
+						}
+					}
+				}
+			}
+			if (empty($pays)) {//Noeud country absent > on l'insère
+				insertNode($xml, "nonodevalue", "meeting", "", 0, "country", "key", $paysConf, "", "", "aC", $cstTN, "");
+				$xml->save($nomfic);
+			}
+		}
 	}
 	
 	//Si présence d'un ISSN, vérification qu'il comporte bien un tiret et ajout éventuel

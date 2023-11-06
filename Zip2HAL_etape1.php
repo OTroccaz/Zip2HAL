@@ -76,7 +76,7 @@ if($numFound == 0 && $numFoundC == 0) {
 
 			//On compare également les DOI s'ils sont présents
 			if(isset($entry->doiId_s)) {$doi = strtolower($hId);}
-			if($doiTEI != "" && isset($entry->doiId_s) && $doiTEI == $entry->doiId_s) {
+			if($doiTEI != "" && isset($entry->doiId_s) && strtolower($doiTEI) == strtolower($entry->doiId_s)) {
 				$idTEI = $entry->halId_s;
 				$docTEI = $entry->docType_s;
 				$halId[$doi] = $hId;
@@ -123,7 +123,7 @@ if($numFound == 0 && $numFoundC == 0) {
 							}
 
 							//On compare également les DOI s'ils sont présents
-							if($doiTEI != "" && isset($entDbl->doiId_s) && $doiTEI == $entDbl->doiId_s) {
+							if($doiTEI != "" && isset($entDbl->doiId_s) && strtolower($doiTEI) == strtolower($entDbl->doiId_s)) {
 								$docTEIDbl = $entDbl->docType_s;
 								if($doublonDbl == "non") {
 									$doublonDbl = "DOI";
@@ -223,7 +223,7 @@ if($numFound == 0 && $numFoundC == 0) {
 
 			//On compare également les DOI s'ils sont présents
 			if(isset($entry->doiId_s)) {$doiC = strtolower($hId);}
-			if($doiTEI != "" && isset($entry->doiId_s) && $doiTEI == $entry->doiId_s) {
+			if($doiTEI != "" && isset($entry->doiId_s) && strtolower($doiTEI) == ($entry->doiId_s)) {
 				$idTEI = $entry->halId_s;
 				$docTEI = $entry->docType_s;
 				$halId[$doi] = $hId;
@@ -270,7 +270,7 @@ if($numFound == 0 && $numFoundC == 0) {
 							}
 
 							//On compare également les DOI s'ils sont présents
-							if($doiTEI != "" && isset($entDblC->doiId_s) && $doiTEI == $entDblC->doiId_s) {
+							if($doiTEI != "" && isset($entDblC->doiId_s) && strtolower($doiTEI) == strtolower($entDblC->doiId_s)) {
 								$docTEIDblC = $entDblC->docType_s;
 								if($doublonDblC == "non") {
 									$doublonDblC = "DOI";
