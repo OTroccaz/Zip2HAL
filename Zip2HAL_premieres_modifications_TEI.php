@@ -150,6 +150,10 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		}
 		
 		//Lorsque des informations sont manquantes (titre, ville, pays et/ou dates), on va essayer de les récupérer via CrossRef, par exemple https://api.crossref.org/v1/works/http:/dx.doi.org/10.1117/12.2656666
+		$titreConf = '';
+		$settlement = '';
+		$paysConf = '';
+		$affPays = '';
 		if (isset($doiTEI) && !empty($doiTEI)) {
 			$reqCR= "https://api.crossref.org/v1/works/https:/dx.doi.org/".$doiTEI;
 			$contCR = file_get_contents($reqCR);
@@ -206,7 +210,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 					}
 				}
 			}
-			if (empty($title)) {//Noeud title absent > on l'insère
+			if (empty($title) && !empty($titreConf)) {//Noeud title absent > on l'insère
 				insertNode($xml, $titreConf, "meeting", "", 0, "title", "", "", "", "", "iB", $cstTN, "");
 				$xml->save($nomfic);
 			}
@@ -224,7 +228,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 					}
 				}
 			}
-			if (empty($dateStart)) {//Noeud date start absent > on l'insère
+			if (empty($dateStart) && !empty($startDate)) {//Noeud date start absent > on l'insère
 				insertNode($xml, $startDate, "meeting", "", 0, "date", "type", "start", "", "", "aC", $cstTN, "");
 				$xml->save($nomfic);
 			}
@@ -242,12 +246,12 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 					}
 				}
 			}
-			if (empty($dateEnd)) {//Noeud date end absent > on l'insère
+			if (empty($dateEnd) && !empty($endDate)) {//Noeud date end absent > on l'insère
 				insertNode($xml, $endDate, "meeting", "", 0, "date", "type", "end", "", "", "aC", $cstTN, "");
 				$xml->save($nomfic);
 			}
 			
-			//Parmi meeting, le noeud settlement end est-t-il présent ?
+			//Parmi meeting, le noeud settlement est-t-il présent ?
 			$ville = '';
 			$elts = $xml->getElementsByTagName("meeting");
 			foreach($elts as $elt) {
@@ -260,7 +264,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 					}
 				}
 			}
-			if (empty($ville)) {//Noeud ville absent > on l'insère
+			if (empty($ville) && !empty($settlement)) {//Noeud ville absent > on l'insère
 				insertNode($xml, $settlement, "meeting", "", 0, "settlement", "", "", "", "", "aC", $cstTN, "");
 				$xml->save($nomfic);
 			}
@@ -278,7 +282,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 					}
 				}
 			}
-			if (empty($pays)) {//Noeud country absent > on l'insère
+			if (empty($pays) && !empty($paysConf)) {//Noeud country absent > on l'insère
 				insertNode($xml, "nonodevalue", "meeting", "", 0, "country", "key", $paysConf, "", "", "aC", $cstTN, "");
 				$xml->save($nomfic);
 			}

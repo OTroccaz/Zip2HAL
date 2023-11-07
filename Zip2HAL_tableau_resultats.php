@@ -766,7 +766,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	echo '</span></td>';
 	
 	//Vérification si des métadonnées sont manquantes
-	//var_dump($tabMetaMQ);
+	//var_dump($tabMetaMQ[$nomfic]);
 	$maj = "non";
 	$message = "";
 	if(empty($tabMetaMQ[$nomfic])) {
