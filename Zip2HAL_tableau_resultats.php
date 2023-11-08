@@ -876,6 +876,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		echo '</span></td>';
 	}else{
 		$titreNotS = str_replace("'", "\'", $titreNot);
+		$titreNotS = htmlspecialchars(str_replace("'", "\'", $titreNotS));//les apostrophes sont parfois directement encodées en &#039;
 		$titreNotS = str_replace('"', '\"', $titreNotS);
 		$titreNotS = str_replace(" ", "%20", $titreNotS);
 		$idNomfic = str_replace(array(".xml", "./XML/"), "", $nomfic);

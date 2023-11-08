@@ -143,7 +143,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 			$resAff = json_decode($contAff);
 			$numFound = 0;
 			if(isset($resAff->response->numFound)) {$numFound=$resAff->response->numFound;}
-			if($numFound != 0) {
+			if($numFound != 0)  {
 				$halAff[$iAff][$cstDI] = $resAff->response->docs[0]->docid;
 				$halAff[$iAff][$cstLA] = $nomAff[$i][$cstLA];
 				$halAff[$iAff][$cstVA] = $resAff->response->docs[0]->valid_s;
@@ -179,7 +179,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 					$resAff = json_decode($contAff);
 					$numFound = 0;
 					if(isset($resAff->response->numFound)) {$numFound=$resAff->response->numFound;}
-					if($numFound != 0) {			
+					if($numFound != 0) {
 						//foreach($resAff->response->docs as $affil) { > Non, on ne prend que la première affiliation trouvée
 							$halAff[$iAff][$cstDI] = $resAff->response->docs[0]->docid;
 							$halAff[$iAff][$cstLA] = $nomAff[$i][$cstLA];
@@ -224,7 +224,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 					$resAff = json_decode($contAff);
 					$numFound = 0;
 					if(isset($resAff->response->numFound)) {$numFound=$resAff->response->numFound;}
-					if($numFound != 0) {			
+					if($numFound != 0) {
 						//foreach($resAff->response->docs as $affil) { > Non, on ne prend que la première affiliation trouvée
 							$halAff[$iAff][$cstDI] = $resAff->response->docs[0]->docid;
 							$halAff[$iAff][$cstLA] = $nomAff[$i][$cstLA];
@@ -252,7 +252,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 								$resAff = json_decode($contAff);
 								$numFound = 0;
 								if(isset($resAff->response->numFound)) {$numFound=$resAff->response->numFound;}
-								if($numFound != 0) {			
+								if($numFound != 0) {
 									//foreach($resAff->response->docs as $affil) { > Non, on ne prend que la première affiliation trouvée
 										$halAff[$iAff][$cstDI] = $resAff->response->docs[0]->docid;
 										$halAff[$iAff][$cstLA] = $nomAff[$i][$cstLA];
@@ -298,7 +298,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 					$resAff = json_decode($contAff);
 					$numFound = 0;
 					if(isset($resAff->response->numFound)) {$numFound=$resAff->response->numFound;}
-					if($numFound != 0) {			
+					if($numFound != 0) {
 						//foreach($resAff->response->docs as $affil) { > Non, on ne prend que la première affiliation trouvée
 							$halAff[$iAff][$cstDI] = $resAff->response->docs[0]->docid;
 							$halAff[$iAff][$cstLA] = $nomAff[$i][$cstLA];
