@@ -388,9 +388,9 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 							$affil = "#struct-".$halAff[$j][$cstDI];
 							insertNode($xml, $cstNO, $cstAU, $cstPE, $i, $cstAF, "ref", $affil, "", "", "aC", $cstAM, "");
 							//Enfin, on modifie pour les noeuds enfants de 'listOrg type="structures"', sous réserve que l'organisme n'est pas déjà présent
-							if(strpos($listaffil, $affil) === false) {
-								$orgs = $xml->getElementsByTagName('org');
-								foreach ($orgs as $org) {
+							$orgs = $xml->getElementsByTagName('org');
+							foreach ($orgs as $org) {
+								if(strpos($listaffil, $affil) === false) {
 									if (strpos($halAff[$j][$cstLA], $org->getAttribute('xml:id')) !== false) {
 										$org->setAttribute('xml:id', str_replace('#', '', $affil));
 										$org->setAttribute('status', $halAff[$j]['valid']);
@@ -411,12 +411,14 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 							$affil = "#struct-".$halAff[$j][$cstDI];
 							insertNode($xml, $cstNO, $cstAU, $cstPE, $i, $cstAF, "ref", $affil, "", "", "aC", $cstAM, "");
 							//Enfin, on modifie pour les noeuds enfants de 'listOrg type="structures"', sous réserve que l'organisme n'est pas déjà présent
-							if(strpos($listaffil, $affil) === false) {
-								$orgs = $xml->getElementsByTagName('org');
-								foreach ($orgs as $org) {
+							$orgs = $xml->getElementsByTagName('org');
+							foreach ($orgs as $org) {
+								if(strpos($listaffil, $affil) === false) {
 									if (strpos($halAff[$j][$cstLA], $org->getAttribute('xml:id')) !== false) {
 										$org->setAttribute('xml:id', str_replace('#', '', $affil));
 										$org->setAttribute('status', $halAff[$j]['valid']);
+										$listaffil .= '~'.$affil;
+										//echo $listaffil.'<br>';
 									}
 								}
 							}
