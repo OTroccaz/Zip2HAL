@@ -38,6 +38,25 @@ if ($action == "suppression") {
 	if(file_exists ($nomfic)) {@unlink($nomfic);}
 }
 
+//Type de document
+if ($action == "typedoc") {
+	$valeur = str_replace("troliapos", "'", $valeur);
+	$tabVal = explode('~|~', $valeur);
+	$elts = $xml->getElementsByTagName('classCode');
+	foreach($elts as $elt) {
+		if ($elt->hasAttribute('scheme') && $elt->getAttribute('scheme') == 'halTypology') {
+			$elt->setAttribute("n", $tabVal[0]);
+			$elt->nodeValue = $tabVal[1];
+			$xml->save($nomfic);
+		}
+	}
+	
+	
+	
+	//insertNode($xml, $cstNO, $cstNS, "", 0, "note", "type", "audience", "n", $valeur, "iB", $cstTN, "");
+	$xml->save($nomfic);
+}
+
 //Domaine
 if ($action == "domaine") {
 	deleteNode($xml, "textClass", $cstCC, 0, "scheme", "halDomain", "", "", $cstEX);

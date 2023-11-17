@@ -64,7 +64,19 @@ $elts = $xml->getElementsByTagName("classCode");
 foreach($elts as $elt) {
 	if($elt->hasAttribute("scheme") && $elt->getAttribute("scheme") == "halTypology") {$typDoc = $elt->getAttribute("n");}
 }
-echo '<td>'.$typDoc.'</td>';
+$reqTD = "https://api.archives-ouvertes.fr/ref/doctype";
+$contTD = file_get_contents($reqTD);
+$resTD = json_decode($contTD);
+echo '<td>';
+echo '<select class="custom-select" id="typdoc" name="typdoc" style="width: 100px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'typedoc\', valeur: $(this).val()});">';
+foreach ($resTD->response->result->doc as $typedoc) {
+	$sel = ($typedoc->str[0] == $typDoc) ? 'selected="selected"' : '';
+	$typ = str_replace("'", "troliapos", $typedoc->str[0].'~|~'.$typedoc->str[1]);
+	echo '<option value="'.$typ.'" '.$sel.'>'.$typedoc->str[0].'</option>';
+}
+
+echo '</select>';
+echo '</td>';
 
 if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublon de type TYP > inutile d'afficher les métadonnées
 	echo $cstSP;
@@ -236,7 +248,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		if (isset($testMetaA) && $testMetaA != "ok") {$testMetaA = "";}
 		if($elt->hasAttribute("type") && $elt->getAttribute("type") == "audience") {
 			echo '<p class="form-inline">Audience* :&nbsp;';
-			echo '<select id="audience-'.$idFic.'" name="audience" class="form-control" style="height: 18px; padding: 0px; width:150px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'audience\', valeur: $(this).val()});">>';
+			echo '<select id="audience-'.$idFic.'" name="audience" class="form-control" style="height: 18px; padding: 0px; width:150px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'audience\', valeur: $(this).val()});">';
 			$valAud = $elt->getAttribute("n");
 			if($valAud == "") {$txt = $cstSE;}else{$txt = "";}
 			echo '<option '.$txt.' value="">Inconnue</option>';
