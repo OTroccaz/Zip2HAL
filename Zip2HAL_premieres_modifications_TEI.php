@@ -55,6 +55,12 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 
 	//Ajout de la langue aux mots-clés + ajout de 3 mots-clés vides
 	$keys = $xml->getElementsByTagName($cstKE);
+	if ($keys->length==0) {//Il n'y a pas de mots-clés dans le XML initial > il faut préparer le noeud
+		insertNode($xml, $cstNO, "textClass", $cstCC, 0, $cstKE, "scheme", $cstAU, "", "", "iB", $cstTA, "");
+		$xml->save($nomfic);
+		$keys = $xml->getElementsByTagName($cstKE);
+		foreach($keys as $key) {}
+	}
 	$ind = 0;
 	$tabKey = array();
 	$domArray = array();
@@ -71,21 +77,33 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		$node->parentNode->removeChild($node);
 	}
 	$xml->save($nomfic);
+	
+	//Si pas de mot-clé, on va essayer d'en trouver avec CrossRef
+	if(empty($tabKey)) {
+		if (isset($doiTEI) && !empty($doiTEI)) {
+			$reqCR = "https://api.crossref.org/v1/works/https://dx.doi.org/".$doiTEI;
+			$contCR = file_get_contents($reqCR);
+			$resCR = json_decode($contCR);
+			if(isset($resCR->status) && $resCR->status == 'ok') {
+				if (isset($resCR->message->{"subject"})) {
+					foreach ($resCR->message->{"subject"} as $keyw) {
+						$tabKey[] = $keyw;
+					}
+				}
+			}
+		}
+	}
+				
 	//Ajout des mots-clés avec la langue
 	foreach($tabKey as $keyw){
 		$bimoc = $xml->createElement("term");
 		$moc = $xml->createTextNode($keyw);
 		$bimoc->setAttribute($cstXL, $languages[$lang]);
 		$bimoc->appendChild($moc);
-		$key->appendChild($bimoc);																		
+		$keys->item(0)->appendChild($bimoc);																		
 		$xml->save($nomfic);
 	}
-	if(empty($tabKey)) {//Il n'y a pas de mots-clés dans le XML initial > il faut préparer le noeud
-		insertNode($xml, $cstNO, "textClass", $cstCC, 0, $cstKE, "scheme", $cstAU, "", "", "iB", $cstTA, "");
-		$xml->save($nomfic);
-		$keys = $xml->getElementsByTagName($cstKE);
-		foreach($keys as $key) {}
-	}				
+	
 	//Ajout de 3 mots-clés vides
 	$keys = $xml->getElementsByTagName($cstKE);
 	for($mc = 0; $mc < 3; $mc++) {
@@ -156,7 +174,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		$paysConf = '';
 		$affPays = '';
 		if (isset($doiTEI) && !empty($doiTEI)) {
-			$reqCR= "https://api.crossref.org/v1/works/https:/dx.doi.org/".$doiTEI;
+			$reqCR = "https://api.crossref.org/v1/works/https://dx.doi.org/".$doiTEI;
 			$contCR = file_get_contents($reqCR);
 			$resCR = json_decode($contCR);
 			if(isset($resCR->status) && $resCR->status == 'ok') {
