@@ -7,6 +7,21 @@
  * Scripts
  */
  
+ function afftypedoc(qui, idFic) {
+	const tab = qui.split('~|~');
+	if (tab[0] == 'COMM' || tab[0] == 'POSTER') {
+		document.getElementById("ComPos-"+idFic).style.display = "block";
+	}else{
+		document.getElementById("ComPos-"+idFic).style.display = "none";
+	}
+	
+	if (tab[0] == 'COUV') {
+		document.getElementById("Couv-"+idFic).style.display = "block";
+	}else{
+		document.getElementById("Couv-"+idFic).style.display = "none";
+	}
+}
+ 
 function majpartDep(nomfic, idFic, partage) {
 	var source = document.getElementById(nomfic + "-" + idFic).innerHTML;
 	var tab1 = source.split('partDep=');

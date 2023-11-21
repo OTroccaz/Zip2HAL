@@ -124,7 +124,7 @@ $brk = '<br><br>';
 $team = "";//Code collection HAL
 $racine = "";//Portail de dépôt
 $partDep = "";//Partage de dépôt = Déposer pour un autre compte
-$domaine = "";//Domaine disciplinaire
+$domaine = (isset($_POST["domaine"])) ? htmlspecialchars($_POST["domaine"]) : '';//Domaine disciplinaire
 $soumis = "soumis";
 
 if(isset($_POST[$soumis])) {
@@ -366,6 +366,7 @@ if($racine == "") {$racine = "https://hal-univ-rennes1.archives-ouvertes.fr/";}
 																							}
 																						}else{
 																							echo $domaine;
+																							echo '<input type="hidden" name="domaine" value ="'.$domaine.'">';
 																						}
 																						?>
 																						
@@ -393,7 +394,7 @@ if($racine == "") {$racine = "https://hal-univ-rennes1.archives-ouvertes.fr/";}
 																				
 																				<div class="form-group row mt-4">
 																						<div class="col-12 justify-content-center d-flex">
-																								<input type="submit" class="btn btn-md btn-primary btn-lg" value="Valider" name="soumis">
+																								<input type="submit" class="btn btn-md btn-primary btn-lg" value="Valider" id="soumis" name="soumis">
 																						</div>
 																				</div> <!-- .form-group -->
 

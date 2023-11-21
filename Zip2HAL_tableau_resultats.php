@@ -56,25 +56,27 @@ if(isset($typDbl) && $typDbl != "") {
 }
 
 //Supprimer le TEI
-echo '<td><span id=\'suppression'.'-'.$idFic.'\'><a class="btn btn-primary" onclick="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'suppression\', valeur : \''.$idFic.'\',}); majokSuppr(\'suppression'.'-'.$idFic.'\');"><i class="mdi mdi-delete text-white"></i></a></span>';
+echo '<td><span id=\'suppression'.'-'.$idFic.'\'><a class="btn btn-primary" onclick="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'suppression\', valeur : \''.$idFic.'\',}); majokSuppr(\'suppression'.'-'.$idFic.'\');"><i class="mdi mdi-delete text-white"></i></a></span></td>';
 
 //Type de document
 $typDoc = "";
+//$nomficZip = $_SERVER['REQUEST_URI'];
 $elts = $xml->getElementsByTagName("classCode");
 foreach($elts as $elt) {
 	if($elt->hasAttribute("scheme") && $elt->getAttribute("scheme") == "halTypology") {$typDoc = $elt->getAttribute("n");}
 }
-$reqTD = "https://api.archives-ouvertes.fr/ref/doctype";
-$contTD = file_get_contents($reqTD);
-$resTD = json_decode($contTD);
+$temps = str_replace(array('./XML/Zip2HAL_TEI_OverHAL_', '.zip'), '', $nomficZip);
 echo '<td>';
-echo '<select class="custom-select" id="typdoc" name="typdoc" style="width: 100px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'typedoc\', valeur: $(this).val()});">';
-foreach ($resTD->response->result->doc as $typedoc) {
-	$sel = ($typedoc->str[0] == $typDoc) ? 'selected="selected"' : '';
-	$typ = str_replace("'", "troliapos", $typedoc->str[0].'~|~'.$typedoc->str[1]);
-	echo '<option value="'.$typ.'" '.$sel.'>'.$typedoc->str[0].'</option>';
-}
-
+//echo '<select class="custom-select" id="typdoc" name="typdoc" style="width: 100px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', nomficHal : \''.str_replace($dir."/", "./XML/HAL/", $nomfic).'\', nomficZip : \''.$nomficZip.'\', temps : \''.$temps.'\', action: \'typedoc\', valeur: $(this).val()}); let myForm = document.querySelector(\'form\'); let submitButton = myForm.querySelector(\'#soumis\'); myForm.requestSubmit(submitButton);">';
+echo '<select class="custom-select" id="typdoc" name="typdoc" style="width: 100px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'typedoc\', valeur: $(this).val()}); afftypedoc($(this).val(), '.$idFic.');">';
+$sel = ($typDoc == 'ART') ? 'selected="selected"' : '';
+echo '<option value="ART~|~Article dans une revue" '.$sel.'>ART</option>';
+$sel = ($typDoc == 'COMM') ? 'selected="selected"' : '';
+echo '<option value="COMM~|~Communication dans un congrès" '.$sel.'>COMM</option>';
+$sel = ($typDoc == 'POSTER') ? 'selected="selected"' : '';
+echo '<option value="POSTER~|~Poster de conférence" '.$sel.'>POSTER</option>';
+$sel = ($typDoc == 'COUV') ? 'selected="selected"' : '';
+echo '<option value="COUV~|~Chapitre dtroliaposouvrage" '.$sel.'>COUV</option>';
 echo '</select>';
 echo '</td>';
 
@@ -315,7 +317,9 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	echo '<p class="form-inline">EISSN :&nbsp;<input type="text" id="eissn-'.$idFic.'" name="eissn-'.$idFic.'" value="'.$eissn.'" class="form-control" style="height: 18px; width:100px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'eissn\', valeur: $(this).val()});"></p>';
 	
 	//Métadonnées spécifiques aux COMM et POSTER
-	if($typDoc == "COMM" || $typDoc == "POSTER") {
+	$affComPos = ($typDoc == "COMM" || $typDoc == "POSTER") ? 'block' : 'none';
+	echo '<span id="ComPos-'.$idFic.'" style="display:'.$affComPos.'">';
+	//if($typDoc == "COMM" || $typDoc == "POSTER") {
 		
 		//Métadonnées > Nom de la revue, ville, dates, titre, pays, ISBN, actes, éditeur scientifique et conférence invitée
 		$titreV = "";
@@ -372,10 +376,10 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 			}
 		}
 		
-		if($settlement == "") {$tabMetaMQ[$nomfic][] = "la ville de la conférence";}
-		if($startDate == "") {$tabMetaMQ[$nomfic][] = "la date de début de la conférence";}
-		if($paysConf == "") {$tabMetaMQ[$nomfic][] = "le pays de la conférence";}
-		if($titreConf == "") {$tabMetaMQ[$nomfic][] = "le titre de la conférence";}
+		if($settlement == "" && ($typDoc == "COMM" || $typDoc == "POSTER")) {$tabMetaMQ[$nomfic][] = "la ville de la conférence";}
+		if($startDate == "" && ($typDoc == "COMM" || $typDoc == "POSTER")) {$tabMetaMQ[$nomfic][] = "la date de début de la conférence";}
+		if($paysConf == "" && ($typDoc == "COMM" || $typDoc == "POSTER")) {$tabMetaMQ[$nomfic][] = "le pays de la conférence";}
+		if($titreConf == "" && ($typDoc == "COMM" || $typDoc == "POSTER")) {$tabMetaMQ[$nomfic][] = "le titre de la conférence";}
 		
 		$txtPO = "";
 		$txtPN = "";
@@ -412,7 +416,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 			}
 		}
 		
-		if($inviConf == "") {$tabMetaMQ[$nomfic][] = "le caractère conférence invitée (O/N)";}
+		if($inviConf == "" && ($typDoc == "COMM" || $typDoc == "POSTER")) {$tabMetaMQ[$nomfic][] = "le caractère conférence invitée (O/N)";}
 		
 		//Ville de la conférence
 		echo '<p class="form-inline">Ville* :&nbsp;<input type="text" id="settlement-'.$idFic.'" name="settlement-'.$idFic.'" value="'.$settlement.'" class="form-control" style="height: 18px; width:280px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'ville\', valeur: $(this).val()});"></p>';
@@ -444,12 +448,15 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 			echo $cst5sp;
 			echo '<input type="radio" '.$txtCN.' id="invitConf-'.$idFic.'" name="invitConf-'.$idFic.'" value="No" class="form-control" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'invitConf\', valeur: $(this).val()});"> Non';
 			echo '</p>';
-	}
+	//}
+	echo '</span>';
 	//Fin métadonnées spécifiques aux COMM et POSTER
 	
 	
 	//Métadonnées spécifiques aux COUV
-	if($typDoc == "COUV") {
+	$affCouv = ($typDoc == "COUV") ? 'block' : 'none';
+	echo '<span id="Couv-'.$idFic.'" style="display:'.$affCouv.'">';
+	//if($typDoc == "COUV") {
 		
 		//Métadonnées > Titre de l'ouvrage, éditeur(s) scientifique(s) et ISBN
 		$titrOuv = "";
@@ -470,7 +477,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 			}
 		}
 		
-		if($titrOuv == "") {$tabMetaMQ[$nomfic][] = "le tite de l\'ouvrage";}
+		if($titrOuv == "" && $typDoc == "COUV") {$tabMetaMQ[$nomfic][] = "le tite de l\'ouvrage";}
 		
 		//Titre de l'ouvrage
 		echo '<p class="form-inline">Titre de l\'ouvrage* :<br><input type="text" id="titrOuv-'.$idFic.'" name="titrOuv-'.$idFic.'" value="'.$titrOuv.'" class="form-control" style="height: 18px; width:600px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'titrOuv\', valeur: $(this).val()});"></p>';
@@ -482,7 +489,8 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		}
 		//ISBN
 		echo '<p class="form-inline">ISBN :&nbsp;<input type="text" id="isbnOuv-'.$idFic.'" name="isbnOuv-'.$idFic.'" value="'.$isbnOuv.'" class="form-control" style="height: 18px; width:200px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'isbnOuv\', valeur: $(this).val()});"></p>';					
-	}
+	//}
+	echo '</span>';
 	//Fin métadonnées spécifiques aux COUV
 	
 	//Métadonnées > Volume, numéro et pages

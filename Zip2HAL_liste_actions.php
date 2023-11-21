@@ -50,11 +50,6 @@ if ($action == "typedoc") {
 			$xml->save($nomfic);
 		}
 	}
-	
-	
-	
-	//insertNode($xml, $cstNO, $cstNS, "", 0, "note", "type", "audience", "n", $valeur, "iB", $cstTN, "");
-	$xml->save($nomfic);
 }
 
 //Domaine
