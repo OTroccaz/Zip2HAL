@@ -114,6 +114,28 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		$keys->item(0)->appendChild($bimoc);																		
 		$xml->save($nomfic);
 	}
+	
+	//Si pas de résumé, on va essayer d'en trouver un avec CrossRef
+	$resume = "";
+	$elts = $xml->getElementsByTagName("abstract");
+	foreach($elts as $elt) {
+		if($elt->hasAttribute($cstXL)) {$resume = str_replace(array("<i>", "</i>"), "", $elt->nodeValue);}
+	}
+	if (empty($resume)) {
+		if (isset($doiTEI) && !empty($doiTEI)) {
+			$reqCR = "https://api.crossref.org/v1/works/https://dx.doi.org/".$doiTEI;
+			$contCR = file_get_contents($reqCR);
+			$resCR = json_decode($contCR);
+			if(isset($resCR->status) && $resCR->status == 'ok') {
+				if (isset($resCR->message->{"abstract"})) {
+					deleteNode($xml, $cstPD, $cstAB, 0, $cstXL, $languages[$lang], "", "", $cstEX);
+					$xml->save($nomfic);
+					insertNode($xml, $resCR->message->{"abstract"}, $cstPD, "", 0, $cstAB, $cstXL, $languages[$lang], "", "", "iB", $cstTN, "");
+					$xml->save($nomfic);
+				}
+			}
+		}
+	}
 
 	//Ajout de la langue au résumé
 	$elts = $xml->getElementsByTagName($cstAB);

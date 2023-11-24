@@ -42,6 +42,7 @@ if ($action == "suppression") {
 if ($action == "typedoc") {
 	$valeur = str_replace("troliapos", "'", $valeur);
 	$tabVal = explode('~|~', $valeur);
+	$init = $_POST["init"];
 	$elts = $xml->getElementsByTagName('classCode');
 	foreach($elts as $elt) {
 		if ($elt->hasAttribute('scheme') && $elt->getAttribute('scheme') == 'halTypology') {
@@ -49,6 +50,167 @@ if ($action == "typedoc") {
 			$elt->nodeValue = $tabVal[1];
 			$xml->save($nomfic);
 		}
+	}
+	//Si ART au départ
+	if ($init == 'ART') {
+		//ART > Supprimer revue
+		//deleteNode($xml, "monogr", "title", 0, "level", "j", "", "", "exact");
+		deleteNode($xml, "imprint", "biblScope", 0, "unit", "serie", "", "", "exact");
+		$xml->save($nomfic);
+		//ART > Supprimer éditeur
+		deleteNode($xml, "imprint", "publisher", 0, "", "", "", "", "exact");
+		$xml->save($nomfic);
+	}
+	//Si COMM ou POSTER au départ
+	if ($init == 'COMM' || $init == 'POSTER') {
+		//COMM ou POSTER > Supprimer noeud principal meeting
+		deleteNode($xml, "monogr", "meeting", 0, "", "", "", "", "exact");
+		$xml->save($nomfic);
+		//COMM ou POSTER > Supprimer titre du volume
+		deleteNode($xml, "imprint", "biblScope", 0, "unit", "serie", "", "", "exact");
+		$xml->save($nomfic);
+		//COMM ou POSTER > Supprimer ISBN de la conférence
+		deleteNode($xml, "monogr", "idno", 0, "type", "isbn", "", "", "exact");
+		$xml->save($nomfic);
+		//COMM ou POSTER > Supprimer proceedings de la conférence
+		deleteNode($xml, "notesStmt", "note", 0, "type", "proceedings", "", "", "exact");
+		$xml->save($nomfic);
+		//COMM ou POSTER > Supprimer conférence invitée O/N
+		deleteNode($xml, "notesStmt", "note", 0, "type", "invited", "", "", "exact");
+		$xml->save($nomfic);
+	}
+	
+	//Si COUV au départ
+	if ($init == 'COUV') {
+		//COUV > Supprimer titre de l'ouvrage
+		deleteNode($xml, "monogr", "editor", 0, "title", "level", "", "", "exact");
+		$xml->save($nomfic);
+		//COUV > Supprimer le(les) éditeurs scientifiques
+		$eds = 0;
+		$elts = $xml->getElementsByTagName($cstMO);
+		foreach($elts as $elt) {
+			if($elt->hasChildNodes()) {
+				foreach($elt->childNodes as $item) {
+					if($item->nodeName == "editor") {
+						deleteNode($xml, "monogr", "editor", $eds, "", "", "", "", "exact");
+					}
+					$eds++;
+				}
+			}
+		}
+		$xml->save($nomfic);
+		//COUV > Supprimer ISBN
+		deleteNode($xml, "monogr", "idno", 0, "type", "isbn", "", "", "exact");
+		$xml->save($nomfic);
+	}
+	
+	//Si ART à l'arrivée
+	if ($tabVal[0] == 'ART') {
+		//ART > Ajouter revue
+		//insertNode($xml, "nonodevalue", "imprint", "biblScope", 0, "biblScope", "unit", "serie", "", "", "iB", $cstTN, "");
+		insertNode($xml, "nonodevalue", $cstMO, $cstIM, 0, $cstTI, $cstLE, "j", "", "", "iB", $cstTN, "");
+		$xml->save($nomfic);
+		//ART > Ajouter éditeur
+		insertNode($xml, "nonodevalue", "imprint", "biblScope", 0, "publisher", "", "", "", "", "iB", $cstTN, "");
+	}
+	
+	//Si COMM ou POSTER à l'arrivée
+	if ($tabVal[0] == 'COMM' || $tabVal[0] == 'POSTER') {
+		//COMM ou POSTER > Ajouter noeud principal meeting
+		insertNode($xml, "nonodevalue", "monogr", "imprint", 0, "meeting", "", "", "", "", "iB", $cstTN, "");
+		$xml->save($nomfic);
+		//COMM ou POSTER > Ajouter titre du volume
+		insertNode($xml, "nonodevalue", $cstIM, "date", 0, $cstBS, "unit", "serie", "", "", "iB", $cstTN, "");
+		$xml->save($nomfic);
+		//COMM ou POSTER > Ajouter date de début de conférence
+		insertNode($xml, "nonodevalue", $cstME, $cstTI, 0, "date", "type", $cstST, "", "", "iA", $cstTN, "");
+		$xml->save($nomfic);
+		//COMM ou POSTER > Ajouter date de fin de conférence
+		insertNode($xml, "nonodevalue", $cstME, "date", 0, "date", "type", "end", "", "", "iA", $cstTN, "");
+		$xml->save($nomfic);
+		//COMM ou POSTER > Ajouter ville de la conférence
+		//Le noeud 'settlement' doit obligatoirement être situé après la date de fin s'il y en a une, sinon après la date de début 
+		$ajout = "non";
+		$bimoc = $xml->createElement("settlement");
+		$moc = $xml->createTextNode("");
+		$bimoc->appendChild($moc);
+		$elts = $xml->getElementsByTagName("date");
+		foreach($elts as $elt) {
+			if ($elt->hasAttribute("type") && $elt->getAttribute("type") == "end") {
+				insertAfter($bimoc, $elt);
+				$xml->save($nomfic);
+				$ajout = "oui";
+			}
+		}
+		if ($ajout == "non") {
+			foreach($elts as $elt) {
+				if ($elt->hasAttribute("type") && $elt->getAttribute("type") == $cstST) {
+					insertAfter($bimoc, $elt);
+					$xml->save($nomfic);
+					$ajout = "oui";
+				}
+			}
+		}
+		$xml->save($nomfic);
+		//COMM ou POSTER > Ajouter titre de la conférence
+		insertNode($xml, "nonodevalue", $cstME, "date", 0, $cstTI, "", "", "", "", "iB", $cstTN, "");
+		$xml->save($nomfic);
+		//COMM ou POSTER > Ajouter pays de la conférence
+		$elts = $xml->getElementsByTagName("meeting");
+		$elt = $xml->createElement("country");
+		$elt->setAttribute("key", "");
+		$elts->item(0)->appendChild($elt);
+		$xml->save($nomfic);
+		//COMM ou POSTER > Ajouter ISBN de la conférence
+		insertNode($xml, "nonodevalue", $cstMO, "idno", 0, "idno", "type", "isbn", "", "", "iB", $cstTN, "");
+		$xml->save($nomfic);
+		//COMM ou POSTER > Ajouter proceedings de la conférence
+		insertNode($xml, "nonodevalue", $cstNS, "", 0, "note", "type", "proceedings", "n", "1", "iB", $cstTN, "");
+		$xml->save($nomfic);
+		//COMM ou POSTER > Ajouter éditeur scientifique
+		insertNode($xml, "nonodevalue", $cstMO, $cstME, 0, $cstED, "", "", "", "", "iA", $cstTN, "");
+		$xml->save($nomfic);
+		//COMM ou POSTER > Ajouter conférence invitée O/N
+		insertNode($xml, "nonodevalue", $cstNS, "", 0, "note", "type", "invited", "n", "0", "iB", $cstTN, "");
+		$xml->save($nomfic);
+	}
+	
+	//Si COUV à l'arrivée
+	if ($tabVal[0] == 'COUV') {
+		//COUV > Ajouter titre de l'ouvrage
+		insertNode($xml, "nonodevalue", $cstMO, $cstED, 0, $cstTI, $cstLE, "m", "", "", "iB", $cstTN, "");
+		$xml->save($nomfic);
+		//COUV > Ajouter éditeur scientifique
+		insertNode($xml, "nonodevalue", "monogr", "imprint", 0, "editor", "", "", "", "", "iB", $cstTN, "");
+		$xml->save($nomfic);
+		insertNode($xml, "nonodevalue", "monogr", "imprint", 0, "editor", "", "", "", "", "iB", $cstTN, "");
+		$xml->save($nomfic);
+		insertNode($xml, "nonodevalue", "monogr", "imprint", 0, "editor", "", "", "", "", "iB", $cstTN, "");
+		$xml->save($nomfic);
+		$elts = $xml->getElementsByTagName($cstMO);
+		$ind = 0;
+		$pos = 0;
+		foreach($elts as $elt) {
+			if ($elt->hasChildNodes()) {
+				foreach($elt->childNodes as $item) {
+					if ($item->nodeName == $cstED) {
+						if ($ind != $pos) {
+						}else{
+							$bimoc = $xml->createElement($cstED);
+							$moc = $xml->createTextNode("");
+							$bimoc->appendChild($moc);
+							$elt->replaceChild($bimoc, $item);
+							break 2;
+						}
+						$ind++;
+					}
+				}
+			}
+		}
+		$xml->save($nomfic);
+		//COUV > Ajouter ISBN
+		insertNode($xml, "nonodevalue", $cstMO, "idno", 0, "idno", "type", "isbn", "", "", "iB", $cstTN, "");
+		$xml->save($nomfic);
 	}
 }
 
@@ -316,7 +478,7 @@ if ($action == $cstEI) {
 	if ($action == "isbnConf") {
 		deleteNode($xml, $cstMO, "idno", 0, "type", "isbn", "", "", $cstEX);
 		$xml->save($nomfic);
-		insertNode($xml, $valeur, $cstMO, $cstTI, 0, "idno", "type", "isbn", "", "", "iB", $cstTN, "");
+		insertNode($xml, $valeur, $cstMO, "idno", 0, "idno", "type", "isbn", "", "", "iB", $cstTN, "");
 		$xml->save($nomfic);
 	}
 
@@ -385,7 +547,7 @@ if ($action == $cstEI) {
 	if ($action == "isbnOuv") {
 		deleteNode($xml, $cstMO, "idno", 0, "type", "isbn", "", "", $cstEX);
 		$xml->save($nomfic);
-		insertNode($xml, $valeur, $cstMO, $cstTI, 0, "idno", "type", "isbn", "", "", "iB", $cstTN, "");
+		insertNode($xml, $valeur, $cstMO, "idno", 0, "idno", "type", "isbn", "", "", "iB", $cstTN, "");
 		$xml->save($nomfic);
 	}
 	

@@ -20,6 +20,12 @@
 	}else{
 		document.getElementById("Couv-"+idFic).style.display = "none";
 	}
+	
+	if (tab[0] == 'ART') {
+		document.getElementById("Art-"+idFic).style.display = "block";
+	}else{
+		document.getElementById("Art-"+idFic).style.display = "none";
+	}
 }
  
 function majpartDep(nomfic, idFic, partage) {
