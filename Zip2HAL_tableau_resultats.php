@@ -69,7 +69,7 @@ $temps = str_replace(array('./XML/Zip2HAL_TEI_OverHAL_', '.zip'), '', $nomficZip
 echo '<td>';
 //echo '<select class="custom-select" id="typdoc" name="typdoc" style="width: 100px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', nomficHal : \''.str_replace($dir."/", "./XML/HAL/", $nomfic).'\', nomficZip : \''.$nomficZip.'\', temps : \''.$temps.'\', action: \'typedoc\', valeur: $(this).val()}); let myForm = document.querySelector(\'form\'); let submitButton = myForm.querySelector(\'#soumis\'); myForm.requestSubmit(submitButton);">';
 echo '<select class="custom-select" id="typdoc" name="typdoc" style="width: 100px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'typedoc\', valeur: $(this).val(), init: \''.$typDoc.'\'}); afftypedoc($(this).val(), '.$idFic.');">';
-$sel = ($typDoc == 'ART') ? 'selected="selected"' : '';
+$sel = ($typDoc == 'ART' || $typDoc == 'PATENT') ? 'selected="selected"' : '';
 echo '<option value="ART~|~Article dans une revue" '.$sel.'>ART</option>';
 $sel = ($typDoc == 'COMM') ? 'selected="selected"' : '';
 echo '<option value="COMM~|~Communication dans un congrès" '.$sel.'>COMM</option>';

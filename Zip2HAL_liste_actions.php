@@ -52,7 +52,7 @@ if ($action == "typedoc") {
 		}
 	}
 	//Si ART au départ
-	if ($init == 'ART') {
+	if ($init == 'ART' || $init == 'PATENT') {
 		//ART > Supprimer revue
 		//deleteNode($xml, "monogr", "title", 0, "level", "j", "", "", "exact");
 		deleteNode($xml, "imprint", "biblScope", 0, "unit", "serie", "", "", "exact");
@@ -117,8 +117,25 @@ if ($action == "typedoc") {
 	//Si COMM ou POSTER à l'arrivée
 	if ($tabVal[0] == 'COMM' || $tabVal[0] == 'POSTER') {
 		//COMM ou POSTER > Ajouter noeud principal meeting
-		insertNode($xml, "nonodevalue", "monogr", "imprint", 0, "meeting", "", "", "", "", "iB", $cstTN, "");
-		$xml->save($nomfic);
+			//Parmi monogr, le noeud imprint est-t-il présent ?
+			$imprint = '';
+			$elts = $xml->getElementsByTagName("monogr");
+			foreach($elts as $elt) {
+				if ($elt->childNodes->length) {
+					foreach ($elt->childNodes as $child) {
+						if ($child->nodeName == "imprint") {
+							$imprint = 'oui';
+							break 2;
+						}
+					}
+				}
+			}
+			if (empty($imprint)) {//Noeud imprint absent
+				insertNode($xml, "nonodevalue", "monogr", "", 0, "meeting", "", "", "", "", "aC", $cstTN, "");
+			}else{
+				insertNode($xml, "nonodevalue", "monogr", "imprint", 0, "meeting", "", "", "", "", "iB", $cstTN, "");
+			}
+			$xml->save($nomfic);
 		//COMM ou POSTER > Ajouter titre du volume
 		insertNode($xml, "nonodevalue", $cstIM, "date", 0, $cstBS, "unit", "serie", "", "", "iB", $cstTN, "");
 		$xml->save($nomfic);
