@@ -79,6 +79,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	$xml->save($nomfic);
 	
 	//Si pas de mot-clé, on va essayer d'en trouver avec CrossRef
+	/*Procédure abandonnée car les mots-clés remontés via CrossRef en sont pas bons
 	if(empty($tabKey)) {
 		if (isset($doiTEI) && !empty($doiTEI)) {
 			$reqCR = "https://api.crossref.org/v1/works/https://dx.doi.org/".$doiTEI;
@@ -93,6 +94,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 			}
 		}
 	}
+	*/
 				
 	//Ajout des mots-clés avec la langue
 	foreach($tabKey as $keyw){
@@ -130,7 +132,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 				if (isset($resCR->message->{"abstract"})) {
 					deleteNode($xml, $cstPD, $cstAB, 0, $cstXL, $languages[$lang], "", "", $cstEX);
 					$xml->save($nomfic);
-					insertNode($xml, $resCR->message->{"abstract"}, $cstPD, "", 0, $cstAB, $cstXL, $languages[$lang], "", "", "iB", $cstTN, "");
+					insertNode($xml, strip_tags($resCR->message->{"abstract"}), $cstPD, "", 0, $cstAB, $cstXL, $languages[$lang], "", "", "iB", $cstTN, "");
 					$xml->save($nomfic);
 				}
 			}
