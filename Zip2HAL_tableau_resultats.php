@@ -558,6 +558,11 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	}
 	$nbMC = $ind - 1;
 	
+	echo '<br>';
+	//Métadonnées > Mots-clés > Ajout par liste de mots-clés séparés par des points-virgules
+	echo 'Ajout de mots-clés dans la langue de la notice : vous pouvez renseigner ici une liste de plusieurs mots-clés séparés par des points-virgules.';
+	echo '<textarea id="mots-cles-liste-'.$idFic.'" name="mots-cles-liste'.$idFic.'" class="textarea form-control" style="width: 600px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'mots-cles-liste\', pos: '.$ind.', valeur: $(this).val(), langue: \''.$lang.'\'});"></textarea>';
+	
 	//Métadonnées > Mots-clés traduits en anglais
 	if($lang != $cstEN) {$affMC = "block";}else{$affMC = "none";}
 	
@@ -571,7 +576,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	}
 	for($mc = 0; $mc <= $nbMC; $mc++) {
 		if(isset($tabMC[$mc])) {$mcT = $tabMC[$mc];}else{$mcT = "";}
-		echo '<input type="text" id="mots-clesT'.$ind.'-'.$idFic.'" name="mots-clesT'.$ind.'-'.$idFic.'" value="'.str_replace("'", "\'", $mcT).'" class="form-control" style="height: 18px; width: 600px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'mots-clesT\', pos: '.$ind.', valeur: $(this).val(), langue: \'English\'});">';
+		echo '<input type="text" id="mots-clesT'.$ind.'-'.$idFic.'" name="mots-clesT'.$ind.'-'.$idFic.'" value="'.str_replace("'", "\'", $mcT).'" class="form-control" style="height: 18px; width: 600px;" onfocusout="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'mots-clesT\', pos: '.$ind.', valeur: $(this).val(), langue: \'English\'});">';
 		$ind++;						
 	}
 	echo '</span>';

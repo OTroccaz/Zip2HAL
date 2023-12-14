@@ -79,7 +79,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	$xml->save($nomfic);
 	
 	//Si pas de mot-clé, on va essayer d'en trouver avec CrossRef
-	/*Procédure abandonnée car les mots-clés remontés via CrossRef en sont pas bons
+	/*Procédure abandonnée car les mots-clés remontés via CrossRef ne sont pas bons
 	if(empty($tabKey)) {
 		if (isset($doiTEI) && !empty($doiTEI)) {
 			$reqCR = "https://api.crossref.org/v1/works/https://dx.doi.org/".$doiTEI;
@@ -107,6 +107,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	}
 	
 	//Ajout de 3 mots-clés vides
+	/*
 	$keys = $xml->getElementsByTagName($cstKE);
 	for($mc = 0; $mc < 3; $mc++) {
 		$bimoc = $xml->createElement("term");
@@ -116,6 +117,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		$keys->item(0)->appendChild($bimoc);																		
 		$xml->save($nomfic);
 	}
+	*/
 	
 	//Si pas de résumé, on va essayer d'en trouver un avec CrossRef
 	$resume = "";

@@ -879,6 +879,56 @@ if ($action == "ajout-mots-cles") {
 	$xml->save($nomfic);
 }
 
+//Ajout d'une liste de mots-clés
+if ($action == "mots-cles-liste") {
+	$keys = $xml->getElementsByTagName($cstKE);
+	$pos = $_POST["pos"];
+	$tabMC = explode(';', $valeur);
+	foreach($tabMC as $mc) {
+		$ind = 0;
+		$exist = "non";
+		
+		foreach($keys as $key) {
+			foreach($key->childNodes as $elt) {
+				if ($elt->hasAttribute($cstXL) && ($elt->getAttribute($cstXL) == $codeLang)) {
+					if ($ind != $pos) {
+					}else{
+						$bimoc = $xml->createElement("term");
+						$moc = $xml->createTextNode($mc);
+						$bimoc->setAttribute($cstXL, $codeLang);
+						$bimoc->appendChild($moc);
+						$key->replaceChild($bimoc, $elt);
+						$exist = "oui";
+						break 2;
+					}
+				}
+				$ind++;
+			}
+		}
+		$xml->save($nomfic);
+		if ($exist == "non") {
+			foreach($keys as $key) {
+				foreach($key->childNodes as $elt) {
+					if ($elt->hasAttribute($cstXL) && ($elt->getAttribute($cstXL) == $codeLang)) {
+						if ($ind != $pos) {
+						}else{
+							$bimoc = $xml->createElement("term");
+							$moc = $xml->createTextNode($mc);
+							$bimoc->setAttribute($cstXL, $codeLang);
+							$bimoc->appendChild($moc);
+							$key->appendChild($bimoc);
+							break 2;
+						}
+					}
+					$ind++;
+				}
+			}
+		}
+		$xml->save($nomfic);
+		$pos++;
+	}
+}
+
 //Résumé
 if ($action == $cstAB) {
 	deleteNode($xml, $cstPD, $cstAB, 0, $cstXL, $codeLang, "", "", $cstEX);
