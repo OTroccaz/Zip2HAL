@@ -401,7 +401,7 @@ if ($action == "editeur") {
 if ($action == "issn") {
 	deleteNode($xml, $cstMO, "idno", 0, "type", "issn", "", "", $cstEX);
 	$xml->save($nomfic);
-	insertNode($xml, $valeur, $cstMO, $cstTI, 0, "idno", "type", "issn", "", "", "iB", $cstTN, "");
+	insertNode($xml, $valeur, $cstMO, $cstIM, 0, "idno", "type", "issn", "", "", "iB", $cstTN, "");
 	$xml->save($nomfic);
 }
 
@@ -409,7 +409,7 @@ if ($action == "issn") {
 if ($action == $cstEI) {
 	deleteNode($xml, $cstMO, "idno", 0, "type", $cstEI, "", "", $cstEX);
 	$xml->save($nomfic);
-	insertNode($xml, $valeur, $cstMO, $cstTI, 0, "idno", "type", $cstEI, "", "", "iB", $cstTN, "");
+	insertNode($xml, $valeur, $cstMO, $cstIM, 0, "idno", "type", $cstEI, "", "", "iB", $cstTN, "");
 	$xml->save($nomfic);
 }
 
