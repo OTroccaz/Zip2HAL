@@ -704,15 +704,21 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		}
 		
 		//Affiliations remontées par OverHAL
-		echo '<i><font style=\'color: #999999;\'>Affiliation(s) remontée(s) par OverHAL:<br>';
-		for($j = 0; $j < count($nomAff); $j++) {
-			if($halAutinit[$i][$cstAN] != "" && stripos($halAutinit[$i][$cstAN], $nomAff[$j][$cstLA]) !== false) {
-				echo '<span id="aut'.$i.'-nomAff'.$j.'">'.$nomAff[$j]['org'];
-				//echo '&nbsp;<i class=\'mdi mdi-trash-can-outline mdi-18px text-primary\'></i></span><br>';
-				echo '</span><br>';
+		if (empty($halAutinit[$i]["rawAffs"])) {//Pas de raw affiliation string
+			echo '<i><font style=\'color: #999999;\'>Affiliation(s) remontée(s) par OverHAL:<br>';
+			for($j = 0; $j < count($nomAff); $j++) {
+				if($halAutinit[$i][$cstAN] != "" && stripos($halAutinit[$i][$cstAN], $nomAff[$j][$cstLA]) !== false) {
+					echo '<span id="aut'.$i.'-nomAff'.$j.'">'.$nomAff[$j]['org'];
+					//echo '&nbsp;<i class=\'mdi mdi-trash-can-outline mdi-18px text-primary\'></i></span><br>';
+					echo '</span><br>';
+				}
 			}
+			echo '</font></i>';
+		}else{
+			echo '<i><font style=\'color: #999999;\'>Affiliation RAW:<br>';
+			echo $halAutinit[$i]["rawAffs"].'<br>';
+			echo '</font></i>';
 		}
-		echo '</font></i>';
 		$ajtAff = "~";//Pour éviter d'afficher 2 fois des affiliations > méthode 1 / méthode 2 > avec ou sans prénom/nom
 		$ajtAffDD = "~";//Drag and drop > Pour éviter de prendre en compte 2 fois des affiliations > méthode 1 / méthode 2 > avec ou sans prénom/nom
 		for($j = 0; $j < count($halAff); $j++) {

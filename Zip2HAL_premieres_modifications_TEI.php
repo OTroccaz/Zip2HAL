@@ -14,6 +14,21 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	include "./Zip2HAL_constantes.php";
 
 	//Premières modifications du TEI avec les résultats précédemment obtenus
+	
+	//Suppression des noeuds 'imaginaires' rawAffs
+	$elts = $xml->getElementsByTagName("author");
+	foreach($elts as $elt) {
+		if ($elt->childNodes->length) {
+			foreach ($elt->childNodes as $child) {
+				if ($child->nodeName == "rawAffs") {
+					$suppr = $elt->removeChild($child);
+					$xml->save($nomfic);
+				}
+			}
+		}
+	}
+	
+
 	//var_dump($halAff);
 	//var_dump($halAut);
 	//Type de document

@@ -32,6 +32,7 @@ $iOrcid = array();//ORCID
 $iResid = array();//ResearcherID
 $halAutinit = array();
 $tabIdHAL = array();//Si plusieurs idHAL remontés pour un même auteur
+$rawAut = array();//Raw affiliation string
 
 include "./Zip2HAL_constantes.php";
 
@@ -78,6 +79,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		$iOrcid[$iAut] = "";
 		$iResid[$iAut] = "";
 		$rolAut[$iAut] = "";
+		$rawAut[$iAut] = "";
 		
 		//Rôle auteur
 		$rolAut[$iAut] = $aut->getAttribute("role");
@@ -126,6 +128,11 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 			}
 			//Affiliations
 			if($elt->nodeName == "affiliation" && $elt->hasAttribute("ref")) {$affAut[$iAut] .= $elt->getAttribute("ref").'~';}
+			
+			//Raw affiliation string
+			if($elt->nodeName == "rawAffs") {
+				$rawAut[$iAut] = $elt->nodeValue;
+			}
 
 			//Si auteur correspondant avec ORCID mais pas de domaine mail ou pas de mail auteur > cas OpenAlex
 			if ($rolAut[$iAut] == 'crp' && !empty($iOrcid[$iAut])) {
@@ -187,6 +194,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		$halAut[$iAut]['rolaut'] = $rolAut[$i];
 		$halAut[$iAut]['fullName'] = "";
 		$halAut[$iAut]['domMail'] = "";
+		$halAut[$iAut]['rawAffs'] = $rawAut[$i];//Raw affiliation string
 		
 		$firstNameT = strtolower(wd_remove_accents($firstName));
 		$lastNameT = strtolower(wd_remove_accents($lastName));
