@@ -929,6 +929,24 @@ if ($action == "mots-cles-liste") {
 	}
 }
 
+//Suppression de tous les mots-clés
+if ($action == 'supprimerTousMC') {
+	$keys = $xml->getElementsByTagName($cstKE);
+	$domArray = array();
+	
+	//Enregistrement des mots-clés
+	foreach($keys as $key) {
+		foreach($key->childNodes as $elt) {
+			$domArray[] = $elt;
+		}
+	}
+	//Suppression du contenu des mots-clés
+	foreach($domArray as $node){ 
+		$node->nodeValue = "";
+	}
+	$xml->save($nomfic);
+}
+
 //Résumé
 if ($action == $cstAB) {
 	deleteNode($xml, $cstPD, $cstAB, 0, $cstXL, $codeLang, "", "", $cstEX);

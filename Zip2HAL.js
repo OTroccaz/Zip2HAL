@@ -27,6 +27,13 @@
 		document.getElementById("Art-"+idFic).style.display = "none";
 	}
 }
+
+//Suppression de tous les mots-clés
+function supprimerTousMC(idFic, nbMC) {
+	for (var i=0; i<nbMC; i++) {
+		document.getElementById('mots-cles'+i+'-'+idFic).setAttribute('value', '');
+	}
+}
  
 function majpartDep(nomfic, idFic, partage) {
 	var source = document.getElementById(nomfic + "-" + idFic).innerHTML;

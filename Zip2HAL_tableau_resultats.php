@@ -545,7 +545,15 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	echo '<br>';
 	
 	//Métadonnées > Mots-clés
+	//Combien en tout ?
+	$ind = 0;
+	foreach($keys as $key) {
+		foreach($key->childNodes as $elt) {
+			$ind++;
+		}
+	}
 	echo 'Mots-clés :';
+	echo '<a style="cursor:pointer;" onclick="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'supprimerTousMC\', valeur: 0, langue: \''.$lang.'\'}); supprimerTousMC('.$idFic.', '.$ind.');"><i class=\'mdi mdi-trash-can-outline mdi-18px text-primary\'></i></a>';
 	$keys = $xml->getElementsByTagName("keywords");
 	$ind = 0;
 	foreach($keys as $key) {
