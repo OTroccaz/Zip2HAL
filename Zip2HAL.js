@@ -32,6 +32,7 @@
 function supprimerTousMC(idFic, nbMC) {
 	for (var i=0; i<nbMC; i++) {
 		document.getElementById('mots-cles'+i+'-'+idFic).setAttribute('value', '');
+		document.getElementById('mots-cles'+i+'-'+idFic).value = '';
 	}
 }
  
