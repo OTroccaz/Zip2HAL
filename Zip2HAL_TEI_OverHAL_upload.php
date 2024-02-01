@@ -40,7 +40,7 @@ if(isset($_FILES[$qui]['name']) && $_FILES[$qui]['name'] != "") //File has been 
 	if($extension != ".zip" && $erreur == "") {$erreur = "?erreur=5";}
 	
 	$temps = time();
-	mkdir($xml.$temps);
+	mkdir($xml.$temps, 0775);
 	$nomfic = "./XML/Zip2HAL_TEI_OverHAL_".$temps.".zip";
 	move_uploaded_file($_FILES[$qui]['tmp_name'], $nomfic);
 	$zip = new ZipArchive;

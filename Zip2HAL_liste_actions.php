@@ -131,7 +131,7 @@ if ($action == "typedoc") {
 				}
 			}
 			if (empty($imprint)) {//Noeud imprint absent
-				insertNode($xml, "nonodevalue", "monogr", "", 0, "meeting", "", "", "", "", "aC", $cstTN, "");
+				insertNode($xml, "nonodevalue", "monogr", "", 0, "imprint", "", "", "", "", "aC", $cstTN, "");
 			}else{
 				insertNode($xml, "nonodevalue", "monogr", "imprint", 0, "meeting", "", "", "", "", "iB", $cstTN, "");
 			}
@@ -194,15 +194,36 @@ if ($action == "typedoc") {
 	
 	//Si COUV à l'arrivée
 	if ($tabVal[0] == 'COUV') {
-		//COUV > Ajouter titre de l'ouvrage
-		insertNode($xml, "nonodevalue", $cstMO, $cstED, 0, $cstTI, $cstLE, "m", "", "", "iB", $cstTN, "");
-		$xml->save($nomfic);
+		//Parmi monogr, le noeud imprint est-t-il présent ?
+		$imprint = '';
+		$elts = $xml->getElementsByTagName("monogr");
+		foreach($elts as $elt) {
+			if ($elt->childNodes->length) {
+				foreach ($elt->childNodes as $child) {
+					if ($child->nodeName == "imprint") {
+						$imprint = 'oui';
+						break 2;
+					}
+				}
+			}
+		}
+		if (empty($imprint)) {//Noeud imprint absent
+			insertNode($xml, "nonodevalue", "monogr", "", 0, "imprint", "", "", "", "", "iA", $cstTN, "");
+			$xml->save($nomfic);
+		}
+		
 		//COUV > Ajouter éditeur scientifique
 		insertNode($xml, "nonodevalue", "monogr", "imprint", 0, "editor", "", "", "", "", "iB", $cstTN, "");
 		$xml->save($nomfic);
-		insertNode($xml, "nonodevalue", "monogr", "imprint", 0, "editor", "", "", "", "", "iB", $cstTN, "");
+		insertNode($xml, "nonodevalue", "monogr", "editor", 0, "editor", "", "", "", "", "iB", $cstTN, "");
 		$xml->save($nomfic);
-		insertNode($xml, "nonodevalue", "monogr", "imprint", 0, "editor", "", "", "", "", "iB", $cstTN, "");
+		insertNode($xml, "nonodevalue", "monogr", "editor", 0, "editor", "", "", "", "", "iB", $cstTN, "");
+		$xml->save($nomfic);
+		//COUV > Ajouter titre de l'ouvrage
+		insertNode($xml, "nonodevalue", $cstMO, $cstED, 0, $cstTI, $cstLE, "m", "", "", "iB", $cstTN, "");
+		$xml->save($nomfic);
+		//COUV > Ajouter année de publication
+		insertNode($xml, "nonodevalue", "imprint", "", 0, "date", "type", "datePub", "", "", "aC", $cstTN, "");
 		$xml->save($nomfic);
 		$elts = $xml->getElementsByTagName($cstMO);
 		$ind = 0;
@@ -453,17 +474,17 @@ if ($action == $cstEI) {
 
 	//COMM ou POSTER > Date de début de conférence
 	if ($action == "startDate") {
-		deleteNode($xml, $cstME, "date", 0, "type", $cstST, "", "", $cstEX);
-		$xml->save($nomfic);
-		insertNode($xml, $valeur, $cstME, $cstTI, 0, "date", "type", $cstST, "", "", "iA", $cstTN, "");
+		//deleteNode($xml, $cstME, "date", 0, "type", $cstST, "", "", $cstEX);
+		//$xml->save($nomfic);
+		insertNode($xml, $valeur, $cstME, "", 0, "date", "type", $cstST, "", "", "iA", $cstTN, "");
 		$xml->save($nomfic);
 	}
 
 	//COMM ou POSTER > Date de fin de conférence
 	if ($action == "endDate") {
-		deleteNode($xml, $cstME, "date", 0, "type", "end", "", "", $cstEX);
-		$xml->save($nomfic);
-		insertNode($xml, $valeur, $cstME, "date", 0, "date", "type", "end", "", "", "iA", $cstTN, "");
+		//deleteNode($xml, $cstME, "date", 0, "type", "end", "", "", $cstEX);
+		//$xml->save($nomfic);
+		insertNode($xml, $valeur, $cstME, "", 1, "date", "type", "end", "", "", "iA", $cstTN, "");
 		$xml->save($nomfic);
 	}
 

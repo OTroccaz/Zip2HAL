@@ -347,6 +347,41 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 				$xml->save($nomfic);
 			}
 		}
+		//le noeud date start est-t-il présent ?
+		$dateStart = '';
+		$elts = $xml->getElementsByTagName("meeting");
+		foreach($elts as $elt) {
+			if ($elt->childNodes->length) {
+				foreach ($elt->childNodes as $child) {
+					if ($child->nodeName == "date" && $child->hasAttribute("type") && $child->getAttribute("type") == "start") {
+						$dateStart = 'oui';
+						break 2;
+					}
+				}
+			}
+		}
+		if (empty($dateStart)) {//Noeud date start absent > on l'insère
+			insertNode($xml, "nonodevalue", "meeting", "", 0, "date", "type", "start", "", "", "aC", $cstTN, "");
+			$xml->save($nomfic);
+		}
+		
+		//le noeud date end est-t-il présent ?
+		$dateEnd = '';
+		$elts = $xml->getElementsByTagName("meeting");
+		foreach($elts as $elt) {
+			if ($elt->childNodes->length) {
+				foreach ($elt->childNodes as $child) {
+					if ($child->nodeName == "date" && $child->hasAttribute("type") && $child->getAttribute("type") == "end") {
+						$dateEnd = 'oui';
+						break 2;
+					}
+				}
+			}
+		}
+		if (empty($dateEnd)) {//Noeud date end absent > on l'insère
+			insertNode($xml, "nonodevalue", "meeting", "", 0, "date", "type", "end", "", "", "aC", $cstTN, "");
+			$xml->save($nomfic);
+		}
 	}
 	
 	//Si présence d'un ISSN, vérification qu'il comporte bien un tiret et ajout éventuel
