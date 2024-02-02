@@ -116,26 +116,40 @@ if ($action == "typedoc") {
 	
 	//Si COMM ou POSTER à l'arrivée
 	if ($tabVal[0] == 'COMM' || $tabVal[0] == 'POSTER') {
-		//COMM ou POSTER > Ajouter noeud principal meeting
-			//Parmi monogr, le noeud imprint est-t-il présent ?
-			$imprint = '';
-			$elts = $xml->getElementsByTagName("monogr");
-			foreach($elts as $elt) {
-				if ($elt->childNodes->length) {
-					foreach ($elt->childNodes as $child) {
-						if ($child->nodeName == "imprint") {
-							$imprint = 'oui';
-							break 2;
-						}
+		//COMM ou POSTER > Parmi monogr, le noeud meeting est-t-il présent ?
+		$meeting = '';
+		$elts = $xml->getElementsByTagName("monogr");
+		foreach($elts as $elt) {
+			if ($elt->childNodes->length) {
+				foreach ($elt->childNodes as $child) {
+					if ($child->nodeName == "meeting") {
+						$meeting = 'oui';
+						break 2;
 					}
 				}
 			}
-			if (empty($imprint)) {//Noeud imprint absent
-				insertNode($xml, "nonodevalue", "monogr", "", 0, "imprint", "", "", "", "", "aC", $cstTN, "");
-			}else{
-				insertNode($xml, "nonodevalue", "monogr", "imprint", 0, "meeting", "", "", "", "", "iB", $cstTN, "");
+		}
+		if (empty($meeting)) {//Noeud meeting absent
+			insertNode($xml, "nonodevalue", "monogr", "", 0, "meeting", "", "", "", "", "aC", $cstTN, "");
+		}
+		$xml->save($nomfic);
+		//COMM ou POSTER > Parmi monogr, le noeud imprint est-t-il présent ?
+		$imprint = '';
+		$elts = $xml->getElementsByTagName("monogr");
+		foreach($elts as $elt) {
+			if ($elt->childNodes->length) {
+				foreach ($elt->childNodes as $child) {
+					if ($child->nodeName == "imprint") {
+						$imprint = 'oui';
+						break 2;
+					}
+				}
 			}
-			$xml->save($nomfic);
+		}
+		if (empty($imprint)) {//Noeud imprint absent
+			insertNode($xml, "nonodevalue", "monogr", "", 0, "imprint", "", "", "", "", "aC", $cstTN, "");
+		}
+		$xml->save($nomfic);
 		//COMM ou POSTER > Ajouter titre du volume
 		insertNode($xml, "nonodevalue", $cstIM, "date", 0, $cstBS, "unit", "serie", "", "", "iB", $cstTN, "");
 		$xml->save($nomfic);
@@ -282,6 +296,31 @@ if ($action == "titreT") {
 	deleteNode($xml, $cstAY, $cstTI, 0, $cstXL, "en", "", "", $cstEX);
 	$xml->save($nomfic);
 	insertNode($xml, $valeur, $cstAY, $cstAU, 0, $cstTI, $cstXL, "en", "", "", "iB", $cstTN, "");
+	$xml->save($nomfic);
+}
+
+//Date de publication
+if ($action == "datePub") {
+	//Parmi monogr, le noeud imprint est-t-il présent ?
+	$imprint = '';
+	$elts = $xml->getElementsByTagName("monogr");
+	foreach($elts as $elt) {
+		if ($elt->childNodes->length) {
+			foreach ($elt->childNodes as $child) {
+				if ($child->nodeName == "imprint") {
+					$imprint = 'oui';
+					break 2;
+				}
+			}
+		}
+	}
+	if (empty($imprint)) {//Noeud imprint absent
+		insertNode($xml, "nonodevalue", "monogr", "", 0, "imprint", "", "", "", "", "iA", $cstTN, "");
+		$xml->save($nomfic);
+	}
+	
+	//Ajouter année de publication
+	insertNode($xml, $valeur, "imprint", "", 0, "date", "type", "datePub", "", "", "aC", $cstTN, "");
 	$xml->save($nomfic);
 }
 
