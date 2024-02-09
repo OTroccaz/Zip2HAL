@@ -130,9 +130,47 @@ if ($action == "typedoc") {
 			}
 		}
 		if (empty($meeting)) {//Noeud meeting absent
-			insertNode($xml, "nonodevalue", "monogr", "", 0, "meeting", "", "", "", "", "aC", $cstTN, "");
+			//Si ART au départ
+			if ($init == 'ART' || $init == 'PATENT') {//Si ART au départ > noeud imprint présent > meeting doit être inséré avant
+				insertNode($xml, "nonodevalue", "monogr", "imprint", 0, "meeting", "", "", "", "", "iB", $cstTN, "");
+			}else{
+				insertNode($xml, "nonodevalue", "monogr", "", 0, "meeting", "", "", "", "", "aC", $cstTN, "");
+			}
 		}
 		$xml->save($nomfic);
+		
+		//COMM ou POSTER > Parmi monogr, le noeud editor est-t-il présent ?
+		$editor = '';
+		$elts = $xml->getElementsByTagName("monogr");
+		foreach($elts as $elt) {
+			if ($elt->childNodes->length) {
+				foreach ($elt->childNodes as $child) {
+					if ($child->nodeName == "editor") {
+						$editor = 'oui';
+						break 2;
+					}
+				}
+			}
+		}
+		if (empty($editor)) {//Noeud editor absent
+			if ($init == 'ART' || $init == 'PATENT') {//Si ART au départ > noeud imprint présent > editor doit être inséré avant
+				insertNode($xml, "nonodevalue", "monogr", "imprint", 0, "editor", "", "", "", "", "iB", $cstTN, "");
+				$xml->save($nomfic);
+				insertNode($xml, "nonodevalue", "monogr", "imprint", 0, "editor", "", "", "", "", "iB", $cstTN, "");
+				$xml->save($nomfic);
+				//insertNode($xml, "nonodevalue", "monogr", "imprint", 0, "editor", "", "", "", "", "iB", $cstTN, "");
+				//$xml->save($nomfic);
+			}else{
+				insertNode($xml, "nonodevalue", "monogr", "meeting", 0, "editor", "", "", "", "", "aC", $cstTN, "");
+				$xml->save($nomfic);
+				insertNode($xml, "nonodevalue", "monogr", "meeting", 0, "editor", "", "", "", "", "aC", $cstTN, "");
+				$xml->save($nomfic);
+				//insertNode($xml, "nonodevalue", "monogr", "meeting", 0, "editor", "", "", "", "", "aC", $cstTN, "");
+				//$xml->save($nomfic);
+			}
+		}
+		$xml->save($nomfic);
+		
 		//COMM ou POSTER > Parmi monogr, le noeud imprint est-t-il présent ?
 		$imprint = '';
 		$elts = $xml->getElementsByTagName("monogr");
@@ -147,9 +185,10 @@ if ($action == "typedoc") {
 			}
 		}
 		if (empty($imprint)) {//Noeud imprint absent
-			insertNode($xml, "nonodevalue", "monogr", "", 0, "imprint", "", "", "", "", "aC", $cstTN, "");
+			insertNode($xml, "nonodevalue", "monogr", "editor", 0, "imprint", "", "", "", "", "aC", $cstTN, "");
 		}
 		$xml->save($nomfic);
+		
 		//COMM ou POSTER > Ajouter titre du volume
 		insertNode($xml, "nonodevalue", $cstIM, "date", 0, $cstBS, "unit", "serie", "", "", "iB", $cstTN, "");
 		$xml->save($nomfic);
