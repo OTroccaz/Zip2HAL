@@ -514,7 +514,7 @@ if ($action == $cstEI) {
 
 //Métadonnées spécifiques aux COMM et POSTER
 
-	////COMM ou POSTER > Titre du volume
+	//COMM ou POSTER > Titre du volume
 	if ($action == "titreV") {
 		deleteNode($xml, $cstIM, $cstBS, 0, "unit", "serie", "", "", $cstEX);
 		$xml->save($nomfic);
@@ -982,7 +982,8 @@ if ($action == "ajout-mots-cles") {
 if ($action == "mots-cles-liste") {
 	$keys = $xml->getElementsByTagName($cstKE);
 	$pos = $_POST["pos"];
-	$tabMC = explode(';', $valeur);
+	//Séprateur , ou ; ?
+	if (strpos($valeur, ',') === false) {$tabMC = explode(';', $valeur);}else{$tabMC = explode(',', $valeur);}
 	foreach($tabMC as $mc) {
 		$ind = 0;
 		$exist = "non";

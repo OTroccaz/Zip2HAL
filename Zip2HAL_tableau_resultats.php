@@ -568,7 +568,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	
 	echo '<br>';
 	//Métadonnées > Mots-clés > Ajout par liste de mots-clés séparés par des points-virgules
-	echo 'Ajout de mots-clés dans la langue de la notice : vous pouvez renseigner ici une liste de plusieurs mots-clés séparés par des points-virgules.';
+	echo 'Ajout de mots-clés dans la langue de la notice : vous pouvez renseigner ici une liste de plusieurs mots-clés séparés par des virgules ou points-virgules.';
 	echo '<textarea id="mots-cles-liste-'.$idFic.'" name="mots-cles-liste'.$idFic.'" class="textarea form-control" style="width: 600px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'mots-cles-liste\', pos: '.$ind.', valeur: $(this).val(), langue: \''.$lang.'\'});"></textarea>';
 	
 	//Métadonnées > Mots-clés traduits en anglais
