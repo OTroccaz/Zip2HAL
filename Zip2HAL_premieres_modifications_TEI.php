@@ -181,6 +181,45 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		$xml->save($nomfic);
 	}
 	
+	//Si typedoc ART ou PATENT
+	if($typDoc == "ART" || $typDoc == "PATENT") {
+		//Parmi monogr, le noeud imprint est-t-il présent ?
+		$imprint = '';
+		$elts = $xml->getElementsByTagName("monogr");
+		foreach($elts as $elt) {
+			if ($elt->childNodes->length) {
+				foreach ($elt->childNodes as $child) {
+					if ($child->nodeName == "imprint") {
+						$imprint = 'oui';
+						break 2;
+					}
+				}
+			}
+		}
+		if (empty($imprint)) {//Noeud imprint absent > on l'insère
+			insertNode($xml, "nonodevalue", "monogr", "", 0, "imprint", "", "", "", "", "aC", $cstTN, "");
+			$xml->save($nomfic);
+		}
+		
+		//Parmi monogr, le noeud title level j (titre de la revue) est-t-il présent ?
+		$title = '';
+		$elts = $xml->getElementsByTagName("monogr");
+		foreach($elts as $elt) {
+			if ($elt->childNodes->length) {
+				foreach ($elt->childNodes as $child) {
+					if ($child->nodeName == "title") {
+						$title = 'oui';
+						break 2;
+					}
+				}
+			}
+		}
+		if (empty($title)) {//Noeud title level j absent > on l'insère
+			insertNode($xml, "nonodevalue", $cstMO, $cstIM, 0, $cstTI, $cstLE, "j", "", "", "iB", $cstTN, "");
+			$xml->save($nomfic);
+		}
+	}
+	
 	//Si typedoc COMM ou POSTER
 	if($typDoc == "COMM" || $typDoc == "POSTER") {
 		//Renseigner les proceedings à oui par défaut s'ils ne sont pas renseignés
@@ -209,7 +248,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 			$xml->save($nomfic);
 		}
 		
-		//Lorsque des informations sont manquantes (titre, ville, pays et/ou dates), on va essayer de les récupérer via CrossRef, par exemple https://api.crossref.org/v1/works/http:/dx.doi.org/10.1117/12.2656666
+		//Lorsque des informations pour COMM ou POSTER sont manquantes (titre, ville, pays et/ou dates), on va essayer de les récupérer via CrossRef, par exemple https://api.crossref.org/v1/works/http:/dx.doi.org/10.1117/12.2656666
 		$titreConf = 'nonodevalue';
 		$settlement = 'nonodevalue';
 		$paysConf = 'nonodevalue';

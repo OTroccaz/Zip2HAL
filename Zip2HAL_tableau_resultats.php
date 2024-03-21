@@ -280,35 +280,34 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	if($testMetaC == "") {$tabMetaMQ[$nomfic][] = "le comité de lecture";}
 	
 	//Métadonnées spécifiques aux ART
-	$affArt = ($typDoc == "ART") ? 'block' : 'none';
-	echo '<span id="Art-'.$idFic.'" style="display:'.$affArt.'">';
-	
-		//Métadonnées > Revue
-		//if($typDoc == "ART") {
-			$nomRevue = "";
-			$elts = $xml->getElementsByTagName($cstTI);
-			foreach($elts as $elt) {
-				if($elt->hasAttribute($cstLE) && $elt->getAttribute($cstLE) == "j") {
-					$nomRevue = $elt->nodeValue;
-					$testMeta = "ok";
-				}
-			}
-			echo '<p class="form-inline">Nom de la revue* :&nbsp;<input type="text" id="revue-'.$idFic.'" name="revue-'.$idFic.'" value="'.$nomRevue.'" class="form-control" style="height: 18px; width:600px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'revue\', valeur: $(this).val()});"></p>';
-			
-			if($nomRevue == "") {$tabMetaMQ[$nomfic][] = "le titre de la revue";}
-		//}
+	if ($typDoc == "ART" || $typDoc == "PATENT") {
+		echo '<span id="Art-'.$idFic.'" style="display:block">';
 		
-		//Métadonnées > Editeur
-		$editeur = "non";
-		$elts = $xml->getElementsByTagName("publisher");
-		foreach($elts as $elt) {
-			echo '<p class="form-inline">Editeur :&nbsp;<input type="text" id="publisher-'.$idFic.'" name="publisher-'.$idFic.'" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:280px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'editeur\', valeur: $(this).val()});"></p>';
-			$editeur = "oui";
-		}
-		if ($editeur == "non") {
-			echo '<p class="form-inline">Editeur :&nbsp;<input type="text" id="publisher-'.$idFic.'" name="publisher-'.$idFic.'" value="" class="form-control" style="height: 18px; width:280px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'editeur\', valeur: $(this).val()});"></p>';
-		}
-	echo '</span>';
+			//Métadonnées > Revue
+				$nomRevue = "";
+				$elts = $xml->getElementsByTagName($cstTI);
+				foreach($elts as $elt) {
+					if($elt->hasAttribute($cstLE) && $elt->getAttribute($cstLE) == "j") {
+						$nomRevue = $elt->nodeValue;
+						$testMeta = "ok";
+					}
+				}
+				echo '<p class="form-inline">Nom de la revue* :&nbsp;<input type="text" id="revue-'.$idFic.'" name="revue-'.$idFic.'" value="'.$nomRevue.'" class="form-control" style="height: 18px; width:600px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'revue\', valeur: $(this).val()});"></p>';
+				
+				if($nomRevue == "") {$tabMetaMQ[$nomfic][] = "le titre de la revue";}
+			
+			//Métadonnées > Editeur
+			$editeur = "non";
+			$elts = $xml->getElementsByTagName("publisher");
+			foreach($elts as $elt) {
+				echo '<p class="form-inline">Editeur :&nbsp;<input type="text" id="publisher-'.$idFic.'" name="publisher-'.$idFic.'" value="'.$elt->nodeValue.'" class="form-control" style="height: 18px; width:280px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'editeur\', valeur: $(this).val()});"></p>';
+				$editeur = "oui";
+			}
+			if ($editeur == "non") {
+				echo '<p class="form-inline">Editeur :&nbsp;<input type="text" id="publisher-'.$idFic.'" name="publisher-'.$idFic.'" value="" class="form-control" style="height: 18px; width:280px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'editeur\', valeur: $(this).val()});"></p>';
+			}
+		echo '</span>';
+	}
 	//Fin métadonnées spécifiques aux ART
 	
 	//Métadonnées > ISSN et EISSN
@@ -323,139 +322,138 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	echo '<p class="form-inline">EISSN :&nbsp;<input type="text" id="eissn-'.$idFic.'" name="eissn-'.$idFic.'" value="'.$eissn.'" class="form-control" style="height: 18px; width:100px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'eissn\', valeur: $(this).val()});"></p>';
 	
 	//Métadonnées spécifiques aux COMM et POSTER
-	$affComPos = ($typDoc == "COMM" || $typDoc == "POSTER") ? 'block' : 'none';
-	echo '<span id="ComPos-'.$idFic.'" style="display:'.$affComPos.'">';
-	//if($typDoc == "COMM" || $typDoc == "POSTER") {
-		
-		//Métadonnées > Nom de la revue, ville, dates, titre, pays, ISBN, actes, éditeur scientifique et conférence invitée
-		$titreV = "";
-		$settlement = "";
-		$startDate = "";
-		$endDate = "";
-		$titreConf = "";
-		$affPays = "";
-		$paysConf = "";
-		$isbnConf = "";
-		$procConf = "";
-		$editConf = "";
-		$inviConf = "";
-		
-		//Métadonnées > Titre du volume
-		$elts = $xml->getElementsByTagName($cstTI);
-		foreach($elts as $elt) {
+	if ($typDoc == "COMM" || $typDoc == "POSTER") {
+		echo '<span id="ComPos-'.$idFic.'" style="display:block">';
+			
+			//Métadonnées > Nom de la revue, ville, dates, titre, pays, ISBN, actes, éditeur scientifique et conférence invitée
+			$titreV = "";
+			$settlement = "";
+			$startDate = "";
+			$endDate = "";
+			$titreConf = "";
+			$affPays = "";
+			$paysConf = "";
+			$isbnConf = "";
+			$procConf = "";
+			$editConf = "";
+			$inviConf = "";
+			
+			//Métadonnées > Titre du volume
+			$elts = $xml->getElementsByTagName($cstTI);
 			foreach($elts as $elt) {
-				if($elt->hasAttribute($cstLE) && ($elt->getAttribute($cstLE) == "j")) {
-					$titreV = $elt->nodeValue;
-					//Déplacement du noeud depuis <title> vers <imprint>
-					deleteNode($xml, $cstMO, $cstTI, 0, $cstLE, "j", "", "", "exact");
-					$xml->save($nomfic);
-					insertNode($xml, $elt->nodeValue, "imprint", "date", 0, "biblScope", "unit", "serie", "", "", "iB", "tagName", "");
-					$xml->save($nomfic);
+				foreach($elts as $elt) {
+					if($elt->hasAttribute($cstLE) && ($elt->getAttribute($cstLE) == "j")) {
+						$titreV = $elt->nodeValue;
+						//Déplacement du noeud depuis <title> vers <imprint>
+						deleteNode($xml, $cstMO, $cstTI, 0, $cstLE, "j", "", "", "exact");
+						$xml->save($nomfic);
+						insertNode($xml, $elt->nodeValue, "imprint", "date", 0, "biblScope", "unit", "serie", "", "", "iB", "tagName", "");
+						$xml->save($nomfic);
+					}
 				}
 			}
-		}
-		echo 'Titre du volume :&nbsp;<textarea id="titreV-'.$idFic.'" name="titreV-'.$idFic.'" class="textarea form-control" style="width: 600px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'titreV\', valeur: $(this).val(), langue : \''.$lang.'\'});">'.$titreV.'</textarea><br>';
-		
-		$elts = $xml->getElementsByTagName("meeting");
-		foreach($elts as $elt) {
-			if($elt->hasChildNodes()) {
-				foreach($elt->childNodes as $item) {
-					//Ville de la conférence
-					if($item->nodeName == "settlement") {$settlement = $item->nodeValue;}
-					//Date de début de conférence
-					if($item->nodeName == "date" && $item->hasAttribute("type") && $item->getAttribute("type") == "start") {$startDate = $item->nodeValue;}
-					//Date de fin de conférence
-					if($item->nodeName == "date" && $item->hasAttribute("type") && $item->getAttribute("type") == "end") {$endDate = $item->nodeValue;}
-					//Titre de la conférence
-					if($item->nodeName == $cstTI) {$titreConf = $item->nodeValue;}
-					//Pays de la conférence
-					$affPays = "";
-					if($item->nodeName == "country" && $item->hasAttribute("key")) {
-						$paysConf = $item->getAttribute("key");
-						$valPays = array_values($countries);
-						$keyPays = array_keys($countries);
-						for($i = 0; $i < count($countries); $i++) {
-							if(strtolower($paysConf) == $valPays[$i]) {$affPays = $keyPays[$i];}
+			echo 'Titre du volume :&nbsp;<textarea id="titreV-'.$idFic.'" name="titreV-'.$idFic.'" class="textarea form-control" style="width: 600px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'titreV\', valeur: $(this).val(), langue : \''.$lang.'\'});">'.$titreV.'</textarea><br>';
+			
+			$elts = $xml->getElementsByTagName("meeting");
+			foreach($elts as $elt) {
+				if($elt->hasChildNodes()) {
+					foreach($elt->childNodes as $item) {
+						//Ville de la conférence
+						if($item->nodeName == "settlement") {$settlement = $item->nodeValue;}
+						//Date de début de conférence
+						if($item->nodeName == "date" && $item->hasAttribute("type") && $item->getAttribute("type") == "start") {$startDate = $item->nodeValue;}
+						//Date de fin de conférence
+						if($item->nodeName == "date" && $item->hasAttribute("type") && $item->getAttribute("type") == "end") {$endDate = $item->nodeValue;}
+						//Titre de la conférence
+						if($item->nodeName == $cstTI) {$titreConf = $item->nodeValue;}
+						//Pays de la conférence
+						$affPays = "";
+						if($item->nodeName == "country" && $item->hasAttribute("key")) {
+							$paysConf = $item->getAttribute("key");
+							$valPays = array_values($countries);
+							$keyPays = array_keys($countries);
+							for($i = 0; $i < count($countries); $i++) {
+								if(strtolower($paysConf) == $valPays[$i]) {$affPays = $keyPays[$i];}
+							}
 						}
 					}
 				}
 			}
-		}
-		
-		if($settlement == "" && ($typDoc == "COMM" || $typDoc == "POSTER")) {$tabMetaMQ[$nomfic][] = "la ville de la conférence";}
-		if($startDate == "" && ($typDoc == "COMM" || $typDoc == "POSTER")) {$tabMetaMQ[$nomfic][] = "la date de début de la conférence";}
-		if($paysConf == "" && ($typDoc == "COMM" || $typDoc == "POSTER")) {$tabMetaMQ[$nomfic][] = "le pays de la conférence";}
-		if($titreConf == "" && ($typDoc == "COMM" || $typDoc == "POSTER")) {$tabMetaMQ[$nomfic][] = "le titre de la conférence";}
-		
-		$txtPO = "";
-		$txtPN = "";
-		$elts = $xml->getElementsByTagName("idno");
-		foreach($elts as $elt) {
-			//ISBN
-			if($elt->hasAttribute("type") && $elt->getAttribute("type") == "isbn") {$isbnConf = $elt->nodeValue;}
-		}
-		$elts = $xml->getElementsByTagName($cstMO);
-		foreach($elts as $elt) {
-			if($elt->hasChildNodes()) {
-				foreach($elt->childNodes as $item) {
-					//Editeur scientifique
-					if($item->nodeName == "editor") {$editConf = $item->nodeValue;}
+			
+			if($settlement == "" && ($typDoc == "COMM" || $typDoc == "POSTER")) {$tabMetaMQ[$nomfic][] = "la ville de la conférence";}
+			if($startDate == "" && ($typDoc == "COMM" || $typDoc == "POSTER")) {$tabMetaMQ[$nomfic][] = "la date de début de la conférence";}
+			if($paysConf == "" && ($typDoc == "COMM" || $typDoc == "POSTER")) {$tabMetaMQ[$nomfic][] = "le pays de la conférence";}
+			if($titreConf == "" && ($typDoc == "COMM" || $typDoc == "POSTER")) {$tabMetaMQ[$nomfic][] = "le titre de la conférence";}
+			
+			$txtPO = "";
+			$txtPN = "";
+			$elts = $xml->getElementsByTagName("idno");
+			foreach($elts as $elt) {
+				//ISBN
+				if($elt->hasAttribute("type") && $elt->getAttribute("type") == "isbn") {$isbnConf = $elt->nodeValue;}
+			}
+			$elts = $xml->getElementsByTagName($cstMO);
+			foreach($elts as $elt) {
+				if($elt->hasChildNodes()) {
+					foreach($elt->childNodes as $item) {
+						//Editeur scientifique
+						if($item->nodeName == "editor") {$editConf = $item->nodeValue;}
+					}
 				}
 			}
-		}
-		$elts = $xml->getElementsByTagName("note");
-		foreach($elts as $elt) {
-			//Conférence invitée O/N
-			//Par défaut, la conférence est considérée comme conférence non invitée
-			$inviConf = "No";
-			if($elt->hasAttribute("type") && $elt->getAttribute("type") == "invited") {
-				if($elt->nodeValue == 0) {$inviConf = "No";}
-				if($elt->nodeValue == 1) {$inviConf = "Yes";}
+			$elts = $xml->getElementsByTagName("note");
+			foreach($elts as $elt) {
+				//Conférence invitée O/N
+				//Par défaut, la conférence est considérée comme conférence non invitée
+				$inviConf = "No";
+				if($elt->hasAttribute("type") && $elt->getAttribute("type") == "invited") {
+					if($elt->nodeValue == 0) {$inviConf = "No";}
+					if($elt->nodeValue == 1) {$inviConf = "Yes";}
+				}
+				//Proceedings O/N
+				//Par défaut, les proceedings sont renseignés comme présents
+				$txtPO = $cstCH;
+				$txtPN = "";
+				if($elt->hasAttribute("type") && $elt->getAttribute("type") == "proceedings") {
+					if($elt->nodeValue == "Yes") {$txtPO = $cstCH; $txtPN = "";}
+					if($elt->nodeValue == "No") {$txtPO = ""; $txtPN = $cstCH;}
+				}
 			}
-			//Proceedings O/N
-			//Par défaut, les proceedings sont renseignés comme présents
-			$txtPO = $cstCH;
-			$txtPN = "";
-			if($elt->hasAttribute("type") && $elt->getAttribute("type") == "proceedings") {
-				if($elt->nodeValue == "Yes") {$txtPO = $cstCH; $txtPN = "";}
-				if($elt->nodeValue == "No") {$txtPO = ""; $txtPN = $cstCH;}
-			}
-		}
-		
-		if($inviConf == "" && ($typDoc == "COMM" || $typDoc == "POSTER")) {$tabMetaMQ[$nomfic][] = "le caractère conférence invitée (O/N)";}
-		
-		//Ville de la conférence
-		echo '<p class="form-inline">Ville* :&nbsp;<input type="text" id="settlement-'.$idFic.'" name="settlement-'.$idFic.'" value="'.$settlement.'" class="form-control" style="height: 18px; width:280px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'ville\', valeur: $(this).val()});"></p>';
-		//Date de début de conférence
-		echo '<p class="form-inline">Date de début de conférence* :&nbsp;<input type="text" id="startDate-'.$idFic.'" name="startDate-'.$idFic.'" value="'.$startDate.'" class="form-control" style="height: 18px; width:140px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'startDate\', valeur: $(this).val()});"></p>';
-		//Date de fin de conférence
-		echo '<p class="form-inline">Date de fin de conférence :&nbsp;<input type="text" id="endDate-'.$idFic.'" name="endDate-'.$idFic.'" value="'.$endDate.'" class="form-control" style="height: 18px; width:140px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'endDate\', valeur: $(this).val()});"></p>';
-		//Titre de la conférence
-		echo 'Titre de la conférence* :&nbsp;<textarea id="titreConf-'.$idFic.'" name="titreConf-'.$idFic.'" class="textarea form-control" style="width: 600px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'titreConf\', valeur: $(this).val()});">'.$titreConf.'</textarea><br>';
-		//Pays de la conférence
-		echo '<p class="form-inline">Pays* :&nbsp;<input type="text" id="paysConf-'.$idFic.'" name="paysConf-'.$idFic.'" value="'.$affPays.'" class="autoPays form-control" style="height: 18px; width:200px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'paysConf\', valeur: $(this).val()});"></p>';
-		//ISBN de la conférence
-		echo '<p class="form-inline">ISBN :&nbsp;<input type="text" id="isbnConf-'.$idFic.'" name="isbnConf-'.$idFic.'" value="'.$isbnConf.'" class="form-control" style="height: 18px; width:200px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'isbnConf\', valeur: $(this).val()});"></p>';
-		//Proceedings de la conférence
-		echo '<p class="form-inline">Proceedings :&nbsp;';
-		echo '<input type="radio" '.$txtPO.' id="procConf-'.$idFic.'" name="procConf-'.$idFic.'" value="Yes" class="form-control" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'procConf\', valeur: $(this).val()});"> Oui';
-		echo $cst5sp;
-		echo '<input type="radio" '.$txtPN.' id="procConf-'.$idFic.'" name="procConf-'.$idFic.'" value="No" class="form-control" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'procConf\', valeur: $(this).val()});"> Non';
-		echo '</p>';
-		//Editeur scientifique
-		echo '<p class="form-inline">Editeur scientifique :&nbsp;<input type="text" id="scientificEditor-'.$idFic.'" name="scientificEditor-'.$idFic.'" value="'.$editConf.'" class="form-control" style="height: 18px; width:280px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'scientificEditor\', valeur: $(this).val()});"></p>';
-		//Conférence invitée O/N
-		$txtCO = "";
-		$txtCN = "";
-		if($inviConf == "Yes") {$txtCO = $cstCH; $txtCN = "";}
-		if($inviConf == "No") {$txtCO = ""; $txtCN = $cstCH;}
-			echo '<p class="form-inline">Conférence invitée* :&nbsp;';
-			echo '<input type="radio" '.$txtCO.' id="invitConf-'.$idFic.'" name="invitConf-'.$idFic.'" value="Yes" class="form-control" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'invitConf\', valeur: $(this).val()});"> Oui';
+			
+			if($inviConf == "" && ($typDoc == "COMM" || $typDoc == "POSTER")) {$tabMetaMQ[$nomfic][] = "le caractère conférence invitée (O/N)";}
+			
+			//Ville de la conférence
+			echo '<p class="form-inline">Ville* :&nbsp;<input type="text" id="settlement-'.$idFic.'" name="settlement-'.$idFic.'" value="'.$settlement.'" class="form-control" style="height: 18px; width:280px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'ville\', valeur: $(this).val()});"></p>';
+			//Date de début de conférence
+			echo '<p class="form-inline">Date de début de conférence* :&nbsp;<input type="text" id="startDate-'.$idFic.'" name="startDate-'.$idFic.'" value="'.$startDate.'" class="form-control" style="height: 18px; width:140px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'startDate\', valeur: $(this).val()});"></p>';
+			//Date de fin de conférence
+			echo '<p class="form-inline">Date de fin de conférence :&nbsp;<input type="text" id="endDate-'.$idFic.'" name="endDate-'.$idFic.'" value="'.$endDate.'" class="form-control" style="height: 18px; width:140px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'endDate\', valeur: $(this).val()});"></p>';
+			//Titre de la conférence
+			echo 'Titre de la conférence* :&nbsp;<textarea id="titreConf-'.$idFic.'" name="titreConf-'.$idFic.'" class="textarea form-control" style="width: 600px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'titreConf\', valeur: $(this).val()});">'.$titreConf.'</textarea><br>';
+			//Pays de la conférence
+			echo '<p class="form-inline">Pays* :&nbsp;<input type="text" id="paysConf-'.$idFic.'" name="paysConf-'.$idFic.'" value="'.$affPays.'" class="autoPays form-control" style="height: 18px; width:200px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'paysConf\', valeur: $(this).val()});"></p>';
+			//ISBN de la conférence
+			echo '<p class="form-inline">ISBN :&nbsp;<input type="text" id="isbnConf-'.$idFic.'" name="isbnConf-'.$idFic.'" value="'.$isbnConf.'" class="form-control" style="height: 18px; width:200px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'isbnConf\', valeur: $(this).val()});"></p>';
+			//Proceedings de la conférence
+			echo '<p class="form-inline">Proceedings :&nbsp;';
+			echo '<input type="radio" '.$txtPO.' id="procConf-'.$idFic.'" name="procConf-'.$idFic.'" value="Yes" class="form-control" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'procConf\', valeur: $(this).val()});"> Oui';
 			echo $cst5sp;
-			echo '<input type="radio" '.$txtCN.' id="invitConf-'.$idFic.'" name="invitConf-'.$idFic.'" value="No" class="form-control" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'invitConf\', valeur: $(this).val()});"> Non';
+			echo '<input type="radio" '.$txtPN.' id="procConf-'.$idFic.'" name="procConf-'.$idFic.'" value="No" class="form-control" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'procConf\', valeur: $(this).val()});"> Non';
 			echo '</p>';
-	//}
-	echo '</span>';
+			//Editeur scientifique
+			echo '<p class="form-inline">Editeur scientifique :&nbsp;<input type="text" id="scientificEditor-'.$idFic.'" name="scientificEditor-'.$idFic.'" value="'.$editConf.'" class="form-control" style="height: 18px; width:280px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'scientificEditor\', valeur: $(this).val()});"></p>';
+			//Conférence invitée O/N
+			$txtCO = "";
+			$txtCN = "";
+			if($inviConf == "Yes") {$txtCO = $cstCH; $txtCN = "";}
+			if($inviConf == "No") {$txtCO = ""; $txtCN = $cstCH;}
+				echo '<p class="form-inline">Conférence invitée* :&nbsp;';
+				echo '<input type="radio" '.$txtCO.' id="invitConf-'.$idFic.'" name="invitConf-'.$idFic.'" value="Yes" class="form-control" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'invitConf\', valeur: $(this).val()});"> Oui';
+				echo $cst5sp;
+				echo '<input type="radio" '.$txtCN.' id="invitConf-'.$idFic.'" name="invitConf-'.$idFic.'" value="No" class="form-control" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'invitConf\', valeur: $(this).val()});"> Non';
+				echo '</p>';
+		echo '</span>';
+	}
 	//Fin métadonnées spécifiques aux COMM et POSTER
 	
 	
