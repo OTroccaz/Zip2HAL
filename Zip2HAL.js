@@ -90,7 +90,7 @@ function majokAuteur(auteurPos, auteurName) {
 	document.getElementById("PN-"+auteurPos).innerHTML = "<s>"+auteurName+"</s>";
 }
 
-function afficacherLang(lang, idFic) {
+function afficacherLang(lang, idFic, langI) {
 	if(lang == "English") {
 		document.getElementById("lantitreT-"+idFic).style.display = "none";
 		document.getElementById("lanMCT-"+idFic).style.display = "none";
@@ -99,6 +99,12 @@ function afficacherLang(lang, idFic) {
 		document.getElementById("lantitreT-"+idFic).style.display = "block";
 		document.getElementById("lanMCT-"+idFic).style.display = "block";
 		document.getElementById("lanresumeT-"+idFic).style.display = "block";
+		let lanresume = document.getElementById("lanresume-"+idFic).innerHTML;
+		document.getElementById("lanresume-"+idFic).innerHTML = lanresume.replaceAll(langI, lang);
+		let lanMC = document.getElementById("lanMC-"+idFic).innerHTML;
+		document.getElementById("lanMC-"+idFic).innerHTML = lanMC.replaceAll(langI, lang);
+		let lantitre = document.getElementById("lantitre-"+idFic).innerHTML;
+		document.getElementById("lantitre-"+idFic).innerHTML = lantitre.replaceAll(langI, lang);
 	}
 }
 

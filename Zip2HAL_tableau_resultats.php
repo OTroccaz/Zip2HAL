@@ -88,7 +88,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	echo '<td style=\'text-align: left;\'><span id=\'metadonnees-'.$idFic.'\'>';
 	
 	//Métadonnées > Langue
-	echo '<p class="form-inline">Langue* :&nbsp;<input id="language-'.$idFic.'" name="language-'.$idFic.'" value="'.$lang.'" class="autoLang form-control" style="height: 18px; width:150px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'language\', valeur: $(this).val(), language: $(this).val()}); afficacherLang($(this).val(), '.$idFic.');"></p>';
+	echo '<p class="form-inline">Langue* :&nbsp;<input id="language-'.$idFic.'" name="language-'.$idFic.'" value="'.$lang.'" class="autoLang form-control" style="height: 18px; width:150px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'language\', valeur: $(this).val(), language: $(this).val()}); afficacherLang($(this).val(), '.$idFic.', \''.trim($lang).'\');"></p>';
 	
 	if($lang == "") {$tabMetaMQ[$nomfic][] = "la langue";}
 	
@@ -152,7 +152,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 			$testMeta = "ok";
 		}
 	}
-	echo 'Titre* :&nbsp;<textarea id="titre-'.$idFic.'" name="titre-'.$idFic.'" class="textarea form-control" style="width: 600px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'titre\', valeur: $(this).val(), langue : \''.$lang.'\'});">'.$titreNot.'</textarea><br>';
+	echo 'Titre* :&nbsp;<span id="lantitre-'.$idFic.'"><textarea id="titre-'.$idFic.'" name="titre-'.$idFic.'" class="textarea form-control" style="width: 600px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'titre\', valeur: $(this).val(), langue : \''.$lang.'\'});">'.$titreNot.'</textarea></span><br>';
 	
 	if($titreNot == "") {$tabMetaMQ[$nomfic][] = "le titre";}
 	
@@ -567,7 +567,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	echo '<br>';
 	//Métadonnées > Mots-clés > Ajout par liste de mots-clés séparés par des points-virgules
 	echo 'Ajout de mots-clés dans la langue de la notice : vous pouvez renseigner ici une liste de plusieurs mots-clés séparés par des virgules ou points-virgules.';
-	echo '<textarea id="mots-cles-liste-'.$idFic.'" name="mots-cles-liste'.$idFic.'" class="textarea form-control" style="width: 600px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'mots-cles-liste\', pos: '.$ind.', valeur: $(this).val(), langue: \''.$lang.'\'});"></textarea>';
+	echo '<span <textarea id="lanMC-'.$idFic.'"><textarea id="mots-cles-liste-'.$idFic.'" name="mots-cles-liste'.$idFic.'" class="textarea form-control" style="width: 600px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'mots-cles-liste\', pos: '.$ind.', valeur: $(this).val(), langue: \''.$lang.'\'});"></textarea></span>';
 	
 	//Métadonnées > Mots-clés traduits en anglais
 	if($lang != $cstEN) {$affMC = "block";}else{$affMC = "none";}
@@ -603,7 +603,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	foreach($elts as $elt) {
 		if($elt->hasAttribute($cstXL)) {$resume = str_replace(array("<i>", "</i>"), "", $elt->nodeValue);}
 	}
-	echo 'Résumé :&nbsp;<textarea id="abstract-'.$idFic.'" name="abstract-'.$idFic.'" class="textarea form-control" style="width: 600px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'abstract\', valeur: $(this).val(), langue: \''.$lang.'\'});">'.$resume.'</textarea><br>';
+	echo '<span id="lanresume-'.$idFic.'">Résumé :&nbsp;<textarea id="abstract-'.$idFic.'" name="abstract-'.$idFic.'" class="textarea form-control" style="width: 600px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'abstract\', valeur: $(this).val(), langue: \''.$lang.'\'});">'.$resume.'</textarea><br></span>';
 	
 	//Métadonnées > Résumé traduit en anglais
 	if($lang != $cstEN) {$affR = "block";}else{$affR = "none";}

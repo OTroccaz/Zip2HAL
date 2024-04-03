@@ -1051,7 +1051,13 @@ if ($action == 'supprimerTousMC') {
 if ($action == $cstAB) {
 	deleteNode($xml, $cstPD, $cstAB, 0, $cstXL, $codeLang, "", "", $cstEX);
 	$xml->save($nomfic);
-	insertNode($xml, $valeur, $cstPD, "", 0, $cstAB, $cstXL, $codeLang, "", "", "iB", $cstTN, "");
+	//insertNode($xml, $valeur, $cstPD, "", 0, $cstAB, $cstXL, $codeLang, "", "", "iB", $cstTN, "");
+	$elts = $xml->getElementsByTagName($cstPD);
+	$bimoc = $xml->createElement($cstAB);
+	$moc = $xml->createTextNode($valeur);
+	$bimoc->setAttribute($cstXL, $codeLang);
+	$bimoc->appendChild($moc);
+	$elts->item(0)->appendChild($bimoc);	
 	$xml->save($nomfic);
 }
 
