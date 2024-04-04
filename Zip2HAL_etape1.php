@@ -87,11 +87,16 @@ if($numFound == 0 && $numFoundC == 0) {
 				}
 			}
 			
+			if (empty($idTEI)) {
+				$idTEI = $entry->halId_s;
+				$halId[$hId] = $idTEI;
+			}
+			
 			if($doublon != "non") {
 				//Doublon trouvé dans HAL > Est-il aussi présent dans la collection et de quel type ?
 				$dbl++;
-				$halId['doublon'][$hId] .= '&nbsp;<a target="_blank" href="https://hal.archives-ouvertes.fr/'.$halId[$hId].'"><img src=\'./img/doublon.jpg\'></a>&nbsp;';
-				$reqDbl = "https://api.archives-ouvertes.fr/search/".$portail."/?fq=collCode_s:%22".$team."%22%20AND%20title_t:%22".$critere."*%22&rows=10000&fl=halId_s,doiId_s,title_s,subTitle_s,docType_s";
+				$halId['doublon'][$hId] .= '&nbsp;<a target="_blank" href="https://hal.science/'.$halId[$hId].'"><img src=\'./img/doublon.jpg\'></a>&nbsp;';
+				$reqDbl = "https://api.archives-ouvertes.fr/search/".$portail."/?fq=collCode_s:%22".$team."%22%20AND%20NOT%20docType_s:%22UNDEFINED%22%20AND%20title_t:%22".urlencode(trim($critere))."*%22&rows=10000&fl=halId_s,doiId_s,title_s,subTitle_s,docType_s";
 				$reqDbl = str_replace(" ", "%20", $reqDbl);
 				$contDbl = file_get_contents($reqDbl);
 				$resDbl = json_decode($contDbl);
@@ -224,8 +229,8 @@ if($numFound == 0 && $numFoundC == 0) {
 			//On compare également les DOI s'ils sont présents
 			if(isset($entry->doiId_s)) {$doiC = strtolower($hId);}
 			if($doiTEI != "" && isset($entry->doiId_s) && strtolower($doiTEI) == ($entry->doiId_s)) {
-				$idTEI = $entry->halId_s;
-				$docTEI = $entry->docType_s;
+				$idTEIC = $entry->halId_s;
+				$docTEIC = $entry->docType_s;
 				$halId[$doi] = $hId;
 				if($doublonC == "non") {
 					$doublonC = "DOI";
@@ -234,11 +239,16 @@ if($numFound == 0 && $numFoundC == 0) {
 				}
 			}
 			
+			if (empty($idTEIC)) {
+				$idTEIC = $entry->halId_s;
+				$halIdC[$hId] = $idTEIC;
+			}
+			
 			if($doublonC != "non") {
 				//Doublon trouvé dans HAL > Est-il aussi présent dans la collection et de quel type ?
 				$dbl++;
-				$halIdC['doublon'][$hId] .= '&nbsp;<a target="_blank" href="https://hal.archives-ouvertes.fr/'.$halIdC[$hId].'"><img src=\'./img/doublon.jpg\'></a>&nbsp;';
-				$reqDblC = "https://api.archives-ouvertes.fr/search/".$portail."/?fq=collCode_s:%22".$team."%22%20AND%20title_t:%22".$critere."*%22&rows=10000&fl=halId_s,doiId_s,title_s,subTitle_s,docType_s";
+				$halIdC['doublon'][$hId] .= '&nbsp;<a target="_blank" href="https://hal.science/'.$halIdC[$hId].'"><img src=\'./img/doublon.jpg\'></a>&nbsp;';
+				$reqDblC = "https://api.archives-ouvertes.fr/search/".$portail."/?fq=collCode_s:%22".$team."%22%20AND%20NOT%20docType_s:%22UNDEFINED%22%20AND%20title_t:%22".urlencode(trim($critere))."*%22&rows=10000&fl=halId_s,doiId_s,title_s,subTitle_s,docType_s";
 				$reqDblC = str_replace(" ", "%20", $reqDblC);
 				$contDblC = file_get_contents($reqDblC);
 				$resDblC = json_decode($contDblC);

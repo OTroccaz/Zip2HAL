@@ -52,7 +52,7 @@ echo '<tr class=\'text-center\'>';
 
 //Doublon ?
 if(isset($typDbl) && $typDbl != "") {
-	echo '<td><a target=\'_blank\' href=\'https://hal.archives-ouvertes.fr/'.$idTEI.'\'><img alt=\'HAL\' src=\'./img/HAL.jpg\'></a></td>';
+	echo '<td><a target=\'_blank\' href=\'https://hal.science/'.$idTEI.'\'><img alt=\'HAL\' src=\'./img/HAL.jpg\'></a></td>';
 }
 
 //Supprimer le TEI
