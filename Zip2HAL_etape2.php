@@ -83,6 +83,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		
 		//Rôle auteur
 		$rolAut[$iAut] = $aut->getAttribute("role");
+		$rawAut[$iAut] = '';
 		
 		foreach($aut->childNodes as $elt) {
 			//Prénom/Nom
@@ -131,7 +132,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 			
 			//Raw affiliation string
 			if($elt->nodeName == "rawAffs") {
-				$rawAut[$iAut] = $elt->nodeValue;
+				$rawAut[$iAut] .= $elt->nodeValue.'~|~';
 			}
 
 			//Si auteur correspondant avec ORCID mais pas de domaine mail ou pas de mail auteur > cas OpenAlex
@@ -153,6 +154,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 				}
 			}
 		}
+		$rawAut[$iAut] = (substr($rawAut[$iAut], -3) == '~|~') ? substr($rawAut[$iAut], 0, -3) : $rawAut[$iAut];
 		$iAut++;
 	}
 	//var_dump($preAut);

@@ -17,6 +17,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	
 	//Suppression des noeuds 'imaginaires' rawAffs
 	$elts = $xml->getElementsByTagName("author");
+	/*
 	foreach($elts as $elt) {
 		if ($elt->childNodes->length) {
 			foreach ($elt->childNodes as $child) {
@@ -27,6 +28,24 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 			}
 		}
 	}
+	*/
+	
+	$rawArray = array();
+	//Sauvegarde des rawAffs
+	foreach($elts as $elt) {
+		if ($elt->childNodes->length) {
+			foreach($elt->childNodes as $child) {
+				if ($child->nodeName == "rawAffs") {
+					$rawArray[] = $child;
+				}
+			}
+		}
+	}
+	//Suppression des rawAffs
+	foreach($rawArray as $node){ 
+		$node->parentNode->removeChild($node);
+	}
+	$xml->save($nomfic);
 	
 
 	//var_dump($halAff);

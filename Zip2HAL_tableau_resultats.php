@@ -721,8 +721,11 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 			}
 			echo '</font></i>';
 		}else{
-			echo '<i><font style=\'color: #999999;\'>Affiliation RAW:<br>';
-			echo $halAutinit[$i]["rawAffs"].'<br>';
+			echo '<i><font style=\'color: #999999;\'>Affiliation(s) RAW:<br>';
+			$tabRaw = explode('~|~', $halAutinit[$i]["rawAffs"]);
+			foreach($tabRaw as $raw) {
+				echo '-> '.$raw.'<br>';
+			}
 			echo '</font></i>';
 		}
 		$ajtAff = "~";//Pour éviter d'afficher 2 fois des affiliations > méthode 1 / méthode 2 > avec ou sans prénom/nom
