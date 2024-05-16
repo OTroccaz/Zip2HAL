@@ -39,6 +39,21 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	include "./Zip2HAL_constantes.php";
 
 	$cptAff = 0;
+	
+	//Eventuelles rawAffs
+	$elts = $xml->getElementsByTagName("author");
+	$rawArray = array();
+	//Sauvegarde des rawAffs
+	foreach($elts as $elt) {
+		if ($elt->childNodes->length) {
+			foreach($elt->childNodes as $child) {
+				if ($child->nodeName == "rawAffs") {
+					$rawArray[] = $child->nodeValue;
+				}
+			}
+		}
+	}
+	//var_dump($rawArray);
 
 	//Affiliations
 	$affs = $xml->getElementsByTagName("org");
@@ -90,7 +105,20 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 						if($nomAff[$iAff]['pays'] == "" && array_key_exists($payAff, $countries)) {$nomAff[$iAff]['pays'] = strtoupper($countries[$payAff]);}
 					}
 				}
-				$nomAff[$iAff]['org'] = $orgAff;							
+				$nomAff[$iAff]['org'] = $orgAff;
+				//Présence de rawAffs ?
+				$extRaw = '';
+				if (isset($rawArray[$iAff])) {
+					$tabRaw = explode(",", $rawArray[$iAff]);
+					foreach ($tabRaw as $raw) {
+						//Recherche du terme 'UMR'
+						if (stripos($raw, 'UMR') !== false) {
+							$pos = strripos($raw, 'UMR');
+							$extRaw = trim(substr($raw, $pos, (strlen($raw) - $pos)));
+						}
+					}
+				}
+				if ($extRaw != '') {$nomAff[$iAff]['org'] .= ', '.$extRaw;}
 			}
 			if(isset($nomAff[$iAff]['pays']) && $nomAff[$iAff]['pays'] == "") {
 				if($elt->nodeName == "desc") {
@@ -159,7 +187,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 			}
 		}
 		
-		if($trouve == 0) {
+		if($trouve == 0 || stripos($code, 'UMR') !== false) {
 			//1ère méthode, sur le référentiel des structures et uniquement sur l'acronyme
 
 			//Si présence d'au moins 3 virgules > test sur chacun des éléments sauf les 2 derniers qui correspondent souvent à la ville et au pays
@@ -201,7 +229,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 			}
 		}
 		
-		if($trouve == 0) {
+		if($trouve == 0 || stripos($code, 'UMR') !== false) {
 			//2ème méthode > avec le référentiel HAL des structures avec le type d'institution
 			
 			//Si présence d'au moins 3 virgules > test sur chacun des éléments sauf les 2 derniers qui correspondent souvent à la ville et au pays
@@ -279,7 +307,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		
 		
 		//4ème méthode, toujours sur le référentiel des structures mais avec une autre requête
-		if($trouve == 0) {
+		if($trouve == 0 || stripos($code, 'UMR') !== false) {
 			//Si présence d'au moins 3 virgules > test sur chacun des éléments sauf les 2 derniers qui correspondent souvent à la ville et au pays
 		//Mais, si pas de virgule ou nombre de virgules < 3, il faut naturellement conserver le dernier élément
 			if(strpos($code, ",") !== false) {$cptCode = 1;}else{$cptCode = 0;}
