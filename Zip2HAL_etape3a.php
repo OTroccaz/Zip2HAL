@@ -166,7 +166,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		if (!empty($nomAff[$i]['ror'])) {
 			$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=ror_s:%22".$nomAff[$i]['ror']."%22&fl=docid,valid_s,name_s,type_s,country_s,acronym_s&sort=valid_s%20desc";
 			$reqAff = str_replace(" ", "%20", $reqAff);
-			echo $cstHR.$reqAff.'">URL requête affiliations (méthode ROR) HAL</a><br>';
+			echo $cstHR.$reqAff.'">URL requête affiliations (méthode ROR) HAL</a>';
 			$contAff = file_get_contents($reqAff);
 			$resAff = json_decode($contAff);
 			$numFound = 0;
@@ -185,9 +185,10 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 				$iAff++;
 				$trouve++;
 			}
+			echo ' > '.$numFound.'<br>';
 		}
 		
-		if($trouve == 0 || stripos($code, 'UMR') !== false) {
+		if($trouve == 0) {
 			//1ère méthode, sur le référentiel des structures et uniquement sur l'acronyme
 
 			//Si présence d'au moins 3 virgules > test sur chacun des éléments sauf les 2 derniers qui correspondent souvent à la ville et au pays
@@ -201,7 +202,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 				if($cptCode <= $max && !in_array($test, $anepasTester)) {						
 					$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=acronym_t:".$test."%20OR%20acronym_sci:".$test."%20AND%20valid_s:(VALID%20OR%20OLD)".$special."&fl=docid,valid_s,name_s,type_s,country_s,acronym_s&sort=valid_s%20desc,docid%20asc";
 					$reqAff = str_replace(" ", "%20", $reqAff);
-					echo $cstHR.$reqAff.'">URL requête affiliations (1ère méthode) HAL</a><br>';
+					echo $cstHR.$reqAff.'">URL requête affiliations (1ère méthode) HAL</a>';
 					//echo $reqAff.'<br>';
 					$contAff = file_get_contents($reqAff);
 					$resAff = json_decode($contAff);
@@ -221,15 +222,17 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 							$halAff[$iAff]['ror'] = "non";
 							$iAff++;
 							$trouve++;
+							echo ' > '.$numFound.'<br>';
 							break;
 						//}
 					}
+					echo ' > '.$numFound.'<br>';
 				}
 				$cptCode++;
 			}
 		}
 		
-		if($trouve == 0 || stripos($code, 'UMR') !== false) {
+		if($trouve == 0) {
 			//2ème méthode > avec le référentiel HAL des structures avec le type d'institution
 			
 			//Si présence d'au moins 3 virgules > test sur chacun des éléments sauf les 2 derniers qui correspondent souvent à la ville et au pays
@@ -246,7 +249,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 					}
 					$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:".$test."%20OR%20code_t:".$test."%20OR%20acronym_t:".$test.")".$typeSpe."%20AND%20valid_s:(VALID%20OR%20OLD)".$special."&fl=docid,valid_s,name_s,type_s,country_s,acronym_s&sort=valid_s desc,docid asc";
 					$reqAff = str_replace(" ", "%20", $reqAff);
-					echo $cstHR.$reqAff.'">URL requête affiliations (2ème méthode) HAL</a><br>';
+					echo $cstHR.$reqAff.'">URL requête affiliations (2ème méthode) HAL</a>';
 					//echo $reqAff.'<br>';
 					$contAff = file_get_contents($reqAff);
 					$resAff = json_decode($contAff);
@@ -266,15 +269,18 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 							$halAff[$iAff]['ror'] = "non";
 							$iAff++;
 							$trouve++;
+							echo ' > '.$numFound.'<br>';
 							break;
 						//}
+						echo ' > '.$numFound.'<br>';
 					}else{
+						echo ' > '.$numFound.'<br>';
 						//3ème méthode > avec le référentiel HAL des structures sans le type d'institution uniquement si country_s = 'fr'
 						if($special != "") {//Dans HAL, on signale le plus souvent des institutions étrangères, pas des labos
 							if(strpos($special, "fr") !== false) {
 								$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:".$test."%20OR%20code_t:".$test."%20OR%20acronym_t:".$test.")%20AND%20valid_s:(VALID%20OR%20OLD)".urlencode($special)."&fl=docid,valid_s,name_s,type_s,country_s,acronym_s&sort=valid_s desc,docid asc";
 								$reqAff = str_replace(" ", "%20", $reqAff);
-								echo $cstHR.$reqAff.'">URL requête affiliations (3ème méthode) HAL</a><br>';
+								echo $cstHR.$reqAff.'">URL requête affiliations (3ème méthode) HAL</a>';
 								//echo $reqAff.'<br>';
 								$contAff = file_get_contents($reqAff);
 								$resAff = json_decode($contAff);
@@ -294,9 +300,11 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 										$halAff[$iAff]['ror'] = "non";
 										$iAff++;
 										$trouve++;
+										echo ' > '.$numFound.'<br>';
 										break;
 									//}
 								}
+								echo ' > '.$numFound.'<br>';
 							}
 						}
 					}
@@ -307,7 +315,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		
 		
 		//4ème méthode, toujours sur le référentiel des structures mais avec une autre requête
-		if($trouve == 0 || stripos($code, 'UMR') !== false) {
+		if($trouve == 0) {
 			//Si présence d'au moins 3 virgules > test sur chacun des éléments sauf les 2 derniers qui correspondent souvent à la ville et au pays
 		//Mais, si pas de virgule ou nombre de virgules < 3, il faut naturellement conserver le dernier élément
 			if(strpos($code, ",") !== false) {$cptCode = 1;}else{$cptCode = 0;}
@@ -320,7 +328,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 					//$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:%22".$test."%22%20OR%20name_t:(".$test.")%20OR%20code_t:%22".$test."%22%20OR%20acronym_t:%22".$test."%22%20OR%20acronym_sci:%22".$test."%22)%20AND%20type_s:".$type."%20AND%20valid_s:(VALID%20OR%20OLD)&fl=docid,valid_s,name_s,type_s&sort=valid_s%20desc,docid%20asc";
 					$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:%22".$test."%22%20OR%20name_t:(".$test.")%20OR%20code_t:%22".$test."%22%20OR%20acronym_t:%22".$test."%22%20OR%20acronym_sci:%22".$test."%22)%20AND%20valid_s:(VALID%20OR%20OLD)".$special."&fl=docid,valid_s,name_s,type_s,country_s,acronym_s&sort=valid_s%20desc,docid%20asc";
 					$reqAff = str_replace(" ", "%20", $reqAff);
-					echo $cstHR.$reqAff.'">URL requête affiliations (3ème méthode) HAL</a><br>';
+					echo $cstHR.$reqAff.'">URL requête affiliations (4ème méthode) HAL</a>';
 					//echo $reqAff.'<br>';
 					$contAff = file_get_contents($reqAff);
 					$resAff = json_decode($contAff);
@@ -340,9 +348,11 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 							$halAff[$iAff]['ror'] = "non";
 							$iAff++;
 							$trouve++;
+							echo ' > '.$numFound.'<br>';
 							break;
 						//}
 					}
+					echo ' > '.$numFound.'<br>';
 				}
 				$cptCode++;
 			}
@@ -364,7 +374,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 						$facetSep = $lastName.' '.$firstName;
 						$reqAff = "https://api.archives-ouvertes.fr/search/index/?q=authLastName_sci:%22".urlencode($lastName)."%22%20AND%20authFirstName_sci:%22".urlencode($firstName)."%22&fq=-labStructValid_s:INCOMING%20OR%20(acronym_sci:%22".urlencode($code)."%22%20OR%20structName_sci:%22".urlencode($code)."%22%20OR%20structCode_sci:%22".urlencode($code)."%22)&fl=structPrimaryHasAlphaAuthIdHal_fs,authId_i,authLastName_s,authFirstName_s&sort=abs(sub(producedDateY_i,".$annee."))%20asc";
 						$reqAff = str_replace(" ", "%20", $reqAff);
-						echo $cstHR.$reqAff.'">URL requête affiliations (4ème méthode) HAL</a><br>';
+						echo $cstHR.$reqAff.'">URL requête affiliations (5ème méthode) HAL</a>';
 						//echo $reqAff.'<br>';
 						$contAff = file_get_contents($reqAff);
 						$resAff = json_decode($contAff);
@@ -397,12 +407,14 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 											$halAff[$iAff]['ror'] = "non";
 											$iAff++;
 											$trouve++;
+											echo ' > '.$numFound.'<br>';
 											break 2;
 										}
 									}
 								}
 							}
 						}
+						echo ' > '.$numFound.'<br>';
 					}
 				}
 			}

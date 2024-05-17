@@ -218,7 +218,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 			$halAut[$iAut]['valOrcid'] = $iOrcid[$iAut];
 			$reqOrc = "https://api.archives-ouvertes.fr/ref/author/?q=orcidId_s:%22".$iOrcid[$iAut]."%22%20AND%20valid_s:%22PREFERRED%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s,fullName_s&sort=valid_s%20desc,docid%20asc";
 			$reqOrc = str_replace(" ", "%20", $reqOrc);
-			echo '<a target="_blank" href="'.$reqOrc.'">URL requête auteurs HAL (méthode ORCID)</a><br>';
+			echo '<a target="_blank" href="'.$reqOrc.'">URL requête auteurs HAL (méthode ORCID)</a>';
 			$contAut = file_get_contents($reqOrc);
 			$resAut = json_decode($contAut);
 			$numFound = 0;
@@ -262,6 +262,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 					}
 				}
 			}
+			echo ' > '.$numFound.'<br>';
 			if($iHi == "non" && $docid != "" && $nbdocid == 1 && $trvDoc == "non") {//Un seul docid trouvé
 				$halAut[$iAut][$cstFN] = $firstName;
 				$halAut[$iAut][$cstLN] = $lastName;
@@ -280,7 +281,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		if(isset($iResid[$iAut]) && $iResid[$iAut] != "" && $halAut[$iAut]['orcid'] != "oui") {
 			$reqRes = "https://api.archives-ouvertes.fr/ref/author/?q=researcherid_id:".$iResid[$iAut]."%20AND%20valid_s:%22PREFERRED%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s,fullName_s&sort=valid_s%20desc,docid%20asc";
 			$reqRes = str_replace(" ", "%20", $reqRes);
-			echo '<a target="_blank" href="'.$reqRes.'">URL requête auteurs HAL (méthode ResearcherID)</a><br>';
+			echo '<a target="_blank" href="'.$reqRes.'">URL requête auteurs HAL (méthode ResearcherID)</a>';
 			$contAut = file_get_contents($reqRes);
 			$resAut = json_decode($contAut);
 			$numFound = 0;
@@ -324,6 +325,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 					}
 				}
 			}
+			echo ' > '.$numFound.'<br>';
 			if($iHi == "non" && $docid != "" && $nbdocid == 1 && $trvDoc == "non") {//Un seul docid trouvé
 				$halAut[$iAut][$cstFN] = $firstName;
 				$halAut[$iAut][$cstLN] = $lastName;
@@ -354,7 +356,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 					if(isset($elt["idORCID"]) && $elt["idORCID"] != "") {
 						$reqOrc = "https://api.archives-ouvertes.fr/ref/author/?q=orcidId_s:".$elt["idORCID"]."%20AND%20firstName_t:%22".urlencode($firstName)."%22%20AND%20valid_s:%22PREFERRED%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s,fullName_s&sort=valid_s%20desc,docid%20asc";
 						$reqOrc = str_replace(" ", "%20", $reqOrc);
-						echo '<a target="_blank" href="'.$reqOrc.'">URL requête auteurs HAL (méthode ORCID à partir du CSV OCDHAL)</a><br>';
+						echo '<a target="_blank" href="'.$reqOrc.'">URL requête auteurs HAL (méthode ORCID à partir du CSV OCDHAL)</a>';
 						$contAut = file_get_contents($reqOrc);
 						$resAut = json_decode($contAut);
 						$numFound = 0;
@@ -414,6 +416,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 								}
 							}
 						}
+						echo ' > '.$numFound.'<br>';
 						if($iHi == "non" && $docid != "" && $nbdocid == 1 && $trvDoc == "non") {//Un seul docid trouvé
 							$halAut[$iAut][$cstFN] = $firstName;
 							$halAut[$iAut][$cstLN] = $lastName;
@@ -434,7 +437,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 						if(isset($elt["idResearcherID"]) && $elt["idResearcherID"] != "") {
 							$reqOrc = "https://api.archives-ouvertes.fr/ref/author/?q=researcherid_id:".$elt["idResearcherID"]."%20AND%20firstName_t:%22".urlencode($firstName)."%22%20AND%20valid_s:%22PREFERRED%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s,fullName_s&sort=valid_s%20desc,docid%20asc";
 							$reqRes = str_replace(" ", "%20", $reqRes);
-							echo '<a target="_blank" href="'.$reqRes.'">URL requête auteurs HAL (méthode ResearcherID à partir du CSV OCDHAL)</a><br>';
+							echo '<a target="_blank" href="'.$reqRes.'">URL requête auteurs HAL (méthode ResearcherID à partir du CSV OCDHAL)</a>';
 							$contAut = file_get_contents($reqRes);
 							$resAut = json_decode($contAut);
 							$numFound = 0;
@@ -494,6 +497,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 									}
 								}
 							}
+							echo ' > '.$numFound.'<br>';
 							if($iHi == "non" && $docid != "" && $nbdocid == 1 && $trvDoc == "non") {//Un seul docid trouvé
 								$halAut[$iAut][$cstFN] = $firstName;
 								$halAut[$iAut][$cstLN] = $lastName;
@@ -525,7 +529,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 							}else{//correspondance sur Nom complet + intiale(s) prénom(s) > vérification de la validité de l'idHAL via HAL et récupération des autres informations
 								$reqIdH = "https://api.archives-ouvertes.fr/ref/author/?q=idHal_s:%22".$elt["idHAL"]."%22%20AND%20valid_s:%22PREFERRED%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s,fullName_s,firstName_s,lastName_s&sort=valid_s%20desc,docid%20asc";
 								$reqIdH = str_replace(" ", "%20", $reqIdH);
-								echo '<a target="_blank" href="'.$reqIdH.'">URL requête idHal HAL (méthode CSV OCDHAL)</a><br>';
+								echo '<a target="_blank" href="'.$reqIdH.'">URL requête idHal HAL (méthode CSV OCDHAL)</a>';
 								$contIdH = file_get_contents($reqIdH);
 								$resIdH = json_decode($contIdH);
 								$numFound = 0;
@@ -583,6 +587,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 										}
 									}
 								}
+								echo ' > '.$numFound.'<br>';
 								if($iHi == "non" && $docid != "" && $nbdocid == 1 && $trvDoc == "non") {//Un seul docid trouvé
 									$halAut[$iAut][$cstFN] = $firstName;
 									$halAut[$iAut][$cstLN] = $lastName;
@@ -606,7 +611,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		if($trouve == 0 && !empty($melAut[$i])) {
 			$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=emailDomain_s:%22".$melAut[$i]."%22%20AND%20fullName_sci:(%22".urlencode($firstName)."%20".urlencode($lastName)."%22%20OR%20%22".urlencode(substr($firstName, 0, 1))."%20".urlencode($lastName)."%22)&rows=1000&fl=emailId_s,idHal_i,idHal_s,docid,valid_s,emailDomain_s,fullName_s&sort=valid_s%20desc,docid%20asc";
 			$reqAut = str_replace(" ", "%20", $reqAut);
-			echo '<a target="_blank" href="'.$reqAut.'">URL requête auteurs HAL (méthode intermédiaire)</a><br>';
+			echo '<a target="_blank" href="'.$reqAut.'">URL requête auteurs HAL (méthode intermédiaire)</a>';
 			//echo $reqAut.'<br>';
 			$contAut = file_get_contents($reqAut);
 			$resAut = json_decode($contAut);
@@ -654,12 +659,13 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 					}
 				}
 			}
+			echo ' > '.$numFound.'<br>';
 		}
 		
 		if($trouve == 0 && strlen($firstName) > 2) {
 			$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=fullName_t:%22".urlencode($firstName)."%20".urlencode($lastName)."%22%20AND%20valid_s:%22PREFERRED%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s,fullName_s&sort=valid_s%20desc,docid%20asc,fullName_s%20asc";
 			$reqAut = str_replace(" ", "%20", $reqAut);
-			echo '<a target="_blank" href="'.$reqAut.'">URL requête auteurs HAL (1ère méthode)</a><br>';
+			echo '<a target="_blank" href="'.$reqAut.'">URL requête auteurs HAL (1ère méthode)</a>';
 			//echo $reqAut.'<br>';
 			$contAut = file_get_contents($reqAut);
 			$resAut = json_decode($contAut);
@@ -708,12 +714,13 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 					}
 				}
 			}
+			echo ' > '.$numFound.'<br>';
 		}
 		
 		if($trouve == 0) {
 			$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=fullName_sci:(%22".urlencode($firstNameT)."%20".urlencode($lastNameT)."%22%20OR%20%22".urlencode(substr($firstNameT, 0, 1))."%20".urlencode($lastNameT)."%22)%20AND%20valid_s:%22PREFERRED%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s,fullName_s&sort=valid_s%20desc,docid%20asc,fullName_s%20asc";
 			$reqAut = str_replace(" ", "%20", $reqAut);
-			echo '<a target="_blank" href="'.$reqAut.'">URL requête auteurs HAL (2ème méthode)</a><br>';
+			echo '<a target="_blank" href="'.$reqAut.'">URL requête auteurs HAL (2ème méthode)</a>';
 			//echo $reqAut.'<br>';
 			$contAut = file_get_contents($reqAut);
 			$resAut = json_decode($contAut);
@@ -772,6 +779,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 					}
 				}
 			}
+			echo ' > '.$numFound.'<br>';
 			if($iHi == "non" && $docid != "" && $nbdocid == 1 && $trvDoc == "non") {//Un seul docid trouvé
 				$halAut[$iAut][$cstFN] = $firstName;
 				$halAut[$iAut][$cstLN] = $lastName;
@@ -790,7 +798,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		if($trouve == 0 && strlen(str_replace(array("-", "."), "", $firstName)) <= 2) {
 			$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=fullName_t:(%22".urlencode($firstName)."%20".urlencode($lastName)."%22%20OR%20%22".urlencode(substr($firstName, 0, 1))."%20".urlencode($lastName)."%22)%20AND%20valid_s:%22PREFERRED%22&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s,fullName_s&sort=valid_s%20desc,docid%20asc,fullName_s%20asc";
 			$reqAut = str_replace(" ", "%20", $reqAut);
-			echo '<a target="_blank" href="'.$reqAut.'">URL requête auteurs HAL (Méthode intermédiaire 2-3)</a><br>';
+			echo '<a target="_blank" href="'.$reqAut.'">URL requête auteurs HAL (Méthode intermédiaire 2-3)</a>';
 			//echo $reqAut.'<br>';
 			$contAut = file_get_contents($reqAut);
 			$resAut = json_decode($contAut);
@@ -845,13 +853,14 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 					}
 				}
 			}
+			echo ' > '.$numFound.'<br>';
 		}
 		
 		//$trvDoc = "non";//Test pour savoir si docid trouvé avec méthode 3 > lui donner la priorité car prénom + com complets plus fiables qu'une initiale seule > donc, ignorer méthode 4
 		if($trouve == 0 && strlen($firstName) > 2) {
 			$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=fullName_t:%22".urlencode($firstName)."%20".urlencode($lastName)."%22%20AND%20valid_s:(%22OLD%22%20OR%20%22INCOMING%22)&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s,fullName_s&sort=valid_s%20desc,docid%20asc,fullName_s%20asc";
 			$reqAut = str_replace(" ", "%20", $reqAut);
-			echo '<a target="_blank" href="'.$reqAut.'">URL requête auteurs HAL (3ème méthode)</a><br>';
+			echo '<a target="_blank" href="'.$reqAut.'">URL requête auteurs HAL (3ème méthode)</a>';
 			//echo $reqAut.'<br>';
 			$contAut = file_get_contents($reqAut);
 			$resAut = json_decode($contAut);
@@ -923,12 +932,13 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 					}
 				}
 			}
+			echo ' > '.$numFound.'<br>';
 		}
 		
 		if($trouve == 0 && $trvDoc == "non") {
 			$reqAut = "https://api.archives-ouvertes.fr/ref/author/?q=fullName_sci:(%22".urlencode($firstNameT)."%20".urlencode($lastNameT)."%22%20OR%20%22".urlencode(substr($firstNameT, 0, 1))."%20".urlencode($lastNameT)."%22)%20AND%20valid_s:(%22OLD%22%20OR%20%22INCOMING%22)&rows=1000&fl=idHal_i,idHal_s,docid,valid_s,emailDomain_s,fullName_s&sort=valid_s%20desc,docid%20asc,fullName_s%20asc";
 			$reqAut = str_replace(" ", "%20", $reqAut);
-			echo '<a target="_blank" href="'.$reqAut.'">URL requête auteurs HAL (4ème méthode)</a><br>';
+			echo '<a target="_blank" href="'.$reqAut.'">URL requête auteurs HAL (4ème méthode)</a>';
 			//echo $reqAut.'<br>';
 			$contAut = file_get_contents($reqAut);
 			$resAut = json_decode($contAut);
@@ -1000,6 +1010,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 					}
 				}
 			}
+			echo ' > '.$numFound.'<br>';
 		}
 		
 		$iAut++;
