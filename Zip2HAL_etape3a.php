@@ -321,7 +321,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 			if(strpos($code, ",") !== false) {$cptCode = 1;}else{$cptCode = 0;}
 			$tabCode = explode(",", $code);
 			foreach($tabCode as $test) {
-				$test = str_replace(" ", "+", trim($test));
+				$test = str_replace(array(" CNRS", " "), array("", "+"), trim($test));
 				$test = urlencode($test);
 				if(count($tabCode) > 2) {$max = count($tabCode) - 2;}else{$max = count($tabCode);}
 				if($cptCode <= $max && !in_array($test, $anepasTester)) {
