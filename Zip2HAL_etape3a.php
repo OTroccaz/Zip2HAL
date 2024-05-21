@@ -109,16 +109,30 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 				//Présence de rawAffs ?
 				$extRaw = '';
 				if (isset($rawArray[$iAff])) {
+					//Recherche du terme 'UMR, xxxx' ou 'umr, xxxx'
+					if (preg_match('/UMR, [0-9]{4}/', strtoupper($rawArray[$iAff]), $match)) {$tabRaw[$r] = str_ireplace('UMR, ', 'UMR ', $rawArray[$iAff]);}
 					$tabRaw = explode(",", $rawArray[$iAff]);
 					foreach ($tabRaw as $raw) {
-						//Recherche du terme 'UMR'
-						if (stripos($raw, 'UMR') !== false) {
-							$pos = strripos($raw, 'UMR');
-							$extRaw = trim(substr($raw, $pos, (strlen($raw) - $pos)));
-						}
+						//Recherche du terme 'UMR xxxx' ou 'umr xxxx'
+						if (preg_match('/UMR [0-9]{4}/', strtoupper($raw), $match)) {$nomAff[$iAff]['org'] .= ', '.$match[0];}
+						//Recherche du terme 'UMR CNRS xxxx' ou 'umr cnrs xxxx'
+						if (preg_match('/UMR CNRS [0-9]{4}/', strtoupper($raw), $match)) {$nomAff[$iAff]['org'] .= ', '.str_ireplace('CNRS ', '', $match[0]);}
+						//Recherche du terme 'UMRxxxx' ou 'umrxxxx'
+						if (preg_match('/UMR[0-9]{4}/', strtoupper($raw), $match)) {$nomAff[$iAff]['org'] .= ', '.$match[0];}
+						//Recherche du terme 'UPR xxxx' ou 'upr xxxx'
+						if (preg_match('/UPR [0-9]{4}/', strtoupper($raw), $match)) {$nomAff[$iAff]['org'] .= ', '.$match[0];}
+						//Recherche du terme 'UPRxxxx' ou 'uprxxxx'
+						if (preg_match('/UPR[0-9]{4}/', strtoupper($raw), $match)) {$nomAff[$iAff]['org'] .= ', '.$match[0];}
+						//Recherche du terme 'UR xxxx' ou 'ur xxxx'
+						if (preg_match('/UR [0-9]{4}/', strtoupper($raw), $match)) {$nomAff[$iAff]['org'] .= ', '.$match[0];}
+						//Recherche du terme 'URxxxx' ou 'urxxxx'
+						if (preg_match('/UR[0-9]{4}/', strtoupper($raw), $match)) {$nomAff[$iAff]['org'] .= ', '.$match[0];}
+						//Recherche du terme 'U xxxx' ou 'u xxxx'
+						if (preg_match('/U [0-9]{4}/', strtoupper($raw), $match)) {$nomAff[$iAff]['org'] .= ', '.$match[0];}
+						//Recherche du terme 'Uxxxx' ou 'uxxxx'
+						if (preg_match('/U[0-9]{4}/', strtoupper($raw), $match)) {$nomAff[$iAff]['org'] .= ', '.$match[0];}
 					}
 				}
-				if ($extRaw != '') {$nomAff[$iAff]['org'] .= ', '.$extRaw;}
 			}
 			if(isset($nomAff[$iAff]['pays']) && $nomAff[$iAff]['pays'] == "") {
 				if($elt->nodeName == "desc") {
@@ -317,11 +331,12 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		//4ème méthode, toujours sur le référentiel des structures mais avec une autre requête
 		if($trouve == 0) {
 			//Si présence d'au moins 3 virgules > test sur chacun des éléments sauf les 2 derniers qui correspondent souvent à la ville et au pays
-		//Mais, si pas de virgule ou nombre de virgules < 3, il faut naturellement conserver le dernier élément
+			//Mais, si pas de virgule ou nombre de virgules < 3, il faut naturellement conserver le dernier élément
+			$code = str_replace(' - ', ',', $code);
 			if(strpos($code, ",") !== false) {$cptCode = 1;}else{$cptCode = 0;}
 			$tabCode = explode(",", $code);
 			foreach($tabCode as $test) {
-				$test = str_replace(array(" CNRS", " "), array("", "+"), trim($test));
+				$test = str_ireplace(array(" CNRS", " INSERM", " INRAE", " INRIA", " "), array("", "", "", "", "+"), trim($test));
 				$test = urlencode($test);
 				if(count($tabCode) > 2) {$max = count($tabCode) - 2;}else{$max = count($tabCode);}
 				if($cptCode <= $max && !in_array($test, $anepasTester)) {
