@@ -110,7 +110,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 				$extRaw = '';
 				if (isset($rawArray[$iAff])) {
 					//Recherche du terme 'UMR, xxxx' ou 'umr, xxxx'
-					if (preg_match('/UMR, [0-9]{4}/', strtoupper($rawArray[$iAff]), $match)) {$tabRaw[$r] = str_ireplace('UMR, ', 'UMR ', $rawArray[$iAff]);}
+					if (preg_match('/UMR, [0-9]{4}/', strtoupper($rawArray[$iAff]), $match)) {$rawArray[$iAff] = str_ireplace('UMR, ', 'UMR ', $rawArray[$iAff]);}
 					$tabRaw = explode(",", $rawArray[$iAff]);
 					foreach ($tabRaw as $raw) {
 						//Recherche du terme 'UMR xxxx' ou 'umr xxxx'
@@ -162,7 +162,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		$type = $nomAff[$i]['type'];
 		$pays = $nomAff[$i]['pays'];
 		if($pays != "") {$special = "%20AND%20country_s:%22".strtolower($pays)."%22";}else{$special = "";}
-		if(strtolower($pays) != "fr") {$special .= "%20%20AND%20type_s:(institution%20OR%20regroupinstitution%20OR%20regrouplaboratory)";}
+		//if(strtolower($pays) != "fr") {$special .= "%20%20AND%20type_s:(institution%20OR%20regroupinstitution%20OR%20regrouplaboratory)";}
 		$trouve = 0;//Test pour savoir si la 1ère méthode a permis de trouver un id de structure
 		//Si présence d'un terme entre crochets, il faut isoler ce terme et l'ajouter comme recherche prioritaire > ajout au début du tableau
 		$crochet = "";
@@ -259,7 +259,8 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 				if($cptCode <= $max && !in_array($test, $anepasTester)) {
 					$typeSpe = "";
 					if($special != "") {//Dans HAL, on signale le plus souvent des institutions étrangères, pas des labos
-						if(strpos($special, "fr") === false) {$typeSpe = "%20AND%20type_s:(institution%20OR%20regroupinstitution%20OR%20regrouplaboratory)";}else{$typeSpe = "%20AND%20type_s:".urlencode($type);}
+						//if(strpos($special, "fr") === false) {$typeSpe = "%20AND%20type_s:(institution%20OR%20regroupinstitution%20OR%20regrouplaboratory)";}else{$typeSpe = "%20AND%20type_s:".urlencode($type);}
+						$typeSpe = "%20AND%20type_s:".urlencode($type);
 					}
 					$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:".$test."%20OR%20code_t:".$test."%20OR%20acronym_t:".$test.")".$typeSpe."%20AND%20valid_s:(VALID%20OR%20OLD)".$special."&fl=docid,valid_s,name_s,type_s,country_s,acronym_s&sort=valid_s desc,docid asc";
 					$reqAff = str_replace(" ", "%20", $reqAff);
