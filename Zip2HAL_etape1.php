@@ -37,6 +37,13 @@ if($numFound == 0 && $numFoundC == 0) {
 		$txtDbl = "";
 		$typid = " <strong>et les types sont identiques</strong>";
 		$nocol = " mais <strong>pas dans la collection</strong> ";
+		//La collection est-ele présente ?
+		foreach($results->response->docs[0]->collCode_s as $coll) {
+			if ($team == $coll) {
+				$nocol = " et <strong> dans la collection</strong> ";
+				break;
+			}
+		}
 		
 		echo '<br>';
 		echo $numFound. ' notice(s) examinée(s)<br>';
