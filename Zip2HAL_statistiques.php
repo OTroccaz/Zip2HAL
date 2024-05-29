@@ -92,21 +92,23 @@ Statistiques Zip2HAL
 
 <?php
 foreach($ACTIONS_LISTE as $act) {
-	echo '<tr>';
-	echo '<td>'.date("d/m/Y", $act["quand"]).'</th>';
-	echo '<td>'.$act["team"].'</th>';
-	echo '<td>'.$act["valeur"].'</th>';
-	echo '<td>'.$act["titre"].'</th>';
-	echo '<td>'.$act["type"].'</th>';
-	echo '<td>'.$act["annee"].'</th>';
-	echo '<td>'.$act["login"].'</th>';
-	echo '<td>'.$act[$cstID].'</th>';
-	if($act[$cstID] != "") {
-		echo '<td><a target="_blank" href="'.$act[$cstID].'">Lien HAL</a></th>';
-	}else{
-		echo '<td>&nbsp;</th>';
+	if($act["login"] == "jonchere") {
+		echo '<tr>';
+		echo '<td>'.date("d/m/Y", $act["quand"]).'</th>';
+		echo '<td>'.$act["team"].'</th>';
+		echo '<td>'.$act["valeur"].'</th>';
+		echo '<td>'.$act["titre"].'</th>';
+		echo '<td>'.$act["type"].'</th>';
+		echo '<td>'.$act["annee"].'</th>';
+		echo '<td>'.$act["login"].'</th>';
+		echo '<td>'.$act[$cstID].'</th>';
+		if($act[$cstID] != "") {
+			echo '<td><a target="_blank" href="'.$act[$cstID].'">Lien HAL</a></th>';
+		}else{
+			echo '<td>&nbsp;</th>';
+		}
+		echo '</tr>';
 	}
-	echo '</tr>';
 }
 ?>
 
