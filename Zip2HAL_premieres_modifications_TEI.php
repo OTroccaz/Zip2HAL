@@ -289,10 +289,10 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 					$affPays = $ou[1];
 				}
 				//Début et fin de la conférence au format aaaa-mm-jj
-				if (isset($resCR->message->event->start->{"date-parts"}[0][0])) {$startDate .= $resCR->message->event->start->{"date-parts"}[0][0];}
+				if (isset($resCR->message->event->start->{"date-parts"}[0][0])) {$startDate = $resCR->message->event->start->{"date-parts"}[0][0];}
 				if (isset($resCR->message->event->start->{"date-parts"}[0][1])) {$startDate .= '-'.substr('0'.$resCR->message->event->start->{"date-parts"}[0][1], -2);}
 				if (isset($resCR->message->event->start->{"date-parts"}[0][2])) {$startDate .= '-'.substr('0'.$resCR->message->event->start->{"date-parts"}[0][2], -2);}
-				if (isset($resCR->message->event->end->{"date-parts"}[0][0])) {$endDate .= $resCR->message->event->end->{"date-parts"}[0][0];}
+				if (isset($resCR->message->event->end->{"date-parts"}[0][0])) {$endDate = $resCR->message->event->end->{"date-parts"}[0][0];}
 				if (isset($resCR->message->event->end->{"date-parts"}[0][1])) {$endDate .= '-'.substr('0'.$resCR->message->event->end->{"date-parts"}[0][1], -2);}
 				if (isset($resCR->message->event->end->{"date-parts"}[0][2])) {$endDate .= '-'.substr('0'.$resCR->message->event->end->{"date-parts"}[0][2], -2);}
 			}

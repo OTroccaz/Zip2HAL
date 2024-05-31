@@ -530,7 +530,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	
 	//Métadonnées > Financement ANR
 	echo 'Indiquez le ou les projets ANR liés à ce travail :<br>';
-	for ($iANR=1; $iANR < 4; $iANR++) {
+	for ($iANR=1; $iANR < 6; $iANR++) {
 		echo '<input type="text" id="ANR'.$iANR.'-'.$idFic.'" name="ANR'.$iANR.'-'.$idFic.'" class="autoANR form-control" style="height: 18px; width: 600px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'ANR\', valeur: $(this).val()});">';
 	}
 	echo '<br>';
