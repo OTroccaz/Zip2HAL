@@ -172,9 +172,10 @@
 																				<br><br>
 																				
 																				<form enctype="multipart/form-data" action="Zip2HAL_TEI_OverHAL_upload.php" method="post" accept-charset="UTF-8">
+																				<input type="hidden" name="MAX_FILE_SIZE" value="2097152"><!-- 2 Mo max > 1024 * (1024 * 2)) > 2097152 octets -->
     
 																						<div class="form-group row mb-1">
-																								 <label for="TEI_OverHAL" class="col-12 col-md-4 col-form-label font-weight-bold pt-0">Fichier source des extractions TEI OverHAL (zip) :</label>
+																								 <label for="TEI_OverHAL" class="col-12 col-md-4 col-form-label font-weight-bold pt-0">Fichier source des extractions TEI OverHAL (zip, 2 Mo max) :</label>
 																								 <div class="col-12 col-md-4">
 																										<input class="form-control" id="TEI_OverHAL" name="TEI_OverHAL" type="file">
 																								</div>
