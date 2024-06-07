@@ -411,7 +411,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 					if($elt->nodeValue == 1) {$inviConf = "Yes";}
 				}
 				//Proceedings O/N
-				//Par défaut, les proceedings sont renseignés comme présents
+				//Par défaut, les proceedings sont renseignés comme absents
 				$txtPO = $cstCH;
 				$txtPN = "";
 				if($elt->hasAttribute("type") && $elt->getAttribute("type") == "proceedings") {

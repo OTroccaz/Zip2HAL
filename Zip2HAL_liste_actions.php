@@ -235,7 +235,7 @@ if ($action == "typedoc") {
 		insertNode($xml, "nonodevalue", $cstMO, "idno", 0, "idno", "type", "isbn", "", "", "iB", $cstTN, "");
 		$xml->save($nomfic);
 		//COMM ou POSTER > Ajouter proceedings de la conférence
-		insertNode($xml, "nonodevalue", $cstNS, "", 0, "note", "type", "proceedings", "n", "1", "iB", $cstTN, "");
+		insertNode($xml, "nonodevalue", $cstNS, "", 0, "note", "type", "proceedings", "n", "0", "iB", $cstTN, "");
 		$xml->save($nomfic);
 		//COMM ou POSTER > Ajouter éditeur scientifique
 		insertNode($xml, "nonodevalue", $cstMO, $cstME, 0, $cstED, "", "", "", "", "iA", $cstTN, "");

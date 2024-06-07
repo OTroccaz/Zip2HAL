@@ -241,7 +241,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	
 	//Si typedoc COMM ou POSTER
 	if($typDoc == "COMM" || $typDoc == "POSTER") {
-		//Renseigner les proceedings à oui par défaut s'ils ne sont pas renseignés
+		//Renseigner les proceedings à non par défaut s'ils ne sont pas renseignés
 		$presProc = "non";
 		$elts = $xml->getElementsByTagName("note");
 		foreach($elts as $elt) {
@@ -250,7 +250,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 			}
 		}
 		if($presProc == "non") {
-			insertNode($xml, "Yes", $cstNS, "", 0, "note", "type", "proceedings", "n", "1", "iB", $cstTN, "");
+			insertNode($xml, "Yes", $cstNS, "", 0, "note", "type", "proceedings", "n", "0", "iB", $cstTN, "");
 			$xml->save($nomfic);
 		}
 		
