@@ -38,7 +38,7 @@ function affil($reqAff, &$return_arr) {
 //Autocomplete affiliations
 if (isset($_GET['term'])){
 	$term = wd_remove_accents(str_replace(' ', '%20', $_GET['term']));
-	$basReq = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:%22".$term."%22%20OR%20name_t:(".$term.")%20OR%20code_s:%22".$term."%22%20OR%20acronym_t:%22".$term."%22%20OR%20structAcronym_sci:%22".$term."%22%20OR%20code_t:%22".$term."%22)";
+	$basReq = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:%22".$term."%22%20OR%20name_t:(".$term.")%20OR%20code_s:%22".$term."%22%20OR%20acronym_t:%22".$term."%22%20OR%20acronym_sci:%22".$term."%22%20OR%20code_t:%22".$term."%22)";
 	$return_arr = array();
 	
 	//VALID
