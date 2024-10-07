@@ -153,6 +153,44 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 					}
 				}
 			}
+			
+			//Si source OpenAlex, présence d'un DOI et pas de mail trouvé, recherche d'un éventuel mail via 'raw_affiliation_string' d'OpenAlex
+			if ($doiTEI != '' && stripos($nomfic, 'openalex') !== false && $adrAut[$iAut] == '') {
+				$urlOA = 'https://api.openalex.org/works?filter=doi:'.$doiTEI;
+				$ch = curl_init();
+				curl_setopt($ch, CURLOPT_URL, $urlOA);
+				curl_setopt($ch, CURLOPT_HEADER, 0);
+				curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+				curl_setopt($ch, CURLOPT_USERAGENT, 'SCD (https://halur1.univ-rennes1.fr)');
+				curl_setopt($ch, CURLOPT_USERAGENT, 'PROXY (http://siproxy.univ-rennes1.fr)');
+				if (isset ($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on")	{
+					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+					curl_setopt($ch, CURLOPT_CAINFO, "cacert.pem");
+				}else{
+					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+				}
+				$contOA = curl_exec($ch);
+				curl_close($ch);
+				$resOA = json_decode($contOA);
+				
+				$numFound = 0;
+				if (isset($resOA->meta->count)) {$numFound = $resOA->meta->count;}
+				if ($numFound != 0) {
+					$j = 0;
+					if (isset($resOA->results[0]->authorships[$j])) {
+						while (isset($resOA->results[0]->authorships[$j])) {
+							if ($preAut[$iAut].' '.$nomAut[$iAut] == $resOA->results[0]->authorships[$j]->author->display_name) {
+								$test = $resOA->results[0]->authorships[$j]->raw_affiliation_strings[0];
+								if (strpos($test, '@') !== false) {//Adresse mail présente
+									preg_match("![a-z0-9._-]{1,}@[a-z0-9._-]{1,}[.]{1}[0-9a-z]{1,3}!i", $test, $mail);
+									$adrAut[$iAut] = $mail[0];
+								}
+							}
+							$j++;
+						}
+					}
+				}
+			}
 		}
 		$rawAut[$iAut] = (substr($rawAut[$iAut], -3) == '~|~') ? substr($rawAut[$iAut], 0, -3) : $rawAut[$iAut];
 		$iAut++;
