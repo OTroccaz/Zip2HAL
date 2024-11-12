@@ -52,7 +52,11 @@ echo '<tr class=\'text-center\'>';
 
 //Doublon ?
 if(isset($typDbl) && $typDbl != "") {
-	echo '<td><a target=\'_blank\' href=\'https://hal.science/'.$idTEI.'\'><img alt=\'HAL\' src=\'./img/HAL.jpg\'></a></td>';
+	if ($crac == '') {
+		echo '<td><a target=\'_blank\' href=\'https://hal.science/'.$idTEI.'\'><img alt=\'HAL\' src=\'./img/HAL.jpg\'></a></td>';
+	}else{
+		echo '<td><a target=\'_blank\' href=\''.$crac.'\'><img alt=\'HAL\' src=\'./img/HAL.jpg\'></a></td>';
+	}
 }
 
 //Supprimer le TEI

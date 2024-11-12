@@ -21,6 +21,7 @@ echo '                <div class="ribbon-content">';
 echo '<a target="_blank" href="'.$reqAPI.'">URL requête API HAL</a>';
 
 $dbl = 0;
+$crac = '';
 
 if($numFound == 0 && $numFoundC == 0) {
 	echo ' - ';
@@ -331,6 +332,7 @@ if($numFound == 0 && $numFoundC == 0) {
 		}
 		if($dbl == 0) {echo 'Aucune notice trouvée dans HAL CRAC, <strong>donc, pas de doublon</strong>';}//Notice non trouvée > pas de doublon
 		if($dbl >= 1) {
+			$crac = $reqAPIC;
 			echo 'La notice est déjà présente dans HAL CRAC'.$txtDblC;
 		}
 
