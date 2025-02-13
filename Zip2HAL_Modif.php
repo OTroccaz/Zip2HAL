@@ -84,7 +84,7 @@ $urlStamp = "https://api.archives-ouvertes.fr/";
 
 $nomfic = "./XML/".$idNomfic.".xml";
 $nomficFin = "./XML/".$idNomfic."-Fin.xml";
-copy($nomfic, $nomficFin);
+//copy($nomfic, $nomficFin);
   
 //suppression éventuel noeud <listBibl type="references">
 $xml = new DOMDocument( "1.0", "UTF-8" );
@@ -101,7 +101,7 @@ foreach($elts as $elt) {
     if ($quoi == "references") {
       $parent = $elt->parentNode; 
       $newXml = $parent->removeChild($elt);
-      $xml->save($nomficFin);
+      $xml->save($nomfic);
     }
   }
 }
@@ -128,7 +128,7 @@ foreach($elts as $elt) {
 foreach($eltASup as $elt) {
   $elt->parentNode->removeChild($elt);
 }
-$xml->save($nomficFin);
+$xml->save($nomfic);
 
 $xmlContenu = $xml->saveXML();//Nécessaire pour le mime-type soit bien considéré comme du text/xml
 
