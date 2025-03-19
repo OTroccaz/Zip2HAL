@@ -1001,7 +1001,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	if($maj == "oui") {
 		$idNomfic = str_replace(array(".xml", "./XML/"), "", $nomfic);
 		$lienMAJ = "./Zip2HAL_Modif.php?action=MAJ&Id=".$idNomfic."&portail=".$racine."&partDep=".$partDep;
-		//$lienMAJ = "https://ecobio.univ-rennes1.fr";//Pour test
+		//$lienMAJ = "https://ecobio.univ-rennes.fr";//Pour test
 		include "./Zip2HAL_actions.php";
 		$titreNotS = str_replace("'", "\'", $titreNot);
 		$titreNotS = str_replace('"', '\"', $titreNotS);

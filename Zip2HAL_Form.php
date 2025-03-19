@@ -117,7 +117,7 @@ $form = "Zip2HAL_Modif.php?action=".$action."&amp;Id=".$id;
                                         </p>
 																				
 																				<p class="mb-4">
-                                            Contacts : <a target='_blank' rel='noopener noreferrer' href="https://openaccess.univ-rennes1.fr/interlocuteurs/laurent-jonchere">Laurent Jonchère</a> (Université de Rennes 1) / <a target='_blank' rel='noopener noreferrer' href="https://creaah.cnrs.fr/team/troccaz-olivier/">Olivier Troccaz</a> (CNRS CReAAH/OSUR).
+                                            Contacts : <a target='_blank' rel='noopener noreferrer' href="https://scienceouverte.univ-rennes.fr/interlocuteurs/laurent-jonchere">Laurent Jonchère</a> (Université de Rennes 1) / <a target='_blank' rel='noopener noreferrer' href="https://creaah.cnrs.fr/team/troccaz-olivier/">Olivier Troccaz</a> (CNRS CReAAH/OSUR).
                                         </p>
 
                                     </div> <!-- end card-body-->
@@ -132,7 +132,7 @@ $form = "Zip2HAL_Modif.php?action=".$action."&amp;Id=".$id;
 																				<p class=" mb-2">
 																						<ul class="list-group">
 																								<li class="list-group-item">
-																										<a target="_blank" rel="noopener noreferrer" href="https://halur1.univ-rennes1.fr/Zip2HAL_Tutoriel.pdf"><i class="mdi mdi-file-pdf-box-outline mr-1"></i> Tutoriel</a>
+																										<a target="_blank" rel="noopener noreferrer" href="./Zip2HAL_Tutoriel.pdf"><i class="mdi mdi-file-pdf-box-outline mr-1"></i> Tutoriel</a>
 																								</li>
                                             </ul> 
                                         </p>

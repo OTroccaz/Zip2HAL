@@ -68,7 +68,7 @@
                                     <div class="page-title-right">
                                         <nav aria-label="breadcrumb">
                                             <ol class="breadcrumb bg-light-lighten p-2">
-																								<li><a href="https://halur1.univ-rennes1.fr/Zip2HAL.php?logout="><i class="uil-power"></i> Déconnexion CAS CCSD</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
+																								<li><a href="https://halur.univ-rennes.fr/Zip2HAL.php?logout="><i class="uil-power"></i> Déconnexion CAS CCSD</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
                                                 <li class="breadcrumb-item"><a href="index.php"><i class="uil-home-alt"></i> Accueil HALUR</a></li>
                                                 <li class="breadcrumb-item active" aria-current="page">Zip2<span class="font-weight-bold">HAL</span></li>
                                             </ol>
@@ -116,7 +116,7 @@
                                         <div class=" mb-2">
 																						<ul class="list-group">
 																								<li class="list-group-item">
-																										<a target="_blank" rel="noopener noreferrer" href="https://halur.univ-rennes.fr/OverHAL-Zip2HAL.pdf"><i class="mdi mdi-file-pdf-box-outline mr-1"></i> Importer des références par lots dans HAL</a>
+																										<a target="_blank" rel="noopener noreferrer" href="./OverHAL-Zip2HAL.pdf"><i class="mdi mdi-file-pdf-box-outline mr-1"></i> Importer des références par lots dans HAL</a>
 																								</li>
                                             </ul> 
                                         </div>

@@ -88,11 +88,11 @@
 																				Le responsable de la rédaction est Laurent Jonchère.<br>
 																				<br>
 																						Téléphone : +33 223233478<br>
-																						Adresse courriel : laurent.jonchere[at]univ-rennes1.fr<br>
+																						Adresse courriel : laurent.jonchere[at]univ-rennes.fr<br>
 
 																				<br><a name='hebergement'><h2>Hébergement</h2>
 
-																				L'hébergement est assuré par l'Université de Rennes 1, dont le siège est :<br>
+																				L'hébergement est assuré par l'Université de Rennes, dont le siège est :<br>
 																				Université de Rennes 1<br>
 																				2, rue du Thabor<br>
 																				CS 46510<br>
