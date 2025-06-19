@@ -612,17 +612,20 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	}
 	echo 'Mots-clés :';
 	echo '<a style="cursor:pointer;" onclick="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'supprimerTousMC\', valeur: 0, langue: \''.$lang.'\'}); supprimerTousMC('.$idFic.', '.$ind.');"><i class=\'mdi mdi-trash-can-outline mdi-18px text-primary\'></i></a>';
-	$keys = $xml->getElementsByTagName("keywords");
-	$ind = 0;
-	foreach($keys as $key) {
-		foreach($key->childNodes as $elt) {
-			if($elt->hasAttribute($cstXL) && ($elt->getAttribute($cstXL) == $languages[$lang] || $elt->getAttribute($cstXL) == "")) {
-				echo '<input type="text" id="mots-cles'.$ind.'-'.$idFic.'" name="mots-cles'.$ind.'-'.$idFic.'" value="'.str_replace("'", "\'", $elt->nodeValue).'" class="form-control" style="height: 18px; width: 600px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'mots-cles\', pos: '.$ind.', valeur: $(this).val(), langue: \''.$lang.'\'});">';
+	//Ne pas récupérer les mots-clés si la source est OpenAlex
+	if (stripos($nomfic, 'openalex') === false) {
+		$keys = $xml->getElementsByTagName("keywords");
+		$ind = 0;
+		foreach($keys as $key) {
+			foreach($key->childNodes as $elt) {
+				if($elt->hasAttribute($cstXL) && ($elt->getAttribute($cstXL) == $languages[$lang] || $elt->getAttribute($cstXL) == "")) {
+					echo '<input type="text" id="mots-cles'.$ind.'-'.$idFic.'" name="mots-cles'.$ind.'-'.$idFic.'" value="'.str_replace("'", "\'", $elt->nodeValue).'" class="form-control" style="height: 18px; width: 600px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'mots-cles\', pos: '.$ind.', valeur: $(this).val(), langue: \''.$lang.'\'});">';
+				}
+				$ind++;
 			}
-			$ind++;
 		}
+		$nbMC = $ind - 1;
 	}
-	$nbMC = $ind - 1;
 	
 	echo '<br>';
 	//Métadonnées > Mots-clés > Ajout par liste de mots-clés séparés par des points-virgules
