@@ -214,7 +214,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 				$test = urlencode(str_replace(" ", "+", trim($test)));
 				if(count($tabCode) > 2) {$max = count($tabCode) - 2;}else{$max = count($tabCode);}
 				if($cptCode <= $max && !in_array($test, $anepasTester)) {						
-					$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=acronym_t:".$test."%20OR%20acronym_sci:".$test."%20AND%20valid_s:(VALID%20OR%20OLD)".$special."&fl=docid,valid_s,name_s,type_s,country_s,acronym_s&sort=valid_s%20desc,docid%20asc";
+					$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=acronym_t:".$test."%20OR%20structAcronym_sci:".$test."%20AND%20valid_s:(VALID%20OR%20OLD)".$special."&fl=docid,valid_s,name_s,type_s,country_s,acronym_s&sort=valid_s%20desc,docid%20asc";
 					$reqAff = str_replace(" ", "%20", $reqAff);
 					echo $cstHR.$reqAff.'">URL requête affiliations (1ère méthode) HAL</a>';
 					//echo $reqAff.'<br>';
@@ -341,8 +341,8 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 				$test = urlencode($test);
 				if(count($tabCode) > 2) {$max = count($tabCode) - 2;}else{$max = count($tabCode);}
 				if($cptCode <= $max && !in_array($test, $anepasTester)) {
-					//$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:%22".$test."%22%20OR%20name_t:(".$test.")%20OR%20code_t:%22".$test."%22%20OR%20acronym_t:%22".$test."%22%20OR%20acronym_sci:%22".$test."%22)%20AND%20type_s:".$type."%20AND%20valid_s:(VALID%20OR%20OLD)&fl=docid,valid_s,name_s,type_s&sort=valid_s%20desc,docid%20asc";
-					$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:%22".$test."%22%20OR%20name_t:(".$test.")%20OR%20code_t:%22".$test."%22%20OR%20acronym_t:%22".$test."%22%20OR%20acronym_sci:%22".$test."%22)%20AND%20valid_s:(VALID%20OR%20OLD)".$special."&fl=docid,valid_s,name_s,type_s,country_s,acronym_s&sort=valid_s%20desc,docid%20asc";
+					//$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:%22".$test."%22%20OR%20name_t:(".$test.")%20OR%20code_t:%22".$test."%22%20OR%20acronym_t:%22".$test."%22%20OR%20structAcronym_sci:%22".$test."%22)%20AND%20type_s:".$type."%20AND%20valid_s:(VALID%20OR%20OLD)&fl=docid,valid_s,name_s,type_s&sort=valid_s%20desc,docid%20asc";
+					$reqAff = "https://api.archives-ouvertes.fr/ref/structure/?q=(name_t:%22".$test."%22%20OR%20name_t:(".$test.")%20OR%20code_t:%22".$test."%22%20OR%20acronym_t:%22".$test."%22%20OR%20structAcronym_sci:%22".$test."%22)%20AND%20valid_s:(VALID%20OR%20OLD)".$special."&fl=docid,valid_s,name_s,type_s,country_s,acronym_s&sort=valid_s%20desc,docid%20asc";
 					$reqAff = str_replace(" ", "%20", $reqAff);
 					echo $cstHR.$reqAff.'">URL requête affiliations (4ème méthode) HAL</a>';
 					//echo $reqAff.'<br>';
@@ -388,7 +388,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 						$firstName = $halAut[$j]['firstName'];
 						$lastName = $halAut[$j]['lastName'];
 						$facetSep = $lastName.' '.$firstName;
-						$reqAff = "https://api.archives-ouvertes.fr/search/index/?q=authLastName_sci:%22".urlencode($lastName)."%22%20AND%20authFirstName_sci:%22".urlencode($firstName)."%22&fq=-labStructValid_s:INCOMING%20OR%20(acronym_sci:%22".urlencode($code)."%22%20OR%20structName_sci:%22".urlencode($code)."%22%20OR%20structCode_sci:%22".urlencode($code)."%22)&fl=structPrimaryHasAlphaAuthIdHal_fs,authId_i,authLastName_s,authFirstName_s&sort=abs(sub(producedDateY_i,".$annee."))%20asc";
+						$reqAff = "https://api.archives-ouvertes.fr/search/index/?q=authLastName_sci:%22".urlencode($lastName)."%22%20AND%20authFirstName_sci:%22".urlencode($firstName)."%22&fq=-labStructValid_s:INCOMING%20OR%20(structAcronym_sci:%22".urlencode($code)."%22%20OR%20structName_sci:%22".urlencode($code)."%22%20OR%20structCode_sci:%22".urlencode($code)."%22)&fl=structPrimaryHasAlphaAuthIdHal_fs,authId_i,authLastName_s,authFirstName_s&sort=abs(sub(producedDateY_i,".$annee."))%20asc";
 						$reqAff = str_replace(" ", "%20", $reqAff);
 						echo $cstHR.$reqAff.'">URL requête affiliations (5ème méthode) HAL</a>';
 						//echo $reqAff.'<br>';
