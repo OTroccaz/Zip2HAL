@@ -694,7 +694,7 @@ echo '<td>';
 	if(isset($doiTEI) && $doiTEI != "") {echo '<br><a target=\'_blank\' rel=\'noopener noreferrer\' href=\'https://api.crossref.org/v1/works/http:/dx.doi.org/'.$doiTEI.'\'><img alt=\'CrossRef\' src=\'./img/CR.jpg\'></a>&nbsp;';}
 	
 	//API OpenAlex
-	if(isset($doiTEI) && $doiTEI != "") {echo '<a target=\'_blank\' rel=\'noopener noreferrer\' href=\'https://api.openalex.org/works?filter=doi:'.$doiTEI.'&mailto=laurent.jonchere@univ-rennes.fr\'><strong>API</strong></a>&nbsp;';}
+	if(isset($doiTEI) && $doiTEI != "") {echo '<br><a target=\'_blank\' rel=\'noopener noreferrer\' href=\'https://api.openalex.org/works?filter=doi:'.$doiTEI.'&mailto=laurent.jonchere@univ-rennes.fr\'><strong>API</strong></a>&nbsp;';}
 echo '</td>';
 
 if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublon de type TYP > inutile d'afficher les affiliations, la validation du TEI et la possibilité d'import dans HAL
