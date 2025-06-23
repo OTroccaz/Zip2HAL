@@ -613,6 +613,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	echo 'Mots-clés :';
 	echo '<a style="cursor:pointer;" onclick="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'supprimerTousMC\', valeur: 0, langue: \''.$lang.'\'}); supprimerTousMC('.$idFic.', '.$ind.');"><i class=\'mdi mdi-trash-can-outline mdi-18px text-primary\'></i></a>';
 	//Ne pas récupérer les mots-clés si la source est OpenAlex
+	$nbMC = 0;
 	if (stripos($nomfic, 'openalex') === false) {
 		$keys = $xml->getElementsByTagName("keywords");
 		$ind = 0;
