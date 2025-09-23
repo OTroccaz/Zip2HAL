@@ -197,14 +197,14 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	if($target != "") {echo '&nbsp;-&nbsp;<a target="_blank" href="'.$target.'">Lien</a></p>';}
 	//Subtype
 	echo '<p class="form-inline">Type de dépôt :&nbsp;<select id="subtype-'.$idFic.'" name="subtype-'.$idFic.'" class="form-control" style="height: 18px; padding: 0px; width:150px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', nomfic : \''.$nomfic.'\', action: \'notice\', valeur: $(\'#notice-'.$idFic.'\').val(), valeur2: $(this).val()});">';
-	if($elt->getAttribute($cstSU) == "greenPublisher" || null !== $elt->getAttribute($cstSU)) {$txt = $cstSE;}else{$txt = "";}
-	echo '<option '.$txt.' value="greenPublisher">greenPublisher</option>';
+	if($elt->getAttribute($cstSU) == "noaction" || null !== $elt->getAttribute($cstSU)) {$txt = $cstSE;}else{$txt = "";}
+	echo '<option '.$txt.' value="noaction">noaction</option>';
 	if($elt->getAttribute($cstSU) == "author") {$txt = $cstSE;}else{$txt = "";}
 	echo '<option '.$txt.' value="author">author</option>';
 	if($elt->getAttribute($cstSU) == "publisherPaid") {$txt = $cstSE;}else{$txt = "";}
 	echo '<option '.$txt.' value="publisherPaid">publisherPaid</option>';
-	if($elt->getAttribute($cstSU) == "noaction") {$txt = $cstSE;}else{$txt = "";}
-	echo '<option '.$txt.' value="noaction">noaction</option>';
+	if($elt->getAttribute($cstSU) == "greenPublisher") {$txt = $cstSE;}else{$txt = "";}
+	echo '<option '.$txt.' value="greenPublisher">greenPublisher</option>';
 	echo '</select></p>';
 	//Licence
 	$licence = "";
