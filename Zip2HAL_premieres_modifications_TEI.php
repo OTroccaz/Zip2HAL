@@ -148,7 +148,6 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 
 		foreach($keys as $key) {
 			foreach($key->childNodes as $elt) {
-				$tabKey[] = $elt->nodeValue;
 				$domArray[] = $elt;
 			}
 		}
@@ -161,6 +160,11 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	
 	//Ajout de 3 mots-clés vides
 	
+	if (null !== $xml->getElementsByTagName($cstKE)) {
+		insertNode($xml, "nonodevalue", "textClass", "classCode", 0, "keywords", "scheme", "author", "", "", "iB", "amont", "");
+		$xml->save($nomfic);
+	}
+	
 	$keys = $xml->getElementsByTagName($cstKE);
 	for($mc = 0; $mc < 3; $mc++) {
 		$bimoc = $xml->createElement("term");
@@ -170,7 +174,6 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		$keys->item(0)->appendChild($bimoc);																		
 		$xml->save($nomfic);
 	}
-	
 	
 	//Si pas de résumé, on va essayer d'en trouver un avec CrossRef
 	$resume = "";
