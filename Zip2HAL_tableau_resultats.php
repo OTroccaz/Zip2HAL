@@ -297,6 +297,8 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 			echo '<p class="form-inline">Audience* :&nbsp;';
 			echo '<select id="audience-'.$idFic.'" name="audience" class="form-control" style="height: 18px; padding: 0px; width:150px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'audience\', valeur: $(this).val()});">';
 			$valAud = $elt->getAttribute("n");
+			//Si COMM ou POSTER, audience = "internationale" si la langue = "English" 
+			if (($typDoc == 'COMM' || $typDoc == 'POSTER') && $lang == 'English') {$valAud = 2;}
 			if($valAud == "") {$txt = $cstSE;}else{$txt = "";}
 			echo '<option '.$txt.' value="">Inconnue</option>';
 			if($valAud == 2) {$txt = $cstSE; $testMetaA = "ok";}else{$txt = "";}
