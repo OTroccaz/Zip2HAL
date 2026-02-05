@@ -1211,6 +1211,7 @@ if ($action == "supprimerIdHAL") {
 	deleteNode($xml, $cstAU, "idno", $i, "type", $cstID, $cstNT, $cstSG, $cstEX);
 	deleteNode($xml, $cstAU, "idno", $i, "type", $cstID, $cstNT, $cstNU, $cstEX);
 	deleteNode($xml, $cstAU, "idno", $i, "type", "halauthorid", "", "", $cstEX);
+	deleteNode($xml, $cstAU, "idno", $i, "type", "ORCID", "", "", $cstEX);
 	$xml->save($nomfic);
 }
 
