@@ -214,6 +214,7 @@ try {
     //exit ("<b>OK, modification effectuée :</b> id=>$id,passwd=>$pss,link=> $link ou $linkpreprod \n");
     //exit ("<b>OK, modification effectuée :</b> id=>$id,passwd=>$pss,link=> $link \n");
 		
+		/*
 		//Récupération du halid pour stockage dans le fichier de statistiques
 		$halId = str_replace(array("https://hal.archives-ouvertes.fr/", "v1"), "", $linkAttribute['href']);
 		$Fnm = "./Zip2HAL_actions.php";
@@ -254,6 +255,7 @@ try {
 		fwrite($inF,$chaine);
 		fclose($inF);
 		array_multisort($ACTIONS_LISTE, SORT_DESC);
+		*/
 		
 		header("Location: ".$linkAttribute['href']);
   } else {
@@ -267,7 +269,7 @@ try {
   return ("ERREUR : Erreur Web service  : ".$e->getMessage()."\n");
 }
 
-curl_close($ch);
+//curl_close($ch);
 
 ?>
 </body>

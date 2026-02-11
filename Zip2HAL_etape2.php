@@ -169,7 +169,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 				}
 				$contOA = curl_exec($ch);
-				curl_close($ch);
+				//curl_close($ch);
 				$resOA = json_decode($contOA);
 				
 				$numFound = 0;
@@ -179,10 +179,12 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 					if (isset($resOA->results[0]->authorships[$j])) {
 						while (isset($resOA->results[0]->authorships[$j])) {
 							if ($preAut[$iAut].' '.$nomAut[$iAut] == $resOA->results[0]->authorships[$j]->author->display_name) {
-								$test = $resOA->results[0]->authorships[$j]->raw_affiliation_strings[0];
-								if (strpos($test, '@') !== false) {//Adresse mail présente
-									preg_match("![a-z0-9._-]{1,}@[a-z0-9._-]{1,}[.]{1}[0-9a-z]{1,3}!i", $test, $mail);
-									$adrAut[$iAut] = $mail[0];
+								if (isset($resOA->results[0]->authorships[$j]->raw_affiliation_strings[0])) {
+									$test = $resOA->results[0]->authorships[$j]->raw_affiliation_strings[0];
+									if (strpos($test, '@') !== false) {//Adresse mail présente
+										preg_match("![a-z0-9._-]{1,}@[a-z0-9._-]{1,}[.]{1}[0-9a-z]{1,3}!i", $test, $mail);
+										$adrAut[$iAut] = $mail[0];
+									}
 								}
 							}
 							$j++;
