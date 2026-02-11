@@ -13,6 +13,9 @@ header('Content-type: text/html; charset=UTF-8');
 ?>
 
 <?php
+//Temporisation pour l'accès au fichier Zip2HAL_actions.php également simultanément modifié par Zip2HAL_liste_actions.php
+sleep(3);
+
 include "./Zip2HAL_constantes.php";
 
 $passw = 'password';
@@ -214,7 +217,6 @@ try {
     //exit ("<b>OK, modification effectuée :</b> id=>$id,passwd=>$pss,link=> $link ou $linkpreprod \n");
     //exit ("<b>OK, modification effectuée :</b> id=>$id,passwd=>$pss,link=> $link \n");
 		
-		/*
 		//Récupération du halid pour stockage dans le fichier de statistiques
 		$halId = str_replace(array("https://hal.archives-ouvertes.fr/", "v1"), "", $linkAttribute['href']);
 		$Fnm = "./Zip2HAL_actions.php";
@@ -255,7 +257,6 @@ try {
 		fwrite($inF,$chaine);
 		fclose($inF);
 		array_multisort($ACTIONS_LISTE, SORT_DESC);
-		*/
 		
 		header("Location: ".$linkAttribute['href']);
   } else {
