@@ -601,7 +601,8 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 													$halAut[$iAut][$cstAN] = $affilName;
 													if(isset($idh->idHal_i)) {$halAut[$iAut][$cstII] = $idh->idHal_i;}else{$halAut[$iAut][$cstII] = "";}
 													if(isset($idh->idHal_s)) {$halAut[$iAut][$cstIS] = $idh->idHal_s;}else{$halAut[$iAut][$cstIS] = "";}
-													if(isset($idh->emailDomain_s[0])) {$halAut[$iAut][$cstMD] = str_replace('@', '', strstr($idh->emailDomain_s[0], '@'));}else{$halAut[$iAut][$cstMD] = "";}
+													//if(isset($idh->emailDomain_s[0])) {$halAut[$iAut][$cstMD] = str_replace('@', '', strstr($idh->emailDomain_s[0], '@'));}else{$halAut[$iAut][$cstMD] = "";}
+													if(isset($idh->emailDomain_s[0])) {$halAut[$iAut][$cstMD] = $idh->emailDomain_s[0];}else{$halAut[$iAut][$cstMD] = "";}
 													if(isset($idh->docid)) {$halAut[$iAut][$cstDI] = $idh->docid; $trvDoc = "oui";}
 													$iHi = "oui";
 													$cptiHi++;
@@ -678,7 +679,8 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 							$halAut[$iAut][$cstAN] = $affilName;
 							if(isset($author->idHal_i)) {$halAut[$iAut][$cstII] = $author->idHal_i;}else{$halAut[$iAut][$cstII] = "";}
 							if(isset($author->idHal_s)) {$halAut[$iAut][$cstIS] = $author->idHal_s;}else{$halAut[$iAut][$cstIS] = "";}
-							if(isset($author->emailDomain_s[0])) {$halAut[$iAut][$cstMD] = str_replace('@', '', strstr($author->emailDomain_s[0], '@'));}else{$halAut[$iAut][$cstMD] = "";}
+							//if(isset($author->emailDomain_s[0])) {$halAut[$iAut][$cstMD] = str_replace('@', '', strstr($author->emailDomain_s[0], '@'));}else{$halAut[$iAut][$cstMD] = "";}
+							if(isset($author->emailDomain_s[0])) {$halAut[$iAut][$cstMD] = $author->emailDomain_s[0];}else{$halAut[$iAut][$cstMD] = "";}
 							if(isset($author->docid)) {$halAut[$iAut][$cstDI] = $author->docid; $trvDoc = "oui";}
 							$iHi = "oui";
 							$cptiHi++;
@@ -732,7 +734,8 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 							$halAut[$iAut][$cstAN] = $affilName;
 							if(isset($author->idHal_i)) {$halAut[$iAut][$cstII] = $author->idHal_i;}else{$halAut[$iAut][$cstII] = "";}
 							if(isset($author->idHal_s)) {$halAut[$iAut][$cstIS] = $author->idHal_s;}else{$halAut[$iAut][$cstIS] = "";}
-							if(isset($author->emailDomain_s[0])) {$halAut[$iAut][$cstMD] = str_replace('@', '', strstr($author->emailDomain_s[0], '@'));}else{$halAut[$iAut][$cstMD] = "";}
+							//if(isset($author->emailDomain_s[0])) {$halAut[$iAut][$cstMD] = str_replace('@', '', strstr($author->emailDomain_s[0], '@'));}else{$halAut[$iAut][$cstMD] = "";}
+							if(isset($author->emailDomain_s[0])) {$halAut[$iAut][$cstMD] = $author->emailDomain_s[0];}else{$halAut[$iAut][$cstMD] = "";}
 							if(isset($author->docid)) {$halAut[$iAut][$cstDI] = $author->docid; $trvDoc = "oui";}
 							$iHi = "oui";
 							$cptiHi++;
@@ -791,7 +794,8 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 							$halAut[$iAut][$cstAN] = $affilName;
 							if(isset($author->idHal_i)) {$halAut[$iAut][$cstII] = $author->idHal_i;}else{$halAut[$iAut][$cstII] = "";}
 							if(isset($author->idHal_s)) {$halAut[$iAut][$cstIS] = $author->idHal_s;}else{$halAut[$iAut][$cstIS] = "";}
-							if(isset($author->emailDomain_s[0])) {$halAut[$iAut][$cstMD] = str_replace('@', '', strstr($author->emailDomain_s[0], '@'));}else{$halAut[$iAut][$cstMD] = "";}
+							//if(isset($author->emailDomain_s[0])) {$halAut[$iAut][$cstMD] = str_replace('@', '', strstr($author->emailDomain_s[0], '@'));}else{$halAut[$iAut][$cstMD] = "";}
+							if(isset($author->emailDomain_s[0])) {$halAut[$iAut][$cstMD] = $author->emailDomain_s[0];}else{$halAut[$iAut][$cstMD] = "";}
 							if(isset($author->docid)) {$halAut[$iAut][$cstDI] = $author->docid; $trvDoc = "oui";}
 							$iHi = "oui";
 							$cptiHi++;
@@ -865,7 +869,8 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 							$halAut[$iAut][$cstAN] = $affilName;
 							if(isset($author->idHal_i)) {$halAut[$iAut][$cstII] = $author->idHal_i;}else{$halAut[$iAut][$cstII] = "";}
 							if(isset($author->idHal_s)) {$halAut[$iAut][$cstIS] = $author->idHal_s;}else{$halAut[$iAut][$cstIS] = "";}
-							if(isset($author->emailDomain_s[0])) {$halAut[$iAut][$cstMD] = str_replace('@', '', strstr($author->emailDomain_s[0], '@'));}else{$halAut[$iAut][$cstMD] = "";}
+							//if(isset($author->emailDomain_s[0])) {$halAut[$iAut][$cstMD] = str_replace('@', '', strstr($author->emailDomain_s[0], '@'));}else{$halAut[$iAut][$cstMD] = "";}
+							if(isset($author->emailDomain_s[0])) {$halAut[$iAut][$cstMD] = $author->emailDomain_s[0];}else{$halAut[$iAut][$cstMD] = "";}
 							if(isset($author->docid)) {$halAut[$iAut][$cstDI] = $author->docid; $trvDoc = "oui";}
 							$iHi = "oui";
 							$cptiHi++;
@@ -930,7 +935,8 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 									$halAut[$iAut][$cstAN] = $affilName;
 									if(isset($author->idHal_i) && $author->idHal_i != 0) {$halAut[$iAut][$cstII] = $author->idHal_i;}else{$halAut[$iAut][$cstII] = "";}
 									if(isset($author->idHal_s)) {$halAut[$iAut][$cstIS] = $author->idHal_s;}else{$halAut[$iAut][$cstIS] = "";}
-									if(isset($author->emailDomain_s[0])) {$halAut[$iAut][$cstMD] = str_replace('@', '', strstr($author->emailDomain_s[0], '@'));}else{$halAut[$iAut][$cstMD] = "";}
+									//if(isset($author->emailDomain_s[0])) {$halAut[$iAut][$cstMD] = str_replace('@', '', strstr($author->emailDomain_s[0], '@'));}else{$halAut[$iAut][$cstMD] = "";}
+									if(isset($author->emailDomain_s[0])) {$halAut[$iAut][$cstMD] = $author->emailDomain_s[0];}else{$halAut[$iAut][$cstMD] = "";}
 									if(isset($author->docid)) {$halAut[$iAut][$cstDI] = $author->docid; $trvDoc = "oui";}
 									$cptiHi++;
 									$trouve++;
@@ -949,7 +955,8 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 									$halAut[$iAut][$cstAN] = $affilName;
 									if(isset($author->idHal_i) && $author->idHal_i != 0) {$halAut[$iAut][$cstII] = $author->idHal_i;}else{$halAut[$iAut][$cstII] = "";}
 									if(isset($author->idHal_s)) {$halAut[$iAut][$cstIS] = $author->idHal_s;}else{$halAut[$iAut][$cstIS] = "";}
-									if(isset($author->emailDomain_s[0])) {$halAut[$iAut][$cstMD] = str_replace('@', '', strstr($author->emailDomain_s[0], '@'));}else{$halAut[$iAut][$cstMD] = "";}
+									//if(isset($author->emailDomain_s[0])) {$halAut[$iAut][$cstMD] = str_replace('@', '', strstr($author->emailDomain_s[0], '@'));}else{$halAut[$iAut][$cstMD] = "";}
+									if(isset($author->emailDomain_s[0])) {$halAut[$iAut][$cstMD] = $author->emailDomain_s[0];}else{$halAut[$iAut][$cstMD] = "";}
 									if(isset($author->docid)) {$halAut[$iAut][$cstDI] = $author->docid; $trvDoc = "oui";}
 									$cptiHi++;
 									$trouve++;
@@ -1008,7 +1015,8 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 									$halAut[$iAut][$cstAN] = $affilName;
 									if(isset($author->idHal_i) && $author->idHal_i != 0) {$halAut[$iAut][$cstII] = $author->idHal_i;}else{$halAut[$iAut][$cstII] = "";}
 									if(isset($author->idHal_s)) {$halAut[$iAut][$cstIS] = $author->idHal_s;}else{$halAut[$iAut][$cstIS] = "";}
-									if(isset($author->emailDomain_s[0])) {$halAut[$iAut][$cstMD] = str_replace('@', '', strstr($author->emailDomain_s[0], '@'));}else{$halAut[$iAut][$cstMD] = "";}
+									//if(isset($author->emailDomain_s[0])) {$halAut[$iAut][$cstMD] = str_replace('@', '', strstr($author->emailDomain_s[0], '@'));}else{$halAut[$iAut][$cstMD] = "";}
+									if(isset($author->emailDomain_s[0])) {$halAut[$iAut][$cstMD] = $author->emailDomain_s[0];}else{$halAut[$iAut][$cstMD] = "";}
 									if(isset($author->docid)) {$halAut[$iAut][$cstDI] = $author->docid; $trvDoc = "oui";}
 									$cptiHi++;
 									$trouve++;
@@ -1027,7 +1035,8 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 									$halAut[$iAut][$cstAN] = $affilName;
 									if(isset($author->idHal_i) && $author->idHal_i != 0) {$halAut[$iAut][$cstII] = $author->idHal_i;}else{$halAut[$iAut][$cstII] = "";}
 									if(isset($author->idHal_s)) {$halAut[$iAut][$cstIS] = $author->idHal_s;}else{$halAut[$iAut][$cstIS] = "";}
-									if(isset($author->emailDomain_s[0])) {$halAut[$iAut][$cstMD] = str_replace('@', '', strstr($author->emailDomain_s[0], '@'));}else{$halAut[$iAut][$cstMD] = "";}
+									//if(isset($author->emailDomain_s[0])) {$halAut[$iAut][$cstMD] = str_replace('@', '', strstr($author->emailDomain_s[0], '@'));}else{$halAut[$iAut][$cstMD] = "";}
+									if(isset($author->emailDomain_s[0])) {$halAut[$iAut][$cstMD] = $author->emailDomain_s[0];}else{$halAut[$iAut][$cstMD] = "";}
 									if(isset($author->docid)) {$halAut[$iAut][$cstDI] = $author->docid; $trvDoc = "oui";}
 									$cptiHi++;
 									$trouve++;
