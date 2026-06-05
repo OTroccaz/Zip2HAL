@@ -215,7 +215,9 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		}
 	}
 	echo '<p class="form-inline">Licence :&nbsp;<select id="licence-'.$idFic.'" name="licence-'.$idFic.'" class="form-control" style="height: 18px; padding: 0px; width:400px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'licence\', valeur: $(this).val()});">';
-	echo '<option value=""></option>';
+	$tst = "http://hal.archives-ouvertes.fr/licences/copyright/";
+	$txt = ($licence == $tst) ? $cstSE : "";
+	echo '<option '.$txt.' value="'.$tst.'">'.$tst.'</option>';
 	$tst = "http://creativecommons.org/licenses/by/";
 	$txt = ($licence == $tst) ? $cstSE : "";
 	echo '<option '.$txt.' value="'.$tst.'">'.$tst.'</option>';
@@ -241,9 +243,6 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	$txt = ($licence == $tst) ? $cstSE : "";
 	echo '<option '.$txt.' value="'.$tst.'">'.$tst.'</option>';
 	$tst = "http://hal.archives-ouvertes.fr/licences/etalab/";
-	$txt = ($licence == $tst) ? $cstSE : "";
-	echo '<option '.$txt.' value="'.$tst.'">'.$tst.'</option>';
-	$tst = "http://hal.archives-ouvertes.fr/licences/copyright/";
 	$txt = ($licence == $tst) ? $cstSE : "";
 	echo '<option '.$txt.' value="'.$tst.'">'.$tst.'</option>';
 	$tst = "http://hal.archives-ouvertes.fr/licences/publicDomain/";
