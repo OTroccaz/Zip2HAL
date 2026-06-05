@@ -175,18 +175,6 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		$xml->save($nomfic);
 	}
 	
-	//Si pas de licence, mettre par défaut à 'http://hal.archives-ouvertes.fr/licences/copyright/'
-	$licence = '';
-	$elts = $xml->getElementsByTagName('licence');
-	foreach($elts as $elt) {
-		if($elt->hasAttribute('target')) {$licence = 'ok';}
-	}
-	if ($licence == '') {
-		deleteNode($xml, "availability", $cstLI, 0, "", "", "", "", $cstEX);
-		insertNode($xml, $cstNO, "availability", "", 0, $cstLI, "target", "http://hal.archives-ouvertes.fr/licences/copyright/", "", "", "iB", $cstTN, "");
-		$xml->save($nomfic);
-	}
-	
 	//Si pas de résumé, on va essayer d'en trouver un avec CrossRef
 	$resume = "";
 	$elts = $xml->getElementsByTagName("abstract");

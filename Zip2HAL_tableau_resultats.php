@@ -190,7 +190,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 		$xml->save($nomfic);
 		insertNode($xml, "nonodevalue", "publicationStmt", "", 0, "availability", "", "", "", "", "aC", $cstTN, "");
 		$xml->save($nomfic);
-		insertNode($xml, "nonodevalue", "availability", "", 0, "licence", "", "", "", "", "aC", $cstTN, "");
+		insertNode($xml, "nonodevalue", "availability", "", 0, "licence", "target", "http://hal.archives-ouvertes.fr/licences/copyright/", "", "", "aC", $cstTN, "");
 		$xml->save($nomfic);
 	}
 	echo '<p class="form-inline">Texte intégral :&nbsp;<input type="text" id="notice-'.$idFic.'" name="notice-'.$idFic.'" value="'.$target.'" class="form-control" style="height: 18px; width:350px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'notice\', valeur: $(this).val(), valeur2: $(\'#subtype-'.$idFic.'\').val()});">';
