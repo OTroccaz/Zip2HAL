@@ -42,7 +42,7 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 				if(strpos($halAut[$i]['affilName'], $halAff[$j]['lsAff']) !== false) {
 					$affil = urlencode($halAff[$j]['names']);
 					$afill = str_replace("&", "%24", $affil);
-					$reqId = "https://api.archives-ouvertes.fr/search/index/?q=authLastName_sci:%22".urlencode($halAut[$i][$cstLN])."%22%20AND%20authFirstName_sci:%22".urlencode($halAut[$i][$cstFN])."%22&fq=(structAcronym_sci:%22".$affil."%22%20OR%20structName_sci:%22".$affil."%22%20OR%20structCode_sci:%22".$affil."%22)&fl=authIdLastNameFirstName_fs&sort=abs(sub(producedDateY_i,".$year."))%20asc";
+					$reqId = "https://api.archives-ouvertes.fr/search/index/?q=authLastName_sci:%22".urlencode($halAut[$i][$cstLN])."%22%20AND%20authFirstName_sci:%22".urlencode($halAut[$i][$cstFN])."%22&fq=(structAcronym_t:%22".$affil."%22%20OR%20structName_t:%22".$affil."%22%20OR%20structCode_t:%22".$affil."%22)&fl=authIdLastNameFirstName_fs&sort=abs(sub(producedDateY_i,".$year."))%20asc";
 					$reqId = str_replace(" ", "%20", $reqId);
 					echo '<a target="_blank" href="'.$reqId.'">URL requête docid HAL</a><br>';
 					//echo $reqId.'<br>';
