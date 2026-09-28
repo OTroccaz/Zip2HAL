@@ -582,11 +582,13 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	$funder = "non";
 	$elts = $xml->getElementsByTagName("funder");
 	foreach($elts as $elt) {
-		echo 'Financement :&nbsp;<textarea id="funder-'.$idFic.'" name="funder-'.$idFic.'" class="textarea form-control" style="width: 600px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'financement\', valeur: $(this).val()});">'.$elt->nodeValue.'</textarea><br>';
+		echo 'Financement(s) :';
+		echo '<a style="cursor:pointer;" onclick="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'supprimerTousFunder\', valeur: 0, langue: \''.$lang.'\'}); supprimerTousFunder('.$idFic.', '.$ind.');"><i class=\'mdi mdi-trash-can-outline mdi-18px text-primary\'></i></a>';
+		echo '&nbsp;<textarea id="funder-'.$idFic.'" name="funder-'.$idFic.'" class="textarea form-control" style="width: 600px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'financement\', valeur: $(this).val()});">'.$elt->nodeValue.'</textarea><br>';
 		$funder = "oui";
 	}
 	if ($funder == "non") {
-		echo 'Financement :&nbsp;<textarea id="funder-'.$idFic.'" name="funder-'.$idFic.'" class="textarea form-control" style="width: 600px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'financement\', valeur: $(this).val()});"></textarea><br>';
+		echo 'Financement(s) :&nbsp;<textarea id="funder-'.$idFic.'" name="funder-'.$idFic.'" class="textarea form-control" style="width: 600px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'financement\', valeur: $(this).val()});"></textarea><br>';
 	}
 	
 	//Métadonnées > Financement ANR

@@ -458,7 +458,7 @@ if($racine == "") {$racine = "https://hal-univ-rennes1.archives-ouvertes.fr/";}
 															//Récupération du premier mot du titre pour limiter la recherche API
 															$tabTit = explode(' ', $titTEI);
 																
-															$portail = $collport[$racine];
+															//$portail = $collport[$racine];
 															
 															//Récupération de l'année de publication
 															$anns = $xml->getElementsByTagName("date");

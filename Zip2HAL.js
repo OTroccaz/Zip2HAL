@@ -35,6 +35,11 @@ function supprimerTousMC(idFic, nbMC) {
 		document.getElementById('mots-cles'+i+'-'+idFic).value = '';
 	}
 }
+
+//Suppression de tous les financements ANR et EU
+function supprimerTousFunder(idFic, nbMC) {
+	document.getElementById('funder-'+idFic).value = '';
+}
  
 function majpartDep(nomfic, idFic, partage) {
 	var source = document.getElementById(nomfic + "-" + idFic).innerHTML;

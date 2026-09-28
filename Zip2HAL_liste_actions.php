@@ -1047,6 +1047,24 @@ if ($action == 'supprimerTousMC') {
 	$xml->save($nomfic);
 }
 
+//Suppression de tous les financements ANR et EU
+if ($action == 'supprimerTousFunder') {
+	$keys = $xml->getElementsByTagName($cstFU);
+	$domArray = array();
+	
+	//Enregistrement des financements
+	foreach($keys as $key) {
+		foreach($key->childNodes as $elt) {
+			$domArray[] = $elt;
+		}
+	}
+	//Suppression du contenu des ficancements
+	foreach($domArray as $node){ 
+		$node->nodeValue = "";
+	}
+	$xml->save($nomfic);
+}
+
 //Résumé
 if ($action == $cstAB) {
 	deleteNode($xml, $cstPD, $cstAB, 0, $cstXL, $codeLang, "", "", $cstEX);
