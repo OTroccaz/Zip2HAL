@@ -31,6 +31,8 @@ function deleteNode($xml, $amont, $aval, $pos, $typAtt1, $valAtt1, $typAtt2, $va
 				foreach($elt->childNodes as $item) {
 					//echo('<script>console.log("'.$amont.' : '.$valAtt1.'");</script>');
 					if ($item->nodeName == $aval) {
+						$att1 = "";
+						$att2 = "";
 						if ($typAtt1 != "") {
 							if ($item->hasAttribute($typAtt1)) {$att1 = $item->getAttribute($typAtt1);}
 							if ($typAtt2 != "" && $item->hasAttribute($typAtt2)) {$att2 = $item->getAttribute($typAtt2);}

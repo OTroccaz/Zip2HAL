@@ -1058,11 +1058,69 @@ if ($action == 'supprimerTousFunder') {
 			$domArray[] = $elt;
 		}
 	}
-	//Suppression du contenu des ficancements
+	//Suppression du contenu des financements
 	foreach($domArray as $node){ 
 		$node->nodeValue = "";
 	}
 	$xml->save($nomfic);
+}
+
+//Supprimer un projet ANR
+if ($action == "supprimerANR") {
+	$tabVal = explode("~", $valeur);
+	$docid = $tabVal[0];
+	//Recherche du noeud funder correspondant
+	$keys = $xml->getElementsByTagName($cstFU);
+	foreach($keys as $key) {
+		if ($key->hasAttribute("ref") && $key->getAttribute("ref") == "#projanr-".$docid) {
+			$anr = "#projanr-".$docid;
+			deleteNode($xml, $cstTS, $cstFU, 0, "ref", $anr, "", "", $cstEX);
+			$xml->save($nomfic);
+		}
+	}
+	//Recherche du noeud org correspondant
+	$orgs = $xml->getElementsByTagName("org");
+	$i = 0;
+	foreach($orgs as $org) {
+		if ($org->hasAttribute("xml:id") && $org->getAttribute("xml:id") == "projanr-".$docid) {
+			$anr = "projanr-".$docid;
+			//deleteNode($xml, $cstLO, "org", $i, "xml:id", $anr, "", "", $cstEX);
+			$x = $xml->getElementsByTagName("org")->item($i);  
+			$y = $x->parentNode;
+			$y->removeChild($x);
+			$xml->save($nomfic);
+		}
+		$i++;
+	}
+}
+
+//Supprimer un projet EUR
+if ($action == "supprimerEUR") {
+	$tabVal = explode("~", $valeur);
+	$docid = $tabVal[0];
+	//Recherche du noeud funder correspondant
+	$keys = $xml->getElementsByTagName($cstFU);
+	foreach($keys as $key) {
+		if ($key->hasAttribute("ref") && $key->getAttribute("ref") == "#projeurop-".$docid) {
+			$eur = "#projeurop-".$docid;
+			deleteNode($xml, $cstTS, $cstFU, 0, "ref", $eur, "", "", $cstEX);
+			$xml->save($nomfic);
+		}
+	}
+	//Recherche du noeud org correspondant
+	$orgs = $xml->getElementsByTagName("org");
+	$i = 0;
+	foreach($orgs as $org) {
+		if ($org->hasAttribute("xml:id") && $org->getAttribute("xml:id") == "projeurop-".$docid) {
+			$eur = "projeurop-".$docid;
+			//deleteNode($xml, $cstLO, "org", $i, "xml:id", $eur, "", "", $cstEX);
+			$x = $xml->getElementsByTagName("org")->item($i);  
+			$y = $x->parentNode;
+			$y->removeChild($x);
+			$xml->save($nomfic);
+		}
+		$i++;
+	}
 }
 
 //Résumé

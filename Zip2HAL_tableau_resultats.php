@@ -594,14 +594,20 @@ if(isset($typDbl) && ($typDbl == "HALCOLLTYP" || $typDbl == "HALTYP")) {//Doublo
 	//Métadonnées > Financement ANR
 	echo 'Indiquez le ou les projets ANR liés à ce travail :<br>';
 	for ($iANR=1; $iANR < 6; $iANR++) {
-		echo '<input type="text" id="ANR'.$iANR.'-'.$idFic.'" name="ANR'.$iANR.'-'.$idFic.'" class="autoANR form-control" style="height: 18px; width: 600px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'ANR\', valeur: $(this).val()});">';
+		echo '<span class="form-inline">';
+		echo '<input type="text" id="ANR'.$iANR.'-'.$idFic.'" name="ANR'.$iANR.'-'.$idFic.'" class="autoANR form-control" style="height: 18px; width: 580px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'ANR\', valeur: $(this).val()});">';
+		echo '<a style="cursor:pointer;" onclick="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'supprimerANR\', pos: \''.$iANR.'\', valeur: $(\'#ANR'.$iANR.'-'.$idFic.'\').val()}); majokANRSuppr(\'ANR'.$iANR.'-'.$idFic.'\');"><i class="mdi mdi-trash-can-outline mdi-18px text-primary"></i></a>';
+		echo '</span>';
 	}
 	echo '<br>';
 	
 	//Métadonnées > Financement EUR
 	echo 'Indiquez le ou les projets EU liés à ce travail :<br>';
 	for ($iEUR=1; $iEUR < 4; $iEUR++) {
-		echo '<input type="text" id="EUR'.$iEUR.'-'.$idFic.'" name="EUR'.$iEUR.'-'.$idFic.'" class="autoEUR form-control" style="height: 18px; width: 600px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'EUR\', valeur: $(this).val()});">';
+		echo '<span class="form-inline">';
+		echo '<input type="text" id="EUR'.$iEUR.'-'.$idFic.'" name="EUR'.$iEUR.'-'.$idFic.'" class="autoEUR form-control" style="height: 18px; width: 580px;" onchange="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'EUR\', valeur: $(this).val()});">';
+		echo '<a style="cursor:pointer;" onclick="$.post(\'Zip2HAL_liste_actions.php\', {nomfic : \''.$nomfic.'\', action: \'supprimerEUR\', pos: \''.$iEUR.'\', valeur: $(\'#EUR'.$iEUR.'-'.$idFic.'\').val()}); majokEURSuppr(\'EUR'.$iEUR.'-'.$idFic.'\');"><i class="mdi mdi-trash-can-outline mdi-18px text-primary"></i></a>';
+		echo '</span>';
 	}
 	echo '<br>';
 	

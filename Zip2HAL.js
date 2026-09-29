@@ -40,6 +40,16 @@ function supprimerTousMC(idFic, nbMC) {
 function supprimerTousFunder(idFic, nbMC) {
 	document.getElementById('funder-'+idFic).value = '';
 }
+
+//Supprimer un projet ANR
+function majokANRSuppr(anrPos) {
+	document.getElementById(anrPos).value = "";
+}
+
+//Supprimer un projet EUR
+function majokEURSuppr(eurPos) {
+	document.getElementById(eurPos).value = "";
+}
  
 function majpartDep(nomfic, idFic, partage) {
 	var source = document.getElementById(nomfic + "-" + idFic).innerHTML;
